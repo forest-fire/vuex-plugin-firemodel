@@ -1,0 +1,47 @@
+{
+  "name": "vuex-plugin-firemodel",
+  "version": "1.0.0",
+  "description": "A Vuex plugin which reponds to all FireModel actions as well as providing mutations which can be imported by your state tree.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "vuepress dev docs",
+    "build:docs": "vuepress build docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/forest-fire/vuex-plugin-firemodel.git"
+  },
+  "keywords": [
+    "firebase",
+    "firemodel",
+    "vuejs",
+    "vuex",
+    "state-management"
+  ],
+  "author": "Ken Snyder",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/forest-fire/vuex-plugin-firemodel/issues"
+  },
+  "homepage": "https://github.com/forest-fire/vuex-plugin-firemodel#readme",
+  "dependencies": {
+    "abstracted-client": "^0.25.2",
+    "firemodel": "^0.25.0",
+    "lodash.get": "^4.4.2",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.4.5"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/lodash.get": "^4.4.6",
+    "@types/mocha": "^5.2.6",
+    "@vuepress/plugin-back-to-top": "^1.0.0-alpha.48",
+    "@vuepress/plugin-last-updated": "^1.0.0-alpha.48",
+    "@vuepress/plugin-medium-zoom": "^1.0.0-alpha.48",
+    "@vuepress/plugin-pwa": "^1.0.0-alpha.48",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "vuepress": "^1.0.0-alpha.48"
+  }
+}
