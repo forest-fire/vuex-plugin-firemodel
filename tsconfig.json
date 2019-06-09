@@ -3,7 +3,6 @@
     "declaration": true,
     "module": "commonjs",
     "target": "es2017",
-    "lib": ["es2017", "esnext.asynciterable", "es2015.reflect"],
     "moduleResolution": "node",
     "sourceMap": true,
     "noImplicitAny": true,
@@ -12,9 +11,8 @@
     "outDir": "./dist/cjs",
     "removeComments": false,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "typeRoots": ["./node_modules/@types", "./src/@types"]
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*", "test/**/*-spec.ts"],
-  "exclude": ["node_modules/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*-spec.ts"]
 }

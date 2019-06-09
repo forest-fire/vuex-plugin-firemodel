@@ -1,6 +1,5 @@
 import { MutationTree } from "vuex";
 import { Model, IFmContextualizedWatchEvent } from "firemodel";
-import { IFmActionWatchRecord } from "./types";
 
 export type ListPropertyCandidates<T> = Pick<
   T,

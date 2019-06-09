@@ -1,21 +1,22 @@
-import { IFirebaseConfig } from "abstracted-firebase";
+import { IFirebaseConfig, RealTimeDB, IFirebaseClientConfig } from "abstracted-firebase";
 import { Watch, Model, IModelOptions, Record, List, ICompositeKey } from "firemodel";
 import { DB } from "abstracted-client";
 import { Dispatch, Commit } from "vuex";
-import { IRootState } from "..";
 import { IDictionary, timestring, datetime, epoch } from "common-types";
 import actionTriggers from "../action-triggers";
+import { IGenericStateTree } from "..";
 
 export * from "./firemodel";
 
-export interface IFmEventContext {
+// TODO: add comment
+export interface IFmEventContext<T = IGenericStateTree> {
   Watch: typeof Watch;
   Record: typeof Record;
   List: typeof List;
   db?: DB;
   dispatch: Dispatch;
   commit: Commit;
-  state: IRootState;
+  state: T;
 }
 
 export interface IFmUserInfo {
@@ -54,9 +55,74 @@ export type IFmOnLogout = (ctx: IFmAuthEventContext) => Promise<void>;
 export type IFmUserUpgrade = (ctx: IFmLoginUpgradeEventContext) => Promise<void>;
 export type IFmRouteChanged = (ctx: IFmRouteEventContext) => Promise<void>;
 
-export interface IFireModelConfig {
-  /** returns an array of callbacks for setting up this plugin */
-  setup: (ctx: typeof actionTriggers) => FmCallback[];
+/**
+ * **Firemodel Config**
+ *
+ * This configuration requires that you provide a means to connect to the DB
+ * and then allows you to do two things:
+ *
+ * 1. Turn on/off core services of this plugin
+ * 2. Hook into _lifecycle_ events (typically to watch/unwatch certain db paths)
+ */
+export interface IFiremodelConfig
+  extends IFiremodelLifecycleHooks,
+    IFiremodelPluginCoreServices {
+  /**
+   * Firemodel must be able to connect to the database -- using
+   * `abstracted-client` to do so -- and therefore the configuration
+   * must include either a Firebase Config (and this plugin will
+   * create an instance of `abstracted-client`) or you can just pass
+   * in an instance of abstracted client here as well.
+   */
+  db: IFirebaseClientConfig;
+  /**
+   * A flag which which determines whether the database connection should be
+   * established immediately on this plugin's initialization.
+   *
+   * Default is `true`
+   */
+  connect: boolean;
+}
+
+export interface IFiremodelPluginCoreServices {
+  /**
+   * **Watch Auth**
+   *
+   * As soon as the database connects this service will
+   * hook into Firebase's events around changes in
+   * _authentication_ status. This opens up the `onAuthChanged`
+   * lifecycle event provided as part of this plugin.
+   *
+   * Typically you **will** want
+   * to enable this if you are using Firemodel's Identity/Auth
+   * system. If you aren't then it follows that you
+   * WOULD NOT enable it.
+   *
+   * If not stated, this option defaults to `false`.
+   */
+  watchAuth?: boolean;
+  /**
+   * **Anonymous Auth**
+   *
+   * Once Firebase has connected to the DB, this service
+   * will ensure that the user is logged in. Of course if
+   * a user already had a valid token/session then it's
+   * normal for **Firebase** to reconnect you but in the
+   * cases where there is no valid token, this service will
+   * login the user as an _anonymous_ user.
+   *
+   * If not stated, this option defaults to `false`.
+   */
+  anonymousAuth?: boolean;
+  /**
+   * **Watch Route Changes**
+   *
+   * if your project is using the popular vuex plugin
+   */
+  watchRouteChanges?: boolean;
+}
+
+export interface IFiremodelLifecycleHooks {
   /**
    * A callback function which is executed any time the
    * database is connected

@@ -1,33 +1,41 @@
 ---
-lineNumbers: true,
+lineNumbers: true
 next: "/events/"
 ---
 
 # Configuration
 
-## Introduction
-
 What you get out of this plugin in in large part related to how you configure it. The idea
-behind this configuration is to take full advantage of **FireModel**'s watchers and in
+behind this configuration is to take full advantage of **Firemodel**'s watchers and in
 turn **Firebase**'s "real time" database characteristics. Hopefully this idea is not
 foreign to you but in a nutshell what we mean is that we should configure this plug so
 that we can "subscribe" to a series of "event streams" that represent change in the
 database that we care about.
 
-After the high-minded statement, let's take the theory down a notch and look at an example
-configuration:
+## Example Config
+
+Let's take the theory down a notch and look at an example configuration:
 
 ```typescript
 const config = {
-  connect: env.firebaseConfg, // no default value provided
+  // config for Firebase DB
+  db: {
+    apiKey: "...",
+    authDomain: "...",
+    databaseURL: "...",
+    projectId: "..."
+  },
+  // connect db when initialized (true is the default)
+  connect: true,
   // Auth Features
-  fireAuth: true, // default is true
-  passiveAuth: true, // default is false
-  // Lifecycle features
+  watchAuth: true,
+  anonymousAuth: true,
+  // Lifecycle hooks
   lifecycle: {
     onConnect,
     onLogin,
-    onLogout
+    onLogout,
+    onRouteChange
   }
 };
 ```
@@ -49,44 +57,47 @@ To understand what this is doing let's take it section by section.
 
 ## Connect
 
-In many cases you'll want to immediately connect your database once your VueJS application
-starts. If that is the case then you should pass in your firebase configuration to this
-parameter and it will ensure that the DB is connected.
+In our example we instantiated a `abstracted-admin` DB connection object and passed this in
+as our means to allow this plugin to interact with Firebase. Note that the db connection
+object as been passed into this plugin but we're **not** waiting for the actual _connection_
+to the database to be established before moving forward. This is not only "fine" but the
+expected means of passing the DB connection to this plugin.
+
+Another way of achieving the same outcome -- and at the same time avoiding the need to create
+the `db` connection within the frontend app -- is to simply pass your database configuration
+into this plugin:
 
 ```typescript
-connect: IFirebaseClientConfig | () => IFirebaseClientConfig
+const db = {
+  apiKey: "...",
+  authDomain: "...",
+  databaseURL: "...",
+  projectId: "..."
+}
+const config = {
+  db,
+  // ...
 ```
 
-Optionally you _can_ pass in a function which allows you to take execution control over
-prior to the connection attempt.
+This means of connecting to the database is probably the cleanest in applications where you don't need to have a direct connection to the `abstracted-admin` reference. In fact, even in these cases,you could still regain that reference if you wanted to by taking it from `FireModel.defaultDb`. In either case though you'll have setup this plugin to connect correctly.
 
 ## Auth
 
-### Firebase Auth
+### Watch Auth
 
-This plugin plays nicely with Firebase's Authentication/Identity service and by default
-assumes you are using it (aka, `fireAuth` defaults to `true`). This provides you with
-event hooks for any change to the authentication state (more in the lifecycle hooks
-section).
+This plugin plays nicely with Firebase's Authentication/Identity. When this service is enabled the opens up the use of the `onLoggedIn` / `onLoggedOut` lifecycle events. In general, if you are using Firemodel's Auth API then you should probably set this to `true`.
 
-### Passive Authentication
+In addition to enabling the `onAuthChanged` lifecycle hook, it also gives you a guarentee that the logged in users ["custom claims"](https://firebase.google.com/docs/auth/admin/custom-claims) are available at  `@firebase/claims` in the state tree.
+
+By default, this service is turned off.
+
+### Anonymous Authentication
 
 In addition to just stating that you'd like to use Firebase's authentication/authorization
-system, you can also opt-in to `passiveAuth`. When this feature is turned on this plugin
+system, you can also opt-in to `anonymousAuth`. When this feature is turned on this plugin
 will -- immediately after connecting to the DB -- check for the appropriate tokens of a
 logged in user and _re_-login the user. If, however, there is no user tokens the existing
-session is logged in as an anonymous user.
-
-### Custom Claims
-
-Firebase allows for the concept off
-["custom claims"](https://firebase.google.com/docs/auth/admin/custom-claims) which are in
-effect a secure way of implementing "role based authorization". This plugin will expose
-any roles/claims that the given user has as part of the `@firebase/claims` property.
-However, without any explicit setting of claims, the claims for a user will never be set.
-Fortunately **FireModel** has an _opinionated_ way of interacting with claims which in
-most cases will be a big time saver. Check out the docs here:
-[FireModel | Authentication & Authorization](https://firemodel.info/using/auth.html)
+session is logged in as an *anonymous* user.
 
 ## Lifecycle Hooks
 

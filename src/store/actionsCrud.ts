@@ -1,30 +1,32 @@
 import { ActionTree } from "vuex";
-import { IFireModelState, IFmActionWatchRecord, IFmLocalChange } from "./types";
-import { IRootState } from ".";
 import {
-  FMEvents,
+  FmEvents,
   Record,
   Watch,
   FireModel,
   IFMRecordEvent,
   IFmRecordEvent,
-  pathJoin
+  pathJoin,
+  Model
 } from "firemodel";
 import get from "lodash.get";
-import { generateLocalId } from "./mutations-config";
+import { IGenericStateTree } from "../index";
+import { generateLocalId } from "./firemodelModule";
 import { IWatcherItem } from "firemodel";
+import { IFiremodelState, IFmActionWatchRecord } from "../types";
+import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
 
 function stripPrefix(name: string) {
   return name.replace("@firemodel/", "");
 }
 
-export default {
+export const actionsCrud: ActionTree<IFiremodelState, IGenericStateTree> = {
   /**
    * The record has changed in an unstated way; this
    * type of event should typically come from a "value"
    * based event watcher on a record.
    */
-  [stripPrefix(FMEvents.RECORD_CHANGED)](store, payload: IFmRecordEvent) {
+  [stripPrefix(FmEvents.RECORD_CHANGED)](store, payload: IFmRecordEvent) {
     if (payload.watcherSource === "record" && !payload.dbPath) {
       payload.dbPath = (payload.query as any)._path;
     }
@@ -35,13 +37,17 @@ export default {
         if (change) {
           payload.priorValue = change.priorValue;
         }
-        store.commit("SERVER_CHANGE_CONFIRMATION", payload);
+        // 2nd phase of 2 phase commit
+        store.commit(FmCrudMutation.serverConfirmed, payload);
       }
-      store.commit(pathJoin(localPath, "CHANGED"), payload, { root: true });
+      // Send mutation to appropriate state node
+      store.commit(pathJoin(localPath, FmCrudMutation.serverChanged), payload, {
+        root: true
+      });
     }
   },
 
-  [stripPrefix(FMEvents.RECORD_CHANGED_LOCALLY)](
+  [stripPrefix(FmEvents.RECORD_CHANGED_LOCALLY)](
     { commit, rootState },
     payload: IFmRecordEvent
   ) {
@@ -50,7 +56,7 @@ export default {
     commit(`${payload.localPath}/CHANGED_LOCALLY`, payloadPlus, { root: true });
   },
 
-  [stripPrefix(FMEvents.RECORD_ADDED_LOCALLY)](
+  [stripPrefix(FmEvents.RECORD_ADDED_LOCALLY)](
     { commit, rootState },
     payload: IFmRecordEvent
   ) {
@@ -67,7 +73,7 @@ export default {
     }
   },
 
-  [stripPrefix(FMEvents.RECORD_ADDED_CONFIRMATION)](
+  [stripPrefix(FmEvents.RECORD_ADDED_CONFIRMATION)](
     { commit, state },
     payload: IFmRecordEvent
   ) {
@@ -76,11 +82,11 @@ export default {
     }
   },
 
-  [stripPrefix(FMEvents.RECORD_ADDED)](
+  [stripPrefix(FmEvents.RECORD_ADDED)](
     { commit, rootState, state },
     payload: IFMRecordEvent
   ) {
-    const changeId = generateLocalId(payload.compositeKey, "add");
+    const changeId = generateLocalId<Model>(payload.compositeKey, "add");
     // if (state.localOnly.find(i => i.dbPath == payload.dbPath)) {
     //   commit('SERVER_CONFIRMATION', payload)
     // }
@@ -94,11 +100,11 @@ export default {
     });
   },
 
-  [stripPrefix(FMEvents.RECORD_REMOVED)](store, payload) {
+  [stripPrefix(FmEvents.RECORD_REMOVED)](store, payload) {
     console.log("TBD record removed: ", payload);
   },
 
-  [stripPrefix(FMEvents.WATCHER_STARTED)]({ commit }, payload: IWatcherItem) {
+  [stripPrefix(FmEvents.WATCHER_STARTED)]({ commit }, payload: IWatcherItem) {
     commit("WATCHER_STARTED", payload);
   },
 
@@ -138,4 +144,4 @@ export default {
         });
     }
   }
-} as ActionTree<IFireModelState, IRootState>;
+};

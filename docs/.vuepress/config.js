@@ -12,7 +12,9 @@ module.exports = {
     },
     "@vuepress/back-to-top": true,
     "@vuepress/last-updated": true,
-    "@vuepress/medium-zoom": true,
+    "@vuepress/medium-zoom": {
+      selector: "img"
+    },
     autometa: {
       site: {
         name: "FireModel Vuex Plugin"
@@ -147,7 +149,10 @@ module.exports = {
     ]
   ],
   themeConfig: {
-    // editLinks: true,
+    repo: "forest-fire/vuex-plugin-firemodel",
+    repoLabel: "contribute",
+    docsDir: "docs",
+    editLinks: true,
     nav: [
       {
         text: "Getting Started",

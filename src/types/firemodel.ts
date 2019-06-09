@@ -1,9 +1,9 @@
-import { IFirebaseConfig } from "abstracted-firebase";
+import { IFirebaseConfig, IFirebaseClientConfig } from "abstracted-firebase";
 import { IFmQueuedAction, IFmWatchItem, IFmLocalChange } from ".";
 
-export interface IFireModelState {
+export interface IFiremodelState {
   /** the configuration used to connect to the Firebase DB */
-  config?: IFirebaseConfig;
+  config?: IFirebaseClientConfig;
   /** a list of custom claims that this user has */
   claims?: string[];
   /** the authentication status of the user */
