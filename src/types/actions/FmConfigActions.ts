@@ -1,9 +1,8 @@
-import { Store } from "vuex";
-import { IFirebaseConfig } from "abstracted-firebase/dist/esnext/types";
-
-export const enum FmConfigAction {
-  connect = "connect",
-  watchAuth = "watchAuth",
-  anonymousAuth = "anonymousAuth",
-  watchRouteChanges = "watchRouteChanges"
+export enum FmConfigAction {
+  connect = "CONNECT",
+  firebaseAuth = "FIREBASE_AUTH",
+  anonymousLogin = "ANONYMOUS_LOGIN",
+  watchRouteChanges = "WATCH_ROUTE_CHANGES",
+  routeChanged = "CALL_ROUTE_HOOKS",
+  watcherStarting = "WATCHER_STARTING"
 }

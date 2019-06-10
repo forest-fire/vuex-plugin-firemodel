@@ -71,7 +71,7 @@ export interface IFiremodelConfig extends IFiremodelLifecycleHooks, IFiremodelPl
      *
      * Default is `true`
      */
-    connect: boolean;
+    connect?: boolean;
 }
 export interface IFiremodelPluginCoreServices {
     /**

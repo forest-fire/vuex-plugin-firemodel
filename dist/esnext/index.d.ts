@@ -1,13 +1,13 @@
 import { IFiremodelConfig as IFiremodelPluginConfig, IFiremodelState } from "./types";
 import { Store } from "vuex";
-import { DB, FirebaseAuth } from "abstracted-client";
+import { DB, FirebaseAuth, IFirebaseClientConfig } from "abstracted-client";
 import { IDictionary } from "common-types";
-import { IFirebaseClientConfig } from "abstracted-firebase";
 export * from "./types";
+export * from "./firemodelMutations";
 /**
  * We know that the root state will include the **@firemodel** state tree
- * but otherwise we will accept a generic understanding unless passed
- * more specifics. This interface represents the generic understanding.
+ * but otherwise we will accept a generic understanding of the rest of the
+ * state tree as this plugin has no means of leveraging any specifics.
  */
 export interface IGenericStateTree extends IDictionary {
     "@firemodel": IFiremodelState;
@@ -19,5 +19,5 @@ export declare function getDb(config?: IFirebaseClientConfig): Promise<DB>;
 export declare function setDb(db: DB): void;
 export declare function getAuth(): Promise<import("@firebase/auth-types").FirebaseAuth>;
 export declare function setAuth(auth: FirebaseAuth): void;
-declare const FirePlugin: (config?: IFiremodelPluginConfig) => (store: Store<IGenericStateTree>) => Promise<void>;
+declare const FirePlugin: (config?: IFiremodelPluginConfig) => (store: Store<any>) => void;
 export default FirePlugin;

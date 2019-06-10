@@ -5,7 +5,6 @@ import { Dispatch, Commit } from "vuex";
 import { IDictionary, timestring, datetime, epoch } from "common-types";
 import actionTriggers from "../action-triggers";
 import { IGenericStateTree } from "..";
-
 export * from "./firemodel";
 
 // TODO: add comment
@@ -81,7 +80,7 @@ export interface IFiremodelConfig
    *
    * Default is `true`
    */
-  connect: boolean;
+  connect?: boolean;
 }
 
 export interface IFiremodelPluginCoreServices {

@@ -3,13 +3,21 @@ export const enum FmCrudMutation {
   changedLocally = "CHANGED_LOCALLY",
   addedLocally = "ADDED_LOCALLY",
   removedLocally = "REMOVED_LOCALLY",
-  serverConfirmed = "SERVER_CONFIRMED",
-  serverRollback = "SERVER_ROLLBACK",
+
   relationshipAdded = "RELATIONSHIP_ADDED",
   relationshipRemoved = "RELATIONSHIP_REMOVED",
 
+  // Client originated changes CONFIRMED
+  serverAddConfirm = "ADD_CONFIRMATION",
+  serverChangeConfirm = "CHANGE_CONFIRMATION",
+  serverRemoveConfirm = "REMOVE_CONFIRMATION",
+  // ROLLBACKS
+  serverAddRollback = "ROLLBACK_ADD",
+  serverChangeRollback = "ROLLBACK_CHANGE",
+  serverRemoveRollback = "ROLLBACK_REMOVE",
+
   // Server originated changes
-  serverAdded = "SERVER_ADDED",
-  serverChanged = "SERVER_CHANGED",
-  serverRemoved = "SERVER_REMOVED"
+  serverAdd = "SERVER_ADD",
+  serverChange = "SERVER_CHANGE",
+  serverRemove = "SERVER_REMOVE"
 }

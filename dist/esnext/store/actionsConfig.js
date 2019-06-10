@@ -1,7 +1,9 @@
 import { FireModel, Record, List, Watch } from "firemodel";
 import { DB } from "abstracted-client";
-import { createError } from "common-types";
+import { wait } from "common-types";
 import { setDb, configuration } from "..";
+import { FmConfigAction } from "../types/actions/FmConfigActions";
+import { FireModelPluginError } from "../errors/FiremodelPluginError";
 /**
  * **actionsConfig**
  *
@@ -16,14 +18,19 @@ export const actionsConfig = {
      *
      * Connects to the Firebase database
      */
-    async connect(store, config) {
+    async [FmConfigAction.connect](store, config) {
         const { commit, dispatch, rootState } = store;
-        commit("@firemodel/CONFIGURE" /* configure */, config); // set Firebase configuration
+        if (!config) {
+            throw new FireModelPluginError(`Connecting to database but NO configuration was present!`, "not-allowed");
+        }
+        commit("CONFIGURE" /* configure */, config); // set Firebase configuration
         try {
+            commit("CONNECTING" /* connecting */);
+            await wait(200);
             const db = await DB.connect(config);
             setDb(db);
             FireModel.defaultDb = db;
-            commit("@firemodel/CONNECT" /* connect */);
+            commit("CONNECTED" /* connected */);
             const ctx = {
                 Record,
                 List,
@@ -33,11 +40,11 @@ export const actionsConfig = {
                 commit,
                 state: rootState
             };
-            await deQueue(ctx, "connected");
+            await runQueue(ctx, "connected");
         }
         catch (e) {
-            commit("@firemodel/CONNECTION_ERROR" /* connectionError */, e);
-            throw createError(`firemodel-plugin/connection-error`, e.message);
+            commit("CONNECTION_ERROR" /* connectionError */, e);
+            throw new FireModelPluginError(e.message, "connection-error");
         }
     },
     /**
@@ -46,7 +53,7 @@ export const actionsConfig = {
      * checks to see if already signed in to Firebase but if not
      * then signs into Firebase as an _anonymous_ user
      */
-    async anonymousAuth(store) {
+    async [FmConfigAction.anonymousLogin](store) {
         const { commit, state, dispatch, rootState } = store;
         const db = await DB.connect(state.config);
         const auth = await db.auth();
@@ -67,26 +74,26 @@ export const actionsConfig = {
                 emailVerified: false
             };
         }
-        commit("setCurrentUser", user);
+        commit("USER_LOGGED_IN" /* userLoggedIn */, user);
         const ctx = Object.assign({ Watch,
             Record,
             List,
             db,
             dispatch,
             commit }, user, { state: rootState });
-        await deQueue(ctx, "logged-in");
+        await runQueue(ctx, "logged-in");
     },
     /**
-     * **watchAuth**
+     * **firebaseAuth**
      *
-     * Watches Firebase auth events and sends notifications of changes
+     * Watches Firebase Auth events and sends notifications of changes
      * via `LOGGED_IN` and `LOGGED_OUT` mutations which in turn ensure
      * that the `@firemodel` state tree has an up-to-date representation
      * of the `currentUser`.
      *
      * Also enables the appropriate lifecycle hooks: `onLogOut` and `onLogIn`
      */
-    async watchAuth(store) {
+    async [FmConfigAction.firebaseAuth](store) {
         const { commit, rootState, dispatch, state } = store;
         const baseContext = {
             List,
@@ -99,16 +106,25 @@ export const actionsConfig = {
         const authChanged = (user) => {
             if (user) {
                 const fm = state["@firemodel"];
-                if (state.currentUser && fm.currentUser.uid !== user.uid) {
-                    if (state.currentUser)
-                        commit("userChanged", { old: state.currentUser, new: user });
-                    // deQueue(store, 'user-changed')
-                }
-                else if (!state.currentUser) {
-                    commit("@firemodel/USER_LOGGED_IN" /* userLoggedIn */, user);
-                    deQueue(Object.assign({}, baseContext, { uid: user.uid, isAnonymous: user.isAnonymous }), "logged-in");
-                }
-                commit("@firemodel/SET_CURRENT_USER" /* setCurrentUser */, {
+                // if (state.currentUser && fm.currentUser.uid !== user.uid) {
+                //   if (state.currentUser)
+                //     commit(FmConfigMutation.userLoggedIn, {
+                //       old: state.currentUser,
+                //       new: user
+                //     });
+                //   // deQueue(store, 'user-changed')
+                // } else if (!state.currentUser) {
+                //   commit(FmConfigMutation.userLoggedIn, user);
+                //   deQueue(
+                //     {
+                //       ...baseContext,
+                //       uid: user.uid,
+                //       isAnonymous: user.isAnonymous
+                //     } as IFmAuthEventContext,
+                //     "logged-in"
+                //   );
+                // }
+                commit("USER_LOGGED_IN" /* userLoggedIn */, {
                     isAnonymous: user.isAnonymous,
                     uid: user.uid,
                     email: user.email,
@@ -116,8 +132,8 @@ export const actionsConfig = {
                 });
             }
             else {
-                commit("@firemodel/USER_LOGGED_OUT" /* userLoggedOut */);
-                deQueue(Object.assign({}, baseContext, { uid: state.currentUser.uid, isAnonymous: state.currentUser.isAnonymous }), "logged-out");
+                commit("USER_LOGGED_OUT" /* userLoggedOut */);
+                runQueue(Object.assign({}, baseContext, { uid: state.currentUser.uid, isAnonymous: state.currentUser.isAnonymous }), "logged-out");
             }
         };
     },
@@ -126,7 +142,7 @@ export const actionsConfig = {
      *
      * Enables lifecycle hooks for route changes
      */
-    async watchRouteChanges({ dispatch, commit, rootState }) {
+    async [FmConfigAction.watchRouteChanges]({ dispatch, commit, rootState }) {
         if (configuration.onRouteChange) {
             const ctx = {
                 Watch,
@@ -136,7 +152,7 @@ export const actionsConfig = {
                 commit,
                 state: rootState
             };
-            deQueue(ctx, "route-changed");
+            runQueue(ctx, "route-changed");
         }
     }
 };
@@ -145,7 +161,7 @@ export const actionsConfig = {
  *
  * pulls items off the lifecycle queue which match the lifecycle event
  */
-async function deQueue(ctx, lifecycle) {
+async function runQueue(ctx, lifecycle) {
     const remainingQueueItems = [];
     const queued = ctx.state["@firemodel"].queued.filter(i => i.on === lifecycle);
     for (const item of queued) {
@@ -163,7 +179,7 @@ async function deQueue(ctx, lifecycle) {
             remainingQueueItems.push(Object.assign({}, item, { error: e.message, errorStack: e.stack }));
         }
     }
-    ctx.commit("@firemodel/LIFECYCLE_EVENT_COMPLETED" /* lifecycleEventCompleted */, {
+    ctx.commit("LIFECYCLE_EVENT_COMPLETED" /* lifecycleEventCompleted */, {
         event: lifecycle,
         actionCallbacks: queued.filter(i => i.on === lifecycle).map(i => i.name)
     });

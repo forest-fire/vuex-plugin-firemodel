@@ -2,6 +2,10 @@ import { FiremodelModule } from "./store";
 import { Watch, Record, List, FireModel } from "firemodel";
 import { DB } from "abstracted-client";
 import { createError } from "common-types";
+import { FmConfigAction } from "./types/actions/FmConfigActions";
+import { FireModelPluginError } from "./errors/FiremodelPluginError";
+import { addNamespace } from "./addNamespace";
+export * from "./firemodelMutations";
 export let configuration;
 export let dbConfig;
 export let firemodelVuex;
@@ -31,25 +35,24 @@ export function setAuth(auth) {
 }
 const FirePlugin = (config) => {
     configuration = config;
-    return async (store) => {
+    return (store) => {
         firemodelVuex = store;
         FireModel.dispatch = store.dispatch;
         store.subscribe((mutation, state) => {
             if (mutation.type === "route/ROUTE_CHANGED") {
-                // TODO: this looks off
-                store.dispatch("@firemodel/watchRouteChanges", Object.assign({ Watch,
+                store.dispatch(addNamespace(FmConfigAction.watchRouteChanges), Object.assign({ Watch,
                     Record,
                     List, dispatch: store.dispatch, state: store.state, commit: store.commit }, mutation.payload));
             }
         });
         store.registerModule("@firemodel", FiremodelModule);
-        await queueLifecycleEvents(store, config);
-        await coreServices(store, Object.assign({ connect: true }, config));
+        queueLifecycleEvents(store, config).then(() => coreServices(store, Object.assign({ connect: true }, config)));
     };
 };
 export default FirePlugin;
 async function queueLifecycleEvents(store, config) {
     if (!config) {
+        throw new FireModelPluginError(`There was no configuration sent into the FiremodelPlugin!`, "not-allowed");
         return;
     }
     const iterable = [
@@ -65,7 +68,7 @@ async function queueLifecycleEvents(store, config) {
         if (config[name]) {
             const empty = () => Promise.resolve();
             const cb = config[name];
-            await store.commit("@firemodel/queue", {
+            await store.commit(addNamespace("@firemodel/QUEUE_EVENT_HOOK" /* queueHook */), {
                 on: event,
                 name: `lifecycle-event-${event}`,
                 cb
@@ -75,18 +78,18 @@ async function queueLifecycleEvents(store, config) {
 }
 async function coreServices(store, config) {
     if (config.connect) {
-        await store.dispatch("connect" /* connect */, config);
+        await store.dispatch(addNamespace(FmConfigAction.connect), config.db);
     }
     if (config.watchAuth) {
-        await store.dispatch("watchAuth" /* watchAuth */, config);
+        await store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config);
     }
     if (config.anonymousAuth) {
-        await store.dispatch("anonymousAuth" /* anonymousAuth */, config);
+        await store.dispatch(addNamespace(FmConfigAction.anonymousLogin), config);
     }
     if (config.watchRouteChanges) {
-        await store.dispatch("watchRouteChanges" /* watchRouteChanges */);
+        await store.dispatch(addNamespace(FmConfigAction.watchRouteChanges));
     }
-    store.commit("@firemodel/CORE_SERVICES_STARTED" /* coreServicesStarted */, {
+    store.commit(addNamespace("CORE_SERVICES_STARTED" /* coreServicesStarted */), {
         message: `all core firemodel plugin services started`,
         config: config.db
     });

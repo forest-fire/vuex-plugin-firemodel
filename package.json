@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/forest-fire/vuex-plugin-firemodel#readme",
   "dependencies": {
-    "abstracted-client": "^0.27.5",
+    "abstracted-client": "^0.27.6",
     "firemodel": "^0.27.3",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",

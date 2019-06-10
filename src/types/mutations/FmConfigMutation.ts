@@ -1,22 +1,35 @@
 export const enum FmConfigMutation {
+  queueHook = "@firemodel/QUEUE_EVENT_HOOK",
+  queueWatcher = "@firemodel/QUEUE_WATCHER",
   /** the DB configuration */
-  configure = "@firemodel/CONFIGURE",
+  configure = "CONFIGURE",
+  /** starting the DB connection process */
+  connecting = "CONNECTING",
   /** the DB has been connected to */
-  connect = "@firemodel/CONNECT",
+  connected = "CONNECTED",
   /** the DB has been disconnected from */
-  disconnect = "@firemodel/DISCONNECT",
+  disconnected = "DISCONNECTED",
   /** there was a connection error while performing an operation */
-  connectionError = "@firemodel/CONNECTION_ERROR",
+  connectionError = "CONNECTION_ERROR",
   /** there was an application error */
-  appErr = "@firemodel/APP_ERROR",
+  appErr = "APP_ERROR",
+  /** clear the errors which were being stored locally */
+  clearErrors = "CLEAR_ERRORS",
   /** the "current user" has changed, user identity details have been set */
-  setCurrentUser = "@firemodel/SET_CURRENT_USER",
+  setCurrentUser = "SET_CURRENT_USER",
   /** a user has logged in */
-  userLoggedIn = "@firemodel/USER_LOGGED_IN",
+  userLoggedIn = "USER_LOGGED_IN",
   /** a user has logged out */
-  userLoggedOut = "@firemodel/USER_LOGGED_OUT",
+  userLoggedOut = "USER_LOGGED_OUT",
   /** a lifecycle event's hooks have all fired */
-  lifecycleEventCompleted = "@firemodel/LIFECYCLE_EVENT_COMPLETED",
+  lifecycleEventCompleted = "LIFECYCLE_EVENT_COMPLETED",
   /** all core plugin services have started */
-  coreServicesStarted = "@firemodel/CORE_SERVICES_STARTED"
+  coreServicesStarted = "CORE_SERVICES_STARTED",
+
+  // watchers
+
+  /** Firebase -- via Firemodel -- has been asked to watch a new path in DB */
+  watcherStarting = "WATCHER_STARTING",
+  /** Firebase -- via Firemodel -- has started watching a new path in the DB */
+  watcherStarted = "WATCHER_STARTED"
 }
