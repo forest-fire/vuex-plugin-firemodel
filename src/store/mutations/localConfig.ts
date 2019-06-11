@@ -14,7 +14,7 @@ import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
 /**
  * The **mutations** scoped to the local configuration of Firebase
  */
-export const local: MutationTree<IFiremodelState> = {
+export const localConfig: MutationTree<IFiremodelState> = {
   [FmConfigMutation.coreServicesStarted]: state => {
     //
   },

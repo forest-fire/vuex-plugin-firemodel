@@ -16,34 +16,30 @@ export function addedLocally<T = MutationTree<IDictionary>>(
       state,
       payload: IFmContextualizedWatchEvent<T> & { paths?: IPathSetter<T>[] }
     ) {
-      if (payload.value) {
-        state = changeRoot(state, payload.value) as T;
-      } else if (payload.paths) {
-        const value = payload.paths.reduce((prev, curr) => {
-          const path = pathJoin(payload.localPath, curr.path);
-          set(prev, path, curr.value);
-          return prev;
-        }, {});
-      }
+      const isRecord = payload.watcherSource === "record";
+      state = isRecord
+        ? (changeRoot(state, payload.value) as T)
+        : (state[propOffset as keyof typeof state] = payload.value);
     },
 
     [FmCrudMutation.changedLocally](
       state,
       payload: IFmContextualizedWatchEvent<T> & { paths?: IPathSetter<T> }
     ) {
-      if (payload.value) {
-        state = changeRoot(state, payload.value) as T;
-      } else if (payload.paths) {
-        //@TODO
-      }
+      const isRecord = payload.watcherSource === "record";
+      state = isRecord
+        ? (changeRoot(state, payload.value) as T)
+        : (state[propOffset as keyof typeof state] = payload.value);
     },
 
-    // TODO: implement
     [FmCrudMutation.removedLocally](
       state,
       payload: IFmContextualizedWatchEvent<T> & { paths?: IPathSetter<T> }
     ) {
-      console.log("TOOD: removed-locally");
+      const isRecord = payload.watcherSource === "record";
+      state = isRecord
+        ? (changeRoot(state, null) as T)
+        : (state[propOffset as keyof typeof state] = null);
     }
   };
 }

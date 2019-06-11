@@ -47,10 +47,14 @@ export function firemodelMutations<T = MutationTree<IDictionary>>(
    */
   propOffset?: string
 ): MutationTree<T> {
-  return {
+  const a: MutationTree<T> = {
     ...addedLocally(propOffset),
     ...serverEvents(propOffset),
     ...serverRollbacks(propOffset),
     ...serverConfirms(propOffset)
   };
+
+  console.log("MUT", a);
+
+  return a;
 }

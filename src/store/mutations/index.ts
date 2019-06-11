@@ -1,4 +1,4 @@
-import { local } from "./localConfig";
+import { localConfig } from "./localConfig";
 import { serverConfirm } from "./serverConfirm";
 import { watcher } from "./watcher";
 import { localCrud } from "./localCrud";
@@ -9,8 +9,8 @@ import { localCrud } from "./localCrud";
  * unknown/generic to this plugin
  */
 export const mutations = {
-  ...local,
-  ...localCrud,
+  ...localConfig,
   ...serverConfirm,
+  ...localCrud,
   ...watcher
 };

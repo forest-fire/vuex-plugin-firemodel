@@ -1,31 +1,23 @@
-import { pathJoin } from "common-types";
-import { set } from "lodash";
 import { changeRoot } from "../shared/changeRoot";
 export function addedLocally(propOffset) {
     return {
         ["ADDED_LOCALLY" /* addedLocally */](state, payload) {
-            if (payload.value) {
-                state = changeRoot(state, payload.value);
-            }
-            else if (payload.paths) {
-                const value = payload.paths.reduce((prev, curr) => {
-                    const path = pathJoin(payload.localPath, curr.path);
-                    set(prev, path, curr.value);
-                    return prev;
-                }, {});
-            }
+            const isRecord = payload.watcherSource === "record";
+            state = isRecord
+                ? changeRoot(state, payload.value)
+                : (state[propOffset] = payload.value);
         },
         ["CHANGED_LOCALLY" /* changedLocally */](state, payload) {
-            if (payload.value) {
-                state = changeRoot(state, payload.value);
-            }
-            else if (payload.paths) {
-                //@TODO
-            }
+            const isRecord = payload.watcherSource === "record";
+            state = isRecord
+                ? changeRoot(state, payload.value)
+                : (state[propOffset] = payload.value);
         },
-        // TODO: implement
         ["REMOVED_LOCALLY" /* removedLocally */](state, payload) {
-            console.log("TOOD: removed-locally");
+            const isRecord = payload.watcherSource === "record";
+            state = isRecord
+                ? changeRoot(state, null)
+                : (state[propOffset] = null);
         }
     };
 }

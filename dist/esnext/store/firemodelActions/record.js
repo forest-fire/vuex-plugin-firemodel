@@ -37,7 +37,7 @@ export const record = {
      */
     [FmEvents.RECORD_CHANGED](store, payload) {
         if (payload.watcherSource === "record") {
-            console.log(determineLocalStateNode(payload, "CHANGE_CONFIRMATION" /* serverChangeConfirm */));
+            console.log(payload);
         }
         // 2nd phase of 2 phase commit
         store.commit("CHANGE_CONFIRMATION" /* serverChangeConfirm */, payload);

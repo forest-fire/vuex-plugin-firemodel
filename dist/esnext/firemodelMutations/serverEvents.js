@@ -1,20 +1,34 @@
+import { changeRoot } from "../shared/changeRoot";
 export function serverEvents(propOffset) {
     return {
         ["SERVER_ADD" /* serverAdd */](state, payload) {
-            const offset = propOffset
-                ? propOffset
-                : payload.watcherSource === "list"
-                    ? "all"
-                    : "";
-            state = offset ? { state, [offset]: payload.value } : payload.value;
+            const isRecord = payload.watcherSource === "record";
+            state = isRecord
+                ? changeRoot(state, payload.value)
+                : propOffset
+                    ? state[propOffset].push(payload.value)
+                    : state.push(payload.value);
         },
         ["SERVER_CHANGE" /* serverChange */](state, payload) {
-            // TODO: implement
-            console.log("TODO: server-change");
+            const isRecord = payload.watcherSource === "record";
+            const updatedList = (list) => {
+                return list.map(i => {
+                    return i.id === payload.value.id ? payload.value : i;
+                });
+            };
+            state = isRecord
+                ? changeRoot(state, payload.value)
+                : propOffset
+                    ? (state[propOffset] = updatedList(payload.value))
+                    : (state = updatedList(payload.value));
         },
         ["SERVER_REMOVE" /* serverRemove */](state, payload) {
-            // TODO: implement
-            console.log("TODO: server-remove");
+            const isRecord = payload.watcherSource === "record";
+            state = isRecord
+                ? changeRoot(state, payload.value)
+                : propOffset
+                    ? (state[propOffset] = null)
+                    : (state = null);
         }
     };
 }

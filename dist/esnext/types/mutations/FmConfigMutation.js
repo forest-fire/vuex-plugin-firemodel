@@ -1,7 +1,7 @@
 export var FmConfigMutation;
 (function (FmConfigMutation) {
-    FmConfigMutation["queueHook"] = "@firemodel/QUEUE_EVENT_HOOK";
-    FmConfigMutation["queueWatcher"] = "@firemodel/QUEUE_WATCHER";
+    FmConfigMutation["queueHook"] = "QUEUE_EVENT_HOOK";
+    FmConfigMutation["queueWatcher"] = "QUEUE_WATCHER";
     /** the DB configuration */
     FmConfigMutation["configure"] = "CONFIGURE";
     /** starting the DB connection process */

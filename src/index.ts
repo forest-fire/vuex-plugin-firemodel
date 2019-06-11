@@ -12,9 +12,9 @@ import { createError, IDictionary } from "common-types";
 import { FmConfigMutation } from "./types/mutations/FmConfigMutation";
 import { FmConfigAction } from "./types/actions/FmConfigActions";
 import { FireModelPluginError } from "./errors/FiremodelPluginError";
-import { addNamespace } from "./addNamespace";
+import { addNamespace } from "./shared/addNamespace";
 export * from "./types";
-export * from "./firemodelMutations";
+export * from "./firemodelMutations/index";
 
 /**
  * We know that the root state will include the **@firemodel** state tree

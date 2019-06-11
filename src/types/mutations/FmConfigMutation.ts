@@ -1,6 +1,6 @@
 export const enum FmConfigMutation {
-  queueHook = "@firemodel/QUEUE_EVENT_HOOK",
-  queueWatcher = "@firemodel/QUEUE_WATCHER",
+  queueHook = "QUEUE_EVENT_HOOK",
+  queueWatcher = "QUEUE_WATCHER",
   /** the DB configuration */
   configure = "CONFIGURE",
   /** starting the DB connection process */

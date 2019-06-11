@@ -4,8 +4,8 @@ import { DB } from "abstracted-client";
 import { createError } from "common-types";
 import { FmConfigAction } from "./types/actions/FmConfigActions";
 import { FireModelPluginError } from "./errors/FiremodelPluginError";
-import { addNamespace } from "./addNamespace";
-export * from "./firemodelMutations";
+import { addNamespace } from "./shared/addNamespace";
+export * from "./firemodelMutations/index";
 export let configuration;
 export let dbConfig;
 export let firemodelVuex;
@@ -68,7 +68,7 @@ async function queueLifecycleEvents(store, config) {
         if (config[name]) {
             const empty = () => Promise.resolve();
             const cb = config[name];
-            await store.commit(addNamespace("@firemodel/QUEUE_EVENT_HOOK" /* queueHook */), {
+            await store.commit(addNamespace("QUEUE_EVENT_HOOK" /* queueHook */), {
                 on: event,
                 name: `lifecycle-event-${event}`,
                 cb

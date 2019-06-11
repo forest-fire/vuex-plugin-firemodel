@@ -1,43 +1,56 @@
 import { MutationTree } from "vuex";
-
 import { IDictionary } from "firemock";
 import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
-import { IFmContextualizedWatchEvent } from "firemodel";
+import { IFmContextualizedWatchEvent, pathJoin, Model } from "firemodel";
 import { IPathSetter } from "abstracted-firebase";
-import { pathJoin } from "common-types";
-import { set } from "lodash";
 import { changeRoot } from "../shared/changeRoot";
+import set from "lodash.set";
 
 export function serverEvents<T = MutationTree<IDictionary>>(
   propOffset?: string
 ): MutationTree<T> {
   return {
     [FmCrudMutation.serverAdd](
-      state,
+      state: IDictionary,
       payload: IFmContextualizedWatchEvent<T> & { paths?: IPathSetter<T> }
     ) {
-      const offset = propOffset
-        ? propOffset
-        : payload.watcherSource === "list"
-        ? "all"
-        : "";
-      state = offset ? { state, [offset]: payload.value } : payload.value;
+      const isRecord = payload.watcherSource === "record";
+      state = isRecord
+        ? (changeRoot(state, payload.value) as T)
+        : propOffset
+        ? state[propOffset].push(payload.value)
+        : state.push(payload.value);
     },
 
-    [FmCrudMutation.serverChange](
-      state,
-      payload: IFmContextualizedWatchEvent<T> & { paths?: IPathSetter<T> }
+    [FmCrudMutation.serverChange]<T extends Model>(
+      state: IDictionary,
+      payload: IFmContextualizedWatchEvent<T>
     ) {
-      // TODO: implement
-      console.log("TODO: server-change");
+      const isRecord = payload.watcherSource === "record";
+      const updatedList = (list: T[]) => {
+        return list.map(i => {
+          return i.id === payload.value.id ? payload.value : i;
+        });
+      };
+
+      state = isRecord
+        ? (changeRoot(state, payload.value) as T)
+        : propOffset
+        ? (state[propOffset] = updatedList(payload.value))
+        : (state = updatedList(payload.value));
     },
 
     [FmCrudMutation.serverRemove](
-      state,
-      payload: IFmContextualizedWatchEvent<T> & { paths?: IPathSetter<T> }
+      state: IDictionary,
+      payload: IFmContextualizedWatchEvent<T>
     ) {
-      // TODO: implement
-      console.log("TODO: server-remove");
+      const isRecord = payload.watcherSource === "record";
+
+      state = isRecord
+        ? (changeRoot(state, payload.value) as T)
+        : propOffset
+        ? (state[propOffset] = null)
+        : (state = null);
     }
   };
 }

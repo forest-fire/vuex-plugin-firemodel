@@ -1,7 +1,7 @@
 /**
  * The **mutations** scoped to the local configuration of Firebase
  */
-export const local = {
+export const localConfig = {
     ["CORE_SERVICES_STARTED" /* coreServicesStarted */]: state => {
         //
     },
@@ -40,10 +40,10 @@ export const local = {
         state.currentUser = undefined;
         state.authenticated = false;
     },
-    ["@firemodel/QUEUE_EVENT_HOOK" /* queueHook */](state, item) {
+    ["QUEUE_EVENT_HOOK" /* queueHook */](state, item) {
         state.queued = state.queued.concat(item);
     },
-    ["@firemodel/QUEUE_WATCHER" /* queueWatcher */](state, item) {
+    ["QUEUE_WATCHER" /* queueWatcher */](state, item) {
         state.queued = state.queued.concat(item);
     },
     ["LIFECYCLE_EVENT_COMPLETED" /* lifecycleEventCompleted */](state, event) {

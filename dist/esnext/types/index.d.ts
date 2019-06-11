@@ -3,7 +3,6 @@ import { Watch, Model, IModelOptions, Record, List } from "firemodel";
 import { DB } from "abstracted-client";
 import { Dispatch, Commit } from "vuex";
 import { IDictionary, epoch } from "common-types";
-import actionTriggers from "../action-triggers";
 import { IGenericStateTree } from "..";
 export * from "./firemodel";
 export interface IFmEventContext<T = IGenericStateTree> {
@@ -40,7 +39,6 @@ export interface IFmRouteEventContext extends IFmEventContext {
     entering: string;
 }
 export declare type FmCallback = () => Promise<void>;
-export declare type IFmSetupPlugin = (ctx: typeof actionTriggers) => FmCallback[];
 export declare type IFmOnConnect = (ctx: IFmEventContext) => Promise<void>;
 export declare type IFmOnDisconnect = (ctx: IFmEventContext) => Promise<void>;
 export declare type IFmOnLogin = (ctx: IFmAuthEventContext) => Promise<void>;

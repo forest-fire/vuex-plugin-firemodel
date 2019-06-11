@@ -3,7 +3,7 @@ import { Store } from "vuex";
 import { DB, FirebaseAuth, IFirebaseClientConfig } from "abstracted-client";
 import { IDictionary } from "common-types";
 export * from "./types";
-export * from "./firemodelMutations";
+export * from "./firemodelMutations/index";
 /**
  * We know that the root state will include the **@firemodel** state tree
  * but otherwise we will accept a generic understanding of the rest of the

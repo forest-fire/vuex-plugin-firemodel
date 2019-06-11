@@ -3,7 +3,6 @@ import { Watch, Model, IModelOptions, Record, List, ICompositeKey } from "firemo
 import { DB } from "abstracted-client";
 import { Dispatch, Commit } from "vuex";
 import { IDictionary, timestring, datetime, epoch } from "common-types";
-import actionTriggers from "../action-triggers";
 import { IGenericStateTree } from "..";
 export * from "./firemodel";
 
@@ -46,7 +45,7 @@ export interface IFmRouteEventContext extends IFmEventContext {
 
 export type FmCallback = () => Promise<void>;
 
-export type IFmSetupPlugin = (ctx: typeof actionTriggers) => FmCallback[];
+// export type IFmSetupPlugin = (ctx: typeof actionTriggers) => FmCallback[];
 export type IFmOnConnect = (ctx: IFmEventContext) => Promise<void>;
 export type IFmOnDisconnect = (ctx: IFmEventContext) => Promise<void>;
 export type IFmOnLogin = (ctx: IFmAuthEventContext) => Promise<void>;

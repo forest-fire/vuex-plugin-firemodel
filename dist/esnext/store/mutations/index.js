@@ -1,4 +1,4 @@
-import { local } from "./localConfig";
+import { localConfig } from "./localConfig";
 import { serverConfirm } from "./serverConfirm";
 import { watcher } from "./watcher";
 import { localCrud } from "./localCrud";
@@ -7,4 +7,4 @@ import { localCrud } from "./localCrud";
  * root of a state tree which is defined by the application but remains
  * unknown/generic to this plugin
  */
-export const mutations = Object.assign({}, local, localCrud, serverConfirm, watcher);
+export const mutations = Object.assign({}, localConfig, serverConfirm, localCrud, watcher);
