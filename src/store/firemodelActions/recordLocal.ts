@@ -9,7 +9,9 @@ export const recordLocal: ActionTree<IFiremodelState, IGenericStateTree> = {
   [FmEvents.RECORD_CHANGED_LOCALLY]({ commit, rootState }, payload: IFmRecordEvent) {
     const payloadPlus = { ...payload, priorValue: get(rootState, payload.localPath) };
     commit(FmCrudMutation.changedLocally, payloadPlus);
-    commit(`${payload.localPath}/CHANGED_LOCALLY`, payloadPlus, { root: true });
+    commit(determineLocalStateNode(payload, FmCrudMutation.changedLocally), payloadPlus, {
+      root: true
+    });
   },
 
   [FmEvents.RECORD_ADDED_LOCALLY]({ commit, rootState }, payload: IFmRecordEvent) {
@@ -20,7 +22,10 @@ export const recordLocal: ActionTree<IFiremodelState, IGenericStateTree> = {
     });
   },
 
-  [FmEvents.RECORD_ADDED_LOCALLY]({ commit }, payload) {
-    //
+  [FmEvents.RECORD_REMOVED_LOCALLY]({ commit }, payload) {
+    commit(FmCrudMutation.removedLocally, payload);
+    commit(determineLocalStateNode(payload, FmCrudMutation.removedLocally), payload, {
+      root: true
+    });
   }
 };

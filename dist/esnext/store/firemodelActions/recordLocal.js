@@ -5,7 +5,9 @@ export const recordLocal = {
     [FmEvents.RECORD_CHANGED_LOCALLY]({ commit, rootState }, payload) {
         const payloadPlus = Object.assign({}, payload, { priorValue: get(rootState, payload.localPath) });
         commit("CHANGED_LOCALLY" /* changedLocally */, payloadPlus);
-        commit(`${payload.localPath}/CHANGED_LOCALLY`, payloadPlus, { root: true });
+        commit(determineLocalStateNode(payload, "CHANGED_LOCALLY" /* changedLocally */), payloadPlus, {
+            root: true
+        });
     },
     [FmEvents.RECORD_ADDED_LOCALLY]({ commit, rootState }, payload) {
         const payloadPlus = Object.assign({}, payload, { priorValue: get(rootState, payload.localPath) });
@@ -14,7 +16,10 @@ export const recordLocal = {
             root: true
         });
     },
-    [FmEvents.RECORD_ADDED_LOCALLY]({ commit }, payload) {
-        //
+    [FmEvents.RECORD_REMOVED_LOCALLY]({ commit }, payload) {
+        commit("REMOVED_LOCALLY" /* removedLocally */, payload);
+        commit(determineLocalStateNode(payload, "REMOVED_LOCALLY" /* removedLocally */), payload, {
+            root: true
+        });
     }
 };
