@@ -1214,9 +1214,9 @@ abbrev@1:
   integrity sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
 
 abstracted-client@^0.27.5:
-  version "0.27.5"
-  resolved "https://registry.yarnpkg.com/abstracted-client/-/abstracted-client-0.27.5.tgz#74c6f33a9beade4b2d4e53b1a15ee271322a670d"
-  integrity sha512-nHa42mOENjaJANIdDS5CLwBsO/iNGC3y/7aK4NKuQrQgsSt0J78GySZdov/xiPD614PJrF+tnoxdRU3Q4Q1uxA==
+  version "0.27.6"
+  resolved "https://registry.yarnpkg.com/abstracted-client/-/abstracted-client-0.27.6.tgz#671f20b9cc6dc674135a20f8337fc2c6e2ba06bf"
+  integrity sha512-KaBOmdCK2SaTF500T8hM+14tKEpdEp1DFPwspZdsMAefr303c12k4JM31YSfTTDHshH1WLUnup7Kx1pWMDh3nA==
   dependencies:
     "@firebase/app" "^0.4.3"
     "@firebase/app-types" "^0.4.0"

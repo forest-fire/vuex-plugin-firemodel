@@ -1,1 +1,0 @@
-export { FiremodelModule } from "./firemodelModule";

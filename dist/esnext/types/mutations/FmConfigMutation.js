@@ -1,23 +1,34 @@
 export var FmConfigMutation;
 (function (FmConfigMutation) {
+    FmConfigMutation["queueHook"] = "QUEUE_EVENT_HOOK";
+    FmConfigMutation["queueWatcher"] = "QUEUE_WATCHER";
     /** the DB configuration */
-    FmConfigMutation["configure"] = "@firemodel/CONFIGURE";
+    FmConfigMutation["configure"] = "CONFIGURE";
+    /** starting the DB connection process */
+    FmConfigMutation["connecting"] = "CONNECTING";
     /** the DB has been connected to */
-    FmConfigMutation["connect"] = "@firemodel/CONNECT";
+    FmConfigMutation["connected"] = "CONNECTED";
     /** the DB has been disconnected from */
-    FmConfigMutation["disconnect"] = "@firemodel/DISCONNECT";
+    FmConfigMutation["disconnected"] = "DISCONNECTED";
     /** there was a connection error while performing an operation */
-    FmConfigMutation["connectionError"] = "@firemodel/CONNECTION_ERROR";
+    FmConfigMutation["connectionError"] = "CONNECTION_ERROR";
     /** there was an application error */
-    FmConfigMutation["appErr"] = "@firemodel/APP_ERROR";
+    FmConfigMutation["appErr"] = "APP_ERROR";
+    /** clear the errors which were being stored locally */
+    FmConfigMutation["clearErrors"] = "CLEAR_ERRORS";
     /** the "current user" has changed, user identity details have been set */
-    FmConfigMutation["setCurrentUser"] = "@firemodel/SET_CURRENT_USER";
+    FmConfigMutation["setCurrentUser"] = "SET_CURRENT_USER";
     /** a user has logged in */
-    FmConfigMutation["userLoggedIn"] = "@firemodel/USER_LOGGED_IN";
+    FmConfigMutation["userLoggedIn"] = "USER_LOGGED_IN";
     /** a user has logged out */
-    FmConfigMutation["userLoggedOut"] = "@firemodel/USER_LOGGED_OUT";
+    FmConfigMutation["userLoggedOut"] = "USER_LOGGED_OUT";
     /** a lifecycle event's hooks have all fired */
-    FmConfigMutation["lifecycleEventCompleted"] = "@firemodel/LIFECYCLE_EVENT_COMPLETED";
+    FmConfigMutation["lifecycleEventCompleted"] = "LIFECYCLE_EVENT_COMPLETED";
     /** all core plugin services have started */
-    FmConfigMutation["coreServicesStarted"] = "@firemodel/CORE_SERVICES_STARTED";
+    FmConfigMutation["coreServicesStarted"] = "CORE_SERVICES_STARTED";
+    // watchers
+    /** Firebase -- via Firemodel -- has been asked to watch a new path in DB */
+    FmConfigMutation["watcherStarting"] = "WATCHER_STARTING";
+    /** Firebase -- via Firemodel -- has started watching a new path in the DB */
+    FmConfigMutation["watcherStarted"] = "WATCHER_STARTED";
 })(FmConfigMutation || (FmConfigMutation = {}));

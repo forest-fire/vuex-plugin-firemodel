@@ -7,17 +7,19 @@ import {
 import { Store } from "vuex";
 import { FiremodelModule } from "./store";
 import { Watch, Record, List, FireModel } from "firemodel";
-import { DB, FirebaseAuth } from "abstracted-client";
+import { DB, FirebaseAuth, IFirebaseClientConfig } from "abstracted-client";
 import { createError, IDictionary } from "common-types";
-import { IFirebaseClientConfig, RealTimeDB } from "abstracted-firebase";
 import { FmConfigMutation } from "./types/mutations/FmConfigMutation";
 import { FmConfigAction } from "./types/actions/FmConfigActions";
+import { FireModelPluginError } from "./errors/FiremodelPluginError";
+import { addNamespace } from "./shared/addNamespace";
 export * from "./types";
+export * from "./firemodelMutations/index";
 
 /**
  * We know that the root state will include the **@firemodel** state tree
- * but otherwise we will accept a generic understanding unless passed
- * more specifics. This interface represents the generic understanding.
+ * but otherwise we will accept a generic understanding of the rest of the
+ * state tree as this plugin has no means of leveraging any specifics.
  */
 export interface IGenericStateTree extends IDictionary {
   "@firemodel": IFiremodelState;
@@ -63,14 +65,13 @@ export function setAuth(auth: FirebaseAuth) {
 
 const FirePlugin = (config?: IFiremodelPluginConfig) => {
   configuration = config;
-  return async (store: Store<IGenericStateTree>) => {
+  return (store: Store<any>) => {
     firemodelVuex = store;
     FireModel.dispatch = store.dispatch;
 
     store.subscribe((mutation, state) => {
       if (mutation.type === "route/ROUTE_CHANGED") {
-        // TODO: this looks off
-        store.dispatch("@firemodel/watchRouteChanges", {
+        store.dispatch(addNamespace(FmConfigAction.watchRouteChanges), {
           Watch,
           Record,
           List,
@@ -85,8 +86,9 @@ const FirePlugin = (config?: IFiremodelPluginConfig) => {
     });
 
     store.registerModule("@firemodel", FiremodelModule);
-    await queueLifecycleEvents(store, config);
-    await coreServices(store, { ...{ connect: true }, ...config });
+    queueLifecycleEvents(store, config).then(() =>
+      coreServices(store, { ...{ connect: true }, ...config })
+    );
   };
 };
 
@@ -97,6 +99,10 @@ async function queueLifecycleEvents<T = IGenericStateTree>(
   config?: IFiremodelPluginConfig
 ) {
   if (!config) {
+    throw new FireModelPluginError(
+      `There was no configuration sent into the FiremodelPlugin!`,
+      "not-allowed"
+    );
     return;
   }
   const iterable = [
@@ -113,7 +119,7 @@ async function queueLifecycleEvents<T = IGenericStateTree>(
     if (config[name as keyof IFiremodelPluginConfig]) {
       const empty = () => Promise.resolve();
       const cb: FmCallback = config[name as keyof IFiremodelPluginConfig] as any;
-      await store.commit("@firemodel/queue", {
+      await store.commit(addNamespace(FmConfigMutation.queueHook), {
         on: event,
         name: `lifecycle-event-${event}`,
         cb
@@ -127,22 +133,22 @@ async function coreServices<T = IGenericStateTree>(
   config: IFiremodelPluginConfig
 ) {
   if (config.connect) {
-    await store.dispatch(FmConfigAction.connect, config);
+    await store.dispatch(addNamespace(FmConfigAction.connect), config.db);
   }
 
   if (config.watchAuth) {
-    await store.dispatch(FmConfigAction.watchAuth, config);
+    await store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config);
   }
 
   if (config.anonymousAuth) {
-    await store.dispatch(FmConfigAction.anonymousAuth, config);
+    await store.dispatch(addNamespace(FmConfigAction.anonymousLogin), config);
   }
 
   if (config.watchRouteChanges) {
-    await store.dispatch(FmConfigAction.watchRouteChanges);
+    await store.dispatch(addNamespace(FmConfigAction.watchRouteChanges));
   }
 
-  store.commit(FmConfigMutation.coreServicesStarted, {
+  store.commit(addNamespace(FmConfigMutation.coreServicesStarted), {
     message: `all core firemodel plugin services started`,
     config: config.db
   });
