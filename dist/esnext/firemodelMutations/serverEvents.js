@@ -12,7 +12,7 @@ export function serverEvents(propOffset) {
         ["SERVER_CHANGE" /* serverChange */](state, payload) {
             const isRecord = payload.watcherSource === "record";
             const updatedList = (list) => {
-                return list.map(i => {
+                return (list || []).map(i => {
                     return i.id === payload.value.id ? payload.value : i;
                 });
             };

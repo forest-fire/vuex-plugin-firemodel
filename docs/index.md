@@ -21,7 +21,7 @@ whereever you initialize your store, typically in
 - `src/store.ts` is pretty common for smaller projects
 
 ```typescript{8}
-import { FirePlugin, IRootState } from vuex-plugin-firemodel;
+import { FirePlugin } from vuex-plugin-firemodel;
 
 const store = new Vuex.Store<IRootState>({
   modules: {
@@ -38,7 +38,4 @@ const store = new Vuex.Store<IRootState>({
 
 ## Using
 
-Using the Vuex devtool plugin have a look at your state tree and you'll notice that even
-without any configuration you'll now have a `@firemodel` branch in your state tree.
-Congrats, you are now started but to get real use out of this plugin continue onto the
-[configuration](/configuration/) section.
+Using the Vuex devtool plugin have a look at your state tree and you'll notice that even without any configuration you'll now have a `@firemodel` branch in your state tree. Congrats, you are now started but to get real use out of this plugin continue onto the [configuration](/configuration/) section.

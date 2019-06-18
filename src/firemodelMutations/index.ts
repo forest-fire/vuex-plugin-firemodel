@@ -54,7 +54,5 @@ export function firemodelMutations<T = MutationTree<IDictionary>>(
     ...serverConfirms(propOffset)
   };
 
-  console.log("MUT", a);
-
   return a;
 }
