@@ -136,7 +136,7 @@ async function coreServices<T = IGenericStateTree>(
     await store.dispatch(addNamespace(FmConfigAction.connect), config.db);
   }
 
-  if (config.watchAuth) {
+  if (config.useAuth) {
     await store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config);
   }
 

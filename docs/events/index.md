@@ -55,7 +55,7 @@ All mutations are defined by the `FmConfigMutation` enumeration which is exporte
 plugin. You can see it's definition below (it is also available as an export to this
 library):
 
-<<< @/src/mutations/FmConfigMutation.ts
+<<< @/src/types/mutations/FmConfigMutation.ts
 
 Typically these mutations are _self-managed_ and consumers of this plugin can largely
 ignore the mutations themselves but the "state" which is created by these mutations is
@@ -84,7 +84,7 @@ will need import them into your state modules.
 The list of CRUD mutations that this plugin will fire into Vuex is defined by the
 `FmCrudMutation` enumeration and listed below:
 
-<<< @/src/mutations/FmCrudMutation.ts
+<<< @/src/types/mutations/FmCrudMutation.ts
 
 > Note: that each of these mutations, when actually _committed_ will be committed into a
 > namespace which is defined for the given `Model` which has changed

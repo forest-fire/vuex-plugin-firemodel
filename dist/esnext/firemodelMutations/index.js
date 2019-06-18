@@ -38,6 +38,5 @@ export function firemodelMutations(
  */
 propOffset) {
     const a = Object.assign({}, addedLocally(propOffset), serverEvents(propOffset), serverRollbacks(propOffset), serverConfirms(propOffset));
-    console.log("MUT", a);
     return a;
 }

@@ -5,12 +5,7 @@ next: "/events/"
 
 # Configuration
 
-What you get out of this plugin in in large part related to how you configure it. The idea
-behind this configuration is to take full advantage of **Firemodel**'s watchers and in
-turn **Firebase**'s "real time" database characteristics. Hopefully this idea is not
-foreign to you but in a nutshell what we mean is that we should configure this plug so
-that we can "subscribe" to a series of "event streams" that represent change in the
-database that we care about.
+What you get out of this plugin in in large part related to how you configure it. The idea behind this configuration is to take full advantage of **Firemodel**'s watchers and in turn **Firebase**'s "real time" database characteristics. Hopefully this idea is not foreign to you but in a nutshell what we mean is that we should configure this plug so that we can "subscribe" to a series of "event streams" that represent change in the database that we care about.
 
 ## Example Config
 
@@ -28,7 +23,7 @@ const config = {
   // connect db when initialized (true is the default)
   connect: true,
   // Auth Features
-  watchAuth: true,
+  useAuth: true,
   anonymousAuth: true,
   // Lifecycle hooks
   lifecycle: {
@@ -57,47 +52,44 @@ To understand what this is doing let's take it section by section.
 
 ## Connect
 
-In our example we instantiated a `abstracted-admin` DB connection object and passed this in
-as our means to allow this plugin to interact with Firebase. Note that the db connection
-object as been passed into this plugin but we're **not** waiting for the actual _connection_
-to the database to be established before moving forward. This is not only "fine" but the
-expected means of passing the DB connection to this plugin.
+### Firebase Config
 
-Another way of achieving the same outcome -- and at the same time avoiding the need to create
-the `db` connection within the frontend app -- is to simply pass your database configuration
-into this plugin:
+We **must** provide this plugin with the appropriate Firebase config to allow it to connect to the database. This is nothing more than the data that Firebase provides to you as part of the "app settings". How you get there has changed a bit recently (and may change again) but the first step is to choose "project settings" (see below): 
 
-```typescript
-const db = {
-  apiKey: "...",
-  authDomain: "...",
-  databaseURL: "...",
-  projectId: "..."
-}
-const config = {
-  db,
-  // ...
-```
+![project settings](./project-settings.png)
 
-This means of connecting to the database is probably the cleanest in applications where you don't need to have a direct connection to the `abstracted-admin` reference. In fact, even in these cases,you could still regain that reference if you wanted to by taking it from `FireModel.defaultDb`. In either case though you'll have setup this plugin to connect correctly.
+And from there you _now_ need to configure an "app" which can be a mobile or web based app. That is a 10 second process and then you'll be presented with a screen like you see below.
+
+![app settings](./app-settings.png)
+
+> Note: when landing on this page the radio button will have a lot of code which you don't need so just choose "config" and it will isolate it to just the configuration you'll need.
+
+### When to Connect
+
+By default this plugin will connect with the database immediately. That is probably the correct behavior 99% of the time but on the chance you _don't_ want it to connect right away you can set the `connect` property to false. If you do this then you would take on responsibility to **dispatch** the `@firemodel/connect` action at the point where you _do_ want to connect.
 
 ## Auth
 
 ### Watch Auth
 
-This plugin plays nicely with Firebase's Authentication/Identity. When this service is enabled the opens up the use of the `onLoggedIn` / `onLoggedOut` lifecycle events. In general, if you are using Firemodel's Auth API then you should probably set this to `true`.
+Authentication and Authorization are critical features of almost every app and Firebase provides a great set of services to make this sometimes tricky process easy. There are, of course, other solutions out there so this plugin does _not_ assume you are using Firebase's Auth/Auth services but opting in is very easy:
 
-In addition to enabling the `onAuthChanged` lifecycle hook, it also gives you a guarentee that the logged in users ["custom claims"](https://firebase.google.com/docs/auth/admin/custom-claims) are available at  `@firebase/claims` in the state tree.
+```typescript
+useAuth: true
+```
+
+This flag, when set to true, will setup a callback with Firebase which allows the plugin to be informed of any _auth_ related events. In turn it will do two things:
+
+1. Keep the `@firebase/currentUser` up to date
+2. Call the `onLoggedIn` / `onLoggedOut` lifecycle events as appropriate.
 
 By default, this service is turned off.
 
 ### Anonymous Authentication
 
-In addition to just stating that you'd like to use Firebase's authentication/authorization
-system, you can also opt-in to `anonymousAuth`. When this feature is turned on this plugin
-will -- immediately after connecting to the DB -- check for the appropriate tokens of a
-logged in user and _re_-login the user. If, however, there is no user tokens the existing
-session is logged in as an *anonymous* user.
+In addition to just stating that you'd like to use Firebase's authentication/authorization system, you can also opt-in to `anonymousAuth`. When this feature is turned on this plugin will -- immediately after connecting to the DB -- check for the appropriate tokens of a logged in user and _re_-login the user. If, however, there is no user tokens the existing session is logged in as an *anonymous* user.
+
+This means that everyone interacting with the site _will_ be a tracked user of some sort. Some will be "known users" and others will be "anonymous users" but all will have a unique ID that tracks the identity of the user.
 
 ## Lifecycle Hooks
 

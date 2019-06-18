@@ -84,21 +84,17 @@ export interface IFiremodelConfig
 
 export interface IFiremodelPluginCoreServices {
   /**
-   * **Watch Auth**
+   * **Use Auth**
    *
-   * As soon as the database connects this service will
-   * hook into Firebase's events around changes in
-   * _authentication_ status. This opens up the `onAuthChanged`
-   * lifecycle event provided as part of this plugin.
-   *
-   * Typically you **will** want
-   * to enable this if you are using Firemodel's Identity/Auth
-   * system. If you aren't then it follows that you
-   * WOULD NOT enable it.
+   * This turns on usage of Firebase's Authentication/Authorization
+   * solution. When this is turned on this plugin will ensure
+   * that the `@firemodel/currentUser` is kept up-to-date
+   * and also that the `onLoggedIn` and `onLoggedOut` lifecycle
+   * events are fired.
    *
    * If not stated, this option defaults to `false`.
    */
-  watchAuth?: boolean;
+  useAuth?: boolean;
   /**
    * **Anonymous Auth**
    *
