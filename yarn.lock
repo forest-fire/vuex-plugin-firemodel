@@ -1213,7 +1213,7 @@ abbrev@1:
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
   integrity sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
 
-abstracted-client@^0.27.5:
+abstracted-client@^0.27.6:
   version "0.27.6"
   resolved "https://registry.yarnpkg.com/abstracted-client/-/abstracted-client-0.27.6.tgz#671f20b9cc6dc674135a20f8337fc2c6e2ba06bf"
   integrity sha512-KaBOmdCK2SaTF500T8hM+14tKEpdEp1DFPwspZdsMAefr303c12k4JM31YSfTTDHshH1WLUnup7Kx1pWMDh3nA==
