@@ -12,7 +12,6 @@ export const localCrud: MutationTree<IFiremodelState> = {
       dbPath: p.dbPath,
       localPath: p.localPath,
       value: p.value,
-      priorValue: p.priorValue,
       timestamp: new Date().getTime()
     });
   },
@@ -25,7 +24,6 @@ export const localCrud: MutationTree<IFiremodelState> = {
       dbPath: p.dbPath,
       localPath: p.localPath,
       value: p.value,
-      priorValue: p.priorValue,
       timestamp: new Date().getTime()
     });
   }

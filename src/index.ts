@@ -15,7 +15,7 @@ import { FireModelPluginError } from "./errors/FiremodelPluginError";
 import { addNamespace } from "./shared/addNamespace";
 export * from "./types";
 export * from "./firemodelMutations/index";
-export * from "firemodel";
+export { FireModel } from "firemodel";
 
 /**
  * We know that the root state will include the **@firemodel** state tree
@@ -64,7 +64,7 @@ export function setAuth(auth: FirebaseAuth) {
   _auth = auth;
 }
 
-const FirePlugin = (config?: IFiremodelPluginConfig) => {
+const FirePlugin = (config: IFiremodelPluginConfig) => {
   configuration = config;
   return (store: Store<any>) => {
     firemodelVuex = store;

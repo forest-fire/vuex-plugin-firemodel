@@ -1,5 +1,16 @@
-import { IFirebaseConfig, RealTimeDB, IFirebaseClientConfig } from "abstracted-firebase";
-import { Watch, Model, IModelOptions, Record, List, ICompositeKey } from "firemodel";
+import {
+  IFirebaseConfig,
+  RealTimeDB,
+  IFirebaseClientConfig
+} from "abstracted-firebase";
+import {
+  Watch,
+  Model,
+  IModelOptions,
+  Record,
+  List,
+  ICompositeKey
+} from "firemodel";
 import { DB } from "abstracted-client";
 import { Dispatch, Commit } from "vuex";
 import { IDictionary, timestring, datetime, epoch } from "common-types";
@@ -50,7 +61,9 @@ export type IFmOnConnect = (ctx: IFmEventContext) => Promise<void>;
 export type IFmOnDisconnect = (ctx: IFmEventContext) => Promise<void>;
 export type IFmOnLogin = (ctx: IFmAuthEventContext) => Promise<void>;
 export type IFmOnLogout = (ctx: IFmAuthEventContext) => Promise<void>;
-export type IFmUserUpgrade = (ctx: IFmLoginUpgradeEventContext) => Promise<void>;
+export type IFmUserUpgrade = (
+  ctx: IFmLoginUpgradeEventContext
+) => Promise<void>;
 export type IFmRouteChanged = (ctx: IFmRouteEventContext) => Promise<void>;
 
 /**
@@ -154,7 +167,7 @@ export interface IFiremodelLifecycleHooks {
   onRouteChange?: IFmRouteChanged;
 }
 
-export type IFmEventActions = "add" | "update" | "remove";
+export type IFmEventActions = "add" | "update" | "remove" | "unknown";
 
 export interface IFmLocalChange<T extends Model = Model> {
   /** the location in the database */
@@ -163,8 +176,6 @@ export interface IFmLocalChange<T extends Model = Model> {
   action: IFmEventActions;
   /** the location in local state management */
   localPath: string;
-  /** prior value of what has been changed locally */
-  priorValue: T;
   /** the new value that has been set locally */
   value: T;
   /** when the local change was made */
@@ -207,7 +218,9 @@ export interface IFmWatchItem {
   localPath: string;
 }
 
-export type IFmQueueCallaback<T extends IFmEventContext> = (ctx: T) => Promise<void>;
+export type IFmQueueCallaback<T extends IFmEventContext> = (
+  ctx: T
+) => Promise<void>;
 
 export interface IFmActionWatchRecord {
   id: string;

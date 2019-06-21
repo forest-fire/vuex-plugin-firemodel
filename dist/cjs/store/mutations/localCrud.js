@@ -8,7 +8,6 @@ exports.localCrud = {
             dbPath: p.dbPath,
             localPath: p.localPath,
             value: p.value,
-            priorValue: p.priorValue,
             timestamp: new Date().getTime()
         });
     },
@@ -19,7 +18,6 @@ exports.localCrud = {
             dbPath: p.dbPath,
             localPath: p.localPath,
             value: p.value,
-            priorValue: p.priorValue,
             timestamp: new Date().getTime()
         });
     }

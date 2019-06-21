@@ -5,10 +5,11 @@ import { IFmContextualizedWatchEvent, pathJoin, Model } from "firemodel";
 import { IPathSetter } from "abstracted-firebase";
 import { changeRoot } from "../shared/changeRoot";
 import { updateList } from "../shared/updateList";
+import { IFiremodelState } from "../types";
 
-export function serverEvents<T = MutationTree<IDictionary>>(
+export function serverEvents<T extends Model>(
   propOffset?: string
-): MutationTree<T> {
+): MutationTree<IFiremodelState> {
   return {
     [FmCrudMutation.serverAdd](
       /**

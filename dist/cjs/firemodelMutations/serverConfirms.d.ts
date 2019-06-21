@@ -1,5 +1,6 @@
 import { MutationTree } from "vuex";
-import { IDictionary } from "firemock";
+import { IFiremodelState } from "../types";
+import { Model } from "firemodel";
 /**
  * **serverConfirms**
  *
@@ -11,4 +12,4 @@ import { IDictionary } from "firemock";
  * event. If for some reason the consuming application wants to go further, they
  * may override the confirm funtions.
  */
-export declare function serverConfirms<T = MutationTree<IDictionary>>(propOffset?: string): MutationTree<T>;
+export declare function serverConfirms<T extends Model>(propOffset?: string): MutationTree<IFiremodelState>;

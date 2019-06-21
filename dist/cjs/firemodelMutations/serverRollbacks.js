@@ -14,13 +14,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 function serverRollbacks(propOffset) {
     return {
         ["ROLLBACK_ADD" /* serverAddRollback */](state, payload) {
-            state = propOffset ? Object.assign({}, state, { [propOffset]: payload.value }) : payload.value;
+            state = propOffset
+                ? Object.assign({}, state, { [propOffset]: payload.value }) : payload.value;
         },
         ["ROLLBACK_CHANGE" /* serverChangeRollback */](state, payload) {
-            state = propOffset ? Object.assign({}, state, { [propOffset]: payload.value }) : payload.value;
+            state = propOffset
+                ? Object.assign({}, state, { [propOffset]: payload.value }) : payload.value;
         },
         ["ROLLBACK_REMOVE" /* serverRemoveRollback */](state, payload) {
-            state = propOffset ? Object.assign({}, state, { [propOffset]: payload.value }) : payload.value;
+            state = propOffset
+                ? Object.assign({}, state, { [propOffset]: payload.value }) : payload.value;
         }
     };
 }

@@ -1,5 +1,6 @@
 import { MutationTree } from "vuex";
-import { IDictionary } from "firemock";
+import { Model } from "firemodel";
+import { IFiremodelState } from "../types";
 /**
  * **serverConfirms**
  *
@@ -11,4 +12,4 @@ import { IDictionary } from "firemock";
  * back to what it had been before it had been optimistically set by the `local`
  * mutation.
  */
-export declare function serverRollbacks<T = MutationTree<IDictionary>>(propOffset?: string): MutationTree<T>;
+export declare function serverRollbacks<T extends Model>(propOffset?: string): MutationTree<IFiremodelState>;

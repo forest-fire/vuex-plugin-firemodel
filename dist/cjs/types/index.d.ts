@@ -141,7 +141,7 @@ export interface IFiremodelLifecycleHooks {
      */
     onRouteChange?: IFmRouteChanged;
 }
-export declare type IFmEventActions = "add" | "update" | "remove";
+export declare type IFmEventActions = "add" | "update" | "remove" | "unknown";
 export interface IFmLocalChange<T extends Model = Model> {
     /** the location in the database */
     dbPath: string;
@@ -149,8 +149,6 @@ export interface IFmLocalChange<T extends Model = Model> {
     action: IFmEventActions;
     /** the location in local state management */
     localPath: string;
-    /** prior value of what has been changed locally */
-    priorValue: T;
     /** the new value that has been set locally */
     value: T;
     /** when the local change was made */
