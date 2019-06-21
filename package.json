@@ -1,6 +1,6 @@
 {
   "name": "vuex-plugin-firemodel",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.8",
   "description": "A Vuex plugin which reponds to all FireModel actions as well as providing mutations which can be imported by your state tree.",
   "main": "dist/cjs/index.js",
   "module": "dist/esnext/index.js",
@@ -8,7 +8,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "vuepress dev docs",
-    "build": "yarn tsc -P tsconfig.esnext.json",
+    "build": "yarn tsc -P tsconfig.esnext.json && yarn tsc -P tsconfig.json",
     "build:docs": "vuepress build docs"
   },
   "repository": {

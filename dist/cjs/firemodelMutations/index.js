@@ -40,7 +40,6 @@ function firemodelMutations(
  */
 propOffset) {
     const a = Object.assign({}, addedLocally_1.addedLocally(propOffset), serverEvents_1.serverEvents(propOffset), serverRollbacks_1.serverRollbacks(propOffset), serverConfirms_1.serverConfirms(propOffset));
-    console.log("MUT", a);
     return a;
 }
 exports.firemodelMutations = firemodelMutations;

@@ -11,6 +11,8 @@ const FmConfigActions_1 = require("./types/actions/FmConfigActions");
 const FiremodelPluginError_1 = require("./errors/FiremodelPluginError");
 const addNamespace_1 = require("./shared/addNamespace");
 __export(require("./firemodelMutations/index"));
+var firemodel_2 = require("firemodel");
+exports.FireModel = firemodel_2.FireModel;
 let _db;
 let _auth;
 async function getDb(config) {
@@ -86,7 +88,7 @@ async function coreServices(store, config) {
     if (config.connect) {
         await store.dispatch(addNamespace_1.addNamespace(FmConfigActions_1.FmConfigAction.connect), config.db);
     }
-    if (config.watchAuth) {
+    if (config.useAuth) {
         await store.dispatch(addNamespace_1.addNamespace(FmConfigActions_1.FmConfigAction.firebaseAuth), config);
     }
     if (config.anonymousAuth) {

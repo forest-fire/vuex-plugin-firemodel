@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const changeRoot_1 = require("../shared/changeRoot");
+const localChange_1 = require("../shared/localChange");
 function addedLocally(propOffset) {
     return {
         ["ADDED_LOCALLY" /* addedLocally */](state, payload) {
@@ -16,10 +17,7 @@ function addedLocally(propOffset) {
                 : (state[propOffset] = payload.value);
         },
         ["REMOVED_LOCALLY" /* removedLocally */](state, payload) {
-            const isRecord = payload.watcherSource === "record";
-            state = isRecord
-                ? changeRoot_1.changeRoot(state, null)
-                : (state[propOffset] = null);
+            state.localOnly = state.localOnly.concat(localChange_1.localChange(payload));
         }
     };
 }

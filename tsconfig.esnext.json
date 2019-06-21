@@ -10,6 +10,7 @@
     "removeComments": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "strictNullChecks": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "typeRoots": ["./node_modules/@types"]

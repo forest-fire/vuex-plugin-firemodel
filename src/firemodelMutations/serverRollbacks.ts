@@ -1,6 +1,8 @@
 import { MutationTree } from "vuex";
 import { IDictionary } from "firemock";
 import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
+import { Model } from "firemodel";
+import { IFiremodelState } from "../types";
 
 /**
  * **serverConfirms**
@@ -13,20 +15,26 @@ import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
  * back to what it had been before it had been optimistically set by the `local`
  * mutation.
  */
-export function serverRollbacks<T = MutationTree<IDictionary>>(
+export function serverRollbacks<T extends Model>(
   propOffset?: string
-): MutationTree<T> {
+): MutationTree<IFiremodelState> {
   return {
     [FmCrudMutation.serverAddRollback](state, payload) {
-      state = propOffset ? { ...state, [propOffset]: payload.value } : payload.value;
+      state = propOffset
+        ? { ...state, [propOffset]: payload.value }
+        : payload.value;
     },
 
     [FmCrudMutation.serverChangeRollback](state, payload) {
-      state = propOffset ? { ...state, [propOffset]: payload.value } : payload.value;
+      state = propOffset
+        ? { ...state, [propOffset]: payload.value }
+        : payload.value;
     },
 
     [FmCrudMutation.serverRemoveRollback](state, payload) {
-      state = propOffset ? { ...state, [propOffset]: payload.value } : payload.value;
+      state = propOffset
+        ? { ...state, [propOffset]: payload.value }
+        : payload.value;
     }
   };
 }

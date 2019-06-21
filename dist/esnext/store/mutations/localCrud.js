@@ -6,7 +6,6 @@ export const localCrud = {
             dbPath: p.dbPath,
             localPath: p.localPath,
             value: p.value,
-            priorValue: p.priorValue,
             timestamp: new Date().getTime()
         });
     },
@@ -17,7 +16,6 @@ export const localCrud = {
             dbPath: p.dbPath,
             localPath: p.localPath,
             value: p.value,
-            priorValue: p.priorValue,
             timestamp: new Date().getTime()
         });
     }

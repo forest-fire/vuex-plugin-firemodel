@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
 import { Model } from "firemodel";
-import { IDictionary } from "common-types";
+import { IFiremodelState } from "../types";
 export declare type ListPropertyCandidates<T> = Pick<T, {
     [K in keyof T]: T[K] extends Model[] ? K : never;
 }[keyof T]>;
@@ -26,7 +26,7 @@ const vuexModule: Module<IMyStateModule, IRootState> = {
 }
 ```
  */
-export declare function firemodelMutations<T = MutationTree<IDictionary>>(
+export declare function firemodelMutations<T extends Model>(
 /**
  * If you are using a **list** based watcher you will almost always want
  * the list of records to be "offset" from the root of the local state
@@ -38,4 +38,4 @@ export declare function firemodelMutations<T = MutationTree<IDictionary>>(
  * `undefined` but if you have an edge case then you can set it to whatever you like
  * and it will honored.
  */
-propOffset?: string): MutationTree<T>;
+propOffset?: string): MutationTree<IFiremodelState>;

@@ -9,4 +9,4 @@ import { IDictionary } from "common-types";
  * @param state
  * @param newValues
  */
-export declare const changeRoot: <T = IDictionary<any>>(state: T, newValues: T) => T;
+export declare const changeRoot: <T = IDictionary<any>>(state: T | null, newValues: T | null) => T | undefined;

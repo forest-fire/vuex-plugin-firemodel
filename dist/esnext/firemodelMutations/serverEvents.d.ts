@@ -1,3 +1,4 @@
 import { MutationTree } from "vuex";
-import { IDictionary } from "firemock";
-export declare function serverEvents<T = MutationTree<IDictionary>>(propOffset?: string): MutationTree<T>;
+import { Model } from "firemodel";
+import { IFiremodelState } from "../types";
+export declare function serverEvents<T extends Model>(propOffset?: string): MutationTree<IFiremodelState>;
