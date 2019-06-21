@@ -6,6 +6,7 @@ import { FmConfigAction } from "./types/actions/FmConfigActions";
 import { FireModelPluginError } from "./errors/FiremodelPluginError";
 import { addNamespace } from "./shared/addNamespace";
 export * from "./firemodelMutations/index";
+export { FireModel } from "firemodel";
 export let configuration;
 export let dbConfig;
 export let firemodelVuex;

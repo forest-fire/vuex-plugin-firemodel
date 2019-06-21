@@ -15,6 +15,7 @@ import { FireModelPluginError } from "./errors/FiremodelPluginError";
 import { addNamespace } from "./shared/addNamespace";
 export * from "./types";
 export * from "./firemodelMutations/index";
+export { FireModel } from "firemodel";
 
 /**
  * We know that the root state will include the **@firemodel** state tree
@@ -118,7 +119,9 @@ async function queueLifecycleEvents<T = IGenericStateTree>(
     const [name, event] = i;
     if (config[name as keyof IFiremodelPluginConfig]) {
       const empty = () => Promise.resolve();
-      const cb: FmCallback = config[name as keyof IFiremodelPluginConfig] as any;
+      const cb: FmCallback = config[
+        name as keyof IFiremodelPluginConfig
+      ] as any;
       await store.commit(addNamespace(FmConfigMutation.queueHook), {
         on: event,
         name: `lifecycle-event-${event}`,
