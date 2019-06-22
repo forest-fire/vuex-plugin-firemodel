@@ -4,7 +4,7 @@ import { DB, FirebaseAuth, IFirebaseClientConfig } from "abstracted-client";
 import { IDictionary } from "common-types";
 export * from "./types";
 export * from "./firemodelMutations/index";
-export { FireModel } from "firemodel";
+export * from "firemodel";
 /**
  * We know that the root state will include the **@firemodel** state tree
  * but otherwise we will accept a generic understanding of the rest of the

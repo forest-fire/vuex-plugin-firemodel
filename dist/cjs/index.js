@@ -11,8 +11,7 @@ const FmConfigActions_1 = require("./types/actions/FmConfigActions");
 const FiremodelPluginError_1 = require("./errors/FiremodelPluginError");
 const addNamespace_1 = require("./shared/addNamespace");
 __export(require("./firemodelMutations/index"));
-var firemodel_2 = require("firemodel");
-exports.FireModel = firemodel_2.FireModel;
+__export(require("firemodel"));
 let _db;
 let _auth;
 async function getDb(config) {

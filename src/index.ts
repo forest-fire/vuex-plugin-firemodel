@@ -15,7 +15,7 @@ import { FireModelPluginError } from "./errors/FiremodelPluginError";
 import { addNamespace } from "./shared/addNamespace";
 export * from "./types";
 export * from "./firemodelMutations/index";
-export { FireModel } from "firemodel";
+export * from "firemodel";
 
 /**
  * We know that the root state will include the **@firemodel** state tree
