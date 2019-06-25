@@ -49,7 +49,7 @@ export function serverEvents<T extends Model>(
         ? (state as IDictionary)[propOffset].map((i: IDictionary) => i.id)
         : state.map((i: IDictionary) => i.id);
 
-      if (!isRecord && ids.includes(payload.value.id)) {
+      if (isRecord && ids.includes(payload.value.id)) {
         // The "change" is to a record which did not previously
         // exist. This is because "change" is a superset of add/remove/update.
         // It is asssumed in this case that the "serverAdd" event will have
