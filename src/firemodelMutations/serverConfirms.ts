@@ -19,16 +19,16 @@ export function serverConfirms<T extends Model>(
   propOffset?: string
 ): MutationTree<IFiremodelState> {
   return {
-    [FmCrudMutation.serverAddConfirm]() {
-      //
+    [FmCrudMutation.serverAddConfirm](state, payload) {
+      console.log("server add confirmed", payload.value.id);
     },
 
-    [FmCrudMutation.serverChangeConfirm]() {
-      console.log("server change confirmed");
+    [FmCrudMutation.serverChangeConfirm](state, payload) {
+      console.log("server change confirmed", payload.value.id);
     },
 
-    [FmCrudMutation.serverRemoveConfirm]() {
-      //
+    [FmCrudMutation.serverRemoveConfirm](state, payload) {
+      console.log("server remove confirmed", payload);
     }
   };
 }

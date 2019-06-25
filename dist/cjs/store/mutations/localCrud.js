@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const localChange_1 = require("../../shared/localChange");
 exports.localCrud = {
     ["ADDED_LOCALLY" /* addedLocally */](state, payload) {
         const p = payload;
@@ -20,6 +21,9 @@ exports.localCrud = {
             value: p.value,
             timestamp: new Date().getTime()
         });
+    },
+    ["REMOVED_LOCALLY" /* removedLocally */](state, payload) {
+        state.localOnly = state.localOnly.concat(localChange_1.localChange(payload));
     }
 };
 //# sourceMappingURL=localCrud.js.map

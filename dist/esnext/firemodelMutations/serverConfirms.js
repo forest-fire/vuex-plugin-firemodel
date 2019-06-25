@@ -11,14 +11,14 @@
  */
 export function serverConfirms(propOffset) {
     return {
-        ["ADD_CONFIRMATION" /* serverAddConfirm */]() {
-            //
+        ["ADD_CONFIRMATION" /* serverAddConfirm */](state, payload) {
+            console.log("server add confirmed", payload.value.id);
         },
-        ["CHANGE_CONFIRMATION" /* serverChangeConfirm */]() {
-            console.log("server change confirmed");
+        ["CHANGE_CONFIRMATION" /* serverChangeConfirm */](state, payload) {
+            console.log("server change confirmed", payload.value.id);
         },
-        ["REMOVE_CONFIRMATION" /* serverRemoveConfirm */]() {
-            //
+        ["REMOVE_CONFIRMATION" /* serverRemoveConfirm */](state, payload) {
+            console.log("server remove confirmed", payload);
         }
     };
 }
