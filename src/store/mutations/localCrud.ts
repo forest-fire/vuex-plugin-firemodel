@@ -1,7 +1,8 @@
 import { MutationTree } from "vuex";
 import { IFiremodelState } from "../..";
 import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
-import { IFmRecordEvent } from "firemodel";
+import { IFmRecordEvent, IFmContextualizedWatchEvent } from "firemodel";
+import { localChange } from "../../shared/localChange";
 
 export const localCrud: MutationTree<IFiremodelState> = {
   [FmCrudMutation.addedLocally](state, payload) {
@@ -26,5 +27,12 @@ export const localCrud: MutationTree<IFiremodelState> = {
       value: p.value,
       timestamp: new Date().getTime()
     });
+  },
+
+  [FmCrudMutation.removedLocally](
+    state: IFiremodelState,
+    payload: IFmContextualizedWatchEvent<IFiremodelState>
+  ) {
+    state.localOnly = state.localOnly.concat(localChange(payload));
   }
 };
