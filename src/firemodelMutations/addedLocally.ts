@@ -3,34 +3,46 @@ import { MutationTree } from "vuex";
 import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
 import { IFmContextualizedWatchEvent, Model } from "firemodel";
 import { changeRoot } from "../shared/changeRoot";
-import { IFiremodelState } from "../types";
+import { updateList } from "../shared/updateList";
 
-export function addedLocally<T extends Model>(
-  propOffset?: string
-): MutationTree<IFiremodelState> {
+export function addedLocally<T>(propOffset?: keyof T): MutationTree<T> {
+  const offset = !propOffset ? ("all" as keyof T) : propOffset;
+
   return {
-    [FmCrudMutation.addedLocally](state, payload: IFmContextualizedWatchEvent<T>) {
-      const isRecord = payload.watcherSource === "record";
-      state = isRecord
-        ? (changeRoot(state, payload.value) as T)
-        : (state[propOffset as keyof typeof state] = payload.value);
-    },
-
-    [FmCrudMutation.changedLocally](state, payload: IFmContextualizedWatchEvent<T>) {
-      const isRecord = payload.watcherSource === "record";
-      state = isRecord
-        ? (changeRoot(state, payload.value) as T)
-        : (state[propOffset as keyof typeof state] = payload.value);
-    },
-
-    [FmCrudMutation.removedLocally](
-      state: IFiremodelState,
+    [FmCrudMutation.addedLocally](
+      state,
       payload: IFmContextualizedWatchEvent<T>
     ) {
       const isRecord = payload.watcherSource === "record";
-      state = isRecord
-        ? (changeRoot(state, payload.value) as T)
-        : (state[propOffset as keyof typeof state] = payload.value);
+      if (isRecord) {
+        changeRoot<T>(state, payload.value);
+      } else {
+        updateList<T>(state, offset, payload.value);
+      }
+    },
+
+    [FmCrudMutation.changedLocally](
+      state,
+      payload: IFmContextualizedWatchEvent<Model>
+    ) {
+      const isRecord = payload.watcherSource === "record";
+      if (isRecord) {
+        changeRoot<T>(state, payload.value);
+      } else {
+        updateList<T>(state, offset, payload.value);
+      }
+    },
+
+    [FmCrudMutation.removedLocally](
+      state: T,
+      payload: IFmContextualizedWatchEvent<Model>
+    ) {
+      const isRecord = payload.watcherSource === "record";
+      if (isRecord) {
+        changeRoot<T>(state, null);
+      } else {
+        updateList<T>(state, offset, null);
+      }
     }
   };
 }

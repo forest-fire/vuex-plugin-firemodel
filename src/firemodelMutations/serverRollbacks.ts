@@ -3,6 +3,8 @@ import { IDictionary } from "firemock";
 import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
 import { Model } from "firemodel";
 import { IFiremodelState } from "../types";
+import { changeRoot } from "../shared/changeRoot";
+import { updateList } from "../shared/updateList";
 
 /**
  * **serverConfirms**
@@ -16,25 +18,37 @@ import { IFiremodelState } from "../types";
  * mutation.
  */
 export function serverRollbacks<T extends Model>(
-  propOffset?: string
-): MutationTree<IFiremodelState> {
+  propOffset?: keyof T
+): MutationTree<T> {
+  // default to "all"
+  const offset = !propOffset ? ("all" as keyof T) : propOffset;
+
   return {
     [FmCrudMutation.serverAddRollback](state, payload) {
-      state = propOffset
-        ? { ...state, [propOffset]: payload.value }
-        : payload.value;
+      const isRecord = payload.watcherSource === "record";
+      if (isRecord) {
+        changeRoot<T>(state, payload.value);
+      } else {
+        updateList<T>(state, offset, payload.value);
+      }
     },
 
     [FmCrudMutation.serverChangeRollback](state, payload) {
-      state = propOffset
-        ? { ...state, [propOffset]: payload.value }
-        : payload.value;
+      const isRecord = payload.watcherSource === "record";
+      if (isRecord) {
+        changeRoot<T>(state, payload.value);
+      } else {
+        updateList<T>(state, offset, payload.value);
+      }
     },
 
     [FmCrudMutation.serverRemoveRollback](state, payload) {
-      state = propOffset
-        ? { ...state, [propOffset]: payload.value }
-        : payload.value;
+      const isRecord = payload.watcherSource === "record";
+      if (isRecord) {
+        changeRoot<T>(state, payload.value);
+      } else {
+        updateList<T>(state, offset, payload.value);
+      }
     }
   };
 }

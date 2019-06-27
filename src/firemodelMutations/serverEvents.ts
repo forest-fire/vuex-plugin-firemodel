@@ -52,7 +52,7 @@ export function serverEvents<T>(propOffset?: keyof T): MutationTree<T> {
        * either a dictionary which includes the "offsetProp" or the array
        * of records at the root of the state structure
        */
-      state: IDictionary | T[],
+      state: T,
       payload: IFmContextualizedWatchEvent<Model>
     ) {
       const isRecord = payload.watcherSource === "record";
@@ -60,11 +60,7 @@ export function serverEvents<T>(propOffset?: keyof T): MutationTree<T> {
       if (isRecord) {
         changeRoot(state, null);
       } else {
-        // TODO: need to ensure that the payload.value is indeed "NULL";
-        // alternatively need to understand why typing is getting confused by
-        offset
-          ? updateList<T>(state, offset, payload.value)
-          : updateList<T>(state as any[], undefined, null);
+        updateList<T>(state, offset, payload.value);
       }
     }
   };

@@ -17,7 +17,7 @@ import { Model } from "firemodel";
  */
 export function serverConfirms<T extends Model>(
   propOffset?: string
-): MutationTree<IFiremodelState> {
+): MutationTree<T> {
   return {
     [FmCrudMutation.serverAddConfirm](state, payload) {
       console.log("server add confirmed", payload.value.id);
