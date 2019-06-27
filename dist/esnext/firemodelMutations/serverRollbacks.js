@@ -1,3 +1,5 @@
+import { changeRoot } from "../shared/changeRoot";
+import { updateList } from "../shared/updateList";
 /**
  * **serverConfirms**
  *
@@ -10,18 +12,35 @@
  * mutation.
  */
 export function serverRollbacks(propOffset) {
+    // default to "all"
+    const offset = !propOffset ? "all" : propOffset;
     return {
         ["ROLLBACK_ADD" /* serverAddRollback */](state, payload) {
-            state = propOffset
-                ? Object.assign({}, state, { [propOffset]: payload.value }) : payload.value;
+            const isRecord = payload.watcherSource === "record";
+            if (isRecord) {
+                changeRoot(state, payload.value);
+            }
+            else {
+                updateList(state, offset, payload.value);
+            }
         },
         ["ROLLBACK_CHANGE" /* serverChangeRollback */](state, payload) {
-            state = propOffset
-                ? Object.assign({}, state, { [propOffset]: payload.value }) : payload.value;
+            const isRecord = payload.watcherSource === "record";
+            if (isRecord) {
+                changeRoot(state, payload.value);
+            }
+            else {
+                updateList(state, offset, payload.value);
+            }
         },
         ["ROLLBACK_REMOVE" /* serverRemoveRollback */](state, payload) {
-            state = propOffset
-                ? Object.assign({}, state, { [propOffset]: payload.value }) : payload.value;
+            const isRecord = payload.watcherSource === "record";
+            if (isRecord) {
+                changeRoot(state, payload.value);
+            }
+            else {
+                updateList(state, offset, payload.value);
+            }
         }
     };
 }

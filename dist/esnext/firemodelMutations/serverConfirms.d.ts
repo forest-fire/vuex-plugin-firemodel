@@ -1,5 +1,4 @@
 import { MutationTree } from "vuex";
-import { IFiremodelState } from "../types";
 import { Model } from "firemodel";
 /**
  * **serverConfirms**
@@ -12,4 +11,4 @@ import { Model } from "firemodel";
  * event. If for some reason the consuming application wants to go further, they
  * may override the confirm funtions.
  */
-export declare function serverConfirms<T extends Model>(propOffset?: string): MutationTree<IFiremodelState>;
+export declare function serverConfirms<T extends Model>(propOffset?: keyof T): MutationTree<T>;

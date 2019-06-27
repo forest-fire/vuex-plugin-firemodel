@@ -4,6 +4,7 @@ import { addedLocally } from "./addedLocally";
 import { serverEvents } from "./serverEvents";
 import { serverRollbacks } from "./serverRollbacks";
 import { serverConfirms } from "./serverConfirms";
+import { IDictionary } from "firemock";
 
 export type ListPropertyCandidates<T> = Pick<
   T,
@@ -32,7 +33,7 @@ const vuexModule: Module<IMyStateModule, IRootState> = {
 }
 ```
  */
-export function firemodelMutations<T extends Model>(
+export function firemodelMutations<T extends IDictionary>(
   /**
    * If you are using a **list** based watcher you will almost always want
    * the list of records to be "offset" from the root of the local state
@@ -44,7 +45,7 @@ export function firemodelMutations<T extends Model>(
    * `undefined` but if you have an edge case then you can set it to whatever you like
    * and it will honored.
    */
-  propOffset?: string
+  propOffset?: keyof T
 ): MutationTree<T> {
   const a: MutationTree<T> = {
     ...addedLocally<T>(propOffset),

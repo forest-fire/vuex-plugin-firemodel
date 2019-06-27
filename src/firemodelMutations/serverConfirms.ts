@@ -16,7 +16,7 @@ import { Model } from "firemodel";
  * may override the confirm funtions.
  */
 export function serverConfirms<T extends Model>(
-  propOffset?: string
+  propOffset?: keyof T
 ): MutationTree<T> {
   return {
     [FmCrudMutation.serverAddConfirm](state, payload) {

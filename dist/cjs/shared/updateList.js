@@ -1,25 +1,39 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_get_1 = __importDefault(require("lodash.get"));
+const lodash_set_1 = __importDefault(require("lodash.set"));
 const FiremodelPluginError_1 = require("../errors/FiremodelPluginError");
-const changeRoot_1 = require("./changeRoot");
+/**
+ * **updateList**
+ *
+ * Updates a module's state tree for a property which is based on a "list watcher";
+ * the actual _list_ data will be based off the root of module state if no `moduleState`
+ * is passed in; in other cases it will use the `moduleState` as an offset to arrive
+ * at the root of the array.
+ *
+ * @param moduleState the module state tree
+ * @param offset the offset from the root where the data is stored;
+ * by default it is "all" but can be anything including _undefined_ (aka, no offset)
+ * @param value the value of the record which has changed
+ */
 function updateList(moduleState, offset, 
 /** the new record value OR "null" if removing the record */
 value) {
-    const existing = (offset ? moduleState[offset] : moduleState) || [];
-    if (!Array.isArray(existing)) {
-        throw new FiremodelPluginError_1.FireModelPluginError(`Attempt to update a list of records but the existing state [ offset: ${offset} ] is not an array [ ${typeof existing} ]`);
+    if (!offset) {
+        throw new FiremodelPluginError_1.FireModelPluginError('"updateList" was passed a falsy value for an offset; this is not currently allowed', "not-allowed");
     }
-    const updated = existing.map(i => {
+    let existing = lodash_get_1.default(moduleState, offset, []);
+    let found = false;
+    let updated = existing.map(i => {
+        if (value && i.id === value.id) {
+            found = true;
+        }
         return value && i.id === value.id ? value : i;
     });
-    if (!offset) {
-        // must deal with root object de-referencing
-        changeRoot_1.changeRoot(moduleState, updated);
-    }
-    else {
-        // just set the offset property and state will change
-        moduleState[offset] = updated;
-    }
+    lodash_set_1.default(moduleState, offset, found ? updated : existing.concat(value));
 }
 exports.updateList = updateList;
 //# sourceMappingURL=updateList.js.map
