@@ -1,39 +1,36 @@
 import { MutationTree } from "vuex";
 import { IDictionary } from "firemock";
 import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
-import { IFmContextualizedWatchEvent, pathJoin, Model } from "firemodel";
-import { IPathSetter } from "abstracted-firebase";
+import { IFmContextualizedWatchEvent, Model } from "firemodel";
 import { changeRoot } from "../shared/changeRoot";
 import { updateList } from "../shared/updateList";
-import { IFiremodelState } from "../types";
 
-export function serverEvents<T extends Model>(
-  propOffset?: string
-): MutationTree<IFiremodelState> {
+export function serverEvents<T>(propOffset?: keyof T): MutationTree<T> {
+  const offset = !propOffset ? ("all" as keyof T) : propOffset;
   return {
     [FmCrudMutation.serverAdd](
       /**
        * either a dictionary which includes the "offsetProp" or the array
        * of records at the root of the state structure
        */
-      state: IDictionary | T[],
-      payload: IFmContextualizedWatchEvent<T> & { paths?: IPathSetter<T> }
+      state: T,
+      payload: IFmContextualizedWatchEvent<T>
     ) {
       const isRecord = payload.watcherSource === "record";
-      state = isRecord
-        ? (changeRoot(state, payload.value) as T)
-        : propOffset
-        ? (state as IDictionary)[propOffset].push(payload.value)
-        : state.push(payload.value);
+      if (isRecord) {
+        changeRoot<T>(state, payload.value);
+      } else {
+        updateList<T>(state, offset, payload.value);
+      }
     },
 
     [FmCrudMutation.serverChange](
       /**
-       * either a dictionary which includes the "offsetProp" or the array
+       * Either a dictionary which includes the "offsetProp" or the array
        * of records at the root of the state structure
        */
-      state: IDictionary | T[],
-      payload: IFmContextualizedWatchEvent<T>
+      state: T,
+      payload: IFmContextualizedWatchEvent<Model>
     ) {
       const isRecord = payload.watcherSource === "record";
       if (payload.value === null) {
@@ -43,26 +40,10 @@ export function serverEvents<T extends Model>(
         // change.
         return;
       }
-      const ids = isRecord
-        ? []
-        : propOffset
-        ? (state as IDictionary)[propOffset].map((i: IDictionary) => i.id)
-        : state.map((i: IDictionary) => i.id);
-
-      if (isRecord && ids.includes(payload.value.id)) {
-        // The "change" is to a record which did not previously
-        // exist. This is because "change" is a superset of add/remove/update.
-        // It is asssumed in this case that the "serverAdd" event will have
-        // taken care of the needed state change.
-        return;
-      }
-
       if (isRecord) {
-        changeRoot(state, payload.value);
+        changeRoot<T>(state, payload.value);
       } else {
-        propOffset
-          ? updateList(state as IDictionary, propOffset, payload.value)
-          : updateList(state as any[], undefined, payload.value);
+        updateList<T>(state, offset, payload.value);
       }
     },
 
@@ -71,19 +52,15 @@ export function serverEvents<T extends Model>(
        * either a dictionary which includes the "offsetProp" or the array
        * of records at the root of the state structure
        */
-      state: IDictionary | T[],
-      payload: IFmContextualizedWatchEvent<T>
+      state: T,
+      payload: IFmContextualizedWatchEvent<Model>
     ) {
       const isRecord = payload.watcherSource === "record";
 
       if (isRecord) {
         changeRoot(state, null);
       } else {
-        // TODO: need to ensure that the payload.value is indeed "NULL";
-        // alternatively need to understand why typing is getting confused by
-        propOffset
-          ? updateList(state as IDictionary, propOffset, payload.value)
-          : updateList(state as any[], undefined, null);
+        updateList<T>(state, offset, payload.value);
       }
     }
   };
