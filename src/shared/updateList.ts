@@ -1,67 +1,52 @@
 import { IDictionary } from "common-types";
-import { Model } from "firemodel";
+import get from "lodash.get";
+import set from "lodash.set";
 import { FireModelPluginError } from "../errors/FiremodelPluginError";
 import { changeRoot } from "./changeRoot";
+
+interface IDictionaryWithId extends IDictionary {
+  id: string;
+}
 
 /**
  * **updateList**
  *
- * Updates a module's state tree for a property which is based on a "list" watcher;
- * assuming there is an offsetProp, `moduleState` is expected to be Dictionary where
- * a property (defined by `propState` but typically "all") will
- * have an array of `T` in it.
+ * Updates a module's state tree for a property which is based on a "list watcher";
+ * the actual _list_ data will be based off the root of module state if no `moduleState`
+ * is passed in; in other cases it will use the `moduleState` as an offset to arrive
+ * at the root of the array.
  *
- * @param moduleState the root of a list watchers state tree
- * @param offset the offset from the root where the data is stored;
- * by default it is "all" but can be anything including undefined (aka, no offset)
- * @param value the value of the record which has changed
- */
-export function updateList<T extends Model>(
-  moduleState: IDictionary,
-  offset: string,
-  value: T
-): void;
-/**
- * **updateList**
- *
- * Updates a module's state tree for a property which is based on a "list" watcher;
- * assuming there is an offsetProp, `moduleState` is expected to be an array of `T` when
- * the `propName` is undefined; alternatively stating an _offset_ changes the expectation
- * of `moduleState` to a dictionary.
- *
- * @param moduleState the root of a list watchers state tree
+ * @param moduleState the module state tree
  * @param offset the offset from the root where the data is stored;
  * by default it is "all" but can be anything including _undefined_ (aka, no offset)
  * @param value the value of the record which has changed
  */
-export function updateList<T extends Model>(
-  moduleState: T[],
-  offset: undefined,
-  value: T
-): void;
-export function updateList<T extends Model>(
-  moduleState: IDictionary | T[],
-  offset: string | undefined,
+export function updateList<T extends IDictionary>(
+  moduleState: T,
+  offset: keyof T,
   /** the new record value OR "null" if removing the record */
-  value: T | null
+  value: IDictionaryWithId | null
 ): void {
-  const existing: T[] =
-    (offset ? (moduleState as IDictionary)[offset] : moduleState) || [];
-  if (!Array.isArray(existing)) {
+  if (!offset) {
     throw new FireModelPluginError(
-      `Attempt to update a list of records but the existing state [ offset: ${offset} ] is not an array [ ${typeof existing} ]`
+      '"updateList" was passed a falsy value for an offset; this is not currently allowed',
+      "not-allowed"
     );
   }
 
-  const updated = existing.map(i => {
+  let existing: IDictionaryWithId[] = get(moduleState, offset, []);
+
+  let found = false;
+  let updated: IDictionaryWithId[] = existing.map(i => {
+    if (value && i.id === value.id) {
+      found = true;
+    }
     return value && i.id === value.id ? value : i;
   });
 
-  if (!offset) {
-    // must deal with root object de-referencing
-    changeRoot(moduleState, updated);
-  } else {
-    // just set the offset property and state will change
-    (moduleState as IDictionary)[offset] = updated;
-  }
+  set<IDictionaryWithId>(
+    moduleState,
+    offset,
+    found ? updated : existing.concat(value as IDictionaryWithId)
+  );
 }

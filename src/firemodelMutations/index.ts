@@ -1,11 +1,9 @@
 import { MutationTree } from "vuex";
 import { Model } from "firemodel";
-import { IDictionary } from "common-types";
 import { addedLocally } from "./addedLocally";
 import { serverEvents } from "./serverEvents";
 import { serverRollbacks } from "./serverRollbacks";
 import { serverConfirms } from "./serverConfirms";
-import { IFiremodelState } from "../types";
 
 export type ListPropertyCandidates<T> = Pick<
   T,
@@ -47,8 +45,8 @@ export function firemodelMutations<T extends Model>(
    * and it will honored.
    */
   propOffset?: string
-): MutationTree<IFiremodelState> {
-  const a: MutationTree<IFiremodelState> = {
+): MutationTree<T> {
+  const a: MutationTree<T> = {
     ...addedLocally<T>(propOffset),
     ...serverEvents<T>(propOffset),
     ...serverRollbacks<T>(propOffset),

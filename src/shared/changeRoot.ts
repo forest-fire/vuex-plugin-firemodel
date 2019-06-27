@@ -1,5 +1,4 @@
 import { IDictionary } from "common-types";
-import { Model } from "firemodel";
 
 /**
  * **changeRoot**
@@ -11,10 +10,7 @@ import { Model } from "firemodel";
  * @param state
  * @param newValues
  */
-export const changeRoot = <T = IDictionary>(
-  state: T | null,
-  newValues: T | null
-) => {
+export const changeRoot = <T = IDictionary>(state: T | null, newValues: T | null) => {
   if (newValues === null) {
     state = null;
     return;
