@@ -6,11 +6,13 @@ import { relationship } from "./relationship";
 import { recordLocal } from "./recordLocal";
 import { recordConfirms } from "./recordConfirms";
 import { recordRollbacks } from "./recordRollbacks";
+import { authActions } from "./auth";
 
 export const firemodelActions: ActionTree<
   IFiremodelState,
   IGenericStateTree
 > = stripNamespaceFromKeys({
+  ...authActions,
   ...recordServerChanges,
   ...recordLocal,
   ...recordConfirms,
@@ -19,7 +21,9 @@ export const firemodelActions: ActionTree<
   ...relationship
 });
 
-function stripNamespaceFromKeys(global: ActionTree<IFiremodelState, IGenericStateTree>) {
+function stripNamespaceFromKeys(
+  global: ActionTree<IFiremodelState, IGenericStateTree>
+) {
   const local: ActionTree<IFiremodelState, IGenericStateTree> = {};
   Object.keys(global).forEach(key => {
     local[key.replace("@firemodel/", "")] = global[key];
