@@ -13,7 +13,11 @@ export function generateLocalId<T = Model>(
   return action;
 }
 
-const mutationTypes = Object.keys(mutations).filter(i => typeof i !== "function");
+export { db } from "./localActions/pluginActions";
+
+const mutationTypes = Object.keys(mutations).filter(
+  i => typeof i !== "function"
+);
 export type IFmConfigMutationTypes = keyof typeof mutationTypes;
 
 /**

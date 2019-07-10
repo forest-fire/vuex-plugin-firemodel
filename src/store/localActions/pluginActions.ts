@@ -9,13 +9,13 @@ import {
   IFmAuthEventContext,
   IFmUserInfo
 } from "../../types";
-import { wait } from "common-types";
 import { IFirebaseClientConfig } from "abstracted-firebase";
 import { User } from "@firebase/auth-types";
 import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
 import { IGenericStateTree, setDb, configuration } from "../..";
 import { FmConfigAction } from "../../types/actions/FmConfigActions";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
+import { database } from "../../shared/database";
 
 /**
  * **pluginActions**
@@ -40,7 +40,7 @@ export const pluginActions = {
     commit(FmConfigMutation.configure, config); // set Firebase configuration
     try {
       commit(FmConfigMutation.connecting);
-      const db = await DB.connect(config);
+      const db = await database(config);
       setDb(db);
       FireModel.defaultDb = db;
       commit(FmConfigMutation.connected);
@@ -68,7 +68,7 @@ export const pluginActions = {
    */
   async [FmConfigAction.anonymousLogin](store) {
     const { commit, state, dispatch, rootState } = store;
-    const db = await DB.connect(state.config);
+    const db = await database(state.config);
     const auth = await db.auth();
     let user: IFmUserInfo;
 
@@ -194,9 +194,9 @@ async function runQueue<T extends IFmEventContext>(
   lifecycle: IFmLifecycleEvents
 ) {
   const remainingQueueItems: IFmQueuedAction<T>[] = [];
-  const queued = ((ctx.state as any)["@firemodel"].queued as IFmQueuedAction<T>[]).filter(
-    i => i.on === lifecycle
-  );
+  const queued = ((ctx.state as any)["@firemodel"].queued as IFmQueuedAction<
+    T
+  >[]).filter(i => i.on === lifecycle);
 
   for (const item of queued) {
     try {
@@ -209,7 +209,10 @@ async function runQueue<T extends IFmEventContext>(
         code: e.code || e.name,
         stack: e.stack
       });
-      remainingQueueItems.push({ ...item, ...{ error: e.message, errorStack: e.stack } });
+      remainingQueueItems.push({
+        ...item,
+        ...{ error: e.message, errorStack: e.stack }
+      });
     }
   }
 

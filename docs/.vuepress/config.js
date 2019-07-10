@@ -58,17 +58,32 @@ module.exports = {
         sizes: "48x48"
       }
     ],
-    [("link", { rel: "icon", href: "/icon/icon-rounded-32.png", sizes: "32x32" })],
-    ["link", { rel: "icon", href: "/icon/icon-rounded-48.png", sizes: "48x48" }],
-    ["link", { rel: "icon", href: "/icon/icon-rounded-192.png", sizes: "192x192" }],
-    ["link", { rel: "icon", href: "/icon/icon-rounded-225.png", sizes: "225x225" }],
-    ["link", { rel: "icon", href: "/icon/icon-rounded-512.png", sizes: "512x512" }],
-    ["link", { rel: "manifest", href: "manifest.json" }],
+    [
+      ("link",
+      { rel: "icon", href: "/icon/icon-rounded-32.png", sizes: "32x32" })
+    ],
+    [
+      "link",
+      { rel: "icon", href: "/icon/icon-rounded-48.png", sizes: "48x48" }
+    ],
+    [
+      "link",
+      { rel: "icon", href: "/icon/icon-rounded-192.png", sizes: "192x192" }
+    ],
+    [
+      "link",
+      { rel: "icon", href: "/icon/icon-rounded-225.png", sizes: "225x225" }
+    ],
+    [
+      "link",
+      { rel: "icon", href: "/icon/icon-rounded-512.png", sizes: "512x512" }
+    ],
+    ["link", { rel: "manifest", href: "/manifest.json" }],
     [
       "link",
       {
         rel: "apple-touch-icon-precomposed",
-        href: "/icon/icon-rounded-192.png",
+        href: "/icons/icon-rounded-192.png",
         sizes: "192x192"
       }
     ],
@@ -76,7 +91,7 @@ module.exports = {
       "link",
       {
         rel: "apple-touch-startup-image",
-        href: "icons/apple_splash_2048.png",
+        href: "/icons/apple_splash_2048.png",
         sizes: "2048x2732"
       }
     ],
@@ -84,7 +99,7 @@ module.exports = {
       "link",
       {
         rel: "apple-touch-startup-image",
-        href: "icons/apple_splash_1668.png",
+        href: "/icons/apple_splash_1668.png",
         sizes: "1668x2224"
       }
     ],
@@ -92,7 +107,7 @@ module.exports = {
       "link",
       {
         rel: "apple-touch-startup-image",
-        href: "icons/apple_splash_1536.png",
+        href: "/icons/apple_splash_1536.png",
         sizes: "1536x2048"
       }
     ],
@@ -100,7 +115,7 @@ module.exports = {
       "link",
       {
         rel: "apple-touch-startup-image",
-        href: "icons/apple_splash_1125.png",
+        href: "/icons/apple_splash_1125.png",
         sizes: "1125x2436"
       }
     ],
@@ -108,7 +123,7 @@ module.exports = {
       "link",
       {
         rel: "apple-touch-startup-image",
-        href: "icons/apple_splash_1242.png",
+        href: "/icons/apple_splash_1242.png",
         sizes: "1242x2208"
       }
     ],
@@ -116,7 +131,7 @@ module.exports = {
       "link",
       {
         rel: "apple-touch-startup-image",
-        href: "icons/apple_splash_750.png",
+        href: "/icons/apple_splash_750.png",
         sizes: "750x1334"
       }
     ],
@@ -124,13 +139,19 @@ module.exports = {
       "link",
       {
         rel: "apple-touch-startup-image",
-        href: "icons/apple_splash_640.png",
+        href: "/icons/apple_splash_640.png",
         sizes: "640x1136"
       }
     ],
 
-    ["link", { rel: "apple-touch-icon", href: "touch-icon-iphone", sizes: "120x120" }],
-    ["link", { rel: "apple-touch-icon", sizes: "152x152", href: "touch-icon-ipad" }],
+    [
+      "link",
+      { rel: "apple-touch-icon", href: "touch-icon-iphone", sizes: "120x120" }
+    ],
+    [
+      "link",
+      { rel: "apple-touch-icon", sizes: "152x152", href: "touch-icon-ipad" }
+    ],
     [
       "link",
       {
