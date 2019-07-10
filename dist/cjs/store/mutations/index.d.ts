@@ -6,3 +6,4 @@
 export declare const mutations: {
     [x: string]: import("vuex").Mutation<import("../..").IFiremodelState>;
 };
+export declare type IFiremodelMutation = keyof typeof mutations;

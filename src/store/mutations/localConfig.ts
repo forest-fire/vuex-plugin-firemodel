@@ -1,15 +1,10 @@
-import { IFirebaseConfig } from "abstracted-firebase/dist/esnext/types";
 import { MutationTree } from "vuex";
-import { IGenericStateTree } from "../..";
 import {
   IFiremodelState,
-  IFmWatchItem,
   IFmLifecycleEvents,
   IFmQueuedAction
 } from "../../types";
-import { IFmRecordEvent } from "firemodel";
 import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
-import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
 import { User } from "@firebase/auth-types";
 
 /**
