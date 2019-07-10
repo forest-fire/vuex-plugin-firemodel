@@ -10,6 +10,7 @@ import {
 import { IFmRecordEvent } from "firemodel";
 import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
 import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
+import { User } from "@firebase/auth-types";
 
 /**
  * The **mutations** scoped to the local configuration of Firebase
@@ -29,7 +30,9 @@ export const localConfig: MutationTree<IFiremodelState> = {
   },
   [FmConfigMutation.connectionError](state, err: Error) {
     state.status = "error";
-    state.errors = state.errors ? state.errors.concat(err.message) : [err.message];
+    state.errors = state.errors
+      ? state.errors.concat(err.message)
+      : [err.message];
   },
   [FmConfigMutation.appErr](state, err) {
     if (!state.errors) {
@@ -41,14 +44,19 @@ export const localConfig: MutationTree<IFiremodelState> = {
     state.errors = [];
   },
 
-  [FmConfigMutation.userLoggedIn](state, user) {
+  [FmConfigMutation.userLoggedIn](state, user: User) {
     state.currentUser = {
       uid: user.uid,
       isAnonymous: user.isAnonymous,
       email: user.email,
-      emailVerified: user.emailVerified
+      emailVerified: user.emailVerified,
+      fullProfile: user
     };
-    state.authenticated = !user ? false : user.isAnonymous ? "anonymous" : "logged-in";
+    state.authenticated = !user
+      ? false
+      : user.isAnonymous
+      ? "anonymous"
+      : "logged-in";
   },
 
   [FmConfigMutation.userLoggedOut](state) {

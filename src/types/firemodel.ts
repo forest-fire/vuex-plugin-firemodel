@@ -1,5 +1,14 @@
 import { IFirebaseConfig, IFirebaseClientConfig } from "abstracted-firebase";
 import { IFmQueuedAction, IFmWatchItem, IFmLocalChange } from ".";
+import { User } from "@firebase/auth-types";
+
+export interface IFiremodelAbbreviatedUser {
+  uid: string;
+  isAnonymous: boolean;
+  email: string | null;
+  emailVerified: boolean;
+  fullProfile: User;
+}
 
 export interface IFiremodelState {
   /** the configuration used to connect to the Firebase DB */
@@ -8,9 +17,14 @@ export interface IFiremodelState {
   claims?: string[];
   /** the authentication status of the user */
   authenticated: false | "anonymous" | "logged-in";
-  currentUser?: any;
+  currentUser?: IFiremodelAbbreviatedUser;
   /** the DB connection status */
-  status: "unconfigured" | "connecting" | "disconnected" | "connected" | "error";
+  status:
+    | "unconfigured"
+    | "connecting"
+    | "disconnected"
+    | "connected"
+    | "error";
   /**
    * callbacks which are queued to be executed when a lifecycle state is achieved
    */

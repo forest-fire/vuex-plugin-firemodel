@@ -2,6 +2,8 @@ import { ActionTree } from "vuex";
 
 import { IFiremodelState, IGenericStateTree } from "../..";
 import { database } from "../../shared/database";
+import { FireModelPluginError } from "../../errors/FiremodelPluginError";
+import { ActionCodeSettings } from "@firebase/auth-types";
 
 /**
  * **authActions**
@@ -38,9 +40,61 @@ export const authActions: ActionTree<IFiremodelState, IGenericStateTree> = {
   },
 
   /**
-   * When resetting a password the user receives a **code** by an off-channel means
-   * (typically email); this dispatch message allows confirmation of the reset using
-   * this code.
+   * Sends a password reset email to the given email address.
+   * To complete the password reset, dispatch `@firemodel/confirmPasswordReset` with
+   * the code supplied in the email sent to the user, along with the new password
+   * specified by the user.
+   */
+  async sendPasswordResetEmail(
+    { commit },
+    {
+      email,
+      actionCodeSettings
+    }: { email: string; actionCodeSettings?: ActionCodeSettings | null }
+  ) {
+    try {
+      const db = await database();
+      const auth = await db.auth();
+      await auth.sendPasswordResetEmail(email, actionCodeSettings);
+      commit("@firebase/sendPasswordResetEmail");
+    } catch (e) {
+      commit("@firebase/error", {
+        stack: e.stack,
+        message: `Failure to send password-reset email: ${e.message} [ ${
+          e.code
+        } ${e.name} ]`
+      });
+      throw e;
+    }
+  },
+
+  /**
+   * Completes the password reset process, given a _confirmation code_
+   * and new _password_.
+   */
+  async confirmPasswordReset(
+    { commit },
+    { code, newPassword }: { code: string; newPassword: string }
+  ) {
+    try {
+      const db = await database();
+      const auth = await db.auth();
+      await auth.confirmPasswordReset(code, newPassword);
+      commit("@firebase/confirmPasswordReset");
+    } catch (e) {
+      commit("@firebase/error", {
+        stack: e.stack,
+        message: `Failured to confirm password reset: ${e.message} [ ${
+          e.code
+        } ${e.name} ]`
+      });
+      throw e;
+    }
+  },
+
+  /**
+   * Checks a password reset code sent to the user by email or other
+   * out-of-band mechanism. Returns the user's email address if valid.
    */
   async verifyPasswordResetCode({ commit }, code: string) {
     try {
@@ -66,9 +120,20 @@ export const authActions: ActionTree<IFiremodelState, IGenericStateTree> = {
    * that allows owner of that email address to revoke the email address change.
    */
   async updateEmail({ commit, state }, newEmail: string) {
+    if (!state.currentUser) {
+      commit(
+        "@firebase/error",
+        `The updateEmail dispatch was dispatched but the current user profile is empty!`
+      );
+      throw new FireModelPluginError(
+        `The updateEmail dispatch was dispatched but the current user profile is empty!`,
+        "not-ready"
+      );
+    }
+
     try {
       const user = state.currentUser;
-      await user.updateEmail(newEmail);
+      await user.fullProfile.updateEmail(newEmail);
       commit("@firemodel/updateEmail", { uid: user.uid, email: newEmail });
     } catch (e) {
       commit("@firebase/error", {
@@ -88,9 +153,20 @@ export const authActions: ActionTree<IFiremodelState, IGenericStateTree> = {
    * call the `reauthenticateWithCredential` to resolve this.
    */
   async updatePassword({ commit, state }, newPassword: string) {
+    if (!state.currentUser) {
+      commit(
+        "@firebase/error",
+        `The updatePassword dispatch was dispatched but the current user profile is empty!`
+      );
+      throw new FireModelPluginError(
+        `The updateEmail dispatch was dispatched but the current user profile is empty!`,
+        "not-ready"
+      );
+    }
+
     try {
       const user = state.currentUser;
-      await user.updatePassword(newPassword);
+      await user.fullProfile.updatePassword(newPassword);
       commit("@firemodel/updateEmail", { uid: user.uid, email: newPassword });
     } catch (e) {
       commit("@firebase/error", {

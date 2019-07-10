@@ -1,5 +1,6 @@
 ---
 lineNumbers: true
+sidebarDepth: 3
 next: "/events/"
 ---
 
@@ -68,7 +69,7 @@ And from there you _now_ need to configure an "app" which can be a mobile or web
 
 By default this plugin will connect with the database immediately. That is probably the correct behavior 99% of the time but on the chance you _don't_ want it to connect right away you can set the `connect` property to false. If you do this then you would take on responsibility to **dispatch** the `@firemodel/connect` action at the point where you _do_ want to connect.
 
-## Auth
+## Core Auth
 
 ### Watch Auth
 
@@ -91,140 +92,181 @@ In addition to just stating that you'd like to use Firebase's authentication/aut
 
 This means that everyone interacting with the site _will_ be a tracked user of some sort. Some will be "known users" and others will be "anonymous users" but all will have a unique ID that tracks the identity of the user.
 
-### Dispatch Events
+## Auth Dispatch Events
 
 Beyond the two core features that this plugin provides, the plugin also makes parts of the Firebase Auth API surface as Vuex _actions_ that you can dispatch. These include:
 
-1. `@firemodel/createUserWithEmailAndPassword` - creates a new user from an email and password
+### `createUserWithEmailAndPassword`
 
-   You dispatch with:
+Creates a new user from an email and password
 
-      ```typescript
-      const { dispatch } from './store';
-      let user: UserCredential;
-      try {
-        const user = await dispatch('@firemodel/createUserWithEmailAndPassord', {
-          email: string,
-          password: string
-        })
-      } catch (e) {
-        // error handling
-      }
-      ```
+You dispatch with:
 
-      Errors include:
+```typescript
+const { dispatch } from './store';
+let user: UserCredential;
+try {
+  const user = await dispatch('@firemodel/createUserWithEmailAndPassord', {
+    email: string,
+    password: string
+  })
+} catch (e) {
+  // error handling
+}
+```
 
-      - `auth/email-already-in-use`
-      - `auth/invalid-email`
-      - `auth/operation-not-allowed`
-      - `auth/weak-password`
+Errors include:
 
-    For more info, check the **Firebase** docs: [createUserWithEmailAndPassword](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#create-user-with-email-and-password)
-1. `@firemodel/sendPasswordResetEmail` - sends a user an email with a link to reset their password.
+- `auth/email-already-in-use`
+- `auth/invalid-email`
+- `auth/operation-not-allowed`
+- `auth/weak-password`
 
-   You dispatch with:
+For more info, check the **Firebase** docs: [createUserWithEmailAndPassword](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#create-user-with-email-and-password)
 
-   ```typescript
-   const { dispatch } from './store';
-   try {
-     await dispatch('@firemodel/sendPasswordResetEmail', {
-       email: string,
-       actionCodeSettings?: ActionCodeSettings | null
-     })
-   } catch (e) {
-     // error handling
-   }
-   ```
+### `sendPasswordResetEmail`
 
-   Errors include:
+Sends a user an email with a link to reset their password.
 
-   - `auth/invalid-email`
-   - `auth/missing-continue-uri`
-   - `auth/invalid-continue-uri`
-   - `auth/unauthorized-continue-uri`
-   - `auth/user-not-found`
+ You dispatch with:
 
-   For more info, check the **Firebase** docs: [sendPasswordResetEmail](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#send-password-reset-email)
-1. `@firemodel/verifyPasswordResetCode` - checks whether an out-of-band reset code was correct; if correct it will return the user's email. Call structure would look like:
-
-    ```typescript
-    const { dispatch } from './store';
-    let validatedEmail;
-    try {
-      validatedEmail = await dispatch('@firemodel/verifyPasswordResetCode', '12345');
-    } catch(e) {
-      // error handling
-    }
-    ```
-
-    Failing conditions include:
-
-    - `auth/expired-action-code`
-    - `auth/invalid-action-code`
-    - `auth/user-disabled`
-    - `auth/user-not-found`
-
-     See the **Firebase** docs for more: [verifyPasswordResetCode](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#verify-password-reset-code)
-
-     Successful execution will not only verify the password in the Firebase Auth system but will also fire the `@firemodel/verifyPasswordResetCode` mutation so that you will see this action serialized as part of the Vuex state log.
-1. `@firemodel/signOut` - signs the user out of a non-anonymous account (and if anonymous authentication is on it will log you in as an anonymous user for tracking purposes)
-
-   You will dispatch with:
-
-      ```typescript
-      const { dispatch } from './store';
-      try {
-        await dispatch('@firemodel/signOut')
-      } catch (e) {
-        // error handling
-      }
-      ```
-
-      Errors include:
-
-      - `auth/email-already-in-use`
-      - `auth/invalid-email`
-      - `auth/operation-not-allowed`
-      - `auth/weak-password`
-
-    For more info, check the **Firebase** docs: [createUserWithEmailAndPassword](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#create-user-with-email-and-password)
-
-2. `@firemodel/updateEmail` - updates the user's email for login/auth.
-
-   ```typescript
-   const { dispatch } from './store';
-   try {
-   await dispatch('@firemodel/updateEmail', newEmail: string);
-   } catch(e) {
+ ```typescript
+ const { dispatch } from './store';
+ try {
+   await dispatch('@firemodel/sendPasswordResetEmail', {
+     email: string,
+     actionCodeSettings?: ActionCodeSettings | null
+   })
+ } catch (e) {
    // error handling
-   }
-   ```
+ }
+ ```
 
-   Failing conditions include:
+ Errors include:
 
-   - `auth/invalid-email`
-   - `auth/email-already-in-use`
-   - `auth/requires-recent-login`
+- `auth/invalid-email`
+- `auth/missing-continue-uri`
+- `auth/invalid-continue-uri`
+- `auth/unauthorized-continue-uri`
+- `auth/user-not-found`
 
-   See the **Firebase** docs for more: [updateEmail](https://firebase.google.com/docs/reference/node/firebase.User.html#update-email)
+ For more info, check the **Firebase** docs: [sendPasswordResetEmail](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#send-password-reset-email)
 
-3. `@firemodel/updatePassword` - updates the user's password for login/auth.
+### `confirmPasswordReset`
 
-    ```typescript
-    const { dispatch } from './store';
-    try {
-      await dispatch('@firemodel/updatePassword', newPassword: string);
-    } catch(e) {
-      // error handling
-    }
-    ```
+Completes the password reset process, given a _confirmation code_ and new _password_.
 
-    Failing conditions include:
+ You dispatch with:
 
-    - `auth/weak-password`
-    - `auth/requires-recent-login`
+ ```typescript
+ const { dispatch } from './store';
+ try {
+   await dispatch('@firemodel/confirmPasswordReset', {
+     email: string,
+     newPassword: string
+   })
+ } catch (e) {
+   // error handling
+ }
+ ```
 
-     See the **Firebase** docs for more: [updatePassword](https://firebase.google.com/docs/reference/node/firebase.User.html#update-password)
+ Errors include:
+
+- `auth/expired-action-code`
+- `auth/invalid-action-code`
+- `auth/user-disabled`
+- `auth/user-not-found`
+- `auth/weak-password`
+
+See the **Firebase** docs for more: [confirmPasswordReset](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#confirm-password-reset)
+
+### `verifyPasswordResetCode`
+
+Checks whether an out-of-band reset code was correct; if correct it will return the user's email. Call structure would look like:
+
+```typescript
+const { dispatch } from './store';
+let validatedEmail;
+try {
+  validatedEmail = await dispatch('@firemodel/verifyPasswordResetCode', '12345');
+} catch(e) {
+  // error handling
+}
+```
+
+Failing conditions include:
+
+- `auth/expired-action-code`
+- `auth/invalid-action-code`
+- `auth/user-disabled`
+- `auth/user-not-found`
+
+ See the **Firebase** docs for more: [verifyPasswordResetCode](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#verify-password-reset-code)
+
+### `updateEmail`
+
+Updates the user's email for login/auth.
+
+```typescript
+const { dispatch } from './store';
+try {
+await dispatch('@firemodel/updateEmail', newEmail: string);
+} catch(e) {
+// error handling
+}
+```
+
+Failing conditions include:
+
+- `auth/invalid-email`
+- `auth/email-already-in-use`
+- `auth/requires-recent-login`
+
+See the **Firebase** docs for more: [updateEmail](https://firebase.google.com/docs/reference/node/firebase.User.html#update-email)
+
+### `updatePassword`
+
+Updates the user's password for login/auth.
+
+```typescript
+const { dispatch } from './store';
+try {
+  await dispatch('@firemodel/updatePassword', newPassword: string);
+} catch(e) {
+  // error handling
+}
+```
+
+Failing conditions include:
+
+- `auth/weak-password`
+- `auth/requires-recent-login`
+
+ See the **Firebase** docs for more: [updatePassword](https://firebase.google.com/docs/reference/node/firebase.User.html#update-password)
+
+### `signOut`
+
+Signs the user out of a non-anonymous account (and if anonymous authentication is on it will log you in as an anonymous user for tracking purposes)
+
+You will dispatch with:
+
+```typescript
+const { dispatch } from './store';
+try {
+  await dispatch('@firemodel/signOut')
+} catch (e) {
+  // error handling
+}
+```
+
+Errors include:
+
+- `auth/email-already-in-use`
+- `auth/invalid-email`
+- `auth/operation-not-allowed`
+- `auth/weak-password`
+
+For more info, check the **Firebase** docs: [signOut](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#sign-out)
 
 ## Lifecycle Hooks
 
