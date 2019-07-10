@@ -7,6 +7,8 @@ function generateLocalId(compositeKey, action) {
     return action;
 }
 exports.generateLocalId = generateLocalId;
+var database_1 = require("../shared/database");
+exports.database = database_1.database;
 const mutationTypes = Object.keys(index_1.mutations).filter(i => typeof i !== "function");
 /**
  * The **Vuex** module that this plugin exports
