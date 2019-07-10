@@ -41,8 +41,9 @@ export const pluginActions = {
     try {
       commit(FmConfigMutation.connecting);
       const db = await database(config);
-      setDb(db);
-      FireModel.defaultDb = db;
+      if (!FireModel.defaultDb) {
+        FireModel.defaultDb = db;
+      }
       commit(FmConfigMutation.connected);
       const ctx: IFmEventContext = {
         Record,
@@ -152,14 +153,16 @@ export const pluginActions = {
         });
       } else {
         commit(FmConfigMutation.userLoggedOut);
-        runQueue(
-          {
-            ...baseContext,
-            uid: state.currentUser.uid,
-            isAnonymous: state.currentUser.isAnonymous
-          } as IFmAuthEventContext,
-          "logged-out"
-        );
+        if (state.currentUser) {
+          runQueue(
+            {
+              ...baseContext,
+              uid: state.currentUser.uid,
+              isAnonymous: state.currentUser.isAnonymous
+            } as IFmAuthEventContext,
+            "logged-out"
+          );
+        }
       }
     };
   },

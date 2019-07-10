@@ -1,8 +1,8 @@
 import { FireModel, Record, List, Watch } from "firemodel";
-import { DB } from "abstracted-client";
-import { setDb, configuration } from "../..";
+import { configuration } from "../..";
 import { FmConfigAction } from "../../types/actions/FmConfigActions";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
+import { database } from "../../shared/database";
 /**
  * **pluginActions**
  *
@@ -22,9 +22,10 @@ export const pluginActions = {
         commit("CONFIGURE" /* configure */, config); // set Firebase configuration
         try {
             commit("CONNECTING" /* connecting */);
-            const db = await DB.connect(config);
-            setDb(db);
-            FireModel.defaultDb = db;
+            const db = await database(config);
+            if (!FireModel.defaultDb) {
+                FireModel.defaultDb = db;
+            }
             commit("CONNECTED" /* connected */);
             const ctx = {
                 Record,
@@ -50,7 +51,7 @@ export const pluginActions = {
      */
     async [FmConfigAction.anonymousLogin](store) {
         const { commit, state, dispatch, rootState } = store;
-        const db = await DB.connect(state.config);
+        const db = await database(state.config);
         const auth = await db.auth();
         let user;
         if (auth.currentUser) {
@@ -128,7 +129,9 @@ export const pluginActions = {
             }
             else {
                 commit("USER_LOGGED_OUT" /* userLoggedOut */);
-                runQueue(Object.assign({}, baseContext, { uid: state.currentUser.uid, isAnonymous: state.currentUser.isAnonymous }), "logged-out");
+                if (state.currentUser) {
+                    runQueue(Object.assign({}, baseContext, { uid: state.currentUser.uid, isAnonymous: state.currentUser.isAnonymous }), "logged-out");
+                }
             }
         };
     },

@@ -16,7 +16,9 @@ export const localConfig = {
     },
     ["CONNECTION_ERROR" /* connectionError */](state, err) {
         state.status = "error";
-        state.errors = state.errors ? state.errors.concat(err.message) : [err.message];
+        state.errors = state.errors
+            ? state.errors.concat(err.message)
+            : [err.message];
     },
     ["APP_ERROR" /* appErr */](state, err) {
         if (!state.errors) {
@@ -32,9 +34,14 @@ export const localConfig = {
             uid: user.uid,
             isAnonymous: user.isAnonymous,
             email: user.email,
-            emailVerified: user.emailVerified
+            emailVerified: user.emailVerified,
+            fullProfile: user
         };
-        state.authenticated = !user ? false : user.isAnonymous ? "anonymous" : "logged-in";
+        state.authenticated = !user
+            ? false
+            : user.isAnonymous
+                ? "anonymous"
+                : "logged-in";
     },
     ["USER_LOGGED_OUT" /* userLoggedOut */](state) {
         state.currentUser = undefined;

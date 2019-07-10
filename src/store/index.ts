@@ -13,7 +13,7 @@ export function generateLocalId<T = Model>(
   return action;
 }
 
-export { db } from "./localActions/pluginActions";
+export { database } from "../shared/database";
 
 const mutationTypes = Object.keys(mutations).filter(
   i => typeof i !== "function"

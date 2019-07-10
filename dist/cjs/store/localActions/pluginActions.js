@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const firemodel_1 = require("firemodel");
-const abstracted_client_1 = require("abstracted-client");
 const __1 = require("../..");
 const FmConfigActions_1 = require("../../types/actions/FmConfigActions");
 const FiremodelPluginError_1 = require("../../errors/FiremodelPluginError");
+const database_1 = require("../../shared/database");
 /**
  * **pluginActions**
  *
@@ -24,9 +24,10 @@ exports.pluginActions = {
         commit("CONFIGURE" /* configure */, config); // set Firebase configuration
         try {
             commit("CONNECTING" /* connecting */);
-            const db = await abstracted_client_1.DB.connect(config);
-            __1.setDb(db);
-            firemodel_1.FireModel.defaultDb = db;
+            const db = await database_1.database(config);
+            if (!firemodel_1.FireModel.defaultDb) {
+                firemodel_1.FireModel.defaultDb = db;
+            }
             commit("CONNECTED" /* connected */);
             const ctx = {
                 Record: firemodel_1.Record,
@@ -52,7 +53,7 @@ exports.pluginActions = {
      */
     async [FmConfigActions_1.FmConfigAction.anonymousLogin](store) {
         const { commit, state, dispatch, rootState } = store;
-        const db = await abstracted_client_1.DB.connect(state.config);
+        const db = await database_1.database(state.config);
         const auth = await db.auth();
         let user;
         if (auth.currentUser) {
@@ -130,7 +131,9 @@ exports.pluginActions = {
             }
             else {
                 commit("USER_LOGGED_OUT" /* userLoggedOut */);
-                runQueue(Object.assign({}, baseContext, { uid: state.currentUser.uid, isAnonymous: state.currentUser.isAnonymous }), "logged-out");
+                if (state.currentUser) {
+                    runQueue(Object.assign({}, baseContext, { uid: state.currentUser.uid, isAnonymous: state.currentUser.isAnonymous }), "logged-out");
+                }
             }
         };
     },
