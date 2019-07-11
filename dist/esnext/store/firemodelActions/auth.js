@@ -7,6 +7,26 @@ import { FireModelPluginError } from "../../errors/FiremodelPluginError";
  */
 export const authActions = {
     /**
+     * Sends a email and password trying to auth on firebase module `signInWithEmailAndPassword`.
+     * For more see [API docs](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#signinwithemailandpassword).
+     */
+    async signInWithEmailAndPassword({ commit }, { email, password }) {
+        try {
+            const db = await database();
+            const auth = await db.auth();
+            const userCredential = await auth.signInWithEmailAndPassword(email, password);
+            commit("@firebase/signInWithEmailAndPassword", userCredential);
+            return userCredential;
+        }
+        catch (e) {
+            commit("@firebase/error", {
+                stack: e.stack,
+                message: `Failure to login user [${email}]: ${e.message} [ ${e.code} ${e.name} ]`
+            });
+            throw e;
+        }
+    },
+    /**
      * Allows a frontend app to create a new user for email and password
      * authentication. The account will initially be set to _un-verified_ but
      * the email used will be sent a link to make the account verified.
