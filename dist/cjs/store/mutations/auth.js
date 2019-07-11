@@ -4,6 +4,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * The **mutations** associated to the Firebase Auth API.
  */
 exports.localConfig = {
+    signInWithEmailAndPassword(state, userCredential) {
+        if (userCredential.user) {
+            state.currentUser = {
+                email: userCredential.user.email,
+                emailVerified: userCredential.user.emailVerified,
+                uid: userCredential.user.uid,
+                isAnonymous: userCredential.user.isAnonymous,
+                fullProfile: userCredential.user
+            };
+        }
+    },
     createUserWithEmailAndPassword(state, userCredential) {
         // no need to change state tree as the observer on onAuthChanged will address this
     },
