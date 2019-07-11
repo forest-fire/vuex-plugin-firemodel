@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * The **mutations** associated to the Firebase Auth API.
  */
-exports.localConfig = {
+exports.authMutations = {
     signInWithEmailAndPassword(state, userCredential) {
         if (userCredential.user) {
             state.currentUser = {

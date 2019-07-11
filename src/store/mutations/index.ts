@@ -1,5 +1,6 @@
 import { localConfig } from "./localConfig";
 import { serverConfirm } from "./serverConfirm";
+import { authMutations } from './auth';
 import { watcher } from "./watcher";
 import { localCrud } from "./localCrud";
 import { errorMutations } from "./errors";
@@ -12,6 +13,7 @@ import { errorMutations } from "./errors";
 export const mutations = {
   ...errorMutations,
   ...localConfig,
+  ...authMutations,
   ...serverConfirm,
   ...localCrud,
   ...watcher

@@ -1,7 +1,7 @@
 /**
  * The **mutations** associated to the Firebase Auth API.
  */
-export const localConfig = {
+export const authMutations = {
     signInWithEmailAndPassword(state, userCredential) {
         if (userCredential.user) {
             state.currentUser = {
