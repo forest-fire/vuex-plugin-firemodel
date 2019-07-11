@@ -17,11 +17,11 @@ exports.authActions = {
             const db = await database_1.database();
             const auth = await db.auth();
             const userCredential = await auth.signInWithEmailAndPassword(email, password);
-            commit("@firebase/signInWithEmailAndPassword", userCredential);
+            commit("@firemodel/signInWithEmailAndPassword", userCredential);
             return userCredential;
         }
         catch (e) {
-            commit("@firebase/error", {
+            commit("@firemodel/error", {
                 stack: e.stack,
                 message: `Failure to login user [${email}]: ${e.message} [ ${e.code} ${e.name} ]`
             });
