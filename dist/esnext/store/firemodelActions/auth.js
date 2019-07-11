@@ -15,11 +15,11 @@ export const authActions = {
             const db = await database();
             const auth = await db.auth();
             const userCredential = await auth.signInWithEmailAndPassword(email, password);
-            commit("@firemodel/signInWithEmailAndPassword", userCredential);
+            commit("signInWithEmailAndPassword", userCredential);
             return userCredential;
         }
         catch (e) {
-            commit("@firemodel/error", {
+            commit("error", {
                 stack: e.stack,
                 message: `Failure to login user [${email}]: ${e.message} [ ${e.code} ${e.name} ]`
             });
@@ -36,11 +36,11 @@ export const authActions = {
             const db = await database();
             const auth = await db.auth();
             const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-            commit("@firebase/createUserWithEmailAndPassword", userCredential);
+            commit("createUserWithEmailAndPassword", userCredential);
             return userCredential;
         }
         catch (e) {
-            commit("@firebase/error", {
+            commit("error", {
                 stack: e.stack,
                 message: `Failure to create user: ${e.message} [ ${e.code} ${e.name} ]`
             });
@@ -49,7 +49,7 @@ export const authActions = {
     },
     /**
      * Sends a password reset email to the given email address.
-     * To complete the password reset, dispatch `@firemodel/confirmPasswordReset` with
+     * To complete the password reset, dispatch `confirmPasswordReset` with
      * the code supplied in the email sent to the user, along with the new password
      * specified by the user.
      */
@@ -58,10 +58,10 @@ export const authActions = {
             const db = await database();
             const auth = await db.auth();
             await auth.sendPasswordResetEmail(email, actionCodeSettings);
-            commit("@firebase/sendPasswordResetEmail");
+            commit("sendPasswordResetEmail");
         }
         catch (e) {
-            commit("@firebase/error", {
+            commit("error", {
                 stack: e.stack,
                 message: `Failure to send password-reset email: ${e.message} [ ${e.code} ${e.name} ]`
             });
@@ -77,10 +77,10 @@ export const authActions = {
             const db = await database();
             const auth = await db.auth();
             await auth.confirmPasswordReset(code, newPassword);
-            commit("@firebase/confirmPasswordReset");
+            commit("confirmPasswordReset");
         }
         catch (e) {
-            commit("@firebase/error", {
+            commit("error", {
                 stack: e.stack,
                 message: `Failured to confirm password reset: ${e.message} [ ${e.code} ${e.name} ]`
             });
@@ -96,11 +96,11 @@ export const authActions = {
             const db = await database();
             const auth = await db.auth();
             const email = await auth.verifyPasswordResetCode(code);
-            commit("@firemodel/verifyPasswordResetCode", email);
+            commit("verifyPasswordResetCode", email);
             return email;
         }
         catch (e) {
-            commit("@firebase/error", {
+            commit("error", {
                 stack: e.stack,
                 message: `Failure to verify password reset code: ${e.message} [ ${e.code} ${e.name} ]`
             });
@@ -113,16 +113,16 @@ export const authActions = {
      */
     async updateEmail({ commit, state }, newEmail) {
         if (!state.currentUser) {
-            commit("@firebase/error", `The updateEmail dispatch was dispatched but the current user profile is empty!`);
+            commit("error", `The updateEmail dispatch was dispatched but the current user profile is empty!`);
             throw new FireModelPluginError(`The updateEmail dispatch was dispatched but the current user profile is empty!`, "not-ready");
         }
         try {
             const user = state.currentUser;
             await user.fullProfile.updateEmail(newEmail);
-            commit("@firemodel/updateEmail", { uid: user.uid, email: newEmail });
+            commit("updateEmail", { uid: user.uid, email: newEmail });
         }
         catch (e) {
-            commit("@firebase/error", {
+            commit("error", {
                 stack: e.stack,
                 message: `Failure to update the logged in user's email address: ${e.message} [ ${e.code} ${e.name} ]`
             });
@@ -137,16 +137,16 @@ export const authActions = {
      */
     async updatePassword({ commit, state }, newPassword) {
         if (!state.currentUser) {
-            commit("@firebase/error", `The updatePassword dispatch was dispatched but the current user profile is empty!`);
+            commit("error", `The updatePassword dispatch was dispatched but the current user profile is empty!`);
             throw new FireModelPluginError(`The updateEmail dispatch was dispatched but the current user profile is empty!`, "not-ready");
         }
         try {
             const user = state.currentUser;
             await user.fullProfile.updatePassword(newPassword);
-            commit("@firemodel/updateEmail", { uid: user.uid, email: newPassword });
+            commit("updateEmail", { uid: user.uid, email: newPassword });
         }
         catch (e) {
-            commit("@firebase/error", {
+            commit("error", {
                 stack: e.stack,
                 message: `Failure to update the logged in user's email address: ${e.message} [ ${e.code} ${e.name} ]`
             });
@@ -161,10 +161,10 @@ export const authActions = {
             const db = await database();
             const auth = await db.auth();
             const email = await auth.signOut();
-            commit("@firemodel/signOut", email);
+            commit("signOut", email);
         }
         catch (e) {
-            commit("@firebase/error", {
+            commit("error", {
                 stack: e.stack,
                 message: `Failure to sign out of Firebase: ${e.message}`
             });

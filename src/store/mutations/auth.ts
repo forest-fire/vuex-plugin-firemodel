@@ -7,7 +7,7 @@ import { IFiremodelAbbreviatedUser } from "../../types";
 /**
  * The **mutations** associated to the Firebase Auth API.
  */
-export const localConfig: MutationTree<IFiremodelState> = {
+export const authMutations: MutationTree<IFiremodelState> = {
   signInWithEmailAndPassword(state, userCredential: UserCredential) {
     if (userCredential.user) {
       state.currentUser = {
