@@ -3,4 +3,4 @@ import { IFiremodelState } from "../..";
 /**
  * The **mutations** associated to the Firebase Auth API.
  */
-export declare const localConfig: MutationTree<IFiremodelState>;
+export declare const authMutations: MutationTree<IFiremodelState>;
