@@ -1,6 +1,6 @@
 import { ActionTree } from "vuex";
 
-import { IFiremodelState, IGenericStateTree } from "../..";
+import { IFiremodelState, IGenericStateTree } from "../../index";
 import { database } from "../../shared/database";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
 import { ActionCodeSettings } from "@firebase/auth-types";
