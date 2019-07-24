@@ -11,6 +11,7 @@ export const authMutations = {
                 isAnonymous: userCredential.user.isAnonymous,
                 fullProfile: userCredential.user
             };
+            state.authenticated = "logged-in";
         }
     },
     createUserWithEmailAndPassword(state, userCredential) {
