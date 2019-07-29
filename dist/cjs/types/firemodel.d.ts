@@ -1,6 +1,8 @@
 import { IFirebaseClientConfig } from "abstracted-firebase";
-import { IFmQueuedAction, IFmWatchItem, IFmLocalChange } from ".";
+import { IFmQueuedAction, IFmWatchItem } from ".";
 import { User } from "@firebase/auth-types";
+import { IFmLocalEvent } from "firemodel";
+import { IDictionary } from "common-types";
 export interface IFiremodelAbbreviatedUser {
     uid: string;
     isAnonymous: boolean;
@@ -25,10 +27,11 @@ export interface IFiremodelState<T> {
     /** which DB paths are being watched */
     watching: IFmWatchItem[];
     /**
-     * which records are updated locally but waiting
-     * for write sync with database
+     * Records or relationships which have been updated _locally_ but are awaiting
+     * confirmation from the database. Each entry is offset by the `transactionId`
+     * which **Firemodel** provides.
      */
-    localOnly: IFmLocalChange[];
+    localOnly: IDictionary<IFmLocalEvent<T>>;
     /** if there was an error the the message will be displayed here */
     errors?: string[];
 }

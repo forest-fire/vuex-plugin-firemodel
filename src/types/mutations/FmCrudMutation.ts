@@ -4,8 +4,17 @@ export const enum FmCrudMutation {
   addedLocally = "ADDED_LOCALLY",
   removedLocally = "REMOVED_LOCALLY",
 
-  relationshipAdded = "RELATIONSHIP_ADDED",
-  relationshipRemoved = "RELATIONSHIP_REMOVED",
+  relationshipAddedLocally = "RELATIONSHIP_ADDED_LOCALLY",
+  relationshipRemovedLocally = "RELATIONSHIP_REMOVED_LOCALLY",
+  relationshipSetLocally = "RELATIONSHIP_SET_LOCALLY",
+
+  relationshipAddConfirmation = "RELATIONSHIP_ADDED_CONFIRMATION",
+  relationshipRemovedConfirmation = "RELATIONSHIP_REMOVED_CONFIRMATION",
+  relationshipSetConfirmation = "RELATIONSHIP_SET_CONFIRMATION",
+
+  relationshipAddRollback = "RELATIONSHIP_ADDED_ROLLBACK",
+  relationshipRemovedRollback = "RELATIONSHIP_REMOVED_ROLLBACK",
+  relationshipSetRollback = "RELATIONSHIP_SET_ROLLBACK",
 
   // Client originated changes CONFIRMED
   serverAddConfirm = "ADD_CONFIRMATION",
