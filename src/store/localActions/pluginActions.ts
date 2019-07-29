@@ -1,5 +1,4 @@
 import { FireModel, Record, List, Watch } from "firemodel";
-import { DB } from "abstracted-client";
 import { ActionTree } from "vuex";
 import {
   IFiremodelState,

@@ -1,6 +1,6 @@
 import { pathJoin } from "common-types";
 
-import { IFmRecordEvent } from "firemodel";
+import { IFmWatchEvent } from "firemodel";
 
 /**
  * **pathToState**
@@ -8,6 +8,12 @@ import { IFmRecordEvent } from "firemodel";
  * Takes a **Firemodel** server event and determines the
  * appropriate path to the local state node.
  */
-export function determineLocalStateNode(payload: IFmRecordEvent, mutation: string) {
-  return pathJoin(payload.localPath.replace(`/${payload.localPostfix}`, ""), mutation);
+export function determineLocalStateNode(
+  payload: IFmWatchEvent,
+  mutation: string
+) {
+  return pathJoin(
+    payload.localPath.replace(`/${payload.localPostfix}`, ""),
+    mutation
+  );
 }
