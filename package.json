@@ -9,6 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "vuepress dev docs",
     "build": "yarn tsc -P tsconfig.esnext.json && yarn tsc -P tsconfig.json",
+    "watch": "yarn tsc --watch -P tsconfig.json",
     "build:docs": "vuepress build docs"
   },
   "repository": {
@@ -30,7 +31,7 @@
   "homepage": "https://github.com/forest-fire/vuex-plugin-firemodel#readme",
   "dependencies": {
     "abstracted-client": "^0.30.0",
-    "firemodel": "^0.30.0",
+    "firemodel": "^0.30.2",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "vuex": "^3.1.1"

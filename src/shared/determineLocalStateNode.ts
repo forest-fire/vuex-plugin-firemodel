@@ -1,5 +1,4 @@
 import { pathJoin } from "common-types";
-
 import { IFmWatchEvent } from "firemodel";
 
 /**
@@ -13,7 +12,7 @@ export function determineLocalStateNode(
   mutation: string
 ) {
   return pathJoin(
-    payload.localPath.replace(`/${payload.localPostfix}`, ""),
+    (payload.localPath || "").replace(`/${payload.localPostfix}`, ""),
     mutation
   );
 }

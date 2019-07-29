@@ -6,5 +6,5 @@ import { pathJoin } from "common-types";
  * appropriate path to the local state node.
  */
 export function determineLocalStateNode(payload, mutation) {
-    return pathJoin(payload.localPath.replace(`/${payload.localPostfix}`, ""), mutation);
+    return pathJoin((payload.localPath || "").replace(`/${payload.localPostfix}`, ""), mutation);
 }
