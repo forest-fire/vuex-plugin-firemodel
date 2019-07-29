@@ -17,18 +17,14 @@ export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
 
-/**
- * We know that the root state will include the **@firemodel** state tree
- * but otherwise we will accept a generic understanding of the rest of the
- * state tree as this plugin has no means of leveraging any specifics.
- */
-export interface IGenericStateTree extends IDictionary {
-  "@firemodel": IFiremodelState;
-}
-
-export let configuration: IFiremodelPluginConfig;
+export let configuration: IFiremodelPluginConfig<any>;
 export let dbConfig: IFirebaseClientConfig;
 export let firemodelVuex: Store<any>;
+let _store;
+export const setStore = <T>(store: Store<T>) => {
+  _store = store;
+};
+
 let _db: DB;
 let _auth: FirebaseAuth;
 
@@ -64,10 +60,11 @@ export function setAuth(auth: FirebaseAuth) {
   _auth = auth;
 }
 
-const FirePlugin = (config: IFiremodelPluginConfig) => {
+const FirePlugin = <T>(config: IFiremodelPluginConfig<T>) => {
   configuration = config;
-  return (store: Store<any>) => {
-    firemodelVuex = store;
+  type IRootState = T & { "@firemodel": IFiremodelState<T> };
+  return (store: Store<IRootState>) => {
+    setStore(store);
     FireModel.dispatch = store.dispatch;
 
     store.subscribe((mutation, state) => {
@@ -86,8 +83,9 @@ const FirePlugin = (config: IFiremodelPluginConfig) => {
       }
     });
 
-    store.registerModule("@firemodel", FiremodelModule);
-    queueLifecycleEvents(store, config).then(() =>
+    store.registerModule("@firemodel", FiremodelModule<IRootState>());
+
+    queueLifecycleEvents<IRootState>(store, config).then(() =>
       coreServices(store, { ...{ connect: true }, ...config })
     );
   };
@@ -95,9 +93,9 @@ const FirePlugin = (config: IFiremodelPluginConfig) => {
 
 export default FirePlugin;
 
-async function queueLifecycleEvents<T = IGenericStateTree>(
+async function queueLifecycleEvents<T>(
   store: Store<T>,
-  config?: IFiremodelPluginConfig
+  config?: IFiremodelPluginConfig<T>
 ) {
   if (!config) {
     throw new FireModelPluginError(
@@ -117,23 +115,23 @@ async function queueLifecycleEvents<T = IGenericStateTree>(
 
   for (const i of iterable) {
     const [name, event] = i;
-    if (config[name as keyof IFiremodelPluginConfig]) {
+    if (config[name as keyof IFiremodelPluginConfig<T>]) {
       const empty = () => Promise.resolve();
       const cb: FmCallback = config[
-        name as keyof IFiremodelPluginConfig
+        name as keyof IFiremodelPluginConfig<T>
       ] as any;
       await store.commit(addNamespace(FmConfigMutation.queueHook), {
         on: event,
         name: `lifecycle-event-${event}`,
         cb
-      } as IFmQueuedAction);
+      } as IFmQueuedAction<T>);
     }
   }
 }
 
-async function coreServices<T = IGenericStateTree>(
+async function coreServices<T>(
   store: Store<T>,
-  config: IFiremodelPluginConfig
+  config: IFiremodelPluginConfig<T>
 ) {
   if (config.connect) {
     await store.dispatch(addNamespace(FmConfigAction.connect), config.db);

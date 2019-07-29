@@ -7,7 +7,7 @@ const FiremodelPluginError_1 = require("../../errors/FiremodelPluginError");
  *
  * The Firebase AUTH actions which this plugin will execute for the user
  */
-exports.authActions = {
+exports.authActions = () => ({
     /**
      * Sends a email and password trying to auth on firebase module `signInWithEmailAndPassword`.
      * For more see [API docs](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#signinwithemailandpassword).
@@ -173,5 +173,5 @@ exports.authActions = {
             throw e;
         }
     }
-};
+});
 //# sourceMappingURL=auth.js.map

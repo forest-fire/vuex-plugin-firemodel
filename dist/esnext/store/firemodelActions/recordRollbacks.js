@@ -1,6 +1,6 @@
 import { FmEvents } from "firemodel";
 import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
-export const recordRollbacks = {
+export const recordRollbacks = () => ({
     [FmEvents.RECORD_ADDED_ROLLBACK]({ commit, state }, payload) {
         commit("ROLLBACK_ADD" /* serverAddRollback */, payload);
         commit(determineLocalStateNode(payload, "ROLLBACK_ADD" /* serverAddRollback */), payload, {
@@ -19,4 +19,4 @@ export const recordRollbacks = {
             root: true
         });
     }
-};
+});

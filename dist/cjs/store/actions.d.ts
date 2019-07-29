@@ -1,3 +1,3 @@
-export declare const actions: {
-    [x: string]: import("vuex").Action<import("..").IFiremodelState, import("..").IGenericStateTree>;
-};
+import { ActionTree } from "vuex";
+import { IFiremodelState } from "../types";
+export declare const actions: <T>() => ActionTree<IFiremodelState<T>, T>;

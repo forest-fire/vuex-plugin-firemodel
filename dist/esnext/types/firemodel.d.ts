@@ -8,7 +8,7 @@ export interface IFiremodelAbbreviatedUser {
     emailVerified: boolean;
     fullProfile: User;
 }
-export interface IFiremodelState {
+export interface IFiremodelState<T> {
     /** the configuration used to connect to the Firebase DB */
     config?: IFirebaseClientConfig;
     /** a list of custom claims that this user has */
@@ -21,7 +21,7 @@ export interface IFiremodelState {
     /**
      * callbacks which are queued to be executed when a lifecycle state is achieved
      */
-    queued: IFmQueuedAction[];
+    queued: IFmQueuedAction<T>[];
     /** which DB paths are being watched */
     watching: IFmWatchItem[];
     /**

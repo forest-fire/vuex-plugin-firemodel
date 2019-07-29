@@ -1,4 +1,4 @@
-export const serverConfirm = {
+export const serverConfirm = () => ({
     ["ADD_CONFIRMATION" /* serverAddConfirm */](state, payload) {
         state.localOnly = state.localOnly.filter(i => i.dbPath !== payload.dbPath);
     },
@@ -8,4 +8,4 @@ export const serverConfirm = {
     ["REMOVE_CONFIRMATION" /* serverRemoveConfirm */](state, payload) {
         state.localOnly = state.localOnly.filter(i => i.dbPath !== payload.dbPath);
     }
-};
+});

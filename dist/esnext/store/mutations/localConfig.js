@@ -1,7 +1,7 @@
 /**
  * The **mutations** scoped to the local configuration of Firebase
  */
-export const localConfig = {
+export const localConfig = () => ({
     ["CORE_SERVICES_STARTED" /* coreServicesStarted */]: state => {
         //
     },
@@ -56,4 +56,4 @@ export const localConfig = {
     ["LIFECYCLE_EVENT_COMPLETED" /* lifecycleEventCompleted */](state, event) {
         //
     }
-};
+});

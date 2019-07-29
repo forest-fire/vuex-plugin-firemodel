@@ -12,6 +12,10 @@ const FiremodelPluginError_1 = require("./errors/FiremodelPluginError");
 const addNamespace_1 = require("./shared/addNamespace");
 __export(require("./firemodelMutations/index"));
 __export(require("firemodel"));
+let _store;
+exports.setStore = (store) => {
+    _store = store;
+};
 let _db;
 let _auth;
 async function getDb(config) {
@@ -43,7 +47,7 @@ exports.setAuth = setAuth;
 const FirePlugin = (config) => {
     exports.configuration = config;
     return (store) => {
-        exports.firemodelVuex = store;
+        exports.setStore(store);
         firemodel_1.FireModel.dispatch = store.dispatch;
         store.subscribe((mutation, state) => {
             if (mutation.type === "route/ROUTE_CHANGED") {
@@ -52,7 +56,7 @@ const FirePlugin = (config) => {
                     List: firemodel_1.List, dispatch: store.dispatch, state: store.state, commit: store.commit }, mutation.payload));
             }
         });
-        store.registerModule("@firemodel", store_1.FiremodelModule);
+        store.registerModule("@firemodel", store_1.FiremodelModule());
         queueLifecycleEvents(store, config).then(() => coreServices(store, Object.assign({ connect: true }, config)));
     };
 };

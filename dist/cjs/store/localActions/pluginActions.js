@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const firemodel_1 = require("firemodel");
-const __1 = require("../..");
+const index_1 = require("../../index");
 const FmConfigActions_1 = require("../../types/actions/FmConfigActions");
 const FiremodelPluginError_1 = require("../../errors/FiremodelPluginError");
 const database_1 = require("../../shared/database");
@@ -10,7 +10,7 @@ const database_1 = require("../../shared/database");
  *
  * The core services that this plugin provides are exposed as Vuex actions
  */
-exports.pluginActions = {
+exports.pluginActions = () => ({
     /**
      * **connect**
      *
@@ -103,7 +103,6 @@ exports.pluginActions = {
         };
         const authChanged = (user) => {
             if (user) {
-                const fm = state["@firemodel"];
                 // if (state.currentUser && fm.currentUser.uid !== user.uid) {
                 //   if (state.currentUser)
                 //     commit(FmConfigMutation.userLoggedIn, {
@@ -143,7 +142,7 @@ exports.pluginActions = {
      * Enables lifecycle hooks for route changes
      */
     async [FmConfigActions_1.FmConfigAction.watchRouteChanges]({ dispatch, commit, rootState }) {
-        if (__1.configuration.onRouteChange) {
+        if (index_1.configuration.onRouteChange) {
             const ctx = {
                 Watch: firemodel_1.Watch,
                 Record: firemodel_1.Record,
@@ -155,7 +154,7 @@ exports.pluginActions = {
             runQueue(ctx, "route-changed");
         }
     }
-};
+});
 /**
  * **runQueue**
  *

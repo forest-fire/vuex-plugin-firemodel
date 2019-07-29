@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const firemodel_1 = require("firemodel");
 const determineLocalStateNode_1 = require("../../shared/determineLocalStateNode");
-exports.recordConfirms = {
+exports.recordConfirms = () => ({
     [firemodel_1.FmEvents.RECORD_ADDED_CONFIRMATION]({ commit, state }, payload) {
         commit("ADD_CONFIRMATION" /* serverAddConfirm */, payload);
         commit(determineLocalStateNode_1.determineLocalStateNode(payload, "ADD_CONFIRMATION" /* serverAddConfirm */), payload, {
@@ -21,5 +21,5 @@ exports.recordConfirms = {
             root: true
         });
     }
-};
+});
 //# sourceMappingURL=recordConfirms.js.map

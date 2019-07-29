@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const firemodel_1 = require("firemodel");
 const determineLocalStateNode_1 = require("../../shared/determineLocalStateNode");
-exports.recordRollbacks = {
+exports.recordRollbacks = () => ({
     [firemodel_1.FmEvents.RECORD_ADDED_ROLLBACK]({ commit, state }, payload) {
         commit("ROLLBACK_ADD" /* serverAddRollback */, payload);
         commit(determineLocalStateNode_1.determineLocalStateNode(payload, "ROLLBACK_ADD" /* serverAddRollback */), payload, {
@@ -21,5 +21,5 @@ exports.recordRollbacks = {
             root: true
         });
     }
-};
+});
 //# sourceMappingURL=recordRollbacks.js.map

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const localChange_1 = require("../../shared/localChange");
-exports.localCrud = {
+exports.localCrud = () => ({
     ["ADDED_LOCALLY" /* addedLocally */](state, payload) {
         const p = payload;
         state.localOnly = state.localOnly.concat({
@@ -25,5 +25,5 @@ exports.localCrud = {
     ["REMOVED_LOCALLY" /* removedLocally */](state, payload) {
         state.localOnly = state.localOnly.concat(localChange_1.localChange(payload));
     }
-};
+});
 //# sourceMappingURL=localCrud.js.map
