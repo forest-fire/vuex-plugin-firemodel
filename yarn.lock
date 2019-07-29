@@ -3347,10 +3347,10 @@ firemock@^0.27.8:
     lodash.set "^4.3.2"
     typed-conversions "^0.10.1"
 
-firemodel@^0.30.3:
-  version "0.30.3"
-  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.30.3.tgz#623b81fbdcf94726f3c13c073292ffee7b0252c8"
-  integrity sha512-pjI99WvEC+DTCE3Wt7CBArnJCqKCtFMDKgmOmtf0P8A4Mj+MV2Pu7FSI2+iTbQB7jxEX0wq3ECUuoNvMFDmPwA==
+firemodel@^0.30.4:
+  version "0.30.4"
+  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.30.4.tgz#05f08b4c1f6c3d6f01c2b1bc919a8756fe76a312"
+  integrity sha512-dJZzz0vwW7+HqOBsk7S3M3b10jsPNvY2GJAVnwtpRzeTFO52IV6gjWOEw/DqS+X4+SGLT3hXQf1hKboYGD4Uhg==
   dependencies:
     abstracted-firebase "^0.30.0"
     common-types "^1.11.15"

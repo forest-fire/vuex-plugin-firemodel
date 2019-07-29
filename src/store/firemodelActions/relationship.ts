@@ -1,6 +1,7 @@
 import { ActionTree } from "vuex";
 import { IFiremodelState } from "../../index";
 import { FmEvents, IFmLocalRelationshipEvent } from "firemodel";
+import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
 
 export const relationship = <T>() =>
   ({
@@ -8,44 +9,38 @@ export const relationship = <T>() =>
       { commit, rootState },
       payload: IFmLocalRelationshipEvent
     ) {
-      // TODO: implement
-      console.log("relationship added locally", payload);
+      commit(FmCrudMutation.relationshipAddedLocally, payload);
     },
     async [FmEvents.RELATIONSHIP_REMOVED_LOCALLY](
       { commit, rootState },
       payload: IFmLocalRelationshipEvent
     ) {
-      // TODO: implement
-      console.log("relationship removed locally", payload);
+      commit(FmCrudMutation.relationshipRemovedLocally, payload);
     },
     async [FmEvents.RELATIONSHIP_SET_LOCALLY](
       { commit, rootState },
       payload: IFmLocalRelationshipEvent
     ) {
-      // TODO: implement
-      console.log("relationship set locally", payload);
+      commit(FmCrudMutation.relationshipSetLocally, payload);
     },
 
     async [FmEvents.RELATIONSHIP_ADDED_CONFIRMATION](
       { commit, rootState },
       payload: IFmLocalRelationshipEvent
     ) {
-      // TODO: implement
-      console.log("relationship add confirmed", payload);
+      commit(FmCrudMutation.relationshipAddConfirmation, payload);
     },
     async [FmEvents.RELATIONSHIP_REMOVED_CONFIRMATION](
       { commit, rootState },
       payload: IFmLocalRelationshipEvent
     ) {
-      // TODO: implement
-      console.log("relationship remove confirmed", payload);
+      commit(FmCrudMutation.relationshipRemovedConfirmation, payload);
     },
     async [FmEvents.RELATIONSHIP_SET_CONFIRMATION](
       { commit, rootState },
       payload: IFmLocalRelationshipEvent
     ) {
-      // TODO: implement
-      console.log("relationship set confirmed", payload);
+      commit(FmCrudMutation.relationshipSetConfirmation, payload);
     },
 
     async [FmEvents.RELATIONSHIP_ADDED_ROLLBACK](

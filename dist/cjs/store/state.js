@@ -8,6 +8,6 @@ exports.state = () => ({
     status: "unconfigured",
     queued: [],
     watching: [],
-    localOnly: []
+    localOnly: {}
 });
 //# sourceMappingURL=state.js.map
