@@ -51,7 +51,7 @@ like so:
 const store = new Vuex.Store<IRootState>({
   // ...
   plugins: [
-    FirePlugin(config)
+    FirePlugin<IRootState>(config)
   ]
 }
 ```
@@ -139,7 +139,7 @@ You dispatch with:
 const { dispatch } from './store';
 let user: UserCredential;
 try {
-  const user = await dispatch('@firemodel/createUserWithEmailAndPassord', {
+  const user = await dispatch('@firemodel/signInWithEmailAndPassword', {
     email: string,
     password: string
   })

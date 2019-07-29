@@ -28,7 +28,7 @@ const store = new Vuex.Store<IRootState>({
     ...
   },
   plugins: [
-    FirePlugin( config ),
+    FirePlugin<IRootState>( config ),
     // any other plugins you are using
   ],
 })
