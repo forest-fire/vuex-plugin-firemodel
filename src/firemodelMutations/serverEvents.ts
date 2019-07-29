@@ -1,7 +1,7 @@
 import { MutationTree } from "vuex";
 import { IDictionary } from "firemock";
 import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
-import { IFmContextualizedWatchEvent, Model } from "firemodel";
+import { Model, IFmWatchEvent } from "firemodel";
 import { changeRoot } from "../shared/changeRoot";
 import { updateList } from "../shared/updateList";
 
@@ -14,7 +14,7 @@ export function serverEvents<T>(propOffset?: keyof T): MutationTree<T> {
        * of records at the root of the state structure
        */
       state: T,
-      payload: IFmContextualizedWatchEvent<T>
+      payload: IFmWatchEvent<T>
     ) {
       const isRecord = payload.watcherSource === "record";
       if (isRecord) {
@@ -30,7 +30,7 @@ export function serverEvents<T>(propOffset?: keyof T): MutationTree<T> {
        * of records at the root of the state structure
        */
       state: T,
-      payload: IFmContextualizedWatchEvent<Model>
+      payload: IFmWatchEvent<Model>
     ) {
       const isRecord = payload.watcherSource === "record";
       if (payload.value === null) {
@@ -53,7 +53,7 @@ export function serverEvents<T>(propOffset?: keyof T): MutationTree<T> {
        * of records at the root of the state structure
        */
       state: T,
-      payload: IFmContextualizedWatchEvent<Model>
+      payload: IFmWatchEvent<Model>
     ) {
       const isRecord = payload.watcherSource === "record";
 
