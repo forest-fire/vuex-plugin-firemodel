@@ -1,6 +1,6 @@
 import { FmEvents } from "firemodel";
 import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
-export const recordServerChanges = {
+export const recordServerChanges = () => ({
     [FmEvents.RECORD_ADDED]({ commit }, payload) {
         commit(determineLocalStateNode(payload, "SERVER_ADD" /* serverAdd */), payload, {
             root: true
@@ -17,4 +17,4 @@ export const recordServerChanges = {
             root: true
         });
     }
-};
+});

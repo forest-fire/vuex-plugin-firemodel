@@ -1,5 +1,5 @@
 import { FireModel, Record, List, Watch } from "firemodel";
-import { configuration } from "../..";
+import { configuration } from "../../index";
 import { FmConfigAction } from "../../types/actions/FmConfigActions";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
 import { database } from "../../shared/database";
@@ -8,7 +8,7 @@ import { database } from "../../shared/database";
  *
  * The core services that this plugin provides are exposed as Vuex actions
  */
-export const pluginActions = {
+export const pluginActions = () => ({
     /**
      * **connect**
      *
@@ -101,7 +101,6 @@ export const pluginActions = {
         };
         const authChanged = (user) => {
             if (user) {
-                const fm = state["@firemodel"];
                 // if (state.currentUser && fm.currentUser.uid !== user.uid) {
                 //   if (state.currentUser)
                 //     commit(FmConfigMutation.userLoggedIn, {
@@ -153,7 +152,7 @@ export const pluginActions = {
             runQueue(ctx, "route-changed");
         }
     }
-};
+});
 /**
  * **runQueue**
  *

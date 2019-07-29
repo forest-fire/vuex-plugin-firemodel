@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const firemodel_1 = require("firemodel");
-exports.relationship = {
+exports.relationship = () => ({
     async [firemodel_1.FmEvents.RELATIONSHIP_ADDED_LOCALLY]({ commit, rootState }, payload) {
         // TODO: implement
         console.log("relationship added locally", payload);
@@ -38,5 +38,5 @@ exports.relationship = {
         // TODO: implement
         console.log("relationship set rolled back", payload);
     }
-};
+});
 //# sourceMappingURL=relationship.js.map

@@ -1,7 +1,7 @@
 /**
  * The **mutations** associated to the Firebase Auth API.
  */
-export const authMutations = {
+export const authMutations = () => ({
     signInWithEmailAndPassword(state, userCredential) {
         if (userCredential.user) {
             state.currentUser = {
@@ -35,4 +35,4 @@ export const authMutations = {
     signOut() {
         // no need to change state tree as the observer on onAuthChanged will address this
     }
-};
+});

@@ -1,5 +1,5 @@
 import { localChange } from "../../shared/localChange";
-export const localCrud = {
+export const localCrud = () => ({
     ["ADDED_LOCALLY" /* addedLocally */](state, payload) {
         const p = payload;
         state.localOnly = state.localOnly.concat({
@@ -23,4 +23,4 @@ export const localCrud = {
     ["REMOVED_LOCALLY" /* removedLocally */](state, payload) {
         state.localOnly = state.localOnly.concat(localChange(payload));
     }
-};
+});

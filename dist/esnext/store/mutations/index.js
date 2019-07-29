@@ -1,6 +1,6 @@
 import { localConfig } from "./localConfig";
 import { serverConfirm } from "./serverConfirm";
-import { authMutations } from './auth';
+import { authMutations } from "./auth";
 import { watcher } from "./watcher";
 import { localCrud } from "./localCrud";
 import { errorMutations } from "./errors";
@@ -9,4 +9,4 @@ import { errorMutations } from "./errors";
  * root of a state tree which is defined by the application but remains
  * unknown/generic to this plugin
  */
-export const mutations = Object.assign({}, errorMutations, localConfig, authMutations, serverConfirm, localCrud, watcher);
+export const mutations = () => (Object.assign({}, errorMutations(), localConfig(), authMutations(), serverConfirm(), localCrud(), watcher()));

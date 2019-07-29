@@ -1,3 +1,3 @@
 import { ActionTree } from "vuex";
-import { IFiremodelState, IGenericStateTree } from "../..";
-export declare const watch: ActionTree<IFiremodelState, IGenericStateTree>;
+import { IFiremodelState } from "../../index";
+export declare const watch: <T>() => ActionTree<IFiremodelState<T>, T>;

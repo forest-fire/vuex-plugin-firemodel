@@ -1,3 +1,3 @@
 import { ActionTree } from "vuex";
-import { IFiremodelState, IGenericStateTree } from "../..";
-export declare const recordServerChanges: ActionTree<IFiremodelState, IGenericStateTree>;
+import { IFiremodelState } from "../../index";
+export declare const recordServerChanges: <T>() => ActionTree<IFiremodelState<T>, T>;

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const firemodel_1 = require("firemodel");
 const determineLocalStateNode_1 = require("../../shared/determineLocalStateNode");
-exports.recordServerChanges = {
+exports.recordServerChanges = () => ({
     [firemodel_1.FmEvents.RECORD_ADDED]({ commit }, payload) {
         commit(determineLocalStateNode_1.determineLocalStateNode(payload, "SERVER_ADD" /* serverAdd */), payload, {
             root: true
@@ -19,5 +19,5 @@ exports.recordServerChanges = {
             root: true
         });
     }
-};
+});
 //# sourceMappingURL=recordServerChanges.js.map

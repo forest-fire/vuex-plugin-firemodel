@@ -13,10 +13,10 @@ const mutationTypes = Object.keys(index_1.mutations).filter(i => typeof i !== "f
 /**
  * The **Vuex** module that this plugin exports
  */
-exports.FiremodelModule = {
-    state: state_1.state,
-    mutations: index_1.mutations,
-    actions: actions_1.actions,
+exports.FiremodelModule = () => ({
+    state: state_1.state(),
+    mutations: index_1.mutations(),
+    actions: actions_1.actions(),
     namespaced: true
-};
+});
 //# sourceMappingURL=index.js.map

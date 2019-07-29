@@ -4,14 +4,12 @@ import {
   IFirebaseClientConfig
 } from "abstracted-firebase";
 import { Watch, Model, IModelOptions, Record, List } from "firemodel";
-import { DB } from "abstracted-client";
 import { Dispatch, Commit } from "vuex";
-import { IDictionary, timestring, datetime, epoch } from "common-types";
-import { IGenericStateTree } from "..";
+import { IDictionary, epoch } from "common-types";
 export * from "./firemodel";
 
 // TODO: add comment
-export interface IFmEventContext<T = IGenericStateTree> {
+export interface IFmEventContext<T> {
   Watch: typeof Watch;
   Record: typeof Record;
   List: typeof List;
@@ -27,9 +25,11 @@ export interface IFmUserInfo {
   email?: string | null;
   emailVerified: boolean;
 }
-export interface IFmAuthEventContext extends IFmEventContext, IFmUserInfo {}
+export interface IFmAuthEventContext<T>
+  extends IFmEventContext<T>,
+    IFmUserInfo {}
 
-export interface IFmLoginUpgradeEventContext extends IFmEventContext {
+export interface IFmLoginUpgradeEventContext<T> extends IFmEventContext<T> {
   uids: {
     before: {
       isAnonymous: boolean;
@@ -42,7 +42,7 @@ export interface IFmLoginUpgradeEventContext extends IFmEventContext {
   };
 }
 
-export interface IFmRouteEventContext extends IFmEventContext {
+export interface IFmRouteEventContext<T> extends IFmEventContext<T> {
   leaving: string;
   entering: string;
 }
@@ -50,14 +50,16 @@ export interface IFmRouteEventContext extends IFmEventContext {
 export type FmCallback = () => Promise<void>;
 
 // export type IFmSetupPlugin = (ctx: typeof actionTriggers) => FmCallback[];
-export type IFmOnConnect = (ctx: IFmEventContext) => Promise<void>;
-export type IFmOnDisconnect = (ctx: IFmEventContext) => Promise<void>;
-export type IFmOnLogin = (ctx: IFmAuthEventContext) => Promise<void>;
-export type IFmOnLogout = (ctx: IFmAuthEventContext) => Promise<void>;
-export type IFmUserUpgrade = (
-  ctx: IFmLoginUpgradeEventContext
+export type IFmOnConnect<T> = (ctx: IFmEventContext<T>) => Promise<void>;
+export type IFmOnDisconnect<T> = (ctx: IFmEventContext<T>) => Promise<void>;
+export type IFmOnLogin<T> = (ctx: IFmAuthEventContext<T>) => Promise<void>;
+export type IFmOnLogout<T> = (ctx: IFmAuthEventContext<T>) => Promise<void>;
+export type IFmUserUpgrade<T> = (
+  ctx: IFmLoginUpgradeEventContext<T>
 ) => Promise<void>;
-export type IFmRouteChanged = (ctx: IFmRouteEventContext) => Promise<void>;
+export type IFmRouteChanged<T> = (
+  ctx: IFmRouteEventContext<T>
+) => Promise<void>;
 
 /**
  * **Firemodel Config**
@@ -68,8 +70,8 @@ export type IFmRouteChanged = (ctx: IFmRouteEventContext) => Promise<void>;
  * 1. Turn on/off core services of this plugin
  * 2. Hook into _lifecycle_ events (typically to watch/unwatch certain db paths)
  */
-export interface IFiremodelConfig
-  extends IFiremodelLifecycleHooks,
+export interface IFiremodelConfig<T>
+  extends IFiremodelLifecycleHooks<T>,
     IFiremodelPluginCoreServices {
   /**
    * Firemodel must be able to connect to the database -- using
@@ -122,33 +124,33 @@ export interface IFiremodelPluginCoreServices {
   watchRouteChanges?: boolean;
 }
 
-export interface IFiremodelLifecycleHooks {
+export interface IFiremodelLifecycleHooks<T> {
   /**
    * A callback function which is executed any time the
    * database is connected
    */
-  onConnect?: IFmOnConnect;
+  onConnect?: IFmOnConnect<T>;
   /**
    * A callback function which is executed when the
    * database is disconnected
    */
-  onDisconnect?: IFmOnDisconnect;
+  onDisconnect?: IFmOnDisconnect<T>;
   /**
    * A callback function which is executed when firebase
    * logs in; this is true for both anonymous and known
    * users
    */
-  onLogin?: IFmOnLogin;
+  onLogin?: IFmOnLogin<T>;
   /**
    * A callback function which is executed when firebase
    * is logged out of (aka, not authenticated)
    */
-  onLogout?: IFmOnLogout;
+  onLogout?: IFmOnLogout<T>;
   /**
    * A callback function which is executed when firebase
    * upgrades an "anonymous" user to a "known" user
    */
-  onUserUpgrade?: IFmUserUpgrade;
+  onUserUpgrade?: IFmUserUpgrade<T>;
   /**
    * the path in the state tree where the "route" can be found;
    * it defaults to "route"
@@ -157,7 +159,7 @@ export interface IFiremodelLifecycleHooks {
   /**
    * A callback function which is executed every time the
    */
-  onRouteChange?: IFmRouteChanged;
+  onRouteChange?: IFmRouteChanged<T>;
 }
 
 export type IFmEventActions = "add" | "update" | "remove" | "unknown";
@@ -184,7 +186,7 @@ export type IFmLifecycleEvents =
   | "user-upgraded"
   | "route-changed";
 
-export interface IFmQueuedAction<T extends IFmEventContext = IFmEventContext> {
+export interface IFmQueuedAction<T> {
   /** a descriptive name for the queued action */
   name: string;
   /**
@@ -211,9 +213,7 @@ export interface IFmWatchItem {
   localPath: string;
 }
 
-export type IFmQueueCallaback<T extends IFmEventContext> = (
-  ctx: T
-) => Promise<void>;
+export type IFmQueueCallaback<T> = (ctx: IFmEventContext<T>) => Promise<void>;
 
 export interface IFmActionWatchRecord {
   id: string;

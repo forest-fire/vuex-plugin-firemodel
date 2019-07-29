@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * The **mutations** associated to the Firebase Auth API.
  */
-exports.authMutations = {
+exports.authMutations = () => ({
     signInWithEmailAndPassword(state, userCredential) {
         if (userCredential.user) {
             state.currentUser = {
@@ -37,5 +37,5 @@ exports.authMutations = {
     signOut() {
         // no need to change state tree as the observer on onAuthChanged will address this
     }
-};
+});
 //# sourceMappingURL=auth.js.map
