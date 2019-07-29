@@ -31,7 +31,7 @@
   "homepage": "https://github.com/forest-fire/vuex-plugin-firemodel#readme",
   "dependencies": {
     "abstracted-client": "^0.30.0",
-    "firemodel": "^0.30.2",
+    "firemodel": "^0.30.3",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "vuex": "^3.1.1"
@@ -41,16 +41,16 @@
     "@types/lodash.get": "^4.4.6",
     "@types/lodash.set": "^4.3.6",
     "@types/mocha": "^5.2.7",
-    "@vuepress/plugin-back-to-top": "^1.0.2",
-    "@vuepress/plugin-last-updated": "^1.0.2",
-    "@vuepress/plugin-medium-zoom": "^1.0.2",
-    "@vuepress/plugin-pwa": "^1.0.2",
+    "@vuepress/plugin-back-to-top": "^1.0.3",
+    "@vuepress/plugin-last-updated": "^1.0.3",
+    "@vuepress/plugin-medium-zoom": "^1.0.3",
+    "@vuepress/plugin-pwa": "^1.0.3",
     "chai": "^4.2.0",
     "firemock": "^0.27.8",
     "mocha": "^6.2.0",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
     "typescript": "^3.5.3",
-    "vuepress": "^1.0.2"
+    "vuepress": "^1.0.3"
   }
 }

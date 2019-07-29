@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.serverConfirm = {
+exports.serverConfirm = () => ({
     ["ADD_CONFIRMATION" /* serverAddConfirm */](state, payload) {
         state.localOnly = state.localOnly.filter(i => i.dbPath !== payload.dbPath);
     },
@@ -10,5 +10,5 @@ exports.serverConfirm = {
     ["REMOVE_CONFIRMATION" /* serverRemoveConfirm */](state, payload) {
         state.localOnly = state.localOnly.filter(i => i.dbPath !== payload.dbPath);
     }
-};
+});
 //# sourceMappingURL=serverConfirm.js.map

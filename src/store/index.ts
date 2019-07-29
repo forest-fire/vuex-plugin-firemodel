@@ -1,7 +1,6 @@
 import { IFmEventActions, IFiremodelState } from "../types";
 import { Module } from "vuex";
 import { ICompositeKey, Model } from "firemodel";
-import { IGenericStateTree } from "..";
 import { state } from "./state";
 import { mutations } from "./mutations/index";
 import { actions } from "./actions";
@@ -20,12 +19,14 @@ const mutationTypes = Object.keys(mutations).filter(
 );
 export type IFmConfigMutationTypes = keyof typeof mutationTypes;
 
+type FunctionToModule = <T>() => Module<IFiremodelState<T>, T>;
+
 /**
  * The **Vuex** module that this plugin exports
  */
-export const FiremodelModule: Module<IFiremodelState, IGenericStateTree> = {
-  state,
-  mutations,
-  actions,
+export const FiremodelModule: FunctionToModule = <T>() => ({
+  state: state<T>(),
+  mutations: mutations<T>(),
+  actions: actions<T>(),
   namespaced: true
-};
+});

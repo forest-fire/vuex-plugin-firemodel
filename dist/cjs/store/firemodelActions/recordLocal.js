@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const firemodel_1 = require("firemodel");
 const lodash_get_1 = __importDefault(require("lodash.get"));
 const determineLocalStateNode_1 = require("../../shared/determineLocalStateNode");
-exports.recordLocal = {
+exports.recordLocal = () => ({
     async [firemodel_1.FmEvents.RECORD_CHANGED_LOCALLY]({ commit, rootState }, payload) {
         const payloadPlus = Object.assign({}, payload, { priorValue: lodash_get_1.default(rootState, payload.localPath) });
         commit("CHANGED_LOCALLY" /* changedLocally */, payloadPlus);
@@ -27,5 +27,5 @@ exports.recordLocal = {
             root: true
         });
     }
-};
+});
 //# sourceMappingURL=recordLocal.js.map

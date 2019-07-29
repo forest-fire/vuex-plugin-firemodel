@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * The **mutations** scoped to the local configuration of Firebase
  */
-exports.localConfig = {
+exports.localConfig = () => ({
     ["CORE_SERVICES_STARTED" /* coreServicesStarted */]: state => {
         //
     },
@@ -58,5 +58,5 @@ exports.localConfig = {
     ["LIFECYCLE_EVENT_COMPLETED" /* lifecycleEventCompleted */](state, event) {
         //
     }
-};
+});
 //# sourceMappingURL=localConfig.js.map

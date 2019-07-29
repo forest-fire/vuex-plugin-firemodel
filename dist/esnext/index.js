@@ -10,6 +10,10 @@ export * from "firemodel";
 export let configuration;
 export let dbConfig;
 export let firemodelVuex;
+let _store;
+export const setStore = (store) => {
+    _store = store;
+};
 let _db;
 let _auth;
 export async function getDb(config) {
@@ -37,7 +41,7 @@ export function setAuth(auth) {
 const FirePlugin = (config) => {
     configuration = config;
     return (store) => {
-        firemodelVuex = store;
+        setStore(store);
         FireModel.dispatch = store.dispatch;
         store.subscribe((mutation, state) => {
             if (mutation.type === "route/ROUTE_CHANGED") {
@@ -46,7 +50,7 @@ const FirePlugin = (config) => {
                     List, dispatch: store.dispatch, state: store.state, commit: store.commit }, mutation.payload));
             }
         });
-        store.registerModule("@firemodel", FiremodelModule);
+        store.registerModule("@firemodel", FiremodelModule());
         queueLifecycleEvents(store, config).then(() => coreServices(store, Object.assign({ connect: true }, config)));
     };
 };

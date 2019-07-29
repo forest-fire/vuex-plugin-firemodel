@@ -1,5 +1,5 @@
 import { FmEvents } from "firemodel";
-export const relationship = {
+export const relationship = () => ({
     async [FmEvents.RELATIONSHIP_ADDED_LOCALLY]({ commit, rootState }, payload) {
         // TODO: implement
         console.log("relationship added locally", payload);
@@ -36,4 +36,4 @@ export const relationship = {
         // TODO: implement
         console.log("relationship set rolled back", payload);
     }
-};
+});
