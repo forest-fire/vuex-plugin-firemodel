@@ -1,13 +1,13 @@
 import { MutationTree } from "vuex";
 import { IFiremodelState } from "../..";
 import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
-import { IFmRecordEvent, IFmContextualizedWatchEvent } from "firemodel";
+import { IFmWatchEvent } from "firemodel";
 import { localChange } from "../../shared/localChange";
 
 export const localCrud: MutationTree<IFiremodelState> = {
   [FmCrudMutation.addedLocally](state, payload) {
     type payloadModel = typeof payload.modelConstructor;
-    const p: IFmRecordEvent<payloadModel> = payload;
+    const p: IFmWatchEvent<payloadModel> = payload;
     state.localOnly = state.localOnly.concat({
       action: "add",
       dbPath: p.dbPath,
@@ -19,7 +19,7 @@ export const localCrud: MutationTree<IFiremodelState> = {
 
   [FmCrudMutation.changedLocally](state, payload) {
     type payloadModel = typeof payload.modelConstructor;
-    const p: IFmRecordEvent<payloadModel> = payload;
+    const p: IFmWatchEvent<payloadModel> = payload;
     state.localOnly = state.localOnly.concat({
       action: "update",
       dbPath: p.dbPath,
@@ -31,7 +31,7 @@ export const localCrud: MutationTree<IFiremodelState> = {
 
   [FmCrudMutation.removedLocally](
     state: IFiremodelState,
-    payload: IFmContextualizedWatchEvent<IFiremodelState>
+    payload: IFmWatchEvent
   ) {
     state.localOnly = state.localOnly.concat(localChange(payload));
   }

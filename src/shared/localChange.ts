@@ -1,4 +1,4 @@
-import { IFmContextualizedWatchEvent, Record, FmEvents } from "firemodel";
+import { IFmWatchEvent, Record, FmEvents } from "firemodel";
 import { IFmLocalChange } from "../index";
 import { IFmEventActions } from "../types";
 import { IDictionary } from "firemock";
@@ -6,9 +6,7 @@ import { IDictionary } from "firemock";
 /**
  * converts a "local change" event into the right data structure
  */
-export function localChange(
-  event: IFmContextualizedWatchEvent
-): IFmLocalChange {
+export function localChange(event: IFmWatchEvent): IFmLocalChange {
   const record = Record.createWith(event.modelConstructor, event.value);
   return {
     dbPath: record.dbPath,

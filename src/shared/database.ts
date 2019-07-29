@@ -1,7 +1,8 @@
-import { DB, IFirebaseClientConfig } from "abstracted-client";
+import { DB, IFirebaseClientConfig, FirebaseAuth } from "abstracted-client";
 import { FireModelPluginError } from "../errors/FiremodelPluginError";
+import { RealTimeDB } from "abstracted-firebase";
 
-let _db: DB;
+let _db: RealTimeDB<FirebaseAuth>;
 /**
  * connects to a Firebase DB unless already connected in which case it
  * it just hands back the existing connection.

@@ -8,7 +8,7 @@ const common_types_1 = require("common-types");
  * appropriate path to the local state node.
  */
 function determineLocalStateNode(payload, mutation) {
-    return common_types_1.pathJoin(payload.localPath.replace(`/${payload.localPostfix}`, ""), mutation);
+    return common_types_1.pathJoin((payload.localPath || "").replace(`/${payload.localPostfix}`, ""), mutation);
 }
 exports.determineLocalStateNode = determineLocalStateNode;
 //# sourceMappingURL=determineLocalStateNode.js.map

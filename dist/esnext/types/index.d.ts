@@ -1,6 +1,5 @@
-import { IFirebaseClientConfig } from "abstracted-firebase";
+import { RealTimeDB, IFirebaseClientConfig } from "abstracted-firebase";
 import { Watch, Model, IModelOptions, Record, List } from "firemodel";
-import { DB } from "abstracted-client";
 import { Dispatch, Commit } from "vuex";
 import { IDictionary, epoch } from "common-types";
 import { IGenericStateTree } from "..";
@@ -9,7 +8,7 @@ export interface IFmEventContext<T = IGenericStateTree> {
     Watch: typeof Watch;
     Record: typeof Record;
     List: typeof List;
-    db?: DB;
+    db?: RealTimeDB;
     dispatch: Dispatch;
     commit: Commit;
     state: T;
