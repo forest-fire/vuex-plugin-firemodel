@@ -14,12 +14,12 @@ what we mean is that we should configure this plug so that we can "subscribe" to
 a series of "event streams" that represent change in the database that we care
 about.
 
-## Example Config
+## Basics
 
 Let's take the theory down a notch and look at an example configuration:
 
 ```typescript
-const config = {
+const config: IFirebaseConfig<IRootConfig> = {
   // config for Firebase DB
   db: {
     apiKey: "...",
@@ -56,14 +56,39 @@ const store = new Vuex.Store<IRootState>({
 }
 ```
 
-To understand what this is doing let's take it section by section.
+The details of this configuration will be explored in the following two sections:
 
-## Connect
+- **Core Services** - there are some opt-in/out services that you get out of the box like `connect` and `useAuth`.
+- **Lifecycle Hooks** - certain application lifecycle events are predictable and this plug-in makes it easy to take actions whenever these events are fired (all of the config under `lifecycle`) relates to that.
 
-### Firebase Config
+But before we move into these two sections let's look at some key _typings_ that will help you configure correctly:
+
+- `IFiremodelConfig<T>` - your configuration is fully typed and beyond just a "signature", it also includes comments:
+
+  ![typing support](./typing-support.png)
+
+  > Note that in our example we broke out the `config` as a separate variable so we had to explicitly state the typing but if you configure this plugin inline with the plugin (a reasonable enough thing) the typing will just come in "for free" (as is the case in this picture).
+
+- `IRootState` - this plugin assumes you are using Vuex _modules_ and that to garner typing information you would have already gathered your _state tree_ into a type. Right now, to get support not only for your modules but also for this plugin's typing you must do something like:
+
+    ```typescript
+      export interface IRootState {
+        orders: IOrdersState
+        customer: ICustomer
+        products: IProductsState
+        // TODO: this should be handled within the plugin
+        ['@firemodel']: IFiremodelState<IRootState>
+    }
+    ```
+
+  The intent is to remove this requirement but at the moment you do need to do this
+
+## Core Services
+
+### Connect
 
 We **must** provide this plugin with the appropriate Firebase config to allow it
-to connect to the database. This is nothing more than the data that Firebase
+to _connect_ to the database. This is nothing more than the data that Firebase
 provides to you as part of the "app settings". How you get there has changed a
 bit recently (and may change again) but the first step is to choose "project
 settings" (see below):
