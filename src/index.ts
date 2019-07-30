@@ -8,7 +8,7 @@ import { Store } from "vuex";
 import { FiremodelModule } from "./store";
 import { Watch, Record, List, FireModel } from "firemodel";
 import { DB, FirebaseAuth, IFirebaseClientConfig } from "abstracted-client";
-import { createError, IDictionary } from "common-types";
+import { createError } from "common-types";
 import { FmConfigMutation } from "./types/mutations/FmConfigMutation";
 import { FmConfigAction } from "./types/actions/FmConfigActions";
 import { FireModelPluginError } from "./errors/FiremodelPluginError";
@@ -60,7 +60,9 @@ export function setAuth(auth: FirebaseAuth) {
   _auth = auth;
 }
 
-const FirePlugin = <T>(config: IFiremodelPluginConfig<T>) => {
+export type IFiremodel<T> = { "@firemodel": IFiremodelState<T> };
+
+const FirePlugin = <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => {
   configuration = config;
   type IRootState = T & { "@firemodel": IFiremodelState<T> };
   return (store: Store<IRootState>) => {
