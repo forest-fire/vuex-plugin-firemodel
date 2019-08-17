@@ -12,7 +12,10 @@ export declare function getDb(config?: IFirebaseClientConfig): Promise<DB>;
 export declare function setDb(db: DB): void;
 export declare function getAuth(): Promise<import("@firebase/auth-types").FirebaseAuth>;
 export declare function setAuth(auth: FirebaseAuth): void;
-declare const FirePlugin: <T>(config: IFiremodelPluginConfig<T>) => (store: Store<T & {
+export declare type IFiremodel<T> = {
+    "@firemodel": IFiremodelState<T>;
+};
+declare const FirePlugin: <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => (store: Store<T & {
     "@firemodel": IFiremodelState<T>;
 }>) => void;
 export default FirePlugin;
