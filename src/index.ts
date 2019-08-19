@@ -5,7 +5,7 @@ import {
   FmCallback
 } from "./types";
 import { Store } from "vuex";
-import { FiremodelModule } from "./store";
+import { FiremodelModule, database } from "./store";
 import { Watch, Record, List, FireModel } from "firemodel";
 import { DB, FirebaseAuth, IFirebaseClientConfig } from "abstracted-client";
 import { createError } from "common-types";
@@ -28,28 +28,9 @@ export const setStore = <T>(store: Store<T>) => {
 let _db: DB;
 let _auth: FirebaseAuth;
 
-export async function getDb(config?: IFirebaseClientConfig): Promise<DB> {
-  if (!dbConfig) {
-    throw createError(
-      "firemodel-plugin/no-configuration",
-      `Attempt to instantiate the database without db configuration provided!`
-    );
-  }
-
-  if (!_db) {
-    setDb(await DB.connect(dbConfig));
-  }
-
-  return _db;
-}
-
-export function setDb(db: DB) {
-  db = _db;
-}
-
 export async function getAuth() {
   if (!_auth) {
-    const db = await getDb();
+    const db = await database();
     setAuth(await db.auth());
   }
 
@@ -137,9 +118,12 @@ async function coreServices<T>(
 ) {
   if (config.connect) {
     await store.dispatch(addNamespace(FmConfigAction.connect), config.db);
+    console.log("connected");
   }
 
   if (config.useAuth) {
+    console.log("useAuth");
+
     await store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config);
   }
 

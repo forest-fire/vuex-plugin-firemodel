@@ -41,6 +41,7 @@ export const pluginActions = <T>() =>
       try {
         commit(FmConfigMutation.connecting);
         const db = await database(config);
+
         if (!FireModel.defaultDb) {
           FireModel.defaultDb = db;
         }
@@ -101,7 +102,7 @@ export const pluginActions = <T>() =>
         ...user,
         state: rootState
       };
-      await runQueue(ctx, "logged-in");
+      // await runQueue(ctx, "logged-in");
     },
 
     /**
@@ -114,7 +115,7 @@ export const pluginActions = <T>() =>
      *
      * Also enables the appropriate lifecycle hooks: `onLogOut` and `onLogIn`
      */
-    async [FmConfigAction.firebaseAuth](store) {
+    async [FmConfigAction.firebaseAuth](store, config) {
       const { commit, rootState, dispatch, state } = store;
       const baseContext: Partial<IFmEventContext<T>> = {
         List,
@@ -124,46 +125,44 @@ export const pluginActions = <T>() =>
         dispatch,
         state: rootState
       };
-      const authChanged = (user?: User) => {
+
+      const authChanged = async (user: User | null) => {
+        const ctx: IFmAuthEventContext<T> = {
+          Watch,
+          Record,
+          List,
+          dispatch,
+          commit,
+          isAnonymous: user ? user.isAnonymous : false,
+          uid: user ? user.uid : "",
+          emailVerified: user ? user.emailVerified : false,
+          email: user ? user.email : "",
+          state: rootState
+        };
         if (user) {
-          // if (state.currentUser && fm.currentUser.uid !== user.uid) {
-          //   if (state.currentUser)
-          //     commit(FmConfigMutation.userLoggedIn, {
-          //       old: state.currentUser,
-          //       new: user
-          //     });
-          //   // deQueue(store, 'user-changed')
-          // } else if (!state.currentUser) {
-          //   commit(FmConfigMutation.userLoggedIn, user);
-          //   deQueue(
-          //     {
-          //       ...baseContext,
-          //       uid: user.uid,
-          //       isAnonymous: user.isAnonymous
-          //     } as IFmAuthEventContext,
-          //     "logged-in"
-          //   );
-          // }
+          commit(FmConfigMutation.queueHook, user);
+        } else {
+          commit(FmConfigMutation.userLoggedOut, user);
+        }
+
+        if (user) {
           commit(FmConfigMutation.userLoggedIn, {
-            isAnonymous: user.isAnonymous,
-            uid: user.uid,
-            email: user.email,
-            emailVerified: user.emailVerified
+            ...ctx
           });
+          await runQueue(ctx, "logged-in");
         } else {
           commit(FmConfigMutation.userLoggedOut);
-          if (state.currentUser) {
-            runQueue(
-              {
-                ...baseContext,
-                uid: state.currentUser.uid,
-                isAnonymous: state.currentUser.isAnonymous
-              } as IFmAuthEventContext<T>,
-              "logged-out"
-            );
-          }
+          await runQueue(ctx, "logged-out");
         }
       };
+      try {
+        const db = await database();
+        const auth = await db.auth();
+        auth.onAuthStateChanged(authChanged);
+      } catch (e) {
+        console.log("Problem hooking into onAuthStateChanged: ", e.message);
+        console.log(e.stack);
+      }
     },
 
     /**

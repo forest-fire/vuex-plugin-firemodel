@@ -34,7 +34,7 @@ exports.authMutations = () => ({
     updatePassword() {
         // nothing to do
     },
-    signOut() {
+    signOut(state) {
         // no need to change state tree as the observer on onAuthChanged will address this
     }
 });
