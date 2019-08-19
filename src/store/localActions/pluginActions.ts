@@ -70,7 +70,7 @@ export const pluginActions = <T>() =>
      */
     async [FmConfigAction.anonymousLogin](store) {
       const { commit, state, dispatch, rootState } = store;
-      const db = await database(state.config);
+      const db = await database();
       const auth = await db.auth();
       let user: IFmUserInfo;
 
@@ -92,16 +92,16 @@ export const pluginActions = <T>() =>
 
       commit(FmConfigMutation.userLoggedIn, user);
 
-      const ctx: IFmAuthEventContext<T> = {
-        Watch,
-        Record,
-        List,
-        db,
-        dispatch,
-        commit,
-        ...user,
-        state: rootState
-      };
+      // const ctx: IFmAuthEventContext<T> = {
+      //   Watch,
+      //   Record,
+      //   List,
+      //   db,
+      //   dispatch,
+      //   commit,
+      //   ...user,
+      //   state: rootState
+      // };
       // await runQueue(ctx, "logged-in");
     },
 
@@ -117,14 +117,14 @@ export const pluginActions = <T>() =>
      */
     async [FmConfigAction.firebaseAuth](store, config) {
       const { commit, rootState, dispatch, state } = store;
-      const baseContext: Partial<IFmEventContext<T>> = {
-        List,
-        Record,
-        Watch,
-        commit,
-        dispatch,
-        state: rootState
-      };
+      // const baseContext: Partial<IFmEventContext<T>> = {
+      //   List,
+      //   Record,
+      //   Watch,
+      //   commit,
+      //   dispatch,
+      //   state: rootState
+      // };
 
       const authChanged = async (user: User | null) => {
         const ctx: IFmAuthEventContext<T> = {
@@ -139,19 +139,12 @@ export const pluginActions = <T>() =>
           email: user ? user.email : "",
           state: rootState
         };
-        if (user) {
-          commit(FmConfigMutation.queueHook, user);
-        } else {
-          commit(FmConfigMutation.userLoggedOut, user);
-        }
 
         if (user) {
-          commit(FmConfigMutation.userLoggedIn, {
-            ...ctx
-          });
+          commit(FmConfigMutation.userLoggedIn, user);
           await runQueue(ctx, "logged-in");
         } else {
-          commit(FmConfigMutation.userLoggedOut);
+          commit(FmConfigMutation.userLoggedOut, user);
           await runQueue(ctx, "logged-out");
         }
       };

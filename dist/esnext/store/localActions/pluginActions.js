@@ -51,7 +51,7 @@ export const pluginActions = () => ({
      */
     async [FmConfigAction.anonymousLogin](store) {
         const { commit, state, dispatch, rootState } = store;
-        const db = await database(state.config);
+        const db = await database();
         const auth = await db.auth();
         let user;
         if (auth.currentUser) {
@@ -71,12 +71,16 @@ export const pluginActions = () => ({
             };
         }
         commit("USER_LOGGED_IN" /* userLoggedIn */, user);
-        const ctx = Object.assign({ Watch,
-            Record,
-            List,
-            db,
-            dispatch,
-            commit }, user, { state: rootState });
+        // const ctx: IFmAuthEventContext<T> = {
+        //   Watch,
+        //   Record,
+        //   List,
+        //   db,
+        //   dispatch,
+        //   commit,
+        //   ...user,
+        //   state: rootState
+        // };
         // await runQueue(ctx, "logged-in");
     },
     /**
@@ -91,14 +95,14 @@ export const pluginActions = () => ({
      */
     async [FmConfigAction.firebaseAuth](store, config) {
         const { commit, rootState, dispatch, state } = store;
-        const baseContext = {
-            List,
-            Record,
-            Watch,
-            commit,
-            dispatch,
-            state: rootState
-        };
+        // const baseContext: Partial<IFmEventContext<T>> = {
+        //   List,
+        //   Record,
+        //   Watch,
+        //   commit,
+        //   dispatch,
+        //   state: rootState
+        // };
         const authChanged = async (user) => {
             const ctx = {
                 Watch,
@@ -113,17 +117,11 @@ export const pluginActions = () => ({
                 state: rootState
             };
             if (user) {
-                commit("QUEUE_EVENT_HOOK" /* queueHook */, user);
-            }
-            else {
-                commit("USER_LOGGED_OUT" /* userLoggedOut */, user);
-            }
-            if (user) {
-                commit("USER_LOGGED_IN" /* userLoggedIn */, Object.assign({}, ctx));
+                commit("USER_LOGGED_IN" /* userLoggedIn */, user);
                 await runQueue(ctx, "logged-in");
             }
             else {
-                commit("USER_LOGGED_OUT" /* userLoggedOut */);
+                commit("USER_LOGGED_OUT" /* userLoggedOut */, user);
                 await runQueue(ctx, "logged-out");
             }
         };

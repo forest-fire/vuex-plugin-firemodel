@@ -118,12 +118,9 @@ async function coreServices<T>(
 ) {
   if (config.connect) {
     await store.dispatch(addNamespace(FmConfigAction.connect), config.db);
-    console.log("connected");
   }
 
   if (config.useAuth) {
-    console.log("useAuth");
-
     await store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config);
   }
 
