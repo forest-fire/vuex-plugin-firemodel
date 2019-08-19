@@ -5,8 +5,6 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const store_1 = require("./store");
 const firemodel_1 = require("firemodel");
-const abstracted_client_1 = require("abstracted-client");
-const common_types_1 = require("common-types");
 const FmConfigActions_1 = require("./types/actions/FmConfigActions");
 const FiremodelPluginError_1 = require("./errors/FiremodelPluginError");
 const addNamespace_1 = require("./shared/addNamespace");
@@ -18,23 +16,9 @@ exports.setStore = (store) => {
 };
 let _db;
 let _auth;
-async function getDb(config) {
-    if (!exports.dbConfig) {
-        throw common_types_1.createError("firemodel-plugin/no-configuration", `Attempt to instantiate the database without db configuration provided!`);
-    }
-    if (!_db) {
-        setDb(await abstracted_client_1.DB.connect(exports.dbConfig));
-    }
-    return _db;
-}
-exports.getDb = getDb;
-function setDb(db) {
-    db = _db;
-}
-exports.setDb = setDb;
 async function getAuth() {
     if (!_auth) {
-        const db = await getDb();
+        const db = await store_1.database();
         setAuth(await db.auth());
     }
     return _auth;
@@ -90,8 +74,10 @@ async function queueLifecycleEvents(store, config) {
 async function coreServices(store, config) {
     if (config.connect) {
         await store.dispatch(addNamespace_1.addNamespace(FmConfigActions_1.FmConfigAction.connect), config.db);
+        console.log("connected");
     }
     if (config.useAuth) {
+        console.log("useAuth");
         await store.dispatch(addNamespace_1.addNamespace(FmConfigActions_1.FmConfigAction.firebaseAuth), config);
     }
     if (config.anonymousAuth) {
