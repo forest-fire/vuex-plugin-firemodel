@@ -70,10 +70,8 @@ async function queueLifecycleEvents(store, config) {
 async function coreServices(store, config) {
     if (config.connect) {
         await store.dispatch(addNamespace(FmConfigAction.connect), config.db);
-        console.log("connected");
     }
     if (config.useAuth) {
-        console.log("useAuth");
         await store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config);
     }
     if (config.anonymousAuth) {
