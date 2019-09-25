@@ -1,5 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const vue_1 = __importDefault(require("vue"));
 /**
  * **changeRoot**
  *
@@ -22,7 +26,7 @@ exports.changeRoot = (state, newValues) => {
      * iterate through each property and change that
      */
     Object.keys(newValues).forEach((v) => {
-        state[v] = newValues[v];
+        vue_1.default.set(state, v, newValues[v]);
     });
     /**
      * If the `newValues` passed in omitted properties but the state

@@ -1,4 +1,5 @@
 import { IDictionary } from "common-types";
+import Vue from "vue";
 
 /**
  * **changeRoot**
@@ -10,7 +11,10 @@ import { IDictionary } from "common-types";
  * @param state
  * @param newValues
  */
-export const changeRoot = <T = IDictionary>(state: T | null, newValues: T | null) => {
+export const changeRoot = <T = IDictionary>(
+  state: T | null,
+  newValues: T | null
+) => {
   if (newValues === null) {
     state = null;
     return;
@@ -24,7 +28,7 @@ export const changeRoot = <T = IDictionary>(state: T | null, newValues: T | null
    * iterate through each property and change that
    */
   Object.keys(newValues).forEach((v: keyof T & string) => {
-    (state as T)[v] = newValues[v];
+    Vue.set(state as any, v, newValues[v]);
   });
 
   /**

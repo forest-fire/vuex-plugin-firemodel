@@ -29,7 +29,7 @@ exports.authMutations = () => ({
         // on success it returns the email of the user who entered the reset code
     },
     updateEmail(state, email) {
-        state.currentUser = Object.assign({}, state.currentUser, { email });
+        state.currentUser = Object.assign(Object.assign({}, state.currentUser), { email });
     },
     updatePassword() {
         // nothing to do

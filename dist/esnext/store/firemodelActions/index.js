@@ -5,7 +5,7 @@ import { recordLocal } from "./recordLocal";
 import { recordConfirms } from "./recordConfirms";
 import { recordRollbacks } from "./recordRollbacks";
 import { authActions } from "./auth";
-export const firemodelActions = () => stripNamespaceFromKeys(Object.assign({}, authActions(), recordServerChanges(), recordLocal(), recordConfirms(), recordRollbacks(), watch(), relationship()));
+export const firemodelActions = () => stripNamespaceFromKeys(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, authActions()), recordServerChanges()), recordLocal()), recordConfirms()), recordRollbacks()), watch()), relationship()));
 function stripNamespaceFromKeys(global) {
     const local = {};
     Object.keys(global).forEach(key => {

@@ -1,3 +1,4 @@
+import Vue from "vue";
 /**
  * **changeRoot**
  *
@@ -20,7 +21,7 @@ export const changeRoot = (state, newValues) => {
      * iterate through each property and change that
      */
     Object.keys(newValues).forEach((v) => {
-        state[v] = newValues[v];
+        Vue.set(state, v, newValues[v]);
     });
     /**
      * If the `newValues` passed in omitted properties but the state

@@ -9,4 +9,4 @@ import { errorMutations } from "./errors";
  * root of a state tree which is defined by the application but remains
  * unknown/generic to this plugin
  */
-export const mutations = () => (Object.assign({}, errorMutations(), localConfig(), authMutations(), serverConfirm(), localCrud(), watcher()));
+export const mutations = () => (Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, errorMutations()), localConfig()), authMutations()), serverConfirm()), localCrud()), watcher()));

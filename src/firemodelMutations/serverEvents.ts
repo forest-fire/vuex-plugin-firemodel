@@ -1,5 +1,4 @@
 import { MutationTree } from "vuex";
-import { IDictionary } from "firemock";
 import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
 import { Model, IFmWatchEvent } from "firemodel";
 import { changeRoot } from "../shared/changeRoot";

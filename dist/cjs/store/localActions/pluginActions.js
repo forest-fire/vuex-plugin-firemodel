@@ -176,7 +176,7 @@ async function runQueue(ctx, lifecycle) {
                 code: e.code || e.name,
                 stack: e.stack
             });
-            remainingQueueItems.push(Object.assign({}, item, { error: e.message, errorStack: e.stack }));
+            remainingQueueItems.push(Object.assign(Object.assign({}, item), { error: e.message, errorStack: e.stack }));
         }
     }
     ctx.commit("LIFECYCLE_EVENT_COMPLETED" /* lifecycleEventCompleted */, {
