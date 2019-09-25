@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const changeRoot_1 = require("../shared/changeRoot");
 const updateList_1 = require("../shared/updateList");
+const isRecord_1 = require("../shared/isRecord");
 /**
  * **serverConfirms**
  *
@@ -15,11 +16,12 @@ const updateList_1 = require("../shared/updateList");
  */
 function serverRollbacks(propOffset) {
     // default to "all"
-    const offset = !propOffset ? "all" : propOffset;
+    const offset = !propOffset
+        ? "all"
+        : propOffset;
     return {
         ["ROLLBACK_ADD" /* serverAddRollback */](state, payload) {
-            const isRecord = payload.watcherSource === "record";
-            if (isRecord) {
+            if (isRecord_1.isRecord(state, payload)) {
                 changeRoot_1.changeRoot(state, payload.value);
             }
             else {
@@ -27,8 +29,7 @@ function serverRollbacks(propOffset) {
             }
         },
         ["ROLLBACK_CHANGE" /* serverChangeRollback */](state, payload) {
-            const isRecord = payload.watcherSource === "record";
-            if (isRecord) {
+            if (isRecord_1.isRecord(state, payload)) {
                 changeRoot_1.changeRoot(state, payload.value);
             }
             else {
@@ -36,8 +37,7 @@ function serverRollbacks(propOffset) {
             }
         },
         ["ROLLBACK_REMOVE" /* serverRemoveRollback */](state, payload) {
-            const isRecord = payload.watcherSource === "record";
-            if (isRecord) {
+            if (isRecord_1.isRecord(state, payload)) {
                 changeRoot_1.changeRoot(state, payload.value);
             }
             else {

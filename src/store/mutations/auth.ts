@@ -1,8 +1,8 @@
 import { MutationTree } from "vuex";
-
 import { IFiremodelState } from "../..";
 import { UserCredential } from "@firebase/auth-types";
 import { IFiremodelAbbreviatedUser } from "../../types";
+import Vue from "vue";
 
 /**
  * The **mutations** associated to the Firebase Auth API.
@@ -11,13 +11,13 @@ export const authMutations = <T>() =>
   ({
     signInWithEmailAndPassword(state, userCredential: UserCredential) {
       if (userCredential.user) {
-        state.currentUser = {
+        Vue.set(state, "currentUser", {
           email: userCredential.user.email,
           emailVerified: userCredential.user.emailVerified,
           uid: userCredential.user.uid,
           isAnonymous: userCredential.user.isAnonymous,
           fullProfile: userCredential.user
-        };
+        });
         state.authenticated = "logged-in";
       }
     },
@@ -38,10 +38,10 @@ export const authMutations = <T>() =>
     },
 
     updateEmail(state, email: string) {
-      state.currentUser = {
+      Vue.set(state, "currentUser", {
         ...(state.currentUser as IFiremodelAbbreviatedUser),
         ...{ email }
-      };
+      });
     },
 
     updatePassword() {

@@ -1,4 +1,4 @@
-import { IDictionary } from "common-types";
+import { Model } from "firemodel";
 /**
  * **changeRoot**
  *
@@ -7,6 +7,6 @@ import { IDictionary } from "common-types";
  * which can result in the state tree not being updated.
  *
  * @param state
- * @param newValues
+ * @param updatedProps
  */
-export declare const changeRoot: <T = IDictionary<any>>(state: T | null, newValues: T | null) => T | undefined;
+export declare const changeRoot: <T extends Model = Model>(state: T, updatedProps: T | null) => T | undefined;

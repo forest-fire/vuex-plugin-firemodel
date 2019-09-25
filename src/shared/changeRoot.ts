@@ -1,5 +1,6 @@
 import { IDictionary } from "common-types";
 import Vue from "vue";
+import { Model } from "firemodel";
 
 /**
  * **changeRoot**
@@ -9,26 +10,23 @@ import Vue from "vue";
  * which can result in the state tree not being updated.
  *
  * @param state
- * @param newValues
+ * @param updatedProps
  */
-export const changeRoot = <T = IDictionary>(
-  state: T | null,
-  newValues: T | null
+export const changeRoot = <T extends Model = Model>(
+  state: T,
+  updatedProps: T | null
 ) => {
-  if (newValues === null) {
-    state = null;
+  if (updatedProps === null) {
+    Object.keys(state).forEach(p => Vue.set(state, p, undefined));
     return;
   }
-
-  // ensure state is set to T
-  state = (state !== null ? state : {}) as T;
 
   /**
    * rather than replace the root object reference,
    * iterate through each property and change that
    */
-  Object.keys(newValues).forEach((v: keyof T & string) => {
-    Vue.set(state as any, v, newValues[v]);
+  Object.keys(updatedProps).forEach((v: keyof T & string) => {
+    Vue.set(state as any, v, updatedProps[v]);
   });
 
   /**
@@ -37,11 +35,12 @@ export const changeRoot = <T = IDictionary>(
    * is a "destructive" update.
    */
   const removed: string[] = Object.keys(state).filter(
-    k => k && !Object.keys(newValues).includes(k)
+    k => k && !Object.keys(updatedProps).includes(k)
   );
 
   Object.keys(removed).forEach(k => {
-    delete (state as T)[k as keyof typeof state];
+    Vue.set(state, k, {});
+    // delete (state as T)[k as keyof typeof state];
   });
   return state;
 };

@@ -2,12 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const changeRoot_1 = require("../shared/changeRoot");
 const updateList_1 = require("../shared/updateList");
+const isRecord_1 = require("../shared/isRecord");
 function addedLocally(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {
         ["ADDED_LOCALLY" /* addedLocally */](state, payload) {
-            const isRecord = payload.watcherSource === "record";
-            if (isRecord) {
+            if (isRecord_1.isRecord(state, payload)) {
                 changeRoot_1.changeRoot(state, payload.value);
             }
             else {
@@ -15,8 +15,7 @@ function addedLocally(propOffset) {
             }
         },
         ["CHANGED_LOCALLY" /* changedLocally */](state, payload) {
-            const isRecord = payload.watcherSource === "record";
-            if (isRecord) {
+            if (isRecord_1.isRecord(state, payload)) {
                 changeRoot_1.changeRoot(state, payload.value);
             }
             else {
@@ -24,8 +23,7 @@ function addedLocally(propOffset) {
             }
         },
         ["REMOVED_LOCALLY" /* removedLocally */](state, payload) {
-            const isRecord = payload.watcherSource === "record";
-            if (isRecord) {
+            if (isRecord_1.isRecord(state, payload)) {
                 changeRoot_1.changeRoot(state, null);
             }
             else {

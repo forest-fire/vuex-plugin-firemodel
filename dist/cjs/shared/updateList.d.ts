@@ -1,7 +1,5 @@
 import { IDictionary } from "common-types";
-interface IDictionaryWithId extends IDictionary {
-    id: string;
-}
+import { Model } from "firemodel";
 /**
  * **updateList**
  *
@@ -15,7 +13,6 @@ interface IDictionaryWithId extends IDictionary {
  * by default it is "all" but can be anything including _undefined_ (aka, no offset)
  * @param value the value of the record which has changed
  */
-export declare function updateList<T extends IDictionary>(moduleState: T, offset: keyof T, 
+export declare function updateList<T extends Model, M extends IDictionary = IDictionary<T[]>>(moduleState: M, offset: keyof M & string, 
 /** the new record value OR "null" if removing the record */
-value: IDictionaryWithId | null): void;
-export {};
+value: T | null): void;

@@ -1,16 +1,17 @@
+import Vue from "vue";
 /**
  * The **mutations** associated to the Firebase Auth API.
  */
 export const authMutations = () => ({
     signInWithEmailAndPassword(state, userCredential) {
         if (userCredential.user) {
-            state.currentUser = {
+            Vue.set(state, "currentUser", {
                 email: userCredential.user.email,
                 emailVerified: userCredential.user.emailVerified,
                 uid: userCredential.user.uid,
                 isAnonymous: userCredential.user.isAnonymous,
                 fullProfile: userCredential.user
-            };
+            });
             state.authenticated = "logged-in";
         }
     },
@@ -27,7 +28,7 @@ export const authMutations = () => ({
         // on success it returns the email of the user who entered the reset code
     },
     updateEmail(state, email) {
-        state.currentUser = Object.assign(Object.assign({}, state.currentUser), { email });
+        Vue.set(state, "currentUser", Object.assign(Object.assign({}, state.currentUser), { email }));
     },
     updatePassword() {
         // nothing to do

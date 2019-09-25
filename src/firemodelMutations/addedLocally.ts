@@ -3,14 +3,20 @@ import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
 import { changeRoot } from "../shared/changeRoot";
 import { updateList } from "../shared/updateList";
 import { IFmWatchEvent } from "firemodel";
+import { IDictionary } from "firemock";
+import { isRecord } from "../shared/isRecord";
 
-export function addedLocally<T>(propOffset?: keyof T): MutationTree<T> {
-  const offset = !propOffset ? ("all" as keyof T) : propOffset;
+export function addedLocally<T>(
+  propOffset?: keyof T & string
+): MutationTree<T> {
+  const offset = !propOffset ? ("all" as keyof T & string) : propOffset;
 
   return {
-    [FmCrudMutation.addedLocally](state, payload: IFmWatchEvent<T>) {
-      const isRecord = payload.watcherSource === "record";
-      if (isRecord) {
+    [FmCrudMutation.addedLocally](
+      state: T | IDictionary<T[]>,
+      payload: IFmWatchEvent<T>
+    ) {
+      if (isRecord(state, payload)) {
         changeRoot<T>(state, payload.value);
       } else {
         updateList<T>(state, offset, payload.value);
@@ -18,8 +24,7 @@ export function addedLocally<T>(propOffset?: keyof T): MutationTree<T> {
     },
 
     [FmCrudMutation.changedLocally](state, payload: IFmWatchEvent<T>) {
-      const isRecord = payload.watcherSource === "record";
-      if (isRecord) {
+      if (isRecord(state, payload)) {
         changeRoot<T>(state, payload.value);
       } else {
         updateList<T>(state, offset, payload.value);
@@ -27,8 +32,7 @@ export function addedLocally<T>(propOffset?: keyof T): MutationTree<T> {
     },
 
     [FmCrudMutation.removedLocally](state: T, payload: IFmWatchEvent<T>) {
-      const isRecord = payload.watcherSource === "record";
-      if (isRecord) {
+      if (isRecord(state, payload)) {
         changeRoot<T>(state, null);
       } else {
         updateList<T>(state, offset, null);

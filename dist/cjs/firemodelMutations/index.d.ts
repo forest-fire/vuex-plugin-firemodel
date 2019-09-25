@@ -38,4 +38,4 @@ export declare function firemodelMutations<T extends IDictionary>(
  * `undefined` but if you have an edge case then you can set it to whatever you like
  * and it will honored.
  */
-propOffset?: keyof T): MutationTree<T>;
+propOffset?: keyof T & string): MutationTree<T>;
