@@ -11,4 +11,4 @@ import { Model } from "firemodel";
  * back to what it had been before it had been optimistically set by the `local`
  * mutation.
  */
-export declare function serverRollbacks<T extends Model>(propOffset?: keyof T): MutationTree<T>;
+export declare function serverRollbacks<T extends Model>(propOffset?: keyof T & string): MutationTree<T>;

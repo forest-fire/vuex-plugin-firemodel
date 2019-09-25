@@ -1,11 +1,11 @@
 import { changeRoot } from "../shared/changeRoot";
 import { updateList } from "../shared/updateList";
+import { isRecord } from "../shared/isRecord";
 export function addedLocally(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {
         ["ADDED_LOCALLY" /* addedLocally */](state, payload) {
-            const isRecord = payload.watcherSource === "record";
-            if (isRecord) {
+            if (isRecord(state, payload)) {
                 changeRoot(state, payload.value);
             }
             else {
@@ -13,8 +13,7 @@ export function addedLocally(propOffset) {
             }
         },
         ["CHANGED_LOCALLY" /* changedLocally */](state, payload) {
-            const isRecord = payload.watcherSource === "record";
-            if (isRecord) {
+            if (isRecord(state, payload)) {
                 changeRoot(state, payload.value);
             }
             else {
@@ -22,8 +21,7 @@ export function addedLocally(propOffset) {
             }
         },
         ["REMOVED_LOCALLY" /* removedLocally */](state, payload) {
-            const isRecord = payload.watcherSource === "record";
-            if (isRecord) {
+            if (isRecord(state, payload)) {
                 changeRoot(state, null);
             }
             else {

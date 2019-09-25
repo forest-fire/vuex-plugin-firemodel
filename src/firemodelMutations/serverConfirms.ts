@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
 import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
-import { Model } from "firemodel";
+import { Model, IFmWatchEvent } from "firemodel";
 
 /**
  * **serverConfirms**
@@ -17,15 +17,15 @@ export function serverConfirms<T extends Model>(
   propOffset?: keyof T
 ): MutationTree<T> {
   return {
-    [FmCrudMutation.serverAddConfirm](state, payload) {
+    [FmCrudMutation.serverAddConfirm](state, payload: IFmWatchEvent<Model>) {
       console.log("server add confirmed", payload.value.id);
     },
 
-    [FmCrudMutation.serverChangeConfirm](state, payload) {
+    [FmCrudMutation.serverChangeConfirm](state, payload: IFmWatchEvent<Model>) {
       console.log("server change confirmed", payload.value.id);
     },
 
-    [FmCrudMutation.serverRemoveConfirm](state, payload) {
+    [FmCrudMutation.serverRemoveConfirm](state, payload: IFmWatchEvent<Model>) {
       console.log("server remove confirmed", payload);
     }
   };

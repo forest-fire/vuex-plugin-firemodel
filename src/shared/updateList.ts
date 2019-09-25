@@ -1,8 +1,8 @@
 import { IDictionary } from "common-types";
 import get from "lodash.get";
-import set from "lodash.set";
+import Vue from "vue";
 import { FireModelPluginError } from "../errors/FiremodelPluginError";
-import { changeRoot } from "./changeRoot";
+import { Model } from "firemodel";
 
 interface IDictionaryWithId extends IDictionary {
   id: string;
@@ -21,11 +21,14 @@ interface IDictionaryWithId extends IDictionary {
  * by default it is "all" but can be anything including _undefined_ (aka, no offset)
  * @param value the value of the record which has changed
  */
-export function updateList<T extends IDictionary>(
-  moduleState: T,
-  offset: keyof T,
+export function updateList<
+  T extends Model,
+  M extends IDictionary = IDictionary<T[]>
+>(
+  moduleState: M,
+  offset: keyof M & string,
   /** the new record value OR "null" if removing the record */
-  value: IDictionaryWithId | null
+  value: T | null
 ): void {
   if (!offset) {
     throw new FireModelPluginError(
@@ -34,19 +37,25 @@ export function updateList<T extends IDictionary>(
     );
   }
 
-  let existing: IDictionaryWithId[] = get(moduleState, offset, []);
+  let existing: T[] = ((moduleState[offset] as unknown) as T[]) || [];
 
   let found = false;
-  let updated: IDictionaryWithId[] = existing.map(i => {
+  let updated: T[] = existing.map(i => {
     if (value && i.id === value.id) {
       found = true;
     }
     return value && i.id === value.id ? value : i;
   });
 
-  set<IDictionaryWithId>(
-    moduleState,
+  Vue.set(
+    moduleState as any,
     offset,
-    found ? updated : existing.concat(value as IDictionaryWithId)
+    found ? updated : existing.concat(value as T)
   );
+
+  // set<IDictionaryWithId>(
+  //   moduleState,
+  //   offset,
+  //   found ? updated : existing.concat(value as IDictionaryWithId)
+  // );
 }

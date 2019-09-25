@@ -1,10 +1,11 @@
 import { MutationTree } from "vuex";
 import { IDictionary } from "firemock";
 import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
-import { Model } from "firemodel";
+import { Model, IFmWatchEvent } from "firemodel";
 import { IFiremodelState } from "../types";
 import { changeRoot } from "../shared/changeRoot";
 import { updateList } from "../shared/updateList";
+import { isRecord } from "../shared/isRecord";
 
 /**
  * **serverConfirms**
@@ -18,33 +19,38 @@ import { updateList } from "../shared/updateList";
  * mutation.
  */
 export function serverRollbacks<T extends Model>(
-  propOffset?: keyof T
+  propOffset?: keyof T & string
 ): MutationTree<T> {
   // default to "all"
-  const offset = !propOffset ? ("all" as keyof T) : propOffset;
+  const offset: keyof T & string = !propOffset
+    ? ("all" as keyof T & string)
+    : propOffset;
 
   return {
-    [FmCrudMutation.serverAddRollback](state, payload) {
-      const isRecord = payload.watcherSource === "record";
-      if (isRecord) {
+    [FmCrudMutation.serverAddRollback](state, payload: IFmWatchEvent<Model>) {
+      if (isRecord(state, payload)) {
         changeRoot<T>(state, payload.value);
       } else {
         updateList<T>(state, offset, payload.value);
       }
     },
 
-    [FmCrudMutation.serverChangeRollback](state, payload) {
-      const isRecord = payload.watcherSource === "record";
-      if (isRecord) {
+    [FmCrudMutation.serverChangeRollback](
+      state,
+      payload: IFmWatchEvent<Model>
+    ) {
+      if (isRecord(state, payload)) {
         changeRoot<T>(state, payload.value);
       } else {
         updateList<T>(state, offset, payload.value);
       }
     },
 
-    [FmCrudMutation.serverRemoveRollback](state, payload) {
-      const isRecord = payload.watcherSource === "record";
-      if (isRecord) {
+    [FmCrudMutation.serverRemoveRollback](
+      state,
+      payload: IFmWatchEvent<Model>
+    ) {
+      if (isRecord(state, payload)) {
         changeRoot<T>(state, payload.value);
       } else {
         updateList<T>(state, offset, payload.value);

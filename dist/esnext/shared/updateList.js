@@ -1,5 +1,4 @@
-import get from "lodash.get";
-import set from "lodash.set";
+import Vue from "vue";
 import { FireModelPluginError } from "../errors/FiremodelPluginError";
 /**
  * **updateList**
@@ -20,7 +19,7 @@ value) {
     if (!offset) {
         throw new FireModelPluginError('"updateList" was passed a falsy value for an offset; this is not currently allowed', "not-allowed");
     }
-    let existing = get(moduleState, offset, []);
+    let existing = moduleState[offset] || [];
     let found = false;
     let updated = existing.map(i => {
         if (value && i.id === value.id) {
@@ -28,5 +27,10 @@ value) {
         }
         return value && i.id === value.id ? value : i;
     });
-    set(moduleState, offset, found ? updated : existing.concat(value));
+    Vue.set(moduleState, offset, found ? updated : existing.concat(value));
+    // set<IDictionaryWithId>(
+    //   moduleState,
+    //   offset,
+    //   found ? updated : existing.concat(value as IDictionaryWithId)
+    // );
 }
