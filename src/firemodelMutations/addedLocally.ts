@@ -1,5 +1,4 @@
 import { MutationTree } from "vuex";
-
 import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
 import { changeRoot } from "../shared/changeRoot";
 import { updateList } from "../shared/updateList";

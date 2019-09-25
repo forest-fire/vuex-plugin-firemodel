@@ -39,7 +39,7 @@ function firemodelMutations(
  * and it will honored.
  */
 propOffset) {
-    const a = Object.assign({}, addedLocally_1.addedLocally(propOffset), serverEvents_1.serverEvents(propOffset), serverRollbacks_1.serverRollbacks(propOffset), serverConfirms_1.serverConfirms(propOffset));
+    const a = Object.assign(Object.assign(Object.assign(Object.assign({}, addedLocally_1.addedLocally(propOffset)), serverEvents_1.serverEvents(propOffset)), serverRollbacks_1.serverRollbacks(propOffset)), serverConfirms_1.serverConfirms(propOffset));
     return a;
 }
 exports.firemodelMutations = firemodelMutations;
