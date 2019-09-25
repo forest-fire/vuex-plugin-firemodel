@@ -6,6 +6,7 @@ import {
 } from "../../types";
 import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
 import { User } from "@firebase/auth-types";
+import Vue from "vue";
 
 /**
  * The **mutations** scoped to the local configuration of Firebase
@@ -26,18 +27,20 @@ export const localConfig = <T>() =>
     },
     [FmConfigMutation.connectionError](state, err: Error) {
       state.status = "error";
-      state.errors = state.errors
-        ? state.errors.concat(err.message)
-        : [err.message];
+      Vue.set(
+        state,
+        "errors",
+        state.errors ? state.errors.concat(err.message) : [err.message]
+      );
     },
     [FmConfigMutation.appErr](state, err) {
       if (!state.errors) {
-        state.errors = [];
+        Vue.set(state, "errors", []);
       }
-      state.errors.push(err.message);
+      Vue.set(state, "errors", (state.errors as any[]).concat(err.message));
     },
     [FmConfigMutation.clearErrors](state) {
-      state.errors = [];
+      Vue.set(state, "errors", []);
     },
 
     [FmConfigMutation.userLoggedIn](state, user: User) {
@@ -48,24 +51,24 @@ export const localConfig = <T>() =>
         emailVerified: user.emailVerified,
         fullProfile: user
       };
-      state.authenticated = !user
-        ? false
-        : user.isAnonymous
-        ? "anonymous"
-        : "logged-in";
+      Vue.set(
+        state,
+        "authenticated",
+        !user ? false : user.isAnonymous ? "anonymous" : "logged-in"
+      );
     },
 
     [FmConfigMutation.userLoggedOut](state) {
-      state.currentUser = undefined;
-      state.authenticated = false;
+      Vue.set(state, "currentUser", {});
+      Vue.set(state, "authenticated", false);
     },
 
     [FmConfigMutation.queueHook](state, item: IFmQueuedAction<T>) {
-      state.queued = state.queued.concat(item);
+      Vue.set(state, "queued", state.queued.concat(item));
     },
 
     [FmConfigMutation.queueWatcher](state, item: IFmQueuedAction<T>) {
-      state.queued = state.queued.concat(item);
+      Vue.set(state, "queued", state.queued.concat(item));
     },
 
     [FmConfigMutation.lifecycleEventCompleted](

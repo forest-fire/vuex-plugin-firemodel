@@ -3,8 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_get_1 = __importDefault(require("lodash.get"));
-const lodash_set_1 = __importDefault(require("lodash.set"));
+const vue_1 = __importDefault(require("vue"));
 const FiremodelPluginError_1 = require("../errors/FiremodelPluginError");
 /**
  * **updateList**
@@ -25,7 +24,7 @@ value) {
     if (!offset) {
         throw new FiremodelPluginError_1.FireModelPluginError('"updateList" was passed a falsy value for an offset; this is not currently allowed', "not-allowed");
     }
-    let existing = lodash_get_1.default(moduleState, offset, []);
+    let existing = moduleState[offset] || [];
     let found = false;
     let updated = existing.map(i => {
         if (value && i.id === value.id) {
@@ -33,7 +32,12 @@ value) {
         }
         return value && i.id === value.id ? value : i;
     });
-    lodash_set_1.default(moduleState, offset, found ? updated : existing.concat(value));
+    vue_1.default.set(moduleState, offset, found ? updated : existing.concat(value));
+    // set<IDictionaryWithId>(
+    //   moduleState,
+    //   offset,
+    //   found ? updated : existing.concat(value as IDictionaryWithId)
+    // );
 }
 exports.updateList = updateList;
 //# sourceMappingURL=updateList.js.map

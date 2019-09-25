@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const changeRoot_1 = require("../shared/changeRoot");
 const updateList_1 = require("../shared/updateList");
+const isRecord_1 = require("../shared/isRecord");
 function serverEvents(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {
@@ -11,8 +12,7 @@ function serverEvents(propOffset) {
          * of records at the root of the state structure
          */
         state, payload) {
-            const isRecord = payload.watcherSource === "record";
-            if (isRecord) {
+            if (isRecord_1.isRecord(state, payload)) {
                 changeRoot_1.changeRoot(state, payload.value);
             }
             else {
@@ -25,7 +25,6 @@ function serverEvents(propOffset) {
          * of records at the root of the state structure
          */
         state, payload) {
-            const isRecord = payload.watcherSource === "record";
             if (payload.value === null) {
                 // a "remove" event will also be picked up by the "change" event
                 // passed by Firebase. This mutation will be ignored with the
@@ -33,7 +32,7 @@ function serverEvents(propOffset) {
                 // change.
                 return;
             }
-            if (isRecord) {
+            if (isRecord_1.isRecord(state, payload)) {
                 changeRoot_1.changeRoot(state, payload.value);
             }
             else {
@@ -46,8 +45,7 @@ function serverEvents(propOffset) {
          * of records at the root of the state structure
          */
         state, payload) {
-            const isRecord = payload.watcherSource === "record";
-            if (isRecord) {
+            if (isRecord_1.isRecord(state, payload)) {
                 changeRoot_1.changeRoot(state, null);
             }
             else {

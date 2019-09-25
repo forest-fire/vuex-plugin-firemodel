@@ -12,30 +12,29 @@ const vue_1 = __importDefault(require("vue"));
  * which can result in the state tree not being updated.
  *
  * @param state
- * @param newValues
+ * @param updatedProps
  */
-exports.changeRoot = (state, newValues) => {
-    if (newValues === null) {
-        state = null;
+exports.changeRoot = (state, updatedProps) => {
+    if (updatedProps === null) {
+        Object.keys(state).forEach(p => vue_1.default.set(state, p, undefined));
         return;
     }
-    // ensure state is set to T
-    state = (state !== null ? state : {});
     /**
      * rather than replace the root object reference,
      * iterate through each property and change that
      */
-    Object.keys(newValues).forEach((v) => {
-        vue_1.default.set(state, v, newValues[v]);
+    Object.keys(updatedProps).forEach((v) => {
+        vue_1.default.set(state, v, updatedProps[v]);
     });
     /**
      * If the `newValues` passed in omitted properties but the state
      * tree has values for it we must remove those properties as this
      * is a "destructive" update.
      */
-    const removed = Object.keys(state).filter(k => k && !Object.keys(newValues).includes(k));
+    const removed = Object.keys(state).filter(k => k && !Object.keys(updatedProps).includes(k));
     Object.keys(removed).forEach(k => {
-        delete state[k];
+        vue_1.default.set(state, k, {});
+        // delete (state as T)[k as keyof typeof state];
     });
     return state;
 };
