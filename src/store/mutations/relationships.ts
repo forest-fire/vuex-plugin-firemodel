@@ -20,9 +20,25 @@ export const relationships = <T>() =>
     [FmCrudMutation.relationshipSetLocally](
       state,
       payload: IFmLocalRelationshipEvent<T>
-    ) {},
+    ) {
+      Vue.set(state, "localOnly", {
+        ...state.localOnly,
+        [payload.transactionId]: payload
+      });
+    },
 
     [FmCrudMutation.relationshipRemovedLocally](
+      state,
+      payload: IFmLocalRelationshipEvent<T>
+    ) {
+      Vue.set(state, "localOnly", {
+        ...state.localOnly,
+        [payload.transactionId]: payload
+      });
+    },
+
+    // CONFIRMATION
+    [FmCrudMutation.relationshipAddConfirmation](
       state,
       payload: IFmLocalRelationshipEvent<T>
     ) {
@@ -31,32 +47,23 @@ export const relationships = <T>() =>
       delete localOnly[transactionId];
       Vue.set(state, "localOnly", localOnly);
     },
-
-    [FmCrudMutation.relationshipSetLocally](
-      state,
-      payload: IFmLocalRelationshipEvent<T>
-    ) {
-      state.localOnly[payload.transactionId] = payload;
-    },
-
-    // CONFIRMATION
-    [FmCrudMutation.relationshipAddConfirmation](
-      state,
-      payload: IFmLocalRelationshipEvent<T>
-    ) {
-      delete state.localOnly[payload.transactionId];
-    },
     [FmCrudMutation.relationshipRemovedConfirmation](
       state,
       payload: IFmLocalRelationshipEvent<T>
     ) {
-      delete state.localOnly[payload.transactionId];
+      const transactionId = payload.transactionId;
+      const localOnly: typeof state.localOnly = { ...{}, ...state.localOnly };
+      delete localOnly[transactionId];
+      Vue.set(state, "localOnly", localOnly);
     },
     [FmCrudMutation.relationshipSetConfirmation](
       state,
       payload: IFmLocalRelationshipEvent<T>
     ) {
-      delete state.localOnly[payload.transactionId];
+      const transactionId = payload.transactionId;
+      const localOnly: typeof state.localOnly = { ...{}, ...state.localOnly };
+      delete localOnly[transactionId];
+      Vue.set(state, "localOnly", localOnly);
     },
 
     // ROLLBACK
