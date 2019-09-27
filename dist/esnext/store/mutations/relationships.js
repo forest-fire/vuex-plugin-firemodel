@@ -1,10 +1,17 @@
-export const serverConfirm = () => ({
+import Vue from "vue";
+export const relationships = () => ({
     // LOCAL
     ["RELATIONSHIP_ADDED_LOCALLY" /* relationshipAddedLocally */](state, payload) {
-        state.localOnly[payload.transactionId] = payload;
+        Vue.set(state, "localOnly", Object.assign(Object.assign({}, state.localOnly), { [payload.transactionId]: payload }));
+    },
+    ["RELATIONSHIP_SET_LOCALLY" /* relationshipSetLocally */](state, payload) {
+        Vue.set(state, "localOnly", Object.assign(Object.assign({}, state.localOnly), { [payload.transactionId]: payload }));
     },
     ["RELATIONSHIP_REMOVED_LOCALLY" /* relationshipRemovedLocally */](state, payload) {
-        state.localOnly[payload.transactionId] = payload;
+        const transactionId = payload.transactionId;
+        const localOnly = Object.assign({}, state.localOnly);
+        delete localOnly[transactionId];
+        Vue.set(state, "localOnly", localOnly);
     },
     ["RELATIONSHIP_SET_LOCALLY" /* relationshipSetLocally */](state, payload) {
         state.localOnly[payload.transactionId] = payload;

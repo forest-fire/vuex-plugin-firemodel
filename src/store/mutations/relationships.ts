@@ -2,22 +2,36 @@ import { MutationTree } from "vuex";
 import { IFiremodelState } from "../../index";
 import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
 import { IFmLocalRelationshipEvent } from "firemodel";
+import Vue from "vue";
 
-export const serverConfirm = <T>() =>
+export const relationships = <T>() =>
   ({
     // LOCAL
     [FmCrudMutation.relationshipAddedLocally](
       state,
       payload: IFmLocalRelationshipEvent<T>
     ) {
-      state.localOnly[payload.transactionId] = payload;
+      Vue.set(state, "localOnly", {
+        ...state.localOnly,
+        [payload.transactionId]: payload
+      });
     },
+
+    [FmCrudMutation.relationshipSetLocally](
+      state,
+      payload: IFmLocalRelationshipEvent<T>
+    ) {},
+
     [FmCrudMutation.relationshipRemovedLocally](
       state,
       payload: IFmLocalRelationshipEvent<T>
     ) {
-      state.localOnly[payload.transactionId] = payload;
+      const transactionId = payload.transactionId;
+      const localOnly: typeof state.localOnly = { ...{}, ...state.localOnly };
+      delete localOnly[transactionId];
+      Vue.set(state, "localOnly", localOnly);
     },
+
     [FmCrudMutation.relationshipSetLocally](
       state,
       payload: IFmLocalRelationshipEvent<T>

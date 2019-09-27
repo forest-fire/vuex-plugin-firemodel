@@ -1,3 +1,3 @@
 import { MutationTree } from "vuex";
 import { IFiremodelState } from "../../index";
-export declare const serverConfirm: <T>() => MutationTree<IFiremodelState<T>>;
+export declare const relationships: <T>() => MutationTree<IFiremodelState<T>>;

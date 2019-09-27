@@ -17,7 +17,8 @@ export const changeRoot = <T extends Model = Model>(
   updatedProps: T | null
 ) => {
   if (updatedProps === null) {
-    Object.keys(state).forEach(p => Vue.set(state, p, undefined));
+    // Object.keys(state).forEach(p => Vue.set(state, p, undefined));
+    state = {} as T;
     return;
   }
 
