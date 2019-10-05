@@ -5,6 +5,7 @@ import { FireModelPluginError } from "./errors/FiremodelPluginError";
 import { addNamespace } from "./shared/addNamespace";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
+export { database } from "./store";
 export let configuration;
 export let dbConfig;
 export let firemodelVuex;
