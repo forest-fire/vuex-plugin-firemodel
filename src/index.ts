@@ -8,7 +8,6 @@ import { Store } from "vuex";
 import { FiremodelModule, database } from "./store";
 import { Watch, Record, List, FireModel } from "firemodel";
 import { DB, FirebaseAuth, IFirebaseClientConfig } from "abstracted-client";
-import { createError } from "common-types";
 import { FmConfigMutation } from "./types/mutations/FmConfigMutation";
 import { FmConfigAction } from "./types/actions/FmConfigActions";
 import { FireModelPluginError } from "./errors/FiremodelPluginError";
@@ -16,6 +15,7 @@ import { addNamespace } from "./shared/addNamespace";
 export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
+export { database } from "./store";
 
 export let configuration: IFiremodelPluginConfig<any>;
 export let dbConfig: IFirebaseClientConfig;
