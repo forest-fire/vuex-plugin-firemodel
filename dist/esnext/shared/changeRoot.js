@@ -11,7 +11,8 @@ import Vue from "vue";
  */
 export const changeRoot = (state, updatedProps) => {
     if (updatedProps === null) {
-        Object.keys(state).forEach(p => Vue.set(state, p, undefined));
+        // Object.keys(state).forEach(p => Vue.set(state, p, undefined));
+        state = {};
         return;
     }
     /**

@@ -6,6 +6,7 @@ import { localCrud } from "./localCrud";
 import { errorMutations } from "./errors";
 import { MutationTree } from "vuex";
 import { IFiremodelState } from "../../types";
+import { relationships } from "./relationships";
 
 /**
  * The **mutations** to the `@firemodel` state node; this state node will be off the
@@ -19,6 +20,7 @@ export const mutations = <T>() =>
     ...authMutations<T>(),
     ...serverConfirm<T>(),
     ...localCrud<T>(),
+    ...relationships<T>(),
     ...watcher<T>()
   } as MutationTree<IFiremodelState<T>>);
 

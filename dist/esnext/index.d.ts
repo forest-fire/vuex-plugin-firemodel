@@ -4,6 +4,7 @@ import { FirebaseAuth, IFirebaseClientConfig } from "abstracted-client";
 export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
+export { database } from "./store";
 export declare let configuration: IFiremodelPluginConfig<any>;
 export declare let dbConfig: IFirebaseClientConfig;
 export declare let firemodelVuex: Store<any>;

@@ -16,7 +16,8 @@ const vue_1 = __importDefault(require("vue"));
  */
 exports.changeRoot = (state, updatedProps) => {
     if (updatedProps === null) {
-        Object.keys(state).forEach(p => vue_1.default.set(state, p, undefined));
+        // Object.keys(state).forEach(p => Vue.set(state, p, undefined));
+        state = {};
         return;
     }
     /**

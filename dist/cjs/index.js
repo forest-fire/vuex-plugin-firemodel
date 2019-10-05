@@ -10,6 +10,8 @@ const FiremodelPluginError_1 = require("./errors/FiremodelPluginError");
 const addNamespace_1 = require("./shared/addNamespace");
 __export(require("./firemodelMutations/index"));
 __export(require("firemodel"));
+var store_2 = require("./store");
+exports.database = store_2.database;
 let _store;
 exports.setStore = (store) => {
     _store = store;
