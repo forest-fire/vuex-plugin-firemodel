@@ -6,15 +6,17 @@ import {
   IFmLifecycleEvents,
   IFmEventContext,
   IFmAuthEventContext,
-  IFmUserInfo
-} from "../../types";
-import { IFirebaseClientConfig } from "abstracted-firebase";
+  IFmUserInfo,
+  IFiremodelConfig
+} from "../../types/index";
+
 import { User } from "@firebase/auth-types";
 import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
 import { configuration } from "../../index";
 import { FmConfigAction } from "../../types/actions/FmConfigActions";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
 import { database } from "../../shared/database";
+import { IFirebaseConfig } from "abstracted-firebase/dist/esnext/types";
 
 /**
  * **pluginActions**
@@ -28,7 +30,7 @@ export const pluginActions = <T>() =>
      *
      * Connects to the Firebase database
      */
-    async [FmConfigAction.connect](store, config: IFirebaseClientConfig) {
+    async [FmConfigAction.connect](store, config) {
       const { commit, dispatch, rootState } = store;
       if (!config) {
         throw new FireModelPluginError(
@@ -115,16 +117,8 @@ export const pluginActions = <T>() =>
      *
      * Also enables the appropriate lifecycle hooks: `onLogOut` and `onLogIn`
      */
-    async [FmConfigAction.firebaseAuth](store, config) {
+    async [FmConfigAction.firebaseAuth](store, config: IFiremodelConfig<T>) {
       const { commit, rootState, dispatch, state } = store;
-      // const baseContext: Partial<IFmEventContext<T>> = {
-      //   List,
-      //   Record,
-      //   Watch,
-      //   commit,
-      //   dispatch,
-      //   state: rootState
-      // };
 
       const authChanged = async (user: User | null) => {
         const ctx: IFmAuthEventContext<T> = {
@@ -152,6 +146,7 @@ export const pluginActions = <T>() =>
         const db = await database();
         const auth = await db.auth();
         auth.onAuthStateChanged(authChanged);
+        auth.setPersistence(config.authPersistence || "session");
       } catch (e) {
         console.log("Problem hooking into onAuthStateChanged: ", e.message);
         console.log(e.stack);

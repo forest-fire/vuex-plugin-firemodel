@@ -12,6 +12,7 @@ import { FmConfigMutation } from "./types/mutations/FmConfigMutation";
 import { FmConfigAction } from "./types/actions/FmConfigActions";
 import { FireModelPluginError } from "./errors/FiremodelPluginError";
 import { addNamespace } from "./shared/addNamespace";
+import { coreServices } from "./coreServices";
 export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
@@ -110,30 +111,4 @@ async function queueLifecycleEvents<T>(
       } as IFmQueuedAction<T>);
     }
   }
-}
-
-async function coreServices<T>(
-  store: Store<T>,
-  config: IFiremodelPluginConfig<T>
-) {
-  if (config.connect) {
-    await store.dispatch(addNamespace(FmConfigAction.connect), config.db);
-  }
-
-  if (config.useAuth) {
-    await store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config);
-  }
-
-  if (config.anonymousAuth) {
-    await store.dispatch(addNamespace(FmConfigAction.anonymousLogin), config);
-  }
-
-  if (config.watchRouteChanges) {
-    await store.dispatch(addNamespace(FmConfigAction.watchRouteChanges));
-  }
-
-  store.commit(addNamespace(FmConfigMutation.coreServicesStarted), {
-    message: `all core firemodel plugin services started`,
-    config: config.db
-  });
 }
