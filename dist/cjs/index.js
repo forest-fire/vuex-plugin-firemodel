@@ -8,6 +8,8 @@ const firemodel_1 = require("firemodel");
 const FmConfigActions_1 = require("./types/actions/FmConfigActions");
 const FiremodelPluginError_1 = require("./errors/FiremodelPluginError");
 const addNamespace_1 = require("./shared/addNamespace");
+const coreServices_1 = require("./coreServices");
+__export(require("./types"));
 __export(require("./firemodelMutations/index"));
 __export(require("firemodel"));
 var store_2 = require("./store");
@@ -43,7 +45,7 @@ const FirePlugin = (config) => {
             }
         });
         store.registerModule("@firemodel", store_1.FiremodelModule());
-        queueLifecycleEvents(store, config).then(() => coreServices(store, Object.assign({ connect: true }, config)));
+        queueLifecycleEvents(store, config).then(() => coreServices_1.coreServices(store, Object.assign({ connect: true }, config)));
     };
 };
 exports.default = FirePlugin;
@@ -72,23 +74,5 @@ async function queueLifecycleEvents(store, config) {
             });
         }
     }
-}
-async function coreServices(store, config) {
-    if (config.connect) {
-        await store.dispatch(addNamespace_1.addNamespace(FmConfigActions_1.FmConfigAction.connect), config.db);
-    }
-    if (config.useAuth) {
-        await store.dispatch(addNamespace_1.addNamespace(FmConfigActions_1.FmConfigAction.firebaseAuth), config);
-    }
-    if (config.anonymousAuth) {
-        await store.dispatch(addNamespace_1.addNamespace(FmConfigActions_1.FmConfigAction.anonymousLogin), config);
-    }
-    if (config.watchRouteChanges) {
-        await store.dispatch(addNamespace_1.addNamespace(FmConfigActions_1.FmConfigAction.watchRouteChanges));
-    }
-    store.commit(addNamespace_1.addNamespace("CORE_SERVICES_STARTED" /* coreServicesStarted */), {
-        message: `all core firemodel plugin services started`,
-        config: config.db
-    });
 }
 //# sourceMappingURL=index.js.map

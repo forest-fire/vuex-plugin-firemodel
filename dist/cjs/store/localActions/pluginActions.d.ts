@@ -1,5 +1,5 @@
 import { ActionTree } from "vuex";
-import { IFiremodelState } from "../../types";
+import { IFiremodelState } from "../../types/index";
 /**
  * **pluginActions**
  *

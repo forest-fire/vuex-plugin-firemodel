@@ -97,14 +97,6 @@ exports.pluginActions = () => ({
      */
     async [FmConfigActions_1.FmConfigAction.firebaseAuth](store, config) {
         const { commit, rootState, dispatch, state } = store;
-        // const baseContext: Partial<IFmEventContext<T>> = {
-        //   List,
-        //   Record,
-        //   Watch,
-        //   commit,
-        //   dispatch,
-        //   state: rootState
-        // };
         const authChanged = async (user) => {
             const ctx = {
                 Watch: firemodel_1.Watch,
@@ -131,6 +123,7 @@ exports.pluginActions = () => ({
             const db = await database_1.database();
             const auth = await db.auth();
             auth.onAuthStateChanged(authChanged);
+            auth.setPersistence(config.authPersistence || "session");
         }
         catch (e) {
             console.log("Problem hooking into onAuthStateChanged: ", e.message);
