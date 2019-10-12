@@ -37,5 +37,18 @@ export const serverConfirm = <T>() =>
       delete localOnly[transactionId];
 
       Vue.set(state, "localOnly", localOnly);
+    },
+
+    [FmCrudMutation.relationshipAddRollback](
+      state,
+      payload: IFmLocalRecordEvent<T>
+    ) {
+      const transactionId = payload.transactionId;
+      const localOnly: typeof state.localOnly = { ...{}, ...state.localOnly };
+      delete localOnly[transactionId];
+      Vue.set(state, "localOnly", localOnly);
+      console.info(
+        `Rolled back changes made locally [ transaction id: ${transactionId} ]`
+      );
     }
   } as MutationTree<IFiremodelState<T>>);
