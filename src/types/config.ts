@@ -104,6 +104,8 @@ export interface IFiremodelPluginCoreServices {
    * If you are using Firebase's **Auth** module you can state the
    * persistance model you would like to use. The types and descriptions
    * are made available on the `AuthPersistenceStrategy` enumeration.
+   *
+   * [Reference Doc](https://firebase.google.com/docs/auth/web/auth-state-persistence)
    */
   authPersistence?: IAuthPersistenceStrategy;
   /**
