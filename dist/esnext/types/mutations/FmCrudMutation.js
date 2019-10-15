@@ -25,4 +25,10 @@ export var FmCrudMutation;
     FmCrudMutation["serverAdd"] = "SERVER_ADD";
     FmCrudMutation["serverChange"] = "SERVER_CHANGE";
     FmCrudMutation["serverRemove"] = "SERVER_REMOVE";
+    /**
+     * when a watcher -- which was configured with `largePayload` -- starts,
+     * it first sends an array of values that exist on the server so that the
+     * server and client are in _sync_.
+     */
+    FmCrudMutation["serverStateSync"] = "SERVER_STATE_SYNC";
 })(FmCrudMutation || (FmCrudMutation = {}));
