@@ -7,9 +7,11 @@ import { recordLocal } from "./recordLocal";
 import { recordConfirms } from "./recordConfirms";
 import { recordRollbacks } from "./recordRollbacks";
 import { authActions } from "./auth";
+import { errors } from "./errors";
 
 export const firemodelActions = <T>() =>
   stripNamespaceFromKeys<T>({
+    ...errors<T>(),
     ...authActions<T>(),
     ...recordServerChanges<T>(),
     ...recordLocal<T>(),
