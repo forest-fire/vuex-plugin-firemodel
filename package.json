@@ -1,6 +1,6 @@
 {
   "name": "vuex-plugin-firemodel",
-  "version": "1.0.0-beta.14",
+  "version": "1.0.0-beta.15",
   "description": "A Vuex plugin which reponds to all FireModel actions as well as providing mutations which can be imported by your state tree.",
   "main": "dist/cjs/index.js",
   "module": "dist/esnext/index.js",
@@ -31,8 +31,8 @@
   },
   "homepage": "https://github.com/forest-fire/vuex-plugin-firemodel#readme",
   "dependencies": {
-    "abstracted-client": "^0.32.3",
-    "firemodel": "^0.32.6",
+    "abstracted-client": "^0.33.0",
+    "firemodel": "^0.33.0",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "vuex": "^3.1.1"
@@ -42,19 +42,19 @@
     "@types/lodash.get": "^4.4.6",
     "@types/lodash.set": "^4.3.6",
     "@types/mocha": "^5.2.7",
-    "@vuepress/plugin-back-to-top": "^1.1.0",
-    "@vuepress/plugin-last-updated": "^1.1.0",
-    "@vuepress/plugin-medium-zoom": "^1.1.0",
-    "@vuepress/plugin-pwa": "^1.1.0",
+    "@vuepress/plugin-back-to-top": "^1.2.0",
+    "@vuepress/plugin-last-updated": "^1.2.0",
+    "@vuepress/plugin-medium-zoom": "^1.2.0",
+    "@vuepress/plugin-pwa": "^1.2.0",
     "async-shelljs": "^0.1.2",
     "chai": "^4.2.0",
     "do-devops": "^0.2.3",
-    "firemock": "^0.32.11",
+    "firemock": "^0.33.1",
     "mocha": "^6.2.1",
     "rimraf": "^3.0.0",
     "ts-node": "^8.4.1",
     "tslint": "^5.20.0",
     "typescript": "^3.6.4",
-    "vuepress": "^1.1.0"
+    "vuepress": "^1.2.0"
   }
 }

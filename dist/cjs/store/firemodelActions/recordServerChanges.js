@@ -13,6 +13,9 @@ exports.recordServerChanges = () => ({
             root: true
         });
     },
+    [firemodel_1.FmEvents.RECORD_MOVED]({ commit }, payload) {
+        console.info("A RECORD_MOVED action was received", payload);
+    },
     [firemodel_1.FmEvents.RECORD_CHANGED](store, payload) {
         // Send mutation to appropriate state node
         this.commit(determineLocalStateNode_1.determineLocalStateNode(payload, "SERVER_CHANGE" /* serverChange */), payload, {
