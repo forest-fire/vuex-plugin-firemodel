@@ -11,6 +11,9 @@ export const recordServerChanges = () => ({
             root: true
         });
     },
+    [FmEvents.RECORD_MOVED]({ commit }, payload) {
+        console.info("A RECORD_MOVED action was received", payload);
+    },
     [FmEvents.RECORD_CHANGED](store, payload) {
         // Send mutation to appropriate state node
         this.commit(determineLocalStateNode(payload, "SERVER_CHANGE" /* serverChange */), payload, {
