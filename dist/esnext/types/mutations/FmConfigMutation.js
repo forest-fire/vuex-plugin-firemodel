@@ -31,4 +31,15 @@ export var FmConfigMutation;
     FmConfigMutation["watcherStarting"] = "WATCHER_STARTING";
     /** Firebase -- via Firemodel -- has started watching a new path in the DB */
     FmConfigMutation["watcherStarted"] = "WATCHER_STARTED";
+    /**
+     * When a "largePayload" has been declared, all SERVER_ADD events from the given
+     * watcher are muted for a short period to ensure that Vuex is not bombarded with
+     * a mutation for every record.
+     */
+    FmConfigMutation["watcherMuted"] = "WATCHER_MUTED";
+    /**
+     * Once the initial set of SERVER_ADD events, the watcher must be _un_muted to
+     * the SERVER_ADD mutations.
+     */
+    FmConfigMutation["watcherUnmuted"] = "WATCHER_UNMUTED";
 })(FmConfigMutation || (FmConfigMutation = {}));

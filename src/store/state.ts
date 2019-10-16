@@ -8,5 +8,6 @@ export const state: <T>() => IFiremodelState<T> = <T>() => ({
   status: "unconfigured",
   queued: [],
   watching: [],
-  localOnly: {}
+  localOnly: {},
+  muted: []
 });

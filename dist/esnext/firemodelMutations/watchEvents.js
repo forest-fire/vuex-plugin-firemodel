@@ -13,7 +13,6 @@ export function watchEvents(propOffset) {
                 changeRoot(state, payload.value);
             }
             else {
-                console.log("list", offset);
                 Vue.set(state, offset, payload.value);
             }
         }

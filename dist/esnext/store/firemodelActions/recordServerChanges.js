@@ -1,10 +1,12 @@
 import { FmEvents } from "firemodel";
 import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
 export const recordServerChanges = () => ({
-    [FmEvents.RECORD_ADDED]({ commit }, payload) {
-        commit(determineLocalStateNode(payload, "SERVER_ADD" /* serverAdd */), payload, {
-            root: true
-        });
+    [FmEvents.RECORD_ADDED]({ commit, state }, payload) {
+        if (!state.muted.includes(payload.watcherId)) {
+            commit(determineLocalStateNode(payload, "SERVER_ADD" /* serverAdd */), payload, {
+                root: true
+            });
+        }
     },
     [FmEvents.RECORD_REMOVED]({ commit }, payload) {
         commit(determineLocalStateNode(payload, "SERVER_REMOVE" /* serverRemove */), payload, {

@@ -6,5 +6,6 @@ export const state = () => ({
     status: "unconfigured",
     queued: [],
     watching: [],
-    localOnly: {}
+    localOnly: {},
+    muted: []
 });

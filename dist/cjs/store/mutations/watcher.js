@@ -7,8 +7,11 @@ exports.watcher = () => ({
     ["WATCHER_STARTED" /* watcherStarted */](state, payload) {
         state.watching = state.watching.concat(payload);
     },
-    ["SERVER_STATE_SYNC" /* serverStateSync */](state, payload) {
-        console.log("server state sync: ", payload);
+    ["WATCHER_MUTED" /* watcherMuted */](state, watcherId) {
+        state.muted = state.muted.concat(watcherId);
+    },
+    ["WATCHER_UNMUTED" /* watcherUnmuted */](state, watcherId) {
+        state.muted = state.muted.filter(i => i !== watcherId);
     }
 });
 //# sourceMappingURL=watcher.js.map
