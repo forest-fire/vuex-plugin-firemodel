@@ -1,16 +1,20 @@
 import { isRecord } from "../shared/isRecord";
 import { changeRoot } from "../shared/changeRoot";
-import { updateList } from "../shared/updateList";
+import Vue from "vue";
 export function watchEvents(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {
+        /**
+         * Bring in the server's current state at the point that a
+         * watcher has been setup.
+         */
         ["SERVER_STATE_SYNC" /* serverStateSync */](state, payload) {
-            console.log(payload);
             if (isRecord(state, payload)) {
                 changeRoot(state, payload.value);
             }
             else {
-                updateList(state, offset, payload.value);
+                console.log("list", offset);
+                Vue.set(state, offset, payload.value);
             }
         }
     };

@@ -1,5 +1,4 @@
 import { IDictionary } from "common-types";
-import get from "lodash.get";
 import Vue from "vue";
 import { FireModelPluginError } from "../errors/FiremodelPluginError";
 import { Model } from "firemodel";

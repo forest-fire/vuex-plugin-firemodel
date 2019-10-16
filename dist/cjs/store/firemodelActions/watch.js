@@ -13,9 +13,9 @@ exports.watch = () => ({
      * When getting a SYNC action from a watcher starting, pass this to the
      * appropriate local state node
      */
-    [firemodel_1.FmEvents.WATCHER_SYNC]({ commit, rootState }, payload) {
-        console.log("watcher sync action", payload);
-        commit(determineLocalStateNode_1.determineLocalStateNode(payload, "SERVER_STATE_SYNC" /* serverStateSync */), payload);
+    [firemodel_1.FmEvents.WATCHER_SYNC]({ commit }, payload) {
+        commit("SERVER_STATE_SYNC" /* serverStateSync */, payload);
+        commit(determineLocalStateNode_1.determineLocalStateNode(payload, "SERVER_STATE_SYNC" /* serverStateSync */), payload, { root: true });
     }
 });
 //# sourceMappingURL=watch.js.map
