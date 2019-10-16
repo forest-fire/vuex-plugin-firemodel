@@ -5,6 +5,7 @@ import { serverEvents } from "./serverEvents";
 import { serverRollbacks } from "./serverRollbacks";
 import { serverConfirms } from "./serverConfirms";
 import { IDictionary } from "firemock";
+import { watchEvents } from "./watchEvents";
 
 export type ListPropertyCandidates<T> = Pick<
   T,
@@ -51,7 +52,8 @@ export function firemodelMutations<T extends IDictionary>(
     ...addedLocally<T>(propOffset),
     ...serverEvents<T>(propOffset),
     ...serverRollbacks<T>(propOffset),
-    ...serverConfirms<T>(propOffset)
+    ...serverConfirms<T>(propOffset),
+    ...watchEvents<T>(propOffset)
   };
 
   return a;

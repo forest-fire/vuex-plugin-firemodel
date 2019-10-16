@@ -1764,9 +1764,9 @@ binary-extensions@^1.0.0:
   integrity sha512-Un7MIEDdUC5gNpcGDV97op1Ywk748MpHcFTHoYs6qnj1Z3j7I53VG3nwZhKzoBZmbdRNnb6WRdFlwl7tSDuZGw==
 
 bluebird@^3.1.1, bluebird@^3.5.5:
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.0.tgz#56a6a886e03f6ae577cffedeb524f8f2450293cf"
-  integrity sha512-aBQ1FxIa7kSWCcmKHlcHFlT2jt6J/l4FzC7KcPELkOJOsPOb/bccdhmIrKDfXhwFrmc7vDoDrrepFvGqjyXGJg==
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.1.tgz#df70e302b471d7473489acf26a93d63b53f874de"
+  integrity sha512-DdmyoGCleJnkbp3nkbxTLJ18rjDsE4yCggEwKNXkeV123sPNfOCYeDoeuOY+F2FrSjO1YXcTU+dsy96KMy+gcg==
 
 bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.4.0:
   version "4.11.8"
@@ -3608,9 +3608,9 @@ firebase-key@^2.0.2:
   integrity sha512-gH0u6apANQsqHUqcf+Yd49VaUQyKNCLxofwYx0gqUGcymeLs5HWg/3tXroGheYYH8+ynxbrnP/Z4F/FEqNy9Ow==
 
 firemock@^0.33.1:
-  version "0.33.1"
-  resolved "https://registry.yarnpkg.com/firemock/-/firemock-0.33.1.tgz#9075741280341e43c6728ca07de930a8e5766501"
-  integrity sha512-JMbonv/McFjDVpSGenDRczhfsWA+oimzEvm9MgivTFPnjrX8QFsiSs3MSYO3CIt17I1fMrF4rX9liWsaD2jbjQ==
+  version "0.33.2"
+  resolved "https://registry.yarnpkg.com/firemock/-/firemock-0.33.2.tgz#a41f099891ff94e2a8f9aeafb825d49247b567bf"
+  integrity sha512-1c6Vm6vdqo40jRh7nnQmmarHW5fT0mPmsfi3E0J5gQpzggAy4GbcEbMV9SewO1ld/l5s6UldQ9O93udYM7fPtg==
   dependencies:
     "@firebase/app-types" "^0.4.5"
     "@firebase/auth-types" "^0.8.1"
@@ -3631,10 +3631,10 @@ firemock@^0.33.1:
     serialized-query "^0.9.1"
     typed-conversions "^0.10.1"
 
-firemodel@^0.33.1:
-  version "0.33.1"
-  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.33.1.tgz#3604d0af97b5dd7b2297c08803b647bfe7f7bc56"
-  integrity sha512-ORGoRNhgE9dAkF7WHzU+GR3IXVFx36C+530JRWkdBpIqb3FyE6td0PXfa9f9kzMP0733JIBNGKad2XRu3qiDSA==
+firemodel@^0.33.2:
+  version "0.33.2"
+  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.33.2.tgz#a9860f7e614544f989a33495ffa32e76f1f78998"
+  integrity sha512-p0yy76r4pAxLGqpuRGEJ9TQcLknyPQAYEFhLM/g0GRf2zTzABSLS+p0dvBvl/ST760OTDQAvMzpV+N89wpzQ9A==
   dependencies:
     abstracted-firebase "^0.33.0"
     common-types "^1.12.9"
@@ -7656,9 +7656,9 @@ terser-webpack-plugin@^1.4.1:
     worker-farm "^1.7.0"
 
 terser@^4.1.2:
-  version "4.3.8"
-  resolved "https://registry.yarnpkg.com/terser/-/terser-4.3.8.tgz#707f05f3f4c1c70c840e626addfdb1c158a17136"
-  integrity sha512-otmIRlRVmLChAWsnSFNO0Bfk6YySuBp6G9qrHiJwlLDd4mxe2ta4sjI7TzIR+W1nBMjilzrMcPOz9pSusgx3hQ==
+  version "4.3.9"
+  resolved "https://registry.yarnpkg.com/terser/-/terser-4.3.9.tgz#e4be37f80553d02645668727777687dad26bbca8"
+  integrity sha512-NFGMpHjlzmyOtPL+fDw3G7+6Ueh/sz4mkaUYa4lJCxOPTNzd0Uj0aZJOmsDYoSQyfuVoWDMSWTPU3huyOm2zdA==
   dependencies:
     commander "^2.20.0"
     source-map "~0.6.1"
@@ -8329,9 +8329,9 @@ webpack-sources@^1.1.0, webpack-sources@^1.4.0, webpack-sources@^1.4.1:
     source-map "~0.6.1"
 
 webpack@^4.8.1:
-  version "4.41.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.41.1.tgz#5388dd3047d680d5d382a84249fd4750e87372fd"
-  integrity sha512-ak7u4tUu/U63sCVxA571IuPZO/Q0pZ9cEXKg+R/woxkDzVovq57uB6L2Hlg/pC8LCU+TWpvtcYwsstivQwMJmw==
+  version "4.41.2"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.41.2.tgz#c34ec76daa3a8468c9b61a50336d8e3303dce74e"
+  integrity sha512-Zhw69edTGfbz9/8JJoyRQ/pq8FYUoY0diOXqW0T6yhgdhCv6wr0hra5DwwWexNRns2Z2+gsnrNcbe9hbGBgk/A==
   dependencies:
     "@webassemblyjs/ast" "1.8.5"
     "@webassemblyjs/helper-module-context" "1.8.5"

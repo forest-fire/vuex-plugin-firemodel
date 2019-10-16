@@ -19,5 +19,11 @@ export declare const enum FmCrudMutation {
     serverRemoveRollback = "ROLLBACK_REMOVE",
     serverAdd = "SERVER_ADD",
     serverChange = "SERVER_CHANGE",
-    serverRemove = "SERVER_REMOVE"
+    serverRemove = "SERVER_REMOVE",
+    /**
+     * when a watcher -- which was configured with `largePayload` -- starts,
+     * it first sends an array of values that exist on the server so that the
+     * server and client are in _sync_.
+     */
+    serverStateSync = "SERVER_STATE_SYNC"
 }

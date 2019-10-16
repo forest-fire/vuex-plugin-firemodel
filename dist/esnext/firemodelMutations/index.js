@@ -2,6 +2,7 @@ import { addedLocally } from "./addedLocally";
 import { serverEvents } from "./serverEvents";
 import { serverRollbacks } from "./serverRollbacks";
 import { serverConfirms } from "./serverConfirms";
+import { watchEvents } from "./watchEvents";
 /**
  * **firebaseMutations**
  *
@@ -37,6 +38,6 @@ export function firemodelMutations(
  * and it will honored.
  */
 propOffset) {
-    const a = Object.assign(Object.assign(Object.assign(Object.assign({}, addedLocally(propOffset)), serverEvents(propOffset)), serverRollbacks(propOffset)), serverConfirms(propOffset));
+    const a = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, addedLocally(propOffset)), serverEvents(propOffset)), serverRollbacks(propOffset)), serverConfirms(propOffset)), watchEvents(propOffset));
     return a;
 }
