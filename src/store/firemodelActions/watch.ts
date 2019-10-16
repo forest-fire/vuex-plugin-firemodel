@@ -19,12 +19,12 @@ export const watch = <T>() =>
      * When getting a SYNC action from a watcher starting, pass this to the
      * appropriate local state node
      */
-    [FmEvents.WATCHER_SYNC]({ commit, rootState }, payload: IFmWatchEvent) {
-      console.log("watcher sync action", payload);
-
+    [FmEvents.WATCHER_SYNC]({ commit }, payload: IFmWatchEvent) {
+      commit(FmCrudMutation.serverStateSync, payload);
       commit(
         determineLocalStateNode(payload, FmCrudMutation.serverStateSync),
-        payload
+        payload,
+        { root: true }
       );
     }
   } as ActionTree<IFiremodelState<T>, T>);

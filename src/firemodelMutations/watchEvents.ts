@@ -4,21 +4,25 @@ import { IFmWatchEvent } from "firemodel";
 import { IDictionary } from "common-types";
 import { isRecord } from "../shared/isRecord";
 import { changeRoot } from "../shared/changeRoot";
-import { updateList } from "../shared/updateList";
+import Vue from "vue";
 
 export function watchEvents<T>(propOffset?: keyof T & string): MutationTree<T> {
   const offset = !propOffset ? ("all" as keyof T & string) : propOffset;
 
   return {
+    /**
+     * Bring in the server's current state at the point that a
+     * watcher has been setup.
+     */
     [FmCrudMutation.serverStateSync](
       state: T | IDictionary<T[]>,
       payload: IFmWatchEvent<T>
     ) {
-      console.log(payload);
       if (isRecord(state, payload)) {
         changeRoot<T>(state, payload.value);
       } else {
-        updateList<T>(state, offset, payload.value);
+        console.log("list", offset);
+        Vue.set(state, offset, payload.value);
       }
     }
   };
