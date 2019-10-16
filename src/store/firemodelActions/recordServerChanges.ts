@@ -6,14 +6,16 @@ import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
 
 export const recordServerChanges = <T>() =>
   ({
-    [FmEvents.RECORD_ADDED]({ commit }, payload: IFmWatchEvent) {
-      commit(
-        determineLocalStateNode(payload, FmCrudMutation.serverAdd),
-        payload,
-        {
-          root: true
-        }
-      );
+    [FmEvents.RECORD_ADDED]({ commit, state }, payload: IFmWatchEvent) {
+      if (!state.muted.includes(payload.watcherId)) {
+        commit(
+          determineLocalStateNode(payload, FmCrudMutation.serverAdd),
+          payload,
+          {
+            root: true
+          }
+        );
+      }
     },
 
     [FmEvents.RECORD_REMOVED]({ commit }, payload) {

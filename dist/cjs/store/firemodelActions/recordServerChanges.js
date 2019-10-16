@@ -3,10 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const firemodel_1 = require("firemodel");
 const determineLocalStateNode_1 = require("../../shared/determineLocalStateNode");
 exports.recordServerChanges = () => ({
-    [firemodel_1.FmEvents.RECORD_ADDED]({ commit }, payload) {
-        commit(determineLocalStateNode_1.determineLocalStateNode(payload, "SERVER_ADD" /* serverAdd */), payload, {
-            root: true
-        });
+    [firemodel_1.FmEvents.RECORD_ADDED]({ commit, state }, payload) {
+        if (!state.muted.includes(payload.watcherId)) {
+            commit(determineLocalStateNode_1.determineLocalStateNode(payload, "SERVER_ADD" /* serverAdd */), payload, {
+                root: true
+            });
+        }
     },
     [firemodel_1.FmEvents.RECORD_REMOVED]({ commit }, payload) {
         commit(determineLocalStateNode_1.determineLocalStateNode(payload, "SERVER_REMOVE" /* serverRemove */), payload, {

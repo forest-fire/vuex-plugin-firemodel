@@ -34,4 +34,6 @@ export interface IFiremodelState<T> {
     localOnly: IDictionary<IFmLocalEvent<T>>;
     /** if there was an error the the message will be displayed here */
     errors?: string[];
+    /** an array of ListWatchers which are temporarily muted */
+    muted: string[];
 }

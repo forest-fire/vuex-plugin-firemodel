@@ -18,7 +18,6 @@ function watchEvents(propOffset) {
                 changeRoot_1.changeRoot(state, payload.value);
             }
             else {
-                console.log("list", offset);
                 vue_1.default.set(state, offset, payload.value);
             }
         }

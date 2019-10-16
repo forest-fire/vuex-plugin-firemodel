@@ -21,7 +21,6 @@ export function watchEvents<T>(propOffset?: keyof T & string): MutationTree<T> {
       if (isRecord(state, payload)) {
         changeRoot<T>(state, payload.value);
       } else {
-        console.log("list", offset);
         Vue.set(state, offset, payload.value);
       }
     }

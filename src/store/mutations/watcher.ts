@@ -1,7 +1,6 @@
 import { MutationTree } from "vuex";
 import { IFiremodelState } from "../..";
 import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
-import { FmCrudMutation } from "../../types";
 
 export const watcher = <T>() =>
   ({
@@ -13,7 +12,11 @@ export const watcher = <T>() =>
       state.watching = state.watching.concat(payload);
     },
 
-    [FmCrudMutation.serverStateSync](state, payload) {
-      console.log("server state sync: ", payload);
+    [FmConfigMutation.watcherMuted](state, watcherId) {
+      state.muted = state.muted.concat(watcherId);
+    },
+
+    [FmConfigMutation.watcherUnmuted](state, watcherId) {
+      state.muted = state.muted.filter(i => i !== watcherId);
     }
   } as MutationTree<IFiremodelState<T>>);
