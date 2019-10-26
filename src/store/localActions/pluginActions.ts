@@ -71,10 +71,12 @@ export const pluginActions = <T>() =>
      * then signs into Firebase as an _anonymous_ user
      */
     async [FmConfigAction.anonymousLogin](store) {
-      const { commit, state, dispatch, rootState } = store;
+      const { commit, dispatch, rootState } = store;
       const db = await database();
       const auth = await db.auth();
       let user: IFmUserInfo;
+
+      console.log(`checking anon login`, rootState);
 
       if (auth.currentUser) {
         user = {
@@ -93,18 +95,6 @@ export const pluginActions = <T>() =>
       }
 
       commit(FmConfigMutation.userLoggedIn, user);
-
-      // const ctx: IFmAuthEventContext<T> = {
-      //   Watch,
-      //   Record,
-      //   List,
-      //   db,
-      //   dispatch,
-      //   commit,
-      //   ...user,
-      //   state: rootState
-      // };
-      // await runQueue(ctx, "logged-in");
     },
 
     /**
@@ -118,7 +108,7 @@ export const pluginActions = <T>() =>
      * Also enables the appropriate lifecycle hooks: `onLogOut` and `onLogIn`
      */
     async [FmConfigAction.firebaseAuth](store, config: IFiremodelConfig<T>) {
-      const { commit, rootState, dispatch, state } = store;
+      const { commit, rootState, dispatch } = store;
 
       const authChanged = async (user: User | null) => {
         const ctx: IFmAuthEventContext<T> = {
@@ -135,11 +125,23 @@ export const pluginActions = <T>() =>
         };
 
         if (user) {
+          console.info(`Login detected`, user);
           commit(FmConfigMutation.userLoggedIn, user);
           await runQueue(ctx, "logged-in");
         } else {
+          console.info(`Logout detected`, user);
           commit(FmConfigMutation.userLoggedOut, user);
           await runQueue(ctx, "logged-out");
+          if (config.anonymousAuth) {
+            const auth = await (await database()).auth();
+            const anon = await auth.signInAnonymously();
+            const user = {
+              uid: (anon.user as User).uid,
+              isAnonymous: true,
+              emailVerified: false
+            };
+            commit(FmConfigMutation.userLoggedIn, user);
+          }
         }
       };
       try {
@@ -147,6 +149,9 @@ export const pluginActions = <T>() =>
         const auth = await db.auth();
         auth.onAuthStateChanged(authChanged);
         auth.setPersistence(config.authPersistence || "session");
+        console.log(
+          `Auth state changes registered ${(rootState as any)["@firemodel"]}`
+        );
       } catch (e) {
         console.log("Problem hooking into onAuthStateChanged: ", e.message);
         console.log(e.stack);
@@ -168,7 +173,7 @@ export const pluginActions = <T>() =>
           commit,
           state: rootState
         };
-        runQueue(ctx, "route-changed");
+        await runQueue(ctx, "route-changed");
       }
     }
   } as ActionTree<IFiremodelState<T>, T>);

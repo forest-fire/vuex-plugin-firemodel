@@ -3,6 +3,7 @@ import { addNamespace } from "./shared/addNamespace";
 import { FmConfigAction } from "./types/actions";
 import { FmConfigMutation } from "./types/mutations/FmConfigMutation";
 import { IFiremodelConfig } from "./types/index";
+import { database } from "./store";
 
 /**
  * Based on the configuration passed in by the consuming app, core
@@ -12,21 +13,35 @@ export async function coreServices<T>(
   store: Store<T>,
   config: IFiremodelConfig<T>
 ) {
+  const starting: Promise<any>[] = [];
   if (config.connect) {
-    await store.dispatch(addNamespace(FmConfigAction.connect), config.db);
+    await database(config.db);
+    console.log("db connected");
+
+    starting.push(
+      store.dispatch(addNamespace(FmConfigAction.connect), config.db)
+    );
   }
 
   if (config.useAuth) {
-    await store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config);
-  }
+    console.log("using Auth");
 
-  if (config.anonymousAuth) {
-    await store.dispatch(addNamespace(FmConfigAction.anonymousLogin), config);
+    starting.push(
+      store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config)
+    );
   }
 
   if (config.watchRouteChanges) {
-    await store.dispatch(addNamespace(FmConfigAction.watchRouteChanges));
+    starting.push(
+      store.dispatch(addNamespace(FmConfigAction.watchRouteChanges))
+    );
   }
+  await Promise.all(starting);
+
+  // if (config.anonymousAuth) {
+  //   await database();
+  //   await store.dispatch(addNamespace(FmConfigAction.anonymousLogin), config);
+  // }
 
   store.commit(addNamespace(FmConfigMutation.coreServicesStarted), {
     message: `all core firemodel plugin services started`,

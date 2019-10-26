@@ -50,10 +50,11 @@ export const pluginActions = () => ({
      * then signs into Firebase as an _anonymous_ user
      */
     async [FmConfigAction.anonymousLogin](store) {
-        const { commit, state, dispatch, rootState } = store;
+        const { commit, dispatch, rootState } = store;
         const db = await database();
         const auth = await db.auth();
         let user;
+        console.log(`checking anon login`, rootState);
         if (auth.currentUser) {
             user = {
                 isAnonymous: auth.currentUser.isAnonymous,
@@ -71,17 +72,6 @@ export const pluginActions = () => ({
             };
         }
         commit("USER_LOGGED_IN" /* userLoggedIn */, user);
-        // const ctx: IFmAuthEventContext<T> = {
-        //   Watch,
-        //   Record,
-        //   List,
-        //   db,
-        //   dispatch,
-        //   commit,
-        //   ...user,
-        //   state: rootState
-        // };
-        // await runQueue(ctx, "logged-in");
     },
     /**
      * **firebaseAuth**
@@ -94,7 +84,7 @@ export const pluginActions = () => ({
      * Also enables the appropriate lifecycle hooks: `onLogOut` and `onLogIn`
      */
     async [FmConfigAction.firebaseAuth](store, config) {
-        const { commit, rootState, dispatch, state } = store;
+        const { commit, rootState, dispatch } = store;
         const authChanged = async (user) => {
             const ctx = {
                 Watch,
@@ -109,12 +99,24 @@ export const pluginActions = () => ({
                 state: rootState
             };
             if (user) {
+                console.info(`Login detected`, user);
                 commit("USER_LOGGED_IN" /* userLoggedIn */, user);
                 await runQueue(ctx, "logged-in");
             }
             else {
+                console.info(`Logout detected`, user);
                 commit("USER_LOGGED_OUT" /* userLoggedOut */, user);
                 await runQueue(ctx, "logged-out");
+                if (config.anonymousAuth) {
+                    const auth = await (await database()).auth();
+                    const anon = await auth.signInAnonymously();
+                    const user = {
+                        uid: anon.user.uid,
+                        isAnonymous: true,
+                        emailVerified: false
+                    };
+                    commit("USER_LOGGED_IN" /* userLoggedIn */, user);
+                }
             }
         };
         try {
@@ -122,6 +124,7 @@ export const pluginActions = () => ({
             const auth = await db.auth();
             auth.onAuthStateChanged(authChanged);
             auth.setPersistence(config.authPersistence || "session");
+            console.log(`Auth state changes registered ${rootState["@firemodel"]}`);
         }
         catch (e) {
             console.log("Problem hooking into onAuthStateChanged: ", e.message);
@@ -143,7 +146,7 @@ export const pluginActions = () => ({
                 commit,
                 state: rootState
             };
-            runQueue(ctx, "route-changed");
+            await runQueue(ctx, "route-changed");
         }
     }
 });
