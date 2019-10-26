@@ -1,6 +1,6 @@
 {
   "name": "vuex-plugin-firemodel",
-  "version": "1.0.0-beta.19",
+  "version": "1.0.0-beta.20",
   "description": "A Vuex plugin which reponds to all FireModel actions as well as providing mutations which can be imported by your state tree.",
   "main": "dist/cjs/index.js",
   "module": "dist/esnext/index.js",
@@ -31,9 +31,9 @@
   },
   "homepage": "https://github.com/forest-fire/vuex-plugin-firemodel#readme",
   "dependencies": {
-    "@firebase/auth-types": "^0.8.1",
-    "abstracted-client": "^0.33.0",
-    "firemodel": "^0.33.3",
+    "@firebase/auth-types": "^0.8.2",
+    "abstracted-client": "^0.33.1",
+    "firemodel": "^0.33.5",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "vuex": "^3.1.1"
