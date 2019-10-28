@@ -465,7 +465,7 @@ await user.associate(orders, newOrder.id)
 
 This in fact _does_ work in most ways but one ... the problem you're going to find is that since the `Order` you've just added does not have a "watcher" associated with the path yet you'll get a Vuex mutation to `order/add` but in your local state tree you've configured to have a _list_ of orders and therefore the local state tree expects the mutation to be `orders/add` (aka, plural).
 
-Once you have setup a list watcher on `Order` -- which you can do right after you've added the record -- all future updates to the record will be correctly mutated to the plural "**orders**" because the watcher is in place. How can we get around this _chicken-and-egg** problem? The answer lies in a property in the optional _options_ hash:
+Once you have setup a list watcher on `Order` -- which you can do right after you've added the record -- all future updates to the record will be correctly mutated to the plural "**orders**" because the watcher is in place. How can we get around this _chicken-and-egg_ problem? The answer lies in a property in the optional _options_ hash:
 
 ```typescript
 const newOrder = await Record.add(Order, { ... }, { pluralizeLocalPath: true })
