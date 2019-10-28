@@ -429,7 +429,19 @@ export async onLogout() {
 
 ### Watching Lists of Records with `list().ids(...)`
 
-There are situations where you will want to setup a **list** watcher which is attached to an array of `id`'s. This isn't hard to do but it potentially leads to an edge case that you may run into.
+There are situations where you will want to setup a **list** watcher which is attached to an array of `id`'s but because you don't have permissions to see the whole list you can not use the simple syntax of:
+
+```typescript
+const watcher = await Watch.list(MyModel).where('uid', '1234');
+```
+
+but must rely instead on:
+
+```typescript
+const watcher = await Watch.list(MyModel).ids(anArrayOfIds);
+```
+
+This alternative isn't hard so long as you have the list of `id`s but when doing this it can potentially leads to an edge case that's worth understanding.
 
 To illustrate, imagine the scenario where you have a list of orders but the logged in user only has read permission to read orders which they own. We might watch the user's orders by first watching the UserProfile like so:
 
