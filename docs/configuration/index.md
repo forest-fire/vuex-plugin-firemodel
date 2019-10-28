@@ -424,3 +424,39 @@ export async onLogout() {
   await Watch.stop(Watch.findByName('user-profile'));
 }
 ```
+
+## Advanced Use Cases
+
+### Watching Lists of Records with `list().ids(...)`
+
+There are situations where you will want to setup a **list** watcher which is attached to an array of `id`'s. This isn't hard to do but it potentially leads to an edge case that you may run into.
+
+To illustrate, imagine the scenario where you have a list of orders but the logged in user only has read permission to read orders which they own. We might watch the user's orders by first watching the UserProfile like so:
+
+```typescript
+await Watch.record(UserProfile, '1234');
+```
+
+And assuming, that you have a relationship setup between `UserProfile` and `Order` you might then:
+
+```typescript
+const recentOrders = Object.keys(state.userProfile.orders).slice(0,3);
+await Watch.list(Order).ids(recentOrders);
+```
+
+This will achieve all the results you want when the user logging in has `recentOrders` but imagine that a new user has logged in and they have no orders but our application requires that there is always at least _one_ order. Well this shouldn't be hard, right? You can just add the order with:
+
+```typescript
+const newOrder = await Record.add(Order, { ... })
+await user.associate(orders, newOrder.id)
+```
+
+This in fact _does_ work in most ways but one ... the problem you're going to find is that since the `Order` you've just added does not have a "watcher" associated with the path yet you'll get a Vuex mutation to `order/add` but in your local state tree you've configured to have a _list_ of orders and therefore the local state tree expects the mutation to be `orders/add` (aka, plural).
+
+Once you have setup a list watcher on `Order` -- which you can do right after you've added the record -- all future updates to the record will be correctly mutated to the plural "**orders**" because the watcher is in place. How can we get around this _chicken-and-egg** problem? The answer lies in a property in the optional _options_ hash:
+
+```typescript
+const newOrder = await Record.add(Order, { ... }, { pluralizeLocalPath: true })
+```
+
+This will ensure that the Vuex mutation is sent to the right place the first time and then -- assuming you setup the list watcher -- all subsequent items will be as well.
