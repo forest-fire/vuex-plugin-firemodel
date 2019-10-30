@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const abstracted_client_1 = require("abstracted-client");
 const FiremodelPluginError_1 = require("../errors/FiremodelPluginError");
+const firemodel_1 = require("firemodel");
 let _db;
 let _config;
 /**
@@ -14,6 +15,7 @@ async function database(config) {
             _db = await abstracted_client_1.DB.connect(config);
         }
         _config = config;
+        firemodel_1.FireModel.defaultDb = _db;
     }
     if (!_db) {
         throw new FiremodelPluginError_1.FireModelPluginError("Trying to get the database connection but it has not been established yet!", "not-ready");

@@ -101,7 +101,7 @@ exports.pluginActions = () => ({
                 state: rootState
             };
             if (user) {
-                console.info(`Login detected`, user);
+                console.info(`Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`);
                 commit("USER_LOGGED_IN" /* userLoggedIn */, user);
                 await runQueue(ctx, "logged-in");
             }
@@ -126,7 +126,7 @@ exports.pluginActions = () => ({
             const auth = await db.auth();
             auth.onAuthStateChanged(authChanged);
             auth.setPersistence(config.authPersistence || "session");
-            console.log(`Auth state changes registered ${rootState["@firemodel"]}`);
+            console.log(`Auth state callback registered`, rootState["@firemodel"]);
         }
         catch (e) {
             console.log("Problem hooking into onAuthStateChanged: ", e.message);
