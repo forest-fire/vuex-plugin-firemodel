@@ -12,6 +12,15 @@ export const watcher = <T>() =>
       state.watching = state.watching.concat(payload);
     },
 
+    [FmConfigMutation.watcherStopped](state, payload) {
+      state.watching = state.watching.filter(
+        i => i.watchId !== payload.hashCode
+      );
+    },
+    [FmConfigMutation.watcherAllStopped](state, payload) {
+      state.watching = [];
+    },
+
     [FmConfigMutation.watcherMuted](state, watcherId) {
       state.muted = state.muted.concat(watcherId);
     },

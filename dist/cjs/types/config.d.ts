@@ -20,6 +20,7 @@ export interface IFmUserInfo {
     emailVerified: boolean;
 }
 export interface IFmAuthEventContext<T> extends IFmEventContext<T>, IFmUserInfo {
+    config: IFiremodelConfig<T>;
 }
 export interface IFmLoginUpgradeEventContext<T> extends IFmEventContext<T> {
     uids: {

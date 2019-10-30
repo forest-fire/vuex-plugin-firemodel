@@ -1,13 +1,13 @@
 import { FireModel, Record, List, Watch } from "firemodel";
 import { ActionTree } from "vuex";
 import {
-  IFiremodelState,
   IFmQueuedAction,
   IFmLifecycleEvents,
   IFmEventContext,
   IFmAuthEventContext,
   IFmUserInfo,
-  IFiremodelConfig
+  IFiremodelConfig,
+  IFiremodelState
 } from "../../types/index";
 
 import { User } from "@firebase/auth-types";
@@ -16,6 +16,8 @@ import { configuration } from "../../index";
 import { FmConfigAction } from "../../types/actions/FmConfigActions";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
 import { database } from "../../shared/database";
+import { authChanged } from "../../shared/authChanges";
+import { runQueue } from "../../shared/runQueue";
 
 /**
  * **pluginActions**
@@ -37,29 +39,26 @@ export const pluginActions = <T>() =>
           "not-allowed"
         );
       }
-
-      commit(FmConfigMutation.configure, config); // set Firebase configuration
       try {
-        commit(FmConfigMutation.connecting);
         const db = await database(config);
-
-        if (!FireModel.defaultDb) {
-          FireModel.defaultDb = db;
-        }
-        commit(FmConfigMutation.connected);
+        FireModel.defaultDb = db;
         const ctx: IFmEventContext<T> = {
+          Watch,
           Record,
           List,
-          Watch,
-          db,
           dispatch,
           commit,
           state: rootState
         };
+
         await runQueue(ctx, "connected");
+
+        commit(FmConfigMutation.configure, config); // set Firebase configuration
       } catch (e) {
-        commit(FmConfigMutation.connectionError, e);
-        throw new FireModelPluginError(e.message, "connection-error");
+        throw new FireModelPluginError(
+          `There was an issue connecting to the Firebase database: ${e.message}`,
+          `vuex-plugin-firemodel/connection-problem`
+        );
       }
     },
 
@@ -104,7 +103,8 @@ export const pluginActions = <T>() =>
      * that the `@firemodel` state tree has an up-to-date representation
      * of the `currentUser`.
      *
-     * Also enables the appropriate lifecycle hooks: `onLogOut` and `onLogIn`
+     * Also enables the appropriate lifecycle hooks: `onLogOut`, `onLogIn`, and
+     * `onUserUpgrade` (when anonymous user logs into a known user)
      */
     async [FmConfigAction.firebaseAuth](store, config: IFiremodelConfig<T>) {
       const { commit, rootState, dispatch } = store;
@@ -115,41 +115,10 @@ export const pluginActions = <T>() =>
         List,
         dispatch,
         commit,
+        config,
         state: rootState
       };
 
-      const authChanged = (context: Partial<IFmAuthEventContext<T>>) => async (
-        user: User | null
-      ) => {
-        const ctx = {
-          ...context,
-          isAnonymous: user ? user.isAnonymous : false,
-          uid: user ? user.uid : "",
-          emailVerified: user ? user.emailVerified : false,
-          email: user ? user.email : ""
-        } as IFmAuthEventContext<T>;
-        if (user) {
-          console.info(
-            `Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`
-          );
-          commit(FmConfigMutation.userLoggedIn, user);
-          await runQueue(ctx, "logged-in");
-        } else {
-          console.info(`Logout detected`, user);
-          commit(FmConfigMutation.userLoggedOut, user);
-          await runQueue(ctx, "logged-out");
-          if (config.anonymousAuth) {
-            const auth = await (await database()).auth();
-            const anon = await auth.signInAnonymously();
-            const user = {
-              uid: (anon.user as User).uid,
-              isAnonymous: true,
-              emailVerified: false
-            };
-            commit(FmConfigMutation.userLoggedIn, user);
-          }
-        }
-      };
       try {
         const db = await database();
         const auth = await db.auth();
@@ -184,41 +153,3 @@ export const pluginActions = <T>() =>
       }
     }
   } as ActionTree<IFiremodelState<T>, T>);
-
-/**
- * **runQueue**
- *
- * pulls items off the lifecycle queue which match the lifecycle event
- */
-async function runQueue<T>(
-  ctx: IFmEventContext<T>,
-  lifecycle: IFmLifecycleEvents
-) {
-  const remainingQueueItems: IFmQueuedAction<T>[] = [];
-  const queued = ((ctx.state as any)["@firemodel"].queued as IFmQueuedAction<
-    T
-  >[]).filter(i => i.on === lifecycle);
-
-  for (const item of queued) {
-    try {
-      const { cb } = item;
-      await cb(ctx);
-    } catch (e) {
-      console.error(`deQueing ${item.name}: ${e.message}`);
-      ctx.commit("error", {
-        message: e.message,
-        code: e.code || e.name,
-        stack: e.stack
-      });
-      remainingQueueItems.push({
-        ...item,
-        ...{ error: e.message, errorStack: e.stack }
-      });
-    }
-  }
-
-  ctx.commit(FmConfigMutation.lifecycleEventCompleted, {
-    event: lifecycle,
-    actionCallbacks: queued.filter(i => i.on === lifecycle).map(i => i.name)
-  });
-}

@@ -5,6 +5,8 @@ const index_1 = require("../../index");
 const FmConfigActions_1 = require("../../types/actions/FmConfigActions");
 const FiremodelPluginError_1 = require("../../errors/FiremodelPluginError");
 const database_1 = require("../../shared/database");
+const authChanges_1 = require("../../shared/authChanges");
+const runQueue_1 = require("../../shared/runQueue");
 /**
  * **pluginActions**
  *
@@ -21,28 +23,22 @@ exports.pluginActions = () => ({
         if (!config) {
             throw new FiremodelPluginError_1.FireModelPluginError(`Connecting to database but NO configuration was present!`, "not-allowed");
         }
-        commit("CONFIGURE" /* configure */, config); // set Firebase configuration
         try {
-            commit("CONNECTING" /* connecting */);
             const db = await database_1.database(config);
-            if (!firemodel_1.FireModel.defaultDb) {
-                firemodel_1.FireModel.defaultDb = db;
-            }
-            commit("CONNECTED" /* connected */);
+            firemodel_1.FireModel.defaultDb = db;
             const ctx = {
+                Watch: firemodel_1.Watch,
                 Record: firemodel_1.Record,
                 List: firemodel_1.List,
-                Watch: firemodel_1.Watch,
-                db,
                 dispatch,
                 commit,
                 state: rootState
             };
-            await runQueue(ctx, "connected");
+            await runQueue_1.runQueue(ctx, "connected");
+            commit("CONFIGURE" /* configure */, config); // set Firebase configuration
         }
         catch (e) {
-            commit("CONNECTION_ERROR" /* connectionError */, e);
-            throw new FiremodelPluginError_1.FireModelPluginError(e.message, "connection-error");
+            throw new FiremodelPluginError_1.FireModelPluginError(`There was an issue connecting to the Firebase database: ${e.message}`, `vuex-plugin-firemodel/connection-problem`);
         }
     },
     /**
@@ -83,7 +79,8 @@ exports.pluginActions = () => ({
      * that the `@firemodel` state tree has an up-to-date representation
      * of the `currentUser`.
      *
-     * Also enables the appropriate lifecycle hooks: `onLogOut` and `onLogIn`
+     * Also enables the appropriate lifecycle hooks: `onLogOut`, `onLogIn`, and
+     * `onUserUpgrade` (when anonymous user logs into a known user)
      */
     async [FmConfigActions_1.FmConfigAction.firebaseAuth](store, config) {
         const { commit, rootState, dispatch } = store;
@@ -93,35 +90,13 @@ exports.pluginActions = () => ({
             List: firemodel_1.List,
             dispatch,
             commit,
+            config,
             state: rootState
-        };
-        const authChanged = (context) => async (user) => {
-            const ctx = Object.assign(Object.assign({}, context), { isAnonymous: user ? user.isAnonymous : false, uid: user ? user.uid : "", emailVerified: user ? user.emailVerified : false, email: user ? user.email : "" });
-            if (user) {
-                console.info(`Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`);
-                commit("USER_LOGGED_IN" /* userLoggedIn */, user);
-                await runQueue(ctx, "logged-in");
-            }
-            else {
-                console.info(`Logout detected`, user);
-                commit("USER_LOGGED_OUT" /* userLoggedOut */, user);
-                await runQueue(ctx, "logged-out");
-                if (config.anonymousAuth) {
-                    const auth = await (await database_1.database()).auth();
-                    const anon = await auth.signInAnonymously();
-                    const user = {
-                        uid: anon.user.uid,
-                        isAnonymous: true,
-                        emailVerified: false
-                    };
-                    commit("USER_LOGGED_IN" /* userLoggedIn */, user);
-                }
-            }
         };
         try {
             const db = await database_1.database();
             const auth = await db.auth();
-            auth.onAuthStateChanged(authChanged(ctx));
+            auth.onAuthStateChanged(authChanges_1.authChanged(ctx));
             auth.setPersistence(config.authPersistence || "session");
             console.log(`Auth state callback registered`, rootState["@firemodel"]);
         }
@@ -145,36 +120,8 @@ exports.pluginActions = () => ({
                 commit,
                 state: rootState
             };
-            await runQueue(ctx, "route-changed");
+            await runQueue_1.runQueue(ctx, "route-changed");
         }
     }
 });
-/**
- * **runQueue**
- *
- * pulls items off the lifecycle queue which match the lifecycle event
- */
-async function runQueue(ctx, lifecycle) {
-    const remainingQueueItems = [];
-    const queued = ctx.state["@firemodel"].queued.filter(i => i.on === lifecycle);
-    for (const item of queued) {
-        try {
-            const { cb } = item;
-            await cb(ctx);
-        }
-        catch (e) {
-            console.error(`deQueing ${item.name}: ${e.message}`);
-            ctx.commit("error", {
-                message: e.message,
-                code: e.code || e.name,
-                stack: e.stack
-            });
-            remainingQueueItems.push(Object.assign(Object.assign({}, item), { error: e.message, errorStack: e.stack }));
-        }
-    }
-    ctx.commit("LIFECYCLE_EVENT_COMPLETED" /* lifecycleEventCompleted */, {
-        event: lifecycle,
-        actionCallbacks: queued.filter(i => i.on === lifecycle).map(i => i.name)
-    });
-}
 //# sourceMappingURL=pluginActions.js.map

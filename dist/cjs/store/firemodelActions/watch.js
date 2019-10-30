@@ -9,6 +9,14 @@ exports.watch = () => ({
     [firemodel_1.FmEvents.WATCHER_STARTED]({ commit }, payload) {
         commit("WATCHER_STARTED" /* watcherStarted */, payload);
     },
+    [firemodel_1.FmEvents.WATCHER_STOPPED]({ commit }, payload) {
+        commit("WATCHER_STOPPED" /* watcherStopped */, payload);
+        // console.log("Watcher stopped", payload);
+    },
+    [firemodel_1.FmEvents.WATCHER_STOPPED_ALL]({ commit }, payload) {
+        commit("WATCHER_STOPPED_ALL" /* watcherAllStopped */, payload);
+        // console.log("All watchers stopped", payload);
+    },
     /**
      * When getting a SYNC action from a watcher starting, pass this to the
      * appropriate local state node

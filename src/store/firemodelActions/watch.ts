@@ -4,7 +4,6 @@ import { FmEvents, IFmWatchEvent } from "firemodel";
 import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
 import { FmCrudMutation } from "../../types";
 import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
-import { wait } from "common-types";
 
 export const watch = <T>() =>
   ({
@@ -14,6 +13,16 @@ export const watch = <T>() =>
 
     [FmEvents.WATCHER_STARTED]({ commit }, payload: IFmWatchEvent) {
       commit(FmConfigMutation.watcherStarted, payload);
+    },
+
+    [FmEvents.WATCHER_STOPPED]({ commit }, payload: IFmWatchEvent) {
+      commit(FmConfigMutation.watcherStopped, payload);
+      // console.log("Watcher stopped", payload);
+    },
+
+    [FmEvents.WATCHER_STOPPED_ALL]({ commit }, payload: IFmWatchEvent) {
+      commit(FmConfigMutation.watcherAllStopped, payload);
+      // console.log("All watchers stopped", payload);
     },
 
     /**
