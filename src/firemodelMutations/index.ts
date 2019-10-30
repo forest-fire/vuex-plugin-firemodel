@@ -4,6 +4,7 @@ import { addedLocally } from "./addedLocally";
 import { serverEvents } from "./serverEvents";
 import { serverRollbacks } from "./serverRollbacks";
 import { serverConfirms } from "./serverConfirms";
+import { reset } from "./reset";
 import { IDictionary } from "firemock";
 import { watchEvents } from "./watchEvents";
 
@@ -53,7 +54,8 @@ export function firemodelMutations<T extends IDictionary>(
     ...serverEvents<T>(propOffset),
     ...serverRollbacks<T>(propOffset),
     ...serverConfirms<T>(propOffset),
-    ...watchEvents<T>(propOffset)
+    ...watchEvents<T>(propOffset),
+    ...reset<T>(propOffset)
   };
 
   return a;

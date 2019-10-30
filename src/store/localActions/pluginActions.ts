@@ -16,7 +16,6 @@ import { configuration } from "../../index";
 import { FmConfigAction } from "../../types/actions/FmConfigActions";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
 import { database } from "../../shared/database";
-import { IFirebaseConfig } from "abstracted-firebase/dist/esnext/types";
 
 /**
  * **pluginActions**
@@ -125,7 +124,9 @@ export const pluginActions = <T>() =>
         };
 
         if (user) {
-          console.info(`Login detected`, user);
+          console.info(
+            `Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`
+          );
           commit(FmConfigMutation.userLoggedIn, user);
           await runQueue(ctx, "logged-in");
         } else {
@@ -150,7 +151,8 @@ export const pluginActions = <T>() =>
         auth.onAuthStateChanged(authChanged);
         auth.setPersistence(config.authPersistence || "session");
         console.log(
-          `Auth state changes registered ${(rootState as any)["@firemodel"]}`
+          `Auth state callback registered`,
+          (rootState as any)["@firemodel"]
         );
       } catch (e) {
         console.log("Problem hooking into onAuthStateChanged: ", e.message);

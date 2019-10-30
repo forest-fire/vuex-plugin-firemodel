@@ -1,5 +1,6 @@
 import { DB } from "abstracted-client";
 import { FireModelPluginError } from "../errors/FiremodelPluginError";
+import { FireModel } from "firemodel";
 let _db;
 let _config;
 /**
@@ -12,6 +13,7 @@ export async function database(config) {
             _db = await DB.connect(config);
         }
         _config = config;
+        FireModel.defaultDb = _db;
     }
     if (!_db) {
         throw new FireModelPluginError("Trying to get the database connection but it has not been established yet!", "not-ready");
