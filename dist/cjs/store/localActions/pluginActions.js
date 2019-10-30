@@ -87,19 +87,16 @@ exports.pluginActions = () => ({
      */
     async [FmConfigActions_1.FmConfigAction.firebaseAuth](store, config) {
         const { commit, rootState, dispatch } = store;
-        const authChanged = async (user) => {
-            const ctx = {
-                Watch: firemodel_1.Watch,
-                Record: firemodel_1.Record,
-                List: firemodel_1.List,
-                dispatch,
-                commit,
-                isAnonymous: user ? user.isAnonymous : false,
-                uid: user ? user.uid : "",
-                emailVerified: user ? user.emailVerified : false,
-                email: user ? user.email : "",
-                state: rootState
-            };
+        const ctx = {
+            Watch: firemodel_1.Watch,
+            Record: firemodel_1.Record,
+            List: firemodel_1.List,
+            dispatch,
+            commit,
+            state: rootState
+        };
+        const authChanged = (context) => async (user) => {
+            const ctx = Object.assign(Object.assign({}, context), { isAnonymous: user ? user.isAnonymous : false, uid: user ? user.uid : "", emailVerified: user ? user.emailVerified : false, email: user ? user.email : "" });
             if (user) {
                 console.info(`Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`);
                 commit("USER_LOGGED_IN" /* userLoggedIn */, user);
@@ -124,7 +121,7 @@ exports.pluginActions = () => ({
         try {
             const db = await database_1.database();
             const auth = await db.auth();
-            auth.onAuthStateChanged(authChanged);
+            auth.onAuthStateChanged(authChanged(ctx));
             auth.setPersistence(config.authPersistence || "session");
             console.log(`Auth state callback registered`, rootState["@firemodel"]);
         }
