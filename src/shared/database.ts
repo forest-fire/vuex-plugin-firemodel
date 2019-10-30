@@ -13,13 +13,13 @@ let _config: IFirebaseClientConfig;
 export async function database(config?: IFirebaseClientConfig) {
   if (config) {
     if (JSON.stringify(config) !== JSON.stringify(_config) || !_db) {
+      _config = config;
       _db = await DB.connect(config);
     }
-    _config = config;
     FireModel.defaultDb = _db;
   }
 
-  if (!_db) {
+  if (!_db && !_config) {
     throw new FireModelPluginError(
       "Trying to get the database connection but it has not been established yet!",
       "not-ready"

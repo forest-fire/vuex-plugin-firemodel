@@ -32,6 +32,10 @@ export const enum FmConfigMutation {
   watcherStarting = "WATCHER_STARTING",
   /** Firebase -- via Firemodel -- has started watching a new path in the DB */
   watcherStarted = "WATCHER_STARTED",
+  /** Firebase -- via Firemodel -- has stopped watching a new path in the DB */
+  watcherStopped = "WATCHER_STOPPED",
+  //** All Firebase watchers have been stopped */
+  watcherAllStopped = "WATCHER_STOPPED_ALL",
   /**
    * When a "largePayload" has been declared, all SERVER_ADD events from the given
    * watcher are muted for a short period to ensure that Vuex is not bombarded with

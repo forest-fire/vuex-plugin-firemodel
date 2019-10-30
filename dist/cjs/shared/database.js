@@ -12,12 +12,12 @@ let _config;
 async function database(config) {
     if (config) {
         if (JSON.stringify(config) !== JSON.stringify(_config) || !_db) {
+            _config = config;
             _db = await abstracted_client_1.DB.connect(config);
         }
-        _config = config;
         firemodel_1.FireModel.defaultDb = _db;
     }
-    if (!_db) {
+    if (!_db && !_config) {
         throw new FiremodelPluginError_1.FireModelPluginError("Trying to get the database connection but it has not been established yet!", "not-ready");
     }
     return _db;

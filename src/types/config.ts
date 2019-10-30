@@ -24,7 +24,9 @@ export interface IFmUserInfo {
 }
 export interface IFmAuthEventContext<T>
   extends IFmEventContext<T>,
-    IFmUserInfo {}
+    IFmUserInfo {
+  config: IFiremodelConfig<T>;
+}
 
 export interface IFmLoginUpgradeEventContext<T> extends IFmEventContext<T> {
   uids: {
