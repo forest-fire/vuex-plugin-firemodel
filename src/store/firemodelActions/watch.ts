@@ -16,6 +16,14 @@ export const watch = <T>() =>
       commit(FmConfigMutation.watcherStarted, payload);
     },
 
+    [FmEvents.WATCHER_STOPPED]({ commit }, payload: IFmWatchEvent) {
+      console.log("Watcher stopped", payload);
+    },
+
+    [FmEvents.WATCHER_STOPPED_ALL]({ commit }, payload: IFmWatchEvent) {
+      console.log("All watchers stopped", payload);
+    },
+
     /**
      * When getting a SYNC action from a watcher starting, pass this to the
      * appropriate local state node
