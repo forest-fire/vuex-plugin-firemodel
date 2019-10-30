@@ -109,20 +109,25 @@ export const pluginActions = <T>() =>
     async [FmConfigAction.firebaseAuth](store, config: IFiremodelConfig<T>) {
       const { commit, rootState, dispatch } = store;
 
-      const authChanged = async (user: User | null) => {
-        const ctx: IFmAuthEventContext<T> = {
-          Watch,
-          Record,
-          List,
-          dispatch,
-          commit,
+      const ctx: Partial<IFmAuthEventContext<T>> = {
+        Watch,
+        Record,
+        List,
+        dispatch,
+        commit,
+        state: rootState
+      };
+
+      const authChanged = (context: Partial<IFmAuthEventContext<T>>) => async (
+        user: User | null
+      ) => {
+        const ctx = {
+          ...context,
           isAnonymous: user ? user.isAnonymous : false,
           uid: user ? user.uid : "",
           emailVerified: user ? user.emailVerified : false,
-          email: user ? user.email : "",
-          state: rootState
-        };
-
+          email: user ? user.email : ""
+        } as IFmAuthEventContext<T>;
         if (user) {
           console.info(
             `Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`
@@ -148,7 +153,7 @@ export const pluginActions = <T>() =>
       try {
         const db = await database();
         const auth = await db.auth();
-        auth.onAuthStateChanged(authChanged);
+        auth.onAuthStateChanged(authChanged(ctx));
         auth.setPersistence(config.authPersistence || "session");
         console.log(
           `Auth state callback registered`,
