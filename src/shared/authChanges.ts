@@ -3,6 +3,9 @@ import { User } from "@firebase/auth-types";
 import { database } from "./database";
 import { runQueue } from "./runQueue";
 
+let _uid: string;
+let _isAnonymous: boolean;
+
 export const authChanged = <T>(
   context: Partial<IFmAuthEventContext<T>>
 ) => async (user: User | null) => {
@@ -18,7 +21,15 @@ export const authChanged = <T>(
     console.info(
       `Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`
     );
-    ctx.commit(FmConfigMutation.userLoggedIn, user);
+    if (!user.isAnonymous && _isAnonymous === true) {
+      console.log(`user ${_uid} was upgraded to user ${user.uid}`);
+      ctx.commit(FmConfigMutation.userUpgraded, { user, priorUid: _uid });
+      await runQueue(ctx, "user-upgraded");
+    } else {
+      ctx.commit(FmConfigMutation.userLoggedIn, user);
+    }
+    _uid = user.uid;
+    _isAnonymous = user.isAnonymous;
     await runQueue(ctx, "logged-in");
   } else {
     console.info(`Logout detected`, user);

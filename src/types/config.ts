@@ -29,16 +29,11 @@ export interface IFmAuthEventContext<T>
 }
 
 export interface IFmLoginUpgradeEventContext<T> extends IFmEventContext<T> {
-  uids: {
-    before: {
-      isAnonymous: boolean;
-      uid: string;
-    };
-    after: {
-      isAnonymous: boolean;
-      uid: string;
-    };
-  };
+  isAnonymous: false;
+  uid: string;
+  priorUid: string;
+  email: string;
+  emailVerified: boolean;
 }
 
 export interface IFmRouteEventContext<T> extends IFmEventContext<T> {

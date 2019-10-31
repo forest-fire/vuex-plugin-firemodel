@@ -2,6 +2,7 @@ import { IFiremodelState } from "../../index";
 import { IFmWatcherStopped, IWatcherEventContext } from "firemodel";
 import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
 import { MutationTree } from "vuex";
+import Vue from "vue";
 
 export const watcher = <T>() =>
   ({
@@ -9,14 +10,18 @@ export const watcher = <T>() =>
       state: IFiremodelState<T>,
       payload: IWatcherEventContext
     ) {
-      //
+      // nothing to do
     },
 
     [FmConfigMutation.watcherStarted](
       state: IFiremodelState<T>,
       payload: IWatcherEventContext
     ) {
-      state.watching = state.watching.concat(payload);
+      Vue.set(
+        state,
+        "watching",
+        state.watching ? state.watching.concat(payload) : [payload]
+      );
     },
 
     [FmConfigMutation.watcherStopped](
