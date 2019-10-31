@@ -1,6 +1,6 @@
 import { ActionTree } from "vuex";
 import { IFiremodelState } from "../../index";
-import { FmEvents, IFmWatchEvent } from "firemodel";
+import { FmEvents, IFmWatchEvent, IFmWatcherStopped } from "firemodel";
 import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
 import { FmCrudMutation } from "../../types";
 import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
@@ -15,14 +15,12 @@ export const watch = <T>() =>
       commit(FmConfigMutation.watcherStarted, payload);
     },
 
-    [FmEvents.WATCHER_STOPPED]({ commit }, payload: IFmWatchEvent) {
+    [FmEvents.WATCHER_STOPPED]({ commit }, payload: IFmWatcherStopped) {
       commit(FmConfigMutation.watcherStopped, payload);
-      // console.log("Watcher stopped", payload);
     },
 
     [FmEvents.WATCHER_STOPPED_ALL]({ commit }, payload: IFmWatchEvent) {
       commit(FmConfigMutation.watcherAllStopped, payload);
-      // console.log("All watchers stopped", payload);
     },
 
     /**

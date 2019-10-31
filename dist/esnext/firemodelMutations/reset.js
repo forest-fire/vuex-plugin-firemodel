@@ -1,15 +1,13 @@
-import { isRecord } from "../shared/isRecord";
-import { changeRoot } from "../shared/changeRoot";
-import { updateList } from "../shared/updateList";
+import Vue from "vue";
 export function reset(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {
         reset(state, payload) {
-            if (isRecord(state, payload)) {
-                changeRoot(state, null);
+            if (offset && Array.isArray(state[offset])) {
+                Vue.set(state, offset, []);
             }
             else {
-                updateList(state, offset, []);
+                state = {};
             }
         }
     };
