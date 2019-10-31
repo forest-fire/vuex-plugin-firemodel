@@ -1,8 +1,7 @@
 import { MutationTree } from "vuex";
 import { Model } from "firemodel";
 import { isRecord } from "../shared/isRecord";
-import { changeRoot } from "../shared/changeRoot";
-import { updateList } from "../shared/updateList";
+import Vue from "vue";
 
 export function reset<T extends Model>(
   propOffset?: keyof T & string
@@ -10,10 +9,10 @@ export function reset<T extends Model>(
   const offset = !propOffset ? ("all" as keyof T & string) : propOffset;
   return {
     reset(state: any, payload: any) {
-      if (isRecord(state, payload)) {
-        changeRoot<T>(state, null);
+      if (offset && Array.isArray(state[offset])) {
+        Vue.set(state, offset, []);
       } else {
-        updateList<any>(state, offset, []);
+        state = {};
       }
     }
   };

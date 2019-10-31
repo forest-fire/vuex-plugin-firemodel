@@ -1,17 +1,18 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const isRecord_1 = require("../shared/isRecord");
-const changeRoot_1 = require("../shared/changeRoot");
-const updateList_1 = require("../shared/updateList");
+const vue_1 = __importDefault(require("vue"));
 function reset(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {
         reset(state, payload) {
-            if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, null);
+            if (offset && Array.isArray(state[offset])) {
+                vue_1.default.set(state, offset, []);
             }
             else {
-                updateList_1.updateList(state, offset, []);
+                state = {};
             }
         }
     };
