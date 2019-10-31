@@ -43,6 +43,9 @@ exports.localConfig = () => ({
         };
         vue_1.default.set(state, "authenticated", !user ? false : user.isAnonymous ? "anonymous" : "logged-in");
     },
+    ["USER_UPGRADED" /* userUpgraded */](state, { user: User, priorUid: string }) {
+        // TODO: implement
+    },
     ["USER_LOGGED_OUT" /* userLoggedOut */](state) {
         vue_1.default.set(state, "currentUser", {});
         vue_1.default.set(state, "authenticated", false);

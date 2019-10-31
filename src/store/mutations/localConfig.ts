@@ -58,6 +58,10 @@ export const localConfig = <T>() =>
       );
     },
 
+    [FmConfigMutation.userUpgraded](state, { user: User, priorUid: string }) {
+      // TODO: implement
+    },
+
     [FmConfigMutation.userLoggedOut](state) {
       Vue.set(state, "currentUser", {});
       Vue.set(state, "authenticated", false);

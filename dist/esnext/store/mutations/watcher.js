@@ -1,9 +1,10 @@
+import Vue from "vue";
 export const watcher = () => ({
     ["WATCHER_STARTING" /* watcherStarting */](state, payload) {
-        //
+        // nothing to do
     },
     ["WATCHER_STARTED" /* watcherStarted */](state, payload) {
-        state.watching = state.watching.concat(payload);
+        Vue.set(state, "watching", state.watching ? state.watching.concat(payload) : [payload]);
     },
     ["WATCHER_STOPPED" /* watcherStopped */](state, payload) {
         state.watching = state.watching.filter(i => i.watcherId !== payload.watcherId);

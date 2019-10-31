@@ -1,6 +1,5 @@
 import { MutationTree } from "vuex";
 import { Model } from "firemodel";
-import { isRecord } from "../shared/isRecord";
 import Vue from "vue";
 
 export function reset<T extends Model>(
