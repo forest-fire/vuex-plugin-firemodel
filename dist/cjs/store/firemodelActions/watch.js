@@ -12,6 +12,10 @@ exports.watch = () => ({
     [firemodel_1.FmEvents.WATCHER_STOPPED]({ commit }, payload) {
         commit("WATCHER_STOPPED" /* watcherStopped */, payload);
     },
+    [firemodel_1.FmEvents.WATCHER_FAILED]({ commit }, payload) {
+        commit("WATCHER_FAILED" /* watcherFailed */, payload);
+        console.warn(`Watcher ${payload.watcherId} failed to start!`);
+    },
     [firemodel_1.FmEvents.WATCHER_STOPPED_ALL]({ commit }, payload) {
         commit("WATCHER_STOPPED_ALL" /* watcherAllStopped */, payload);
     },
