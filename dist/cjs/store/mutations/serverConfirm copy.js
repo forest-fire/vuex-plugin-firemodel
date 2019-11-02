@@ -27,6 +27,13 @@ exports.serverConfirm = () => ({
         const localOnly = Object.assign({}, state.localOnly);
         delete localOnly[transactionId];
         vue_1.default.set(state, "localOnly", localOnly);
+    },
+    ["RELATIONSHIP_ADDED_ROLLBACK" /* relationshipAddRollback */](state, payload) {
+        const transactionId = payload.transactionId;
+        const localOnly = Object.assign({}, state.localOnly);
+        delete localOnly[transactionId];
+        vue_1.default.set(state, "localOnly", localOnly);
+        console.info(`Rolled back changes made locally [ transaction id: ${transactionId} ]`);
     }
 });
-//# sourceMappingURL=serverConfirm.js.map
+//# sourceMappingURL=serverConfirm copy.js.map

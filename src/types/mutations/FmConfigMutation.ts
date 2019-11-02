@@ -34,6 +34,8 @@ export const enum FmConfigMutation {
   watcherStarting = "WATCHER_STARTING",
   /** Firebase -- via Firemodel -- has started watching a new path in the DB */
   watcherStarted = "WATCHER_STARTED",
+  /** When attempting to start a watcher there was a failure (usually permission based) */
+  watcherFailed = "WATCHER_FAILED",
   /** Firebase -- via Firemodel -- has stopped watching a new path in the DB */
   watcherStopped = "WATCHER_STOPPED",
   //** All Firebase watchers have been stopped */

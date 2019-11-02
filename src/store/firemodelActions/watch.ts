@@ -19,6 +19,11 @@ export const watch = <T>() =>
       commit(FmConfigMutation.watcherStopped, payload);
     },
 
+    [FmEvents.WATCHER_FAILED]({ commit }, payload: IFmWatcherStopped) {
+      commit(FmConfigMutation.watcherFailed, payload);
+      console.warn(`Watcher ${payload.watcherId} failed to start!`);
+    },
+
     [FmEvents.WATCHER_STOPPED_ALL]({ commit }, payload: IFmWatchEvent) {
       commit(FmConfigMutation.watcherAllStopped, payload);
     },

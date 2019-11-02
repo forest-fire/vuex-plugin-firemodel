@@ -1,5 +1,6 @@
 import { localConfig } from "./localConfig";
 import { serverConfirm } from "./serverConfirm";
+import { serverRollback } from "./serverRollback";
 import { authMutations } from "./auth";
 import { watcher } from "./watcher";
 import { localCrud } from "./localCrud";
@@ -19,6 +20,7 @@ export const mutations = <T>() =>
     ...localConfig<T>(),
     ...authMutations<T>(),
     ...serverConfirm<T>(),
+    ...serverRollback<T>(),
     ...localCrud<T>(),
     ...relationships<T>(),
     ...watcher<T>()
