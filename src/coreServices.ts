@@ -38,11 +38,6 @@ export async function coreServices<T>(
   }
   await Promise.all(starting);
 
-  // if (config.anonymousAuth) {
-  //   await database();
-  //   await store.dispatch(addNamespace(FmConfigAction.anonymousLogin), config);
-  // }
-
   store.commit(addNamespace(FmConfigMutation.coreServicesStarted), {
     message: `all core firemodel plugin services started`,
     config: config.db

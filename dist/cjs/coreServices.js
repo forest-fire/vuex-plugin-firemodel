@@ -22,10 +22,6 @@ async function coreServices(store, config) {
         starting.push(store.dispatch(addNamespace_1.addNamespace(actions_1.FmConfigAction.watchRouteChanges)));
     }
     await Promise.all(starting);
-    // if (config.anonymousAuth) {
-    //   await database();
-    //   await store.dispatch(addNamespace(FmConfigAction.anonymousLogin), config);
-    // }
     store.commit(addNamespace_1.addNamespace("CORE_SERVICES_STARTED" /* coreServicesStarted */), {
         message: `all core firemodel plugin services started`,
         config: config.db
