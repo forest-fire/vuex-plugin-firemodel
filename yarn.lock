@@ -686,7 +686,7 @@
     tslib "1.10.0"
     xmlhttprequest "1.8.0"
 
-"@firebase/auth-types@0.8.2", "@firebase/auth-types@^0.8.1", "@firebase/auth-types@^0.8.2":
+"@firebase/auth-types@0.8.2", "@firebase/auth-types@^0.8.2":
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/@firebase/auth-types/-/auth-types-0.8.2.tgz#9722138481724a16a79f7d645e9c5598cc932269"
   integrity sha512-qcP7wZ76CIb7IN+K544GomA42cCS36KZmQ3n9Ou1JsYplEaMo52x4UuQTZFqlRoMaUWi61oQ9jiuE5tOAMJwDA==
@@ -698,7 +698,7 @@
   dependencies:
     "@firebase/auth-types" "0.8.2"
 
-"@firebase/database-types@0.4.7", "@firebase/database-types@^0.4.5", "@firebase/database-types@^0.4.6", "@firebase/database-types@^0.4.7":
+"@firebase/database-types@0.4.7", "@firebase/database-types@^0.4.6", "@firebase/database-types@^0.4.7":
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/@firebase/database-types/-/database-types-0.4.7.tgz#9fc82b3895fc096f073e37dd66d6e5b32f233a54"
   integrity sha512-7UHZ0n6aj3sR5W4HsU18dysHMSIS6348xWTMypoA0G4mORaQSuleCSL6zJLaCosarDEojnncy06yW69fyFxZtA==
@@ -1306,17 +1306,6 @@ abstracted-client@^0.34.0:
     events "^3.0.0"
     lodash.first "^3.0.0"
     lodash.last "^3.0.0"
-    serialized-query "^0.9.1"
-    typed-conversions "^0.10.1"
-
-abstracted-firebase@^0.33.2:
-  version "0.33.2"
-  resolved "https://registry.yarnpkg.com/abstracted-firebase/-/abstracted-firebase-0.33.2.tgz#e80c6e752cd6c4a0e632b394d71a46545693bc86"
-  integrity sha512-yrY+O8pXh0r7CUHfDUmeB7AZ6+5Nk4EjEx6+GgSG5nTRIIHcReNV0ICU76eOiS7AkuxiT81G9H7ay27hNYMk6w==
-  dependencies:
-    "@firebase/auth-types" "^0.8.1"
-    "@firebase/database-types" "^0.4.5"
-    common-types "^1.12.9"
     serialized-query "^0.9.1"
     typed-conversions "^0.10.1"
 
@@ -3639,12 +3628,12 @@ firemock@^0.33.7:
     serialized-query "^0.9.1"
     typed-conversions "^0.10.1"
 
-firemodel@^0.34.0:
-  version "0.34.0"
-  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.34.0.tgz#2ab25cec651404ae3f3b3fbea93929fa1d4e49ce"
-  integrity sha512-UjfRNrkfdh9uGfGIy2+4WqGbCLOHwXRjO9qRx47OxyymNVywOXH/MPNJry0CPmn6r+ITThaiDNfDRzG0oP2Low==
+firemodel@^0.34.2:
+  version "0.34.2"
+  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.34.2.tgz#955022cd2f2d6afaf209bf82cb01e2a06cd880c4"
+  integrity sha512-5naGSJL1XcVIvW88BCOkrNFhepeA2GaOOuhnrA+lksj/VSLZ0s4NWBsgUeRCx+tznLPeUd8iRsC5PQfr+jVaEw==
   dependencies:
-    abstracted-firebase "^0.33.2"
+    abstracted-firebase "^0.34.0"
     common-types "^1.12.12"
     date-fns "^1.30.1"
     fast-copy "2.0.3"
@@ -8117,9 +8106,9 @@ verror@1.10.0:
     extsprintf "^1.2.0"
 
 vm-browserify@^1.0.1:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.0.tgz#bd76d6a23323e2ca8ffa12028dc04559c75f9019"
-  integrity sha512-iq+S7vZJE60yejDYM0ek6zg308+UZsdtPExWP9VZoCFCz1zkJoXFnAX7aZfd/ZwrkidzdUZL0C/ryW+JwAiIGw==
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
+  integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.4"

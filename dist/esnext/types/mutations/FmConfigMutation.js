@@ -33,6 +33,8 @@ export var FmConfigMutation;
     FmConfigMutation["watcherStarting"] = "WATCHER_STARTING";
     /** Firebase -- via Firemodel -- has started watching a new path in the DB */
     FmConfigMutation["watcherStarted"] = "WATCHER_STARTED";
+    /** When attempting to start a watcher there was a failure (usually permission based) */
+    FmConfigMutation["watcherFailed"] = "WATCHER_FAILED";
     /** Firebase -- via Firemodel -- has stopped watching a new path in the DB */
     FmConfigMutation["watcherStopped"] = "WATCHER_STOPPED";
     //** All Firebase watchers have been stopped */
