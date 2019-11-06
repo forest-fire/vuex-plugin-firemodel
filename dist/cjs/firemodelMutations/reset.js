@@ -7,7 +7,7 @@ const vue_1 = __importDefault(require("vue"));
 function reset(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {
-        reset(state, payload) {
+        ["RESET" /* reset */](state, payload) {
             if (offset && Array.isArray(state[offset])) {
                 vue_1.default.set(state, offset, []);
             }

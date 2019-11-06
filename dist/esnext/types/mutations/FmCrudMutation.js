@@ -31,4 +31,9 @@ export var FmCrudMutation;
      * server and client are in _sync_.
      */
     FmCrudMutation["serverStateSync"] = "SERVER_STATE_SYNC";
+    /**
+     * Allows state modules to be "reset" which involves removing the data
+     * in the given module.
+     */
+    FmCrudMutation["reset"] = "RESET";
 })(FmCrudMutation || (FmCrudMutation = {}));
