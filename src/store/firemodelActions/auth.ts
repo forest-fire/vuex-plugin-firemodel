@@ -208,7 +208,6 @@ export const authActions = <T>() =>
         const db = await database();
         Record.defaultDb = db;
         const auth = await db.auth();
-        // commit(`@firemodel/reset`, { uid, email, model });
         if (model) {
           const localPath =
             typeof model === "string" ? model : Record.create(model).localPath;

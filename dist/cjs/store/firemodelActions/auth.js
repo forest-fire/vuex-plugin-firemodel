@@ -166,10 +166,9 @@ exports.authActions = () => ({
             const db = await database_1.database();
             firemodel_1.Record.defaultDb = db;
             const auth = await db.auth();
-            commit(`@firemodel/reset`, { uid, email, model });
             if (model) {
                 const localPath = typeof model === "string" ? model : firemodel_1.Record.create(model).localPath;
-                commit(`${localPath}/reset`, { uid, email, model });
+                commit(`${localPath}/RESET`, { uid, email, model });
             }
             await auth.signOut();
             commit("@firemodel/SIGNED_OUT", { uid, email, model });
