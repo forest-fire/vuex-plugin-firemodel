@@ -1,3 +1,4 @@
+import { Model } from "firemodel";
 export declare enum AuthPersistenceStrategy {
     /**
      * Indicates that the state will be persisted even when the browser window is closed
@@ -19,3 +20,19 @@ export declare enum AuthPersistenceStrategy {
     none = "none"
 }
 export declare type IAuthPersistenceStrategy = keyof typeof AuthPersistenceStrategy;
+/**
+ * The payload of a `@firemodel/SIGNED_OUT` action and downstream mutations to both
+ * `@firemodel` and other stateful modules. The mutations include both _reset_ messages
+ * as well as the `[module]/SIGNED_OUT` mutations
+ */
+export interface ISignOutPayload<T extends Model = Model> {
+    /** the `uid` of the user who is being signed out */
+    uid: string;
+    email?: string;
+    /**
+     * An identifier of the **Firemodel** `Model` which stores the user profile. This can either
+     * but the _constructor_ for the model or you can simply pass in a string "dot" path to the
+     * local path in the Vuex state tree.
+     */
+    model?: (new () => T) | string;
+}

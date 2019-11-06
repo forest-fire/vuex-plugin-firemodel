@@ -1,5 +1,6 @@
 import { database } from "../../shared/database";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
+import { Record } from "firemodel";
 /**
  * **authActions**
  *
@@ -154,14 +155,22 @@ export const authActions = () => ({
         }
     },
     /**
-     * Signs out the current user from Firebase
+     * Signs out the current user from Firebase; it will also
+     * optionally send a **reset** to the `Model` which stores the
+     * user profile of the user.
      */
-    async signOut({ commit }) {
+    async signOut({ commit }, { uid, email, model }) {
         try {
             const db = await database();
+            Record.defaultDb = db;
             const auth = await db.auth();
-            const email = await auth.signOut();
-            commit("signOut", email);
+            commit(`@firemodel/reset`, { uid, email, model });
+            if (model) {
+                const localPath = typeof model === "string" ? model : Record.create(model).localPath;
+                commit(`${localPath}/reset`, { uid, email, model });
+            }
+            await auth.signOut();
+            commit("@firemodel/SIGNED_OUT", { uid, email, model });
         }
         catch (e) {
             commit("error", {
