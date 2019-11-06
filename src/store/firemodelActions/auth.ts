@@ -1,9 +1,10 @@
 import { ActionTree } from "vuex";
 
-import { IFiremodelState } from "../../index";
+import { IFiremodelState, ISignOutPayload } from "../../index";
 import { database } from "../../shared/database";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
 import { ActionCodeSettings } from "@firebase/auth-types";
+import { FmEvents, Record } from "firemodel";
 
 /**
  * **authActions**
@@ -33,9 +34,7 @@ export const authActions = <T>() =>
       } catch (e) {
         commit("error", {
           stack: e.stack,
-          message: `Failure to login user [${email}]: ${e.message} [ ${
-            e.code
-          } ${e.name} ]`
+          message: `Failure to login user [${email}]: ${e.message} [ ${e.code} ${e.name} ]`
         });
         throw e;
       }
@@ -63,9 +62,7 @@ export const authActions = <T>() =>
       } catch (e) {
         commit("error", {
           stack: e.stack,
-          message: `Failure to create user: ${e.message} [ ${e.code} ${
-            e.name
-          } ]`
+          message: `Failure to create user: ${e.message} [ ${e.code} ${e.name} ]`
         });
         throw e;
       }
@@ -92,9 +89,7 @@ export const authActions = <T>() =>
       } catch (e) {
         commit("error", {
           stack: e.stack,
-          message: `Failure to send password-reset email: ${e.message} [ ${
-            e.code
-          } ${e.name} ]`
+          message: `Failure to send password-reset email: ${e.message} [ ${e.code} ${e.name} ]`
         });
         throw e;
       }
@@ -116,9 +111,7 @@ export const authActions = <T>() =>
       } catch (e) {
         commit("error", {
           stack: e.stack,
-          message: `Failured to confirm password reset: ${e.message} [ ${
-            e.code
-          } ${e.name} ]`
+          message: `Failured to confirm password reset: ${e.message} [ ${e.code} ${e.name} ]`
         });
         throw e;
       }
@@ -139,9 +132,7 @@ export const authActions = <T>() =>
       } catch (e) {
         commit("error", {
           stack: e.stack,
-          message: `Failure to verify password reset code: ${e.message} [ ${
-            e.code
-          } ${e.name} ]`
+          message: `Failure to verify password reset code: ${e.message} [ ${e.code} ${e.name} ]`
         });
         throw e;
       }
@@ -170,9 +161,7 @@ export const authActions = <T>() =>
       } catch (e) {
         commit("error", {
           stack: e.stack,
-          message: `Failure to update the logged in user's email address: ${
-            e.message
-          } [ ${e.code} ${e.name} ]`
+          message: `Failure to update the logged in user's email address: ${e.message} [ ${e.code} ${e.name} ]`
         });
         throw e;
       }
@@ -203,23 +192,30 @@ export const authActions = <T>() =>
       } catch (e) {
         commit("error", {
           stack: e.stack,
-          message: `Failure to update the logged in user's email address: ${
-            e.message
-          } [ ${e.code} ${e.name} ]`
+          message: `Failure to update the logged in user's email address: ${e.message} [ ${e.code} ${e.name} ]`
         });
         throw e;
       }
     },
 
     /**
-     * Signs out the current user from Firebase
+     * Signs out the current user from Firebase; it will also
+     * optionally send a **reset** to the `Model` which stores the
+     * user profile of the user.
      */
-    async signOut({ commit }) {
+    async signOut({ commit }, { uid, email, model }: ISignOutPayload) {
       try {
         const db = await database();
+        Record.defaultDb = db;
         const auth = await db.auth();
-        const email = await auth.signOut();
-        commit("signOut", email);
+        commit(`@firemodel/reset`, { uid, email, model });
+        if (model) {
+          const localPath =
+            typeof model === "string" ? model : Record.create(model).localPath;
+          commit(`${localPath}/reset`, { uid, email, model });
+        }
+        await auth.signOut();
+        commit("@firemodel/SIGNED_OUT", { uid, email, model });
       } catch (e) {
         commit("error", {
           stack: e.stack,
