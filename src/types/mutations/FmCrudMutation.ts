@@ -34,5 +34,11 @@ export const enum FmCrudMutation {
    * it first sends an array of values that exist on the server so that the
    * server and client are in _sync_.
    */
-  serverStateSync = "SERVER_STATE_SYNC"
+  serverStateSync = "SERVER_STATE_SYNC",
+
+  /**
+   * Allows state modules to be "reset" which involves removing the data
+   * in the given module.
+   */
+  reset = "RESET"
 }

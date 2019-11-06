@@ -50,5 +50,9 @@ export const authMutations = <T>() =>
 
     signOut(state) {
       // no need to change state tree as the observer on onAuthChanged will address this
+    },
+    /** once the sign out process has completed */
+    SIGNED_OUT(state, payload) {
+      console.log(`Signed out:`, payload);
     }
   } as MutationTree<IFiremodelState<T>>);
