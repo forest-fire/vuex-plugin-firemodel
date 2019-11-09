@@ -19,12 +19,22 @@ export async function runQueue<T>(
     T
   >[]).filter(i => i.on === lifecycle);
 
+  let errors = 0;
+  let successes = 0;
+
   for (const item of queued) {
     try {
-      const { cb } = item;
-      await cb(ctx);
+      await item.cb(ctx);
+      successes++;
     } catch (e) {
-      console.error(`deQueing ${item.name}: ${e.message}`);
+      errors++;
+      console.error(
+        `deQueing ${item.name}: ${
+          e.message
+        }.\n\nThe callback which being called when the error occurred was: ${
+          item.cb ? item.cb.toString() : "undefined callback"
+        }`
+      );
       ctx.commit("error", {
         message: e.message,
         code: e.code || e.name,
@@ -35,6 +45,11 @@ export async function runQueue<T>(
         ...{ error: e.message, errorStack: e.stack }
       });
     }
+  }
+  if (errors > 0) {
+    console.warn(
+      `- while running the ${lifecycle} event, ${errors} errors were encountered [ ${successes} successful ]; errors will be listed in the @firemodel state tree.`
+    );
   }
 
   ctx.commit(FmConfigMutation.lifecycleEventCompleted, {
