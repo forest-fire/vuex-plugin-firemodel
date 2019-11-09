@@ -19,7 +19,7 @@ export async function runQueue(ctx, lifecycle) {
             try {
                 let originPoint = '';
                 const stack = await (await StackTrace.fromError(e, { offline: true }))
-                    .map(i => { var _a; return ` - ${(_a = i.fileName) === null || _a === void 0 ? void 0 : _a.replace('webpack-internal:///', '')}:${i.functionName}(${i.args}) at line ${i.lineNumber}, col ${i.columnNumber}; ${i.source ? `src: ${i.source.slice(0, 20)} ...` : ''}`; })
+                    .map(i => { var _a; return ` - ${(_a = i.fileName) === null || _a === void 0 ? void 0 : _a.replace('webpack-internal:///', '')}:${i.functionName}(${i.args ? " " + i.args.join(', ') + " " : ''}) at line ${i.lineNumber}, col ${i.columnNumber}; ${i.source ? `src: ${i.source.slice(0, 20)} ...` : ''}`; })
                     .join("\n");
                 console.error(`deQueing ${item.name}: ${e.message}.\n\nThe stacktrace is:\n${stack}`);
             }
