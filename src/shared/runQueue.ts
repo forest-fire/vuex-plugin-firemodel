@@ -5,6 +5,8 @@ import {
   FmConfigMutation
 } from "../types/index";
 
+import StackTrace from "stacktrace-js";
+
 /**
  * **runQueue**
  *
@@ -28,13 +30,26 @@ export async function runQueue<T>(
       successes++;
     } catch (e) {
       errors++;
-      console.error(
-        `deQueing ${item.name}: ${
-          e.message
-        }.\n\nThe callback which being called when the error occurred was: ${
-          item.cb ? item.cb.toString() : "undefined callback"
-        }`
-      );
+
+      try {
+        const stack = await (await StackTrace.fromError(e))
+          .map(
+            i => ` - ${i.fileName}:${i.functionName}() at line ${i.lineNumber}`
+          )
+          .join("\n");
+        console.error(
+          `deQueing ${item.name}: ${e.message}.\n\nThe stacktrace is:\n${stack}`
+        );
+      } catch (se) {
+        console.error(
+          `deQueing ${item.name}: ${
+            e.message
+          }.\n\nThe callback which being called when the error occurred starts like this: ${
+            item.cb ? item.cb.toString().slice(0, 50) : "undefined callback"
+          }`
+        );
+      }
+
       ctx.commit("error", {
         message: e.message,
         code: e.code || e.name,
