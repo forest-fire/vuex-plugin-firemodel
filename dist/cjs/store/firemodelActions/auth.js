@@ -19,6 +19,10 @@ exports.authActions = () => ({
             const auth = await db.auth();
             const userCredential = await auth.signInWithEmailAndPassword(email, password);
             commit("signInWithEmailAndPassword", userCredential);
+            if (userCredential.user) {
+                const token = await userCredential.user.getIdTokenResult();
+                commit("SET_CUSTOM_CLAIMS", token.claims);
+            }
             return userCredential;
         }
         catch (e) {

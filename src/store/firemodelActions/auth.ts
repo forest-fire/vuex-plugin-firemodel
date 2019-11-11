@@ -29,6 +29,10 @@ export const authActions = <T>() =>
           password
         );
         commit("signInWithEmailAndPassword", userCredential);
+        if (userCredential.user) {
+          const token = await userCredential.user.getIdTokenResult();
+          commit("SET_CUSTOM_CLAIMS", token.claims);
+        }
 
         return userCredential;
       } catch (e) {
