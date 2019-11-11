@@ -39,5 +39,8 @@ export const authMutations = () => ({
     /** once the sign out process has completed */
     SIGNED_OUT(state, payload) {
         console.log(`Signed out:`, payload);
+    },
+    SET_CUSTOM_CLAIMS(state, claims) {
+        state.claims = Object.keys(claims || {});
     }
 });

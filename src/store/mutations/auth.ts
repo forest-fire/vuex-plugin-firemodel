@@ -3,6 +3,7 @@ import { IFiremodelState } from "../..";
 import { UserCredential } from "@firebase/auth-types";
 import { IFiremodelAbbreviatedUser } from "../../types";
 import Vue from "vue";
+import { IDictionary } from "firemock";
 
 /**
  * The **mutations** associated to the Firebase Auth API.
@@ -54,5 +55,9 @@ export const authMutations = <T>() =>
     /** once the sign out process has completed */
     SIGNED_OUT(state, payload) {
       console.log(`Signed out:`, payload);
+    },
+
+    SET_CUSTOM_CLAIMS(state, claims: IDictionary) {
+      state.claims = Object.keys(claims || {});
     }
   } as MutationTree<IFiremodelState<T>>);
