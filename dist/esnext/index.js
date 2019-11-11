@@ -1,9 +1,9 @@
 import { FiremodelModule, database } from "./store";
-import { Watch, Record, List, FireModel } from "firemodel";
 import { FmConfigAction } from "./types/actions/FmConfigActions";
 import { FireModelPluginError } from "./errors/FiremodelPluginError";
 import { addNamespace } from "./shared/addNamespace";
 import { coreServices } from "./coreServices";
+import { FireModel, Watch, Record, List } from "firemodel";
 export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
@@ -15,6 +15,9 @@ let _store;
 export const setStore = (store) => {
     _store = store;
 };
+export function getStore() {
+    return _store;
+}
 let _db;
 let _auth;
 export async function getAuth() {
