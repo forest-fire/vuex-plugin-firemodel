@@ -6,7 +6,6 @@ import {
 } from "./types";
 import { Store } from "vuex";
 import { FiremodelModule, database } from "./store";
-import { Watch, Record, List, FireModel } from "firemodel";
 import { DB, IFirebaseClientConfig } from "abstracted-client";
 import { FmConfigMutation } from "./types/mutations/FmConfigMutation";
 import { FmConfigAction } from "./types/actions/FmConfigActions";
@@ -14,6 +13,7 @@ import { FireModelPluginError } from "./errors/FiremodelPluginError";
 import { addNamespace } from "./shared/addNamespace";
 import { coreServices } from "./coreServices";
 import { FirebaseAuth } from "@firebase/auth-types";
+import { FireModel, Watch, Record, List } from "firemodel";
 export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
@@ -22,10 +22,13 @@ export { database } from "./store";
 export let configuration: IFiremodelPluginConfig<any>;
 export let dbConfig: IFirebaseClientConfig;
 export let firemodelVuex: Store<any>;
-let _store;
+let _store: Store<any>;
 export const setStore = <T>(store: Store<T>) => {
   _store = store;
 };
+export function getStore<T = any>() {
+  return _store as Store<T>;
+}
 
 let _db: DB;
 let _auth: FirebaseAuth;

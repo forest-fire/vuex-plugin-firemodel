@@ -33,9 +33,10 @@ export async function runQueue<T>(
 
       try {
         let originPoint: string=''
-        const stack = await (await StackTrace.fromError(e, {offline: true}))
+        const frames = await StackTrace.fromError(e, {offline: true});
+        const stack = await frames
           .map(
-            i => ` - ${i.fileName?.replace('webpack-internal:///','')}:${i.functionName}(${i.args ? " " + i.args.join(', ')+ " " : ''}) at line ${i.lineNumber}, col ${i.columnNumber}; ${i.source ? `src: ${i.source.slice(0,20)} ...` : ''}`
+            i => ` - ${i.fileName?.replace('webpack-internal:///','')}:${i.functionName}(${i.args ? " " + i.args.join(', ')+ " " : ''}) at line ${i.lineNumber}, col ${i.columnNumber}`
           )
           .join("\n");
         console.error(

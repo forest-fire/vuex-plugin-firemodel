@@ -10,6 +10,7 @@ export declare let configuration: IFiremodelPluginConfig<any>;
 export declare let dbConfig: IFirebaseClientConfig;
 export declare let firemodelVuex: Store<any>;
 export declare const setStore: <T>(store: Store<T>) => void;
+export declare function getStore<T = any>(): Store<T>;
 export declare function getAuth(): Promise<FirebaseAuth>;
 export declare function setAuth(auth: FirebaseAuth): void;
 export declare type IFiremodel<T> = {

@@ -4,11 +4,11 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 const store_1 = require("./store");
-const firemodel_1 = require("firemodel");
 const FmConfigActions_1 = require("./types/actions/FmConfigActions");
 const FiremodelPluginError_1 = require("./errors/FiremodelPluginError");
 const addNamespace_1 = require("./shared/addNamespace");
 const coreServices_1 = require("./coreServices");
+const firemodel_1 = require("firemodel");
 __export(require("./types"));
 __export(require("./firemodelMutations/index"));
 __export(require("firemodel"));
@@ -18,6 +18,10 @@ let _store;
 exports.setStore = (store) => {
     _store = store;
 };
+function getStore() {
+    return _store;
+}
+exports.getStore = getStore;
 let _db;
 let _auth;
 async function getAuth() {
