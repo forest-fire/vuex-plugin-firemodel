@@ -6,7 +6,7 @@ export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
 export { database } from "./store";
-export * from "./store/api";
+export * from "./api";
 export declare let configuration: IFiremodelPluginConfig<any>;
 export declare let dbConfig: IFirebaseClientConfig;
 export declare let firemodelVuex: Store<any>;

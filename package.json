@@ -1,7 +1,10 @@
 {
   "name": "vuex-plugin-firemodel",
-  "version": "1.0.0-beta.41",
+  "version": "1.0.0-beta.43",
   "description": "A Vuex plugin which reponds to all FireModel actions as well as providing mutations which can be imported by your state tree.",
+  "files": [
+    "dist"
+  ],
   "main": "dist/cjs/index.js",
   "module": "dist/esnext/index.js",
   "typings": "dist/esnext/index.d.ts",
