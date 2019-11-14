@@ -21,7 +21,8 @@ exports.signInWithEmailAndPassword = signInWithEmailAndPassword;
 async function createUserWithEmailAndPassword(email, password) {
     return index_1.getStore().dispatch({
         type: "@firemodel/createUserWithEmailAndPassword",
-        payload: { email, password }
+        email,
+        password
     });
 }
 exports.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
@@ -34,7 +35,8 @@ exports.signOut = signOut;
 async function sendPasswordResetEmail(email, actionCodeSettings) {
     return index_1.getStore().dispatch({
         type: "@firemodel/sendPasswordResetEmail",
-        payload: { email, actionCodeSettings }
+        email,
+        actionCodeSettings
     });
 }
 exports.sendPasswordResetEmail = sendPasswordResetEmail;

@@ -18,7 +18,8 @@ export async function signInWithEmailAndPassword(email, password) {
 export async function createUserWithEmailAndPassword(email, password) {
     return getStore().dispatch({
         type: "@firemodel/createUserWithEmailAndPassword",
-        payload: { email, password }
+        email,
+        password
     });
 }
 export async function signOut() {
@@ -29,6 +30,7 @@ export async function signOut() {
 export async function sendPasswordResetEmail(email, actionCodeSettings) {
     return getStore().dispatch({
         type: "@firemodel/sendPasswordResetEmail",
-        payload: { email, actionCodeSettings }
+        email,
+        actionCodeSettings
     });
 }

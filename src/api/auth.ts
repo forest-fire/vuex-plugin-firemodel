@@ -28,7 +28,8 @@ export async function createUserWithEmailAndPassword(
 ): Promise<UserCredential> {
   return getStore().dispatch({
     type: "@firemodel/createUserWithEmailAndPassword",
-    payload: { email, password }
+    email,
+    password
   });
 }
 
@@ -44,6 +45,7 @@ export async function sendPasswordResetEmail(
 ): Promise<void> {
   return getStore().dispatch({
     type: "@firemodel/sendPasswordResetEmail",
-    payload: { email, actionCodeSettings }
+    email,
+    actionCodeSettings
   });
 }
