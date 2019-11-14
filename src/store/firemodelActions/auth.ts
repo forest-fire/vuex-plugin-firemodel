@@ -3,7 +3,7 @@ import { ActionTree } from "vuex";
 import { IFiremodelState, ISignOutPayload } from "../../index";
 import { database } from "../../shared/database";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
-import { ActionCodeSettings } from "@firebase/auth-types";
+import { ActionCodeSettings, UserCredential } from "@firebase/auth-types";
 import { FmEvents, Record } from "firemodel";
 
 /**
@@ -52,7 +52,7 @@ export const authActions = <T>() =>
     async createUserWithEmailAndPassword(
       { commit },
       { email, password }: { email: string; password: string }
-    ) {
+    ): Promise<UserCredential> {
       try {
         const db = await database();
         const auth = await db.auth();
@@ -89,7 +89,7 @@ export const authActions = <T>() =>
         const db = await database();
         const auth = await db.auth();
         await auth.sendPasswordResetEmail(email, actionCodeSettings);
-        commit("sendPasswordResetEmail");
+        commit("sendPasswordResetEmail", { email, actionCodeSettings });
       } catch (e) {
         commit("error", {
           stack: e.stack,

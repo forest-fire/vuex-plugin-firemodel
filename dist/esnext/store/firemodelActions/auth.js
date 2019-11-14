@@ -63,7 +63,7 @@ export const authActions = () => ({
             const db = await database();
             const auth = await db.auth();
             await auth.sendPasswordResetEmail(email, actionCodeSettings);
-            commit("sendPasswordResetEmail");
+            commit("sendPasswordResetEmail", { email, actionCodeSettings });
         }
         catch (e) {
             commit("error", {
