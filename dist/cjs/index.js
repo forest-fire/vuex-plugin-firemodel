@@ -14,6 +14,7 @@ __export(require("./firemodelMutations/index"));
 __export(require("firemodel"));
 var store_2 = require("./store");
 exports.database = store_2.database;
+__export(require("./store/api"));
 let _store;
 exports.setStore = (store) => {
     _store = store;

@@ -8,6 +8,7 @@ export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
 export { database } from "./store";
+export * from "./store/api";
 export let configuration;
 export let dbConfig;
 export let firemodelVuex;
