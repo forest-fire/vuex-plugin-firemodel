@@ -15,6 +15,11 @@ export async function signInWithEmailAndPassword(email, password) {
         password
     });
 }
+/**
+ * Allows a frontend app to create a new user for email and password
+ * authentication. The account will initially be set to _un-verified_ but
+ * the email used will be sent a link to make the account verified.
+ */
 export async function createUserWithEmailAndPassword(email, password) {
     return getStore().dispatch({
         type: "@firemodel/createUserWithEmailAndPassword",
@@ -22,15 +27,88 @@ export async function createUserWithEmailAndPassword(email, password) {
         password
     });
 }
-export async function signOut() {
+/**
+ * Signs out the current user from Firebase; it will also
+ * optionally send a **reset** to the `Model` which stores the
+ * user profile of the user.
+ */
+export async function signOut(payload) {
     return getStore().dispatch({
-        type: "@firemodel/signOut"
+        type: "@firemodel/signOut",
+        payload
     });
 }
+/**
+ * Sends a password reset email to the given email address.
+ * To complete the password reset, dispatch `confirmPasswordReset` with
+ * the code supplied in the email sent to the user, along with the new password
+ * specified by the user.
+ */
 export async function sendPasswordResetEmail(email, actionCodeSettings) {
     return getStore().dispatch({
         type: "@firemodel/sendPasswordResetEmail",
         email,
         actionCodeSettings
+    });
+}
+/**
+ * Completes the password reset process, given a _confirmation code_
+ * and new _password_.
+ */
+export async function confirmPasswordReset(code, newPassword) {
+    return getStore().dispatch({
+        type: "@firemodel/confirmPassordReset",
+        code,
+        newPassword
+    });
+}
+/**
+ * Checks a password reset code sent to the user by email or other
+ * out-of-band mechanism. Returns the user's email address if valid.
+ */
+export async function verifyPasswordResetCode(code) {
+    return getStore().dispatch({
+        type: "@firemodel/verifyPasswordResetCode",
+        code
+    });
+}
+/**
+ * Updates the user's email address. An email will be sent to the original email address
+ * that allows owner of that email address to revoke the email address change.
+ */
+export async function updateEmail(newEmail) {
+    return getStore().dispatch({
+        type: "@firemodel/updateEmail",
+        payload: newEmail
+    });
+}
+/**
+ * Updates the user's password. In order to allow this operation a user
+ * must have logged in recently. If this requirement isn't met a
+ * `auth/requires-recent-login` error will be thrown. You will then have to
+ * call the `reauthenticateWithCredential` to resolve this.
+ */
+export async function updatePassword(password) {
+    return getStore().dispatch({
+        type: "@firemodel/updateEmail",
+        password
+    });
+}
+/**
+ * Update a user's basic profile information with name and/or
+ * photo URL.
+ */
+export async function updateProfile(profile) {
+    return getStore().dispatch({
+        type: "@firemodel/updateProfile",
+        profile
+    });
+}
+/**
+ * Sends a verification email to the currently logged in user
+ */
+export async function sendEmailVerification() {
+    return getStore().dispatch({
+        type: "@firemodel/sendEmailVerification"
     });
 }

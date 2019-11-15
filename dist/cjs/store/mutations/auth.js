@@ -32,15 +32,18 @@ exports.authMutations = () => ({
     verifyPasswordResetCode(state, email) {
         // on success it returns the email of the user who entered the reset code
     },
-    updateEmail(state, email) {
+    updatedEmail(state, email) {
         vue_1.default.set(state, "currentUser", Object.assign(Object.assign({}, state.currentUser), { email }));
     },
-    updatePassword() {
+    updatedPassword() {
         // nothing to do
     },
     signOut(state) {
         // no need to change state tree as the observer on onAuthChanged will address this
     },
+    // updatedProfile(state, profile: {}) {
+    //   state.currentUser?.fullProfile.displayName =
+    // },
     /** once the sign out process has completed */
     SIGNED_OUT(state, payload) {
         console.log(`Signed out:`, payload);

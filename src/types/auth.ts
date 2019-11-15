@@ -39,3 +39,8 @@ export interface ISignOutPayload<T extends Model = Model> {
    */
   model?: (new () => T) | string;
 }
+
+export interface IAuthProfile {
+  displayName?: string;
+  photoURL?: string;
+}
