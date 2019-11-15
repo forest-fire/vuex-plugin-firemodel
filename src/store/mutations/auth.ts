@@ -38,20 +38,25 @@ export const authMutations = <T>() =>
       // on success it returns the email of the user who entered the reset code
     },
 
-    updateEmail(state, email: string) {
+    updatedEmail(state, email: string) {
       Vue.set(state, "currentUser", {
         ...(state.currentUser as IFiremodelAbbreviatedUser),
         ...{ email }
       });
     },
 
-    updatePassword() {
+    updatedPassword() {
       // nothing to do
     },
 
     signOut(state) {
       // no need to change state tree as the observer on onAuthChanged will address this
     },
+
+    // updatedProfile(state, profile: {}) {
+    //   state.currentUser?.fullProfile.displayName =
+    // },
+
     /** once the sign out process has completed */
     SIGNED_OUT(state, payload) {
       console.log(`Signed out:`, payload);

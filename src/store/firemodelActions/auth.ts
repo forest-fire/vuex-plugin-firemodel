@@ -1,10 +1,11 @@
 import { ActionTree } from "vuex";
 
-import { IFiremodelState, ISignOutPayload } from "../../index";
+import { IFiremodelState, ISignOutPayload, IAuthProfile } from "../../index";
 import { database } from "../../shared/database";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
 import { ActionCodeSettings, UserCredential } from "@firebase/auth-types";
 import { FmEvents, Record } from "firemodel";
+import { updateProfile } from "../../api";
 
 /**
  * **authActions**
@@ -125,7 +126,7 @@ export const authActions = <T>() =>
      * Checks a password reset code sent to the user by email or other
      * out-of-band mechanism. Returns the user's email address if valid.
      */
-    async verifyPasswordResetCode({ commit }, code: string) {
+    async verifyPasswordResetCode({ commit }, code: string): Promise<string> {
       try {
         const db = await database();
         const auth = await db.auth();
@@ -161,7 +162,7 @@ export const authActions = <T>() =>
       try {
         const user = state.currentUser;
         await user.fullProfile.updateEmail(newEmail);
-        commit("updateEmail", { uid: user.uid, email: newEmail });
+        commit("updatedEmail", { uid: user.uid, email: newEmail });
       } catch (e) {
         commit("error", {
           stack: e.stack,
@@ -177,7 +178,7 @@ export const authActions = <T>() =>
      * `auth/requires-recent-login` error will be thrown. You will then have to
      * call the `reauthenticateWithCredential` to resolve this.
      */
-    async updatePassword({ commit, state }, newPassword: string) {
+    async updatePassword({ commit, state }, { password }) {
       if (!state.currentUser) {
         commit(
           "error",
@@ -191,12 +192,36 @@ export const authActions = <T>() =>
 
       try {
         const user = state.currentUser;
-        await user.fullProfile.updatePassword(newPassword);
-        commit("updateEmail", { uid: user.uid, email: newPassword });
+        await user.fullProfile.updatePassword(password);
+        commit("updatedPassword", { uid: user.uid, password: "*****" });
       } catch (e) {
         commit("error", {
           stack: e.stack,
-          message: `Failure to update the logged in user's email address: ${e.message} [ ${e.code} ${e.name} ]`
+          message: `Failure to update the logged in user's password: ${e.message} [ ${e.code} ${e.name} ]`
+        });
+        throw e;
+      }
+    },
+
+    /**
+     * Update a user's basic profile information with name and/or
+     * photo URL.
+     */
+    async updateProfile({ commit, state }, profile: IAuthProfile) {
+      try {
+        const user = state.currentUser;
+        if (!user) {
+          throw new FireModelPluginError(
+            `Attempt to updateProfile() before currentUser is set in Firebase identity system!`,
+            "not-ready"
+          );
+        }
+        await user.fullProfile.updateProfile(profile);
+        commit("updatedProfile", profile);
+      } catch (e) {
+        commit("error", {
+          stack: e.stack,
+          message: `Failure to update user's profile: ${e.message} [ ${e.code} ]`
         });
         throw e;
       }
@@ -219,6 +244,29 @@ export const authActions = <T>() =>
         }
         await auth.signOut();
         commit("@firemodel/SIGNED_OUT", { uid, email, model });
+      } catch (e) {
+        commit("error", {
+          stack: e.stack,
+          message: `Failure to sign out of Firebase: ${e.message}`
+        });
+        throw e;
+      }
+    },
+
+    /**
+     * Sends a verification email to the currently logged in user
+     */
+    async sendEmailVerification({ commit }) {
+      try {
+        const db = await database();
+        const auth = await db.auth();
+        if (!auth.currentUser) {
+          throw new FireModelPluginError(
+            `Attempt to call sendEmailVerification() failed because there is no "currentUser" set in the identity system yet!`,
+            "firemodel/not-ready"
+          );
+        }
+        return auth.currentUser.sendEmailVerification();
       } catch (e) {
         commit("error", {
           stack: e.stack,
