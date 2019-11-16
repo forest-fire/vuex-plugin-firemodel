@@ -4,6 +4,7 @@ import { FireModelPluginError } from "./errors/FiremodelPluginError";
 import { addNamespace } from "./shared/addNamespace";
 import { coreServices } from "./coreServices";
 import { FireModel, Watch, Record, List } from "firemodel";
+import copy from "fast-copy";
 export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
@@ -31,9 +32,11 @@ export async function getAuth() {
 export function setAuth(auth) {
     _auth = auth;
 }
+export let initialState;
 const FirePlugin = (config) => {
     configuration = config;
     return (store) => {
+        initialState = copy(store.state);
         setStore(store);
         FireModel.dispatch = store.dispatch;
         store.subscribe((mutation, state) => {

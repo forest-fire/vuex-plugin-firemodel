@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const vue_1 = __importDefault(require("vue"));
+const __1 = require("..");
 /**
  * **changeRoot**
  *
@@ -16,9 +17,8 @@ const vue_1 = __importDefault(require("vue"));
  */
 exports.changeRoot = (state, updatedProps) => {
     if (updatedProps === null) {
-        // Object.keys(state).forEach(p => Vue.set(state, p, undefined));
-        state = {};
-        return;
+        // TODO: make this reset to "default state" not empty state
+        return Object.keys(state).forEach(p => vue_1.default.set(state, p, updatedProps && updatedProps[p] ? updatedProps[p] : __1.initialState[p]));
     }
     /**
      * rather than replace the root object reference,

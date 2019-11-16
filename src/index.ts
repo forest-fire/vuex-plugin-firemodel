@@ -14,6 +14,9 @@ import { addNamespace } from "./shared/addNamespace";
 import { coreServices } from "./coreServices";
 import { FirebaseAuth } from "@firebase/auth-types";
 import { FireModel, Watch, Record, List } from "firemodel";
+import { IDictionary } from "firemock";
+import copy from "fast-copy";
+
 export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
@@ -47,12 +50,15 @@ export function setAuth(auth: FirebaseAuth) {
   _auth = auth;
 }
 
+export let initialState: IDictionary;
+
 export type IFiremodel<T> = { "@firemodel": IFiremodelState<T> };
 
 const FirePlugin = <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => {
   configuration = config;
   type IRootState = T & { "@firemodel": IFiremodelState<T> };
   return (store: Store<IRootState>) => {
+    initialState = copy(store.state);
     setStore(store);
     FireModel.dispatch = store.dispatch;
 

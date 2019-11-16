@@ -1,4 +1,5 @@
 import Vue from "vue";
+import { initialState } from "..";
 /**
  * **changeRoot**
  *
@@ -11,9 +12,8 @@ import Vue from "vue";
  */
 export const changeRoot = (state, updatedProps) => {
     if (updatedProps === null) {
-        // Object.keys(state).forEach(p => Vue.set(state, p, undefined));
-        state = {};
-        return;
+        // TODO: make this reset to "default state" not empty state
+        return Object.keys(state).forEach(p => Vue.set(state, p, updatedProps && updatedProps[p] ? updatedProps[p] : initialState[p]));
     }
     /**
      * rather than replace the root object reference,
