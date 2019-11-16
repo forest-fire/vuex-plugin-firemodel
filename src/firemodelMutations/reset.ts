@@ -2,6 +2,7 @@ import { MutationTree } from "vuex";
 import { Model } from "firemodel";
 import Vue from "vue";
 import { FmCrudMutation } from "../types";
+import { initialState } from "..";
 
 export function reset<T extends Model>(
   propOffset?: keyof T & string
@@ -12,7 +13,10 @@ export function reset<T extends Model>(
       if (offset && Array.isArray(state[offset])) {
         Vue.set(state, offset, []);
       } else {
-        state = {};
+        // TODO: make this reset to "default state" not empty state
+        return Object.keys(state).forEach(p =>
+          Vue.set(state, p, initialState[p])
+        );
       }
     }
   };

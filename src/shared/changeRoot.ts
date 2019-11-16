@@ -1,6 +1,7 @@
 import { IDictionary } from "common-types";
 import Vue from "vue";
 import { Model } from "firemodel";
+import { initialState } from "..";
 
 /**
  * **changeRoot**
@@ -17,9 +18,14 @@ export const changeRoot = <T extends Model = Model>(
   updatedProps: T | null
 ) => {
   if (updatedProps === null) {
-    // Object.keys(state).forEach(p => Vue.set(state, p, undefined));
-    state = {} as T;
-    return;
+    // TODO: make this reset to "default state" not empty state
+    return Object.keys(state).forEach(p =>
+      Vue.set(
+        state,
+        p,
+        updatedProps && updatedProps[p] ? updatedProps[p] : initialState[p]
+      )
+    );
   }
 
   /**

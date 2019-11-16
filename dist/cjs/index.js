@@ -2,6 +2,9 @@
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const store_1 = require("./store");
 const FmConfigActions_1 = require("./types/actions/FmConfigActions");
@@ -9,6 +12,7 @@ const FiremodelPluginError_1 = require("./errors/FiremodelPluginError");
 const addNamespace_1 = require("./shared/addNamespace");
 const coreServices_1 = require("./coreServices");
 const firemodel_1 = require("firemodel");
+const fast_copy_1 = __importDefault(require("fast-copy"));
 __export(require("./types"));
 __export(require("./firemodelMutations/index"));
 __export(require("firemodel"));
@@ -40,6 +44,7 @@ exports.setAuth = setAuth;
 const FirePlugin = (config) => {
     exports.configuration = config;
     return (store) => {
+        exports.initialState = fast_copy_1.default(store.state);
         exports.setStore(store);
         firemodel_1.FireModel.dispatch = store.dispatch;
         store.subscribe((mutation, state) => {

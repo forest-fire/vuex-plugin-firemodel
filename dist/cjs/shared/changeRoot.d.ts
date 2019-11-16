@@ -9,4 +9,4 @@ import { Model } from "firemodel";
  * @param state
  * @param updatedProps
  */
-export declare const changeRoot: <T extends Model = Model>(state: T, updatedProps: T | null) => T | undefined;
+export declare const changeRoot: <T extends Model = Model>(state: T, updatedProps: T | null) => void | T;
