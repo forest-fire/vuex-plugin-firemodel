@@ -8,6 +8,7 @@ import { recordConfirms } from "./recordConfirms";
 import { recordRollbacks } from "./recordRollbacks";
 import { authActions } from "./auth";
 import { errors } from "./errors";
+import { other } from "./other";
 
 export const firemodelActions = <T>() =>
   stripNamespaceFromKeys<T>({
@@ -18,7 +19,8 @@ export const firemodelActions = <T>() =>
     ...recordConfirms<T>(),
     ...recordRollbacks<T>(),
     ...watch<T>(),
-    ...relationship<T>()
+    ...relationship<T>(),
+    ...other<T>()
   }) as ActionTree<IFiremodelState<T>, T>;
 
 function stripNamespaceFromKeys<T>(global: ActionTree<IFiremodelState<T>, T>) {

@@ -9,13 +9,13 @@ export function reset<T extends Model>(
 ): MutationTree<T> {
   const offset = !propOffset ? ("all" as keyof T & string) : propOffset;
   return {
-    [FmCrudMutation.reset](state: any, payload: any) {
+    [FmCrudMutation.reset](state: any, mod: string) {
       if (offset && Array.isArray(state[offset])) {
         Vue.set(state, offset, []);
       } else {
         // TODO: make this reset to "default state" not empty state
         return Object.keys(state).forEach(p =>
-          Vue.set(state, p, initialState[p])
+          Vue.set(state, p, initialState[mod][p])
         );
       }
     }

@@ -8,13 +8,13 @@ const __1 = require("..");
 function reset(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {
-        ["RESET" /* reset */](state, payload) {
+        ["RESET" /* reset */](state, mod) {
             if (offset && Array.isArray(state[offset])) {
                 vue_1.default.set(state, offset, []);
             }
             else {
                 // TODO: make this reset to "default state" not empty state
-                return Object.keys(state).forEach(p => vue_1.default.set(state, p, __1.initialState[p]));
+                return Object.keys(state).forEach(p => vue_1.default.set(state, p, __1.initialState[mod][p]));
             }
         }
     };
