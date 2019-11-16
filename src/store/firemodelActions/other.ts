@@ -1,13 +1,12 @@
 import { ActionTree } from "vuex";
 import { IFiremodelState } from "../../index";
-import { FmEvents, IFmWatchEvent } from "firemodel";
-import get from "lodash.get";
-import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
-import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
 
 export const other = <T>() =>
   ({
+    /**
+     * Resets a given module name back to it's default state
+     */
     async RESET({ commit }, module: string) {
-      commit(`${module}/RESET`, { module });
+      commit(`${module}/RESET`, { module }, { root: true });
     }
   } as ActionTree<IFiremodelState<T>, T>);

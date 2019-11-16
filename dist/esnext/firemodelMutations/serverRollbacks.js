@@ -20,7 +20,7 @@ export function serverRollbacks(propOffset) {
     return {
         ["ROLLBACK_ADD" /* serverAddRollback */](state, payload) {
             if (isRecord(state, payload)) {
-                changeRoot(state, payload.value);
+                changeRoot(state, payload.value, payload.localPath);
             }
             else {
                 updateList(state, offset, payload.value);
@@ -28,7 +28,7 @@ export function serverRollbacks(propOffset) {
         },
         ["ROLLBACK_CHANGE" /* serverChangeRollback */](state, payload) {
             if (isRecord(state, payload)) {
-                changeRoot(state, payload.value);
+                changeRoot(state, payload.value, payload.localPath);
             }
             else {
                 updateList(state, offset, payload.value);
@@ -36,7 +36,7 @@ export function serverRollbacks(propOffset) {
         },
         ["ROLLBACK_REMOVE" /* serverRemoveRollback */](state, payload) {
             if (isRecord(state, payload)) {
-                changeRoot(state, payload.value);
+                changeRoot(state, payload.value, payload.localPath);
             }
             else {
                 updateList(state, offset, payload.value);

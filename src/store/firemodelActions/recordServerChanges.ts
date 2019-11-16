@@ -8,13 +8,22 @@ export const recordServerChanges = <T>() =>
   ({
     [FmEvents.RECORD_ADDED]({ commit, state }, payload: IFmWatchEvent) {
       if (!state.muted.includes(payload.watcherId)) {
-        commit(
-          determineLocalStateNode(payload, FmCrudMutation.serverAdd),
-          payload,
-          {
-            root: true
-          }
-        );
+        try {
+          commit(
+            determineLocalStateNode(payload, FmCrudMutation.serverAdd),
+            payload,
+            {
+              root: true
+            }
+          );
+        } catch (e) {
+          console.error(
+            `Problem with mutation ${determineLocalStateNode(
+              payload,
+              FmCrudMutation.serverAdd
+            )}. Payload was: ${payload}\n\nError was: ${e.message}`
+          );
+        }
       }
     },
 
@@ -33,13 +42,21 @@ export const recordServerChanges = <T>() =>
     },
 
     [FmEvents.RECORD_CHANGED](store, payload: IFmWatchEvent) {
-      // Send mutation to appropriate state node
-      this.commit(
-        determineLocalStateNode(payload, FmCrudMutation.serverChange),
-        payload,
-        {
-          root: true
-        }
-      );
+      try {
+        this.commit(
+          determineLocalStateNode(payload, FmCrudMutation.serverChange),
+          payload,
+          {
+            root: true
+          }
+        );
+      } catch (e) {
+        console.error(
+          `Problem with mutation ${determineLocalStateNode(
+            payload,
+            FmCrudMutation.serverAdd
+          )}. Payload was: ${payload}.\n\nError was: ${e.message}`
+        );
+      }
     }
   } as ActionTree<IFiremodelState<T>, T>);

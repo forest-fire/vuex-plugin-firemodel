@@ -29,7 +29,7 @@ export function serverRollbacks<T extends Model>(
   return {
     [FmCrudMutation.serverAddRollback](state, payload: IFmWatchEvent<Model>) {
       if (isRecord(state, payload)) {
-        changeRoot<T>(state, payload.value);
+        changeRoot<T>(state, payload.value, payload.localPath);
       } else {
         updateList<T>(state, offset, payload.value);
       }
@@ -40,7 +40,7 @@ export function serverRollbacks<T extends Model>(
       payload: IFmWatchEvent<Model>
     ) {
       if (isRecord(state, payload)) {
-        changeRoot<T>(state, payload.value);
+        changeRoot<T>(state, payload.value, payload.localPath);
       } else {
         updateList<T>(state, offset, payload.value);
       }
@@ -51,7 +51,7 @@ export function serverRollbacks<T extends Model>(
       payload: IFmWatchEvent<Model>
     ) {
       if (isRecord(state, payload)) {
-        changeRoot<T>(state, payload.value);
+        changeRoot<T>(state, payload.value, payload.localPath);
       } else {
         updateList<T>(state, offset, payload.value);
       }

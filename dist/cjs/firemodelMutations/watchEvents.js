@@ -15,7 +15,7 @@ function watchEvents(propOffset) {
          */
         ["SERVER_STATE_SYNC" /* serverStateSync */](state, payload) {
             if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, payload.value);
+                changeRoot_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
                 vue_1.default.set(state, offset, payload.value);

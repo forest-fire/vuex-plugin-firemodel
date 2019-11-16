@@ -19,7 +19,7 @@ export function serverEvents<T>(
       payload: IFmWatchEvent<T>
     ) {
       if (isRecord(state, payload)) {
-        changeRoot<T>(state, payload.value);
+        changeRoot<T>(state, payload.value, payload.localPath);
       } else {
         updateList<T>(state, offset, payload.value);
       }
@@ -41,7 +41,7 @@ export function serverEvents<T>(
         return;
       }
       if (isRecord(state, payload)) {
-        changeRoot<T>(state, payload.value);
+        changeRoot<T>(state, payload.value, payload.localPath);
       } else {
         updateList<T>(state, offset, payload.value);
       }
@@ -56,7 +56,7 @@ export function serverEvents<T>(
       payload: IFmWatchEvent<Model>
     ) {
       if (isRecord(state, payload)) {
-        changeRoot(state, null);
+        changeRoot(state, null, payload.localPath);
       } else {
         updateList<T>(state, offset, payload.value);
       }

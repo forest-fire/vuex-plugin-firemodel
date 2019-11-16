@@ -19,7 +19,7 @@ export function watchEvents<T>(propOffset?: keyof T & string): MutationTree<T> {
       payload: IFmWatchEvent<T>
     ) {
       if (isRecord(state, payload)) {
-        changeRoot<T>(state, payload.value);
+        changeRoot<T>(state, payload.value, payload.localPath);
       } else {
         Vue.set(state, offset, payload.value);
       }

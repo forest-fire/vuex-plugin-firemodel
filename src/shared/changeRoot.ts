@@ -2,6 +2,7 @@ import { IDictionary } from "common-types";
 import Vue from "vue";
 import { Model } from "firemodel";
 import { initialState } from "..";
+import { FireModelPluginError } from "../errors/FiremodelPluginError";
 
 /**
  * **changeRoot**
@@ -15,10 +16,31 @@ import { initialState } from "..";
  */
 export const changeRoot = <T extends Model = Model>(
   state: T,
-  updatedProps: T | null
+  updatedProps: T | null,
+  moduleName: string
 ) => {
+  /** the full set of props defined by both current and new state */
+  const properties = Array.from(
+    new Set(
+      Object.keys(state).concat(updatedProps ? Object.keys(updatedProps) : [])
+    )
+  );
+
+  if (initialState[moduleName] === undefined) {
+    throw new FireModelPluginError(
+      `Attempt to change the state of the Vuex module "${moduleName}" failed because there was no initial state defined for that module. Please check that the spelling is correct as this is typically a typo.`
+    );
+  }
+
+  properties.forEach(prop => {
+    const newState = updatedProps ? updatedProps[prop as keyof T] : null;
+    const oldState = state[prop as keyof T];
+    const defaultState = initialState[moduleName][prop];
+
+    state[prop as keyof T] = newState === null ? defaultState : newState;
+  });
+
   if (updatedProps === null) {
-    // TODO: make this reset to "default state" not empty state
     return Object.keys(state).forEach(p =>
       Vue.set(
         state,
