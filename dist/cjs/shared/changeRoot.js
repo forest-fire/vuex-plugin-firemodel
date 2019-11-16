@@ -1,5 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const vue_1 = __importDefault(require("vue"));
 const __1 = require("..");
 const FiremodelPluginError_1 = require("../errors/FiremodelPluginError");
 /**
@@ -22,7 +26,8 @@ exports.changeRoot = (state, updatedProps, moduleName) => {
         const newState = updatedProps ? updatedProps[prop] : null;
         const oldState = state[prop];
         const defaultState = __1.initialState[moduleName][prop];
-        state[prop] = newState === null ? defaultState : newState;
+        vue_1.default.set(state, prop, newState === null ? defaultState : newState);
+        // state[prop as keyof T] = newState === null ? defaultState : newState;
     });
     return state;
 };
