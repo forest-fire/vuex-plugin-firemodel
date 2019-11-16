@@ -13,7 +13,7 @@ function serverEvents(propOffset) {
          */
         state, payload) {
             if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, payload.value);
+                changeRoot_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
                 updateList_1.updateList(state, offset, payload.value);
@@ -33,7 +33,7 @@ function serverEvents(propOffset) {
                 return;
             }
             if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, payload.value);
+                changeRoot_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
                 updateList_1.updateList(state, offset, payload.value);
@@ -46,7 +46,7 @@ function serverEvents(propOffset) {
          */
         state, payload) {
             if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, null);
+                changeRoot_1.changeRoot(state, null, payload.localPath);
             }
             else {
                 updateList_1.updateList(state, offset, payload.value);

@@ -10,7 +10,7 @@ export function watchEvents(propOffset) {
          */
         ["SERVER_STATE_SYNC" /* serverStateSync */](state, payload) {
             if (isRecord(state, payload)) {
-                changeRoot(state, payload.value);
+                changeRoot(state, payload.value, payload.localPath);
             }
             else {
                 Vue.set(state, offset, payload.value);

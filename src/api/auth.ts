@@ -6,7 +6,6 @@
 
 import { getStore } from "../index";
 import { ActionCodeSettings, UserCredential } from "@firebase/auth-types";
-import { database } from "../store";
 import { IAuthProfile } from "../types";
 import { IModelConstructor } from "firemodel";
 

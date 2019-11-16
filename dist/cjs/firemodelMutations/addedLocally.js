@@ -8,7 +8,7 @@ function addedLocally(propOffset) {
     return {
         ["ADDED_LOCALLY" /* addedLocally */](state, payload) {
             if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, payload.value);
+                changeRoot_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
                 updateList_1.updateList(state, offset, payload.value);
@@ -16,7 +16,7 @@ function addedLocally(propOffset) {
         },
         ["CHANGED_LOCALLY" /* changedLocally */](state, payload) {
             if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, payload.value);
+                changeRoot_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
                 updateList_1.updateList(state, offset, payload.value);
@@ -24,7 +24,7 @@ function addedLocally(propOffset) {
         },
         ["REMOVED_LOCALLY" /* removedLocally */](state, payload) {
             if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, null);
+                changeRoot_1.changeRoot(state, null, payload.localPath);
             }
             else {
                 updateList_1.updateList(state, offset, null);

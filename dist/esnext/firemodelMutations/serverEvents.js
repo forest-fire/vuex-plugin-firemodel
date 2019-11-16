@@ -11,7 +11,7 @@ export function serverEvents(propOffset) {
          */
         state, payload) {
             if (isRecord(state, payload)) {
-                changeRoot(state, payload.value);
+                changeRoot(state, payload.value, payload.localPath);
             }
             else {
                 updateList(state, offset, payload.value);
@@ -31,7 +31,7 @@ export function serverEvents(propOffset) {
                 return;
             }
             if (isRecord(state, payload)) {
-                changeRoot(state, payload.value);
+                changeRoot(state, payload.value, payload.localPath);
             }
             else {
                 updateList(state, offset, payload.value);
@@ -44,7 +44,7 @@ export function serverEvents(propOffset) {
          */
         state, payload) {
             if (isRecord(state, payload)) {
-                changeRoot(state, null);
+                changeRoot(state, null, payload.localPath);
             }
             else {
                 updateList(state, offset, payload.value);

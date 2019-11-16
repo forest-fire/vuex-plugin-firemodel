@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const vue_1 = __importDefault(require("vue"));
 const __1 = require("..");
+const FiremodelPluginError_1 = require("../errors/FiremodelPluginError");
 /**
  * **changeRoot**
  *
@@ -15,9 +16,19 @@ const __1 = require("..");
  * @param state
  * @param updatedProps
  */
-exports.changeRoot = (state, updatedProps) => {
+exports.changeRoot = (state, updatedProps, moduleName) => {
+    /** the full set of props defined by both current and new state */
+    const properties = Array.from(new Set(Object.keys(state).concat(updatedProps ? Object.keys(updatedProps) : [])));
+    if (__1.initialState[moduleName] === undefined) {
+        throw new FiremodelPluginError_1.FireModelPluginError(`Attempt to change the state of the Vuex module "${moduleName}" failed because there was no initial state defined for that module. Please check that the spelling is correct as this is typically a typo.`);
+    }
+    properties.forEach(prop => {
+        const newState = updatedProps ? updatedProps[prop] : null;
+        const oldState = state[prop];
+        const defaultState = __1.initialState[moduleName][prop];
+        state[prop] = newState === null ? defaultState : newState;
+    });
     if (updatedProps === null) {
-        // TODO: make this reset to "default state" not empty state
         return Object.keys(state).forEach(p => vue_1.default.set(state, p, updatedProps && updatedProps[p] ? updatedProps[p] : __1.initialState[p]));
     }
     /**
