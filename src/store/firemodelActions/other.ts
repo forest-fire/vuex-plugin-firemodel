@@ -7,7 +7,7 @@ import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
 
 export const other = <T>() =>
   ({
-    async reset({ commit }, module: string) {
-      commit(`${module}/reset`, { module });
+    async RESET({ commit }, module: string) {
+      commit(`${module}/RESET`, { module });
     }
   } as ActionTree<IFiremodelState<T>, T>);

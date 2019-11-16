@@ -1,5 +1,5 @@
 export const other = () => ({
-    async reset({ commit }, module) {
-        commit(`${module}/reset`, { module });
+    async RESET({ commit }, module) {
+        commit(`${module}/RESET`, { module });
     }
 });

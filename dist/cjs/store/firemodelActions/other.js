@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.other = () => ({
-    async reset({ commit }, module) {
-        commit(`${module}/reset`, { module });
+    async RESET({ commit }, module) {
+        commit(`${module}/RESET`, { module });
     }
 });
 //# sourceMappingURL=other.js.map
