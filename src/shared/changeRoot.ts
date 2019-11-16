@@ -37,7 +37,8 @@ export const changeRoot = <T extends Model = Model>(
     const oldState = state[prop as keyof T];
     const defaultState = initialState[moduleName][prop];
 
-    state[prop as keyof T] = newState === null ? defaultState : newState;
+    Vue.set(state, prop, newState === null ? defaultState : newState);
+    // state[prop as keyof T] = newState === null ? defaultState : newState;
   });
 
   return state;
