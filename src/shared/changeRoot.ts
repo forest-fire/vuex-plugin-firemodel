@@ -40,36 +40,5 @@ export const changeRoot = <T extends Model = Model>(
     state[prop as keyof T] = newState === null ? defaultState : newState;
   });
 
-  if (updatedProps === null) {
-    return Object.keys(state).forEach(p =>
-      Vue.set(
-        state,
-        p,
-        updatedProps && updatedProps[p] ? updatedProps[p] : initialState[p]
-      )
-    );
-  }
-
-  /**
-   * rather than replace the root object reference,
-   * iterate through each property and change that
-   */
-  Object.keys(updatedProps).forEach((v: keyof T & string) => {
-    Vue.set(state as any, v, updatedProps[v]);
-  });
-
-  /**
-   * If the `newValues` passed in omitted properties but the state
-   * tree has values for it we must remove those properties as this
-   * is a "destructive" update.
-   */
-  const removed: string[] = Object.keys(state).filter(
-    k => k && !Object.keys(updatedProps).includes(k)
-  );
-
-  Object.keys(removed).forEach(k => {
-    Vue.set(state, k, {});
-    // delete (state as T)[k as keyof typeof state];
-  });
   return state;
 };
