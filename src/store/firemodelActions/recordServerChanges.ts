@@ -41,9 +41,9 @@ export const recordServerChanges = <T>() =>
       console.info("A RECORD_MOVED action was received", payload);
     },
 
-    [FmEvents.RECORD_CHANGED](store, payload: IFmWatchEvent) {
+    [FmEvents.RECORD_CHANGED]({ commit }, payload: IFmWatchEvent) {
       try {
-        this.commit(
+        commit(
           determineLocalStateNode(payload, FmCrudMutation.serverChange),
           payload,
           {

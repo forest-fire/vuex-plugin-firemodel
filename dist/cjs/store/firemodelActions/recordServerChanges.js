@@ -23,9 +23,9 @@ exports.recordServerChanges = () => ({
     [firemodel_1.FmEvents.RECORD_MOVED]({ commit }, payload) {
         console.info("A RECORD_MOVED action was received", payload);
     },
-    [firemodel_1.FmEvents.RECORD_CHANGED](store, payload) {
+    [firemodel_1.FmEvents.RECORD_CHANGED]({ commit }, payload) {
         try {
-            this.commit(determineLocalStateNode_1.determineLocalStateNode(payload, "SERVER_CHANGE" /* serverChange */), payload, {
+            commit(determineLocalStateNode_1.determineLocalStateNode(payload, "SERVER_CHANGE" /* serverChange */), payload, {
                 root: true
             });
         }

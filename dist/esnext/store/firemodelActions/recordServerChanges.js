@@ -21,9 +21,9 @@ export const recordServerChanges = () => ({
     [FmEvents.RECORD_MOVED]({ commit }, payload) {
         console.info("A RECORD_MOVED action was received", payload);
     },
-    [FmEvents.RECORD_CHANGED](store, payload) {
+    [FmEvents.RECORD_CHANGED]({ commit }, payload) {
         try {
-            this.commit(determineLocalStateNode(payload, "SERVER_CHANGE" /* serverChange */), payload, {
+            commit(determineLocalStateNode(payload, "SERVER_CHANGE" /* serverChange */), payload, {
                 root: true
             });
         }
