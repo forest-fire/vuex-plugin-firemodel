@@ -119,7 +119,7 @@ export async function updateEmail(newEmail: string): Promise<void> {
  */
 export async function updatePassword(password: string): Promise<void> {
   return getStore().dispatch({
-    type: "@firemodel/updateEmail",
+    type: "@firemodel/updatePassword",
     password
   });
 }
