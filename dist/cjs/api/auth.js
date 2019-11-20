@@ -99,7 +99,7 @@ exports.updateEmail = updateEmail;
  */
 async function updatePassword(password) {
     return index_1.getStore().dispatch({
-        type: "@firemodel/updateEmail",
+        type: "@firemodel/updatePassword",
         password
     });
 }
