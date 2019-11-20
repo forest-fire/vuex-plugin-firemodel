@@ -679,7 +679,7 @@
   resolved "https://registry.yarnpkg.com/@firebase/app-types/-/app-types-0.4.7.tgz#792a0f117185e42ec5a247f6bedc94a921711110"
   integrity sha512-4LnhDYsUhgxMBnCfQtWvrmMy9XxeZo059HiRbpt3ufdpUcZZOBDOouQdjkODwHLhcnNrB7LeyiqYpS2jrLT8Mw==
 
-"@firebase/app@^0.4.22":
+"@firebase/app@^0.4.24":
   version "0.4.24"
   resolved "https://registry.yarnpkg.com/@firebase/app/-/app-0.4.24.tgz#58dc293e6af83c20700e10e7ea185cbab2b269eb"
   integrity sha512-QkyagyuBWFaBPROLuF1h+JKsZJMFREJwykwRyxxgEaH0bvfQb64AP8OMcpBswPrh2IVHv7EZXgUAzwSWNTNHdw==
@@ -691,22 +691,17 @@
     tslib "1.10.0"
     xmlhttprequest "1.8.0"
 
-"@firebase/auth-types@0.8.2", "@firebase/auth-types@^0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/@firebase/auth-types/-/auth-types-0.8.2.tgz#9722138481724a16a79f7d645e9c5598cc932269"
-  integrity sha512-qcP7wZ76CIb7IN+K544GomA42cCS36KZmQ3n9Ou1JsYplEaMo52x4UuQTZFqlRoMaUWi61oQ9jiuE5tOAMJwDA==
-
-"@firebase/auth-types@^0.9.0":
+"@firebase/auth-types@0.9.0", "@firebase/auth-types@^0.9.0":
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/@firebase/auth-types/-/auth-types-0.9.0.tgz#74e2246f4de12a869d7dcdd2cf3f62b8796e5176"
   integrity sha512-G1DU4wCtcyvHCPKOhcRtlXNP7soxM8X1Fi4TlmUkYvF4sRzuL2fP7EsjkBwkscP9rqHifyjdWfrV2ry31CTd3g==
 
-"@firebase/auth@^0.12.3":
-  version "0.12.4"
-  resolved "https://registry.yarnpkg.com/@firebase/auth/-/auth-0.12.4.tgz#85e54957aa2b8a03b489fb9f59cf2897d0bd498a"
-  integrity sha512-nGzXJDB6NlGnd4JH16Myl2n+vQKRlJ5Wmjk10CB5ZTJu5NGs65uRf4wLBB6P2VyK0cGD/WcE+mfE34RxY/26hA==
+"@firebase/auth@^0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@firebase/auth/-/auth-0.13.0.tgz#275144cc72d4318051123bd79d3fec9bbc7a746a"
+  integrity sha512-MwQA/NFUxtaqFM3wZa3iGJfs3msFzEtBL1H35oYeYlYSdq2ow023GvIioMXxs+BR5982Pia1HmzPQK6fBQu4oA==
   dependencies:
-    "@firebase/auth-types" "0.8.2"
+    "@firebase/auth-types" "0.9.0"
 
 "@firebase/database-types@0.4.7", "@firebase/database-types@^0.4.7":
   version "0.4.7"
@@ -715,7 +710,7 @@
   dependencies:
     "@firebase/app-types" "0.4.7"
 
-"@firebase/database@^0.5.10":
+"@firebase/database@^0.5.12":
   version "0.5.12"
   resolved "https://registry.yarnpkg.com/@firebase/database/-/database-0.5.12.tgz#cca539065220b662808d46d0dae86d95eff831aa"
   integrity sha512-DIljaH+XspE6hRHErAkXAKLDiNIJkdmz0QaAWxSxqIumXgNDcxP8jEoJUXtuztWIqAhgD8z8q9/eNyYpM/p3nA==
@@ -1307,18 +1302,18 @@ abbrev@1:
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
   integrity sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
 
-abstracted-client@^0.34.0:
-  version "0.34.0"
-  resolved "https://registry.yarnpkg.com/abstracted-client/-/abstracted-client-0.34.0.tgz#40ee7d14fe96502c1531dc19706a0f204c38b6ec"
-  integrity sha512-d1rjal4C6X903R0+H8SRf/bqyHzBC+YTrNJF5IwBEb3gMCTlC7n3hnFZcaKSWbWUU/kGqAhwgbrHaV6p5CAMcw==
+abstracted-client@^0.35.0:
+  version "0.35.0"
+  resolved "https://registry.yarnpkg.com/abstracted-client/-/abstracted-client-0.35.0.tgz#d80905d875531e282f022ef6846595295e742c1f"
+  integrity sha512-hIlFaIF2XKOgJziQdYs5bbd26NCjryPwNdUnTJdDmiOv+Pr++Ipa+GxS1D0LdRmhpWLp6YI8kb8YXdlFpahlMg==
   dependencies:
-    "@firebase/app" "^0.4.22"
+    "@firebase/app" "^0.4.24"
     "@firebase/app-types" "^0.4.7"
-    "@firebase/auth" "^0.12.3"
-    "@firebase/auth-types" "^0.8.2"
-    "@firebase/database" "^0.5.10"
+    "@firebase/auth" "^0.13.0"
+    "@firebase/auth-types" "^0.9.0"
+    "@firebase/database" "^0.5.12"
     "@firebase/database-types" "^0.4.7"
-    abstracted-firebase "^0.34.0"
+    abstracted-firebase "^0.35.0"
     common-types "^1.12.12"
     events "^3.0.0"
     lodash.first "^3.0.0"
@@ -1326,12 +1321,13 @@ abstracted-client@^0.34.0:
     serialized-query "^0.9.1"
     typed-conversions "^0.10.1"
 
-abstracted-firebase@^0.34.0:
-  version "0.34.1"
-  resolved "https://registry.yarnpkg.com/abstracted-firebase/-/abstracted-firebase-0.34.1.tgz#fdae705487478fa669b8312329cb4fd7fa505e06"
-  integrity sha512-QRf2rtEXjnld3MSIDHeIZTOVbeSkdSfEnTiS/i9Uv+c+1oBr4Am3yvYWOD+/rh4t1dAiooCYtGpjKYu9ZsN8PA==
+abstracted-firebase@^0.35.0:
+  version "0.35.0"
+  resolved "https://registry.yarnpkg.com/abstracted-firebase/-/abstracted-firebase-0.35.0.tgz#6b0e1cfa88cd801bbce686ec6417c259a1907c19"
+  integrity sha512-uF75odRdDYgUYqBD1BWOIsojwLeZv1lGYkkrWc3p86lOVohT5tZvXM4PJguNoauqjV1T0xZmPNfqG6351HRZeg==
   dependencies:
-    "@firebase/auth-types" "^0.8.2"
+    "@firebase/app-types" "^0.4.7"
+    "@firebase/auth-types" "^0.9.0"
     "@firebase/database-types" "^0.4.7"
     common-types "^1.12.12"
     serialized-query "^0.9.1"
@@ -2771,6 +2767,11 @@ date-fns@^1.30.1:
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
   integrity sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==
 
+date-fns@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.8.0.tgz#628d865367e30e45747ed1e8b0c1572090b04f55"
+  integrity sha512-nbZMIMsoD7QiIKipZ5+XRTCtHZad1ch8OEkLaJxjGL6ThAK2IWAdjmAUAS7Fdz5fCaVWtqc+c8pAsN/MX8eaew==
+
 de-indent@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/de-indent/-/de-indent-1.0.2.tgz#b2038e846dc33baa5796128d0804b455b8c1e21d"
@@ -3670,14 +3671,14 @@ firemock@^0.35.0:
     serialized-query "^0.9.1"
     typed-conversions "^0.10.1"
 
-firemodel@^0.34.10:
-  version "0.34.10"
-  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.34.10.tgz#9242e2514ca673566fead0d0a39675d0adbecca6"
-  integrity sha512-sfvdX+o/bGpxoVDY8kqtzMxyyPnFPOYmWgreu/nqxXfXOOOufaNHmfX4futoJab/i2A0G3Eq8lRlRNPPbzJ50w==
+firemodel@^0.35.0:
+  version "0.35.0"
+  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.35.0.tgz#de10be384b4a07f7500e381a31f8b329dd40d763"
+  integrity sha512-MMVY7IGMZiAGkZemdnDlYaabmEQGAtAL/rgrSm50WPwjdHZYpDa4g+3oNLT+EMLX2LeRkNNybHju+BDK8b1KJg==
   dependencies:
-    abstracted-firebase "^0.34.0"
+    abstracted-firebase "^0.35.0"
     common-types "^1.12.12"
-    date-fns "^1.30.1"
+    date-fns "^2.8.0"
     fast-copy "2.0.3"
     fast-deep-equal "^2.0.1"
     firebase-key "^2.0.2"
