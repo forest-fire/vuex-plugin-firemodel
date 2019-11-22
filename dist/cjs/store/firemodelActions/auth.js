@@ -23,6 +23,9 @@ exports.authActions = () => ({
                 const token = await userCredential.user.getIdTokenResult();
                 commit("SET_CUSTOM_CLAIMS", token.claims);
             }
+            else {
+                console.warn(`Logged in but the UserCredential didn't appear to include the "User" property!`, userCredential, "\nThe current user is identified as:", auth.currentUser);
+            }
             return userCredential;
         }
         catch (e) {
