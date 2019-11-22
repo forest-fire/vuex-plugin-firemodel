@@ -5,13 +5,13 @@ import Vue from "vue";
 export const authMutations = () => ({
     signInWithEmailAndPassword(state, userCredential) {
         if (userCredential.user) {
-            Vue.set(state, "currentUser", {
+            const summary = {
                 email: userCredential.user.email,
                 emailVerified: userCredential.user.emailVerified,
                 uid: userCredential.user.uid,
-                isAnonymous: userCredential.user.isAnonymous,
-                fullProfile: userCredential.user
-            });
+                isAnonymous: userCredential.user.isAnonymous
+            };
+            Vue.set(state, "currentUser", Object.assign(Object.assign({}, summary), { fullProfile: userCredential.user }));
             state.authenticated = "logged-in";
         }
     },
