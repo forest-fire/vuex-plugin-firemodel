@@ -9,6 +9,15 @@ let _isAnonymous: boolean;
 export const authChanged = <T>(
   context: Partial<IFmAuthEventContext<T>>
 ) => async (user: User | null) => {
+  if ((user as any).credential) {
+    // TODO: look into why this is happening
+    const e = new Error();
+    console.warn(
+      "Auth changed but it appears to have given us a UserCredential rather than a User object!",
+      e.stack
+    );
+    user = (user as any).user as User;
+  }
   const ctx = () =>
     ({
       ...context,
@@ -21,15 +30,6 @@ export const authChanged = <T>(
 
   if (user) {
     console.group("Login Event");
-    if ((user as any).credential) {
-      // TODO: look into why this is happening
-      const e = new Error();
-      console.warn(
-        "Auth changed but it appears to have given us a UserCredential rather than a User object!",
-        e.stack
-      );
-      user = (user as any).user as User;
-    }
 
     console.info(
       `Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`
