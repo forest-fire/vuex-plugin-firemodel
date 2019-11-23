@@ -29,6 +29,10 @@ export const localConfig = () => ({
         Vue.set(state, "errors", []);
     },
     ["USER_LOGGED_IN" /* userLoggedIn */](state, user) {
+        if (isUserCredential(user)) {
+            console.warn("A UserCredential was passed in instead of a User!", new Error().stack);
+            user = user.user;
+        }
         Vue.set(state, "currentUser", {
             uid: user.uid,
             isAnonymous: user.isAnonymous,
@@ -58,3 +62,6 @@ export const localConfig = () => ({
         //
     }
 });
+function isUserCredential(user) {
+    return user.credential ? true : false;
+}
