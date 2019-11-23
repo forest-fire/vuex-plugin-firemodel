@@ -6,15 +6,16 @@ export const authChanged = (context) => async (user) => {
     const ctx = () => (Object.assign(Object.assign({}, context), { isAnonymous: user ? user.isAnonymous : false, uid: user ? user.uid : "", emailVerified: user ? user.emailVerified : false, email: user ? user.email : "", fullProfile: user }));
     if (user) {
         console.group("Login Event");
+        if (user.credential) {
+            const e = new Error();
+            console.warn("Auth changed but it appears to have given us a UserCredential rather than a User object!", e.stack);
+            user = user.user;
+        }
         console.info(`Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`);
         if (!user.isAnonymous && _isAnonymous === true) {
             console.log(`anonymous user ${_uid} was abandoned in favor of user ${user.uid}`);
             ctx().commit("USER_ABANDONED" /* userAbandoned */, {
-                uid: user.uid,
-                email: user.email,
-                emailVerified: user.emailVerified,
-                isAnonymous: user ? user.isAnonymous : false,
-                fullProfile: user,
+                user,
                 priorUid: _uid
             });
             await runQueue(ctx(), "user-abandoned");

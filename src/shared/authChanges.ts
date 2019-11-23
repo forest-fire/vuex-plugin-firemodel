@@ -1,5 +1,5 @@
 import { IFmAuthEventContext, FmConfigMutation } from "../types/index";
-import { User } from "@firebase/auth-types";
+import { User, UserCredential } from "@firebase/auth-types";
 import { database } from "./database";
 import { runQueue } from "./runQueue";
 
@@ -21,6 +21,15 @@ export const authChanged = <T>(
 
   if (user) {
     console.group("Login Event");
+    if ((user as any).credential) {
+      // TODO: look into why this is happening
+      const e = new Error();
+      console.warn(
+        "Auth changed but it appears to have given us a UserCredential rather than a User object!",
+        e.stack
+      );
+      user = (user as any).user as User;
+    }
 
     console.info(
       `Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`
@@ -30,11 +39,7 @@ export const authChanged = <T>(
         `anonymous user ${_uid} was abandoned in favor of user ${user.uid}`
       );
       ctx().commit(FmConfigMutation.userAbandoned, {
-        uid: user.uid,
-        email: user.email,
-        emailVerified: user.emailVerified,
-        isAnonymous: user ? user.isAnonymous : false,
-        fullProfile: user,
+        user,
         priorUid: _uid
       });
 
