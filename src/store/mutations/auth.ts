@@ -67,5 +67,9 @@ export const authMutations = <T>() =>
 
     SET_CUSTOM_CLAIMS(state, claims: IDictionary) {
       state.claims = Object.keys(claims || {});
+    },
+
+    SET_AUTH_TOKEN(state, token: string) {
+      state.token = token;
     }
   } as MutationTree<IFiremodelState<T>>);

@@ -86,8 +86,6 @@ export const pluginActions = <T>() =>
           emailVerified: false,
           fullProfile: anon
         });
-
-        commit("SET_CUSTOM_CLAIMS", {});
       }
     },
 

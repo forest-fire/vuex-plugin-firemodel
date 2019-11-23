@@ -62,7 +62,6 @@ exports.pluginActions = () => ({
                 emailVerified: false,
                 fullProfile: anon
             });
-            commit("SET_CUSTOM_CLAIMS", {});
         }
     },
     /**
