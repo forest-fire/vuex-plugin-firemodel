@@ -3,7 +3,7 @@ import { runQueue } from "./runQueue";
 let _uid;
 let _isAnonymous;
 export const authChanged = (context) => async (user) => {
-    if (user.credential) {
+    if (user && user.credential) {
         // TODO: look into why this is happening
         const e = new Error();
         console.warn("Auth changed but it appears to have given us a UserCredential rather than a User object!", e.stack);

@@ -9,7 +9,7 @@ let _isAnonymous: boolean;
 export const authChanged = <T>(
   context: Partial<IFmAuthEventContext<T>>
 ) => async (user: User | null) => {
-  if ((user as any).credential) {
+  if (user && (user as any).credential) {
     // TODO: look into why this is happening
     const e = new Error();
     console.warn(
