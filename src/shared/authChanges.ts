@@ -37,6 +37,7 @@ export const authChanged = <T>(
         fullProfile: user,
         priorUid: _uid
       });
+
       await runQueue(ctx(), "user-abandoned");
     }
 
@@ -58,13 +59,8 @@ export const authChanged = <T>(
     if (ctx().config.anonymousAuth) {
       const auth = await (await database()).auth();
       const anon = await auth.signInAnonymously();
-      const user = {
-        uid: (anon.user as User).uid,
-        isAnonymous: true,
-        emailVerified: false,
-        fullProfile: anon.user
-      };
-      ctx().commit(FmConfigMutation.userLoggedIn, user);
+
+      ctx().commit(FmConfigMutation.userLoggedIn, anon);
     }
     console.groupEnd();
   }
