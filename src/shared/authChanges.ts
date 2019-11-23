@@ -29,8 +29,15 @@ export const authChanged = <T>(
       console.log(
         `anonymous user ${_uid} was abandoned in favor of user ${user.uid}`
       );
-      ctx().commit(FmConfigMutation.userAbandoned, { user, priorUid: _uid });
-      await runQueue(ctx(), "user-upgraded");
+      ctx().commit(FmConfigMutation.userAbandoned, {
+        uid: user.uid,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        isAnonymous: user ? user.isAnonymous : false,
+        fullProfile: user,
+        priorUid: _uid
+      });
+      await runQueue(ctx(), "user-abandoned");
     }
 
     ctx().commit(FmConfigMutation.userLoggedIn, user);
