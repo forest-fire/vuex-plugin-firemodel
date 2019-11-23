@@ -9,19 +9,8 @@ const vue_1 = __importDefault(require("vue"));
  */
 exports.authMutations = () => ({
     signInWithEmailAndPassword(state, userCredential) {
-        // if (userCredential.user) {
-        //   const summary = {
-        //     email: userCredential.user.email,
-        //     emailVerified: userCredential.user.emailVerified,
-        //     uid: userCredential.user.uid,
-        //     isAnonymous: userCredential.user.isAnonymous
-        //   };
-        //   Vue.set(state, "currentUser", {
-        //     ...summary,
-        //     fullProfile: userCredential.user
-        //   });
-        //   state.authenticated = "logged-in";
-        // }
+        console.debug("user signed in with email/password");
+        // the @firemodel.currentUser will be updated by the `changeAuth` function
     },
     createUserWithEmailAndPassword(state, userCredential) {
         // no need to change state tree as the observer on onAuthChanged will address this
@@ -52,10 +41,10 @@ exports.authMutations = () => ({
         console.log(`Signed out:`, payload);
     },
     SET_CUSTOM_CLAIMS(state, claims) {
-        state.claims = claims;
+        vue_1.default.set(state, "claims", claims);
     },
     SET_AUTH_TOKEN(state, token) {
-        state.token = token;
+        vue_1.default.set(state, "token", token);
     }
 });
 //# sourceMappingURL=auth.js.map
