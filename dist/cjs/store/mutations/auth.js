@@ -49,7 +49,7 @@ exports.authMutations = () => ({
         console.log(`Signed out:`, payload);
     },
     SET_CUSTOM_CLAIMS(state, claims) {
-        state.claims = Object.keys(claims || {});
+        state.claims = claims;
     },
     SET_AUTH_TOKEN(state, token) {
         state.token = token;

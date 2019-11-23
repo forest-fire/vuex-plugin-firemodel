@@ -66,7 +66,7 @@ export const authMutations = <T>() =>
     },
 
     SET_CUSTOM_CLAIMS(state, claims: IDictionary) {
-      state.claims = Object.keys(claims || {});
+      state.claims = claims;
     },
 
     SET_AUTH_TOKEN(state, token: string) {
