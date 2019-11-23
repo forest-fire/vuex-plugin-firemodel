@@ -21,23 +21,19 @@ export const authChanged = <T>(
 
   if (user) {
     console.group("Login Event");
+
     console.info(
       `Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`
     );
-
-    if (user) {
-      if (!user.isAnonymous && _isAnonymous === true) {
-        console.log(
-          `anonymous user ${_uid} was abandoned in favor of user ${user.uid}`
-        );
-        ctx().commit(FmConfigMutation.userAbandoned, { user, priorUid: _uid });
-        await runQueue(ctx(), "user-upgraded");
-      }
-
-      ctx().commit(FmConfigMutation.userLoggedIn, user);
-    } else {
-      ctx().commit(FmConfigMutation.userLoggedOut, user);
+    if (!user.isAnonymous && _isAnonymous === true) {
+      console.log(
+        `anonymous user ${_uid} was abandoned in favor of user ${user.uid}`
+      );
+      ctx().commit(FmConfigMutation.userAbandoned, { user, priorUid: _uid });
+      await runQueue(ctx(), "user-upgraded");
     }
+
+    ctx().commit(FmConfigMutation.userLoggedIn, user);
 
     const token = await user.getIdTokenResult();
     ctx().commit("SET_CUSTOM_CLAIMS", token.claims);
@@ -58,7 +54,8 @@ export const authChanged = <T>(
       const user = {
         uid: (anon.user as User).uid,
         isAnonymous: true,
-        emailVerified: false
+        emailVerified: false,
+        fullProfile: anon.user
       };
       ctx().commit(FmConfigMutation.userLoggedIn, user);
     }

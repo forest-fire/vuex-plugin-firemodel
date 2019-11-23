@@ -7,17 +7,12 @@ export const authChanged = (context) => async (user) => {
     if (user) {
         console.group("Login Event");
         console.info(`Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`);
-        if (user) {
-            if (!user.isAnonymous && _isAnonymous === true) {
-                console.log(`anonymous user ${_uid} was abandoned in favor of user ${user.uid}`);
-                ctx().commit("USER_ABANDONED" /* userAbandoned */, { user, priorUid: _uid });
-                await runQueue(ctx(), "user-upgraded");
-            }
-            ctx().commit("USER_LOGGED_IN" /* userLoggedIn */, user);
+        if (!user.isAnonymous && _isAnonymous === true) {
+            console.log(`anonymous user ${_uid} was abandoned in favor of user ${user.uid}`);
+            ctx().commit("USER_ABANDONED" /* userAbandoned */, { user, priorUid: _uid });
+            await runQueue(ctx(), "user-upgraded");
         }
-        else {
-            ctx().commit("USER_LOGGED_OUT" /* userLoggedOut */, user);
-        }
+        ctx().commit("USER_LOGGED_IN" /* userLoggedIn */, user);
         const token = await user.getIdTokenResult();
         ctx().commit("SET_CUSTOM_CLAIMS", token.claims);
         ctx().commit("SET_AUTH_TOKEN", token.token);
@@ -37,7 +32,8 @@ export const authChanged = (context) => async (user) => {
             const user = {
                 uid: anon.user.uid,
                 isAnonymous: true,
-                emailVerified: false
+                emailVerified: false,
+                fullProfile: anon.user
             };
             ctx().commit("USER_LOGGED_IN" /* userLoggedIn */, user);
         }

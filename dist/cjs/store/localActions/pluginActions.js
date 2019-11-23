@@ -55,13 +55,6 @@ exports.pluginActions = () => ({
         console.log(`checking anon login`, rootState);
         if (auth.currentUser && !auth.currentUser.isAnonymous) {
             const anon = await auth.signInAnonymously();
-            commit("USER_LOGGED_IN" /* userLoggedIn */, {
-                uid: anon.user.uid,
-                isAnonymous: true,
-                email: undefined,
-                emailVerified: false,
-                fullProfile: anon
-            });
         }
     },
     /**
