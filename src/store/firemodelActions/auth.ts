@@ -4,8 +4,7 @@ import { IFiremodelState, ISignOutPayload, IAuthProfile } from "../../index";
 import { database } from "../../shared/database";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
 import { ActionCodeSettings, UserCredential } from "@firebase/auth-types";
-import { FmEvents, Record } from "firemodel";
-import { updateProfile } from "../../api";
+import { Record } from "firemodel";
 
 /**
  * **authActions**

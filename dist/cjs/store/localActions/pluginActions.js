@@ -48,28 +48,22 @@ exports.pluginActions = () => ({
      * then signs into Firebase as an _anonymous_ user
      */
     async [FmConfigActions_1.FmConfigAction.anonymousLogin](store) {
-        const { commit, dispatch, rootState } = store;
+        const { commit, rootState } = store;
         const db = await database_1.database();
         const auth = await db.auth();
         let user;
         console.log(`checking anon login`, rootState);
-        if (auth.currentUser) {
-            user = {
-                isAnonymous: auth.currentUser.isAnonymous,
-                uid: auth.currentUser.uid,
-                email: auth.currentUser.email,
-                emailVerified: auth.currentUser.emailVerified
-            };
-        }
-        else {
+        if (auth.currentUser && !auth.currentUser.isAnonymous) {
             const anon = await auth.signInAnonymously();
-            user = {
+            commit("USER_LOGGED_IN" /* userLoggedIn */, {
                 uid: anon.user.uid,
                 isAnonymous: true,
-                emailVerified: false
-            };
+                email: undefined,
+                emailVerified: false,
+                fullProfile: anon
+            });
+            commit("SET_CUSTOM_CLAIMS", {});
         }
-        commit("USER_LOGGED_IN" /* userLoggedIn */, user);
     },
     /**
      * **firebaseAuth**

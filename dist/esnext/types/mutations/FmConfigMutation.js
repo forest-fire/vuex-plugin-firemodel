@@ -22,6 +22,8 @@ export var FmConfigMutation;
     FmConfigMutation["userLoggedIn"] = "USER_LOGGED_IN";
     /** a user who was previously an "anonymous" user was _upgraded_ to a **known** user */
     FmConfigMutation["userUpgraded"] = "USER_UPGRADED";
+    /** an anonymous user was abaandoned in favor of a logged in user */
+    FmConfigMutation["userAbandoned"] = "USER_ABANDONED";
     /** a user has logged out */
     FmConfigMutation["userLoggedOut"] = "USER_LOGGED_OUT";
     /** a lifecycle event's hooks have all fired */

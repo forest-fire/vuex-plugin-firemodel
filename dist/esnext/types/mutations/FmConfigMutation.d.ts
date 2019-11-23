@@ -21,6 +21,8 @@ export declare const enum FmConfigMutation {
     userLoggedIn = "USER_LOGGED_IN",
     /** a user who was previously an "anonymous" user was _upgraded_ to a **known** user */
     userUpgraded = "USER_UPGRADED",
+    /** an anonymous user was abaandoned in favor of a logged in user */
+    userAbandoned = "USER_ABANDONED",
     /** a user has logged out */
     userLoggedOut = "USER_LOGGED_OUT",
     /** a lifecycle event's hooks have all fired */
