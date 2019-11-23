@@ -4,16 +4,19 @@ import Vue from "vue";
  */
 export const authMutations = () => ({
     signInWithEmailAndPassword(state, userCredential) {
-        if (userCredential.user) {
-            const summary = {
-                email: userCredential.user.email,
-                emailVerified: userCredential.user.emailVerified,
-                uid: userCredential.user.uid,
-                isAnonymous: userCredential.user.isAnonymous
-            };
-            Vue.set(state, "currentUser", Object.assign(Object.assign({}, summary), { fullProfile: userCredential.user }));
-            state.authenticated = "logged-in";
-        }
+        // if (userCredential.user) {
+        //   const summary = {
+        //     email: userCredential.user.email,
+        //     emailVerified: userCredential.user.emailVerified,
+        //     uid: userCredential.user.uid,
+        //     isAnonymous: userCredential.user.isAnonymous
+        //   };
+        //   Vue.set(state, "currentUser", {
+        //     ...summary,
+        //     fullProfile: userCredential.user
+        //   });
+        //   state.authenticated = "logged-in";
+        // }
     },
     createUserWithEmailAndPassword(state, userCredential) {
         // no need to change state tree as the observer on onAuthChanged will address this

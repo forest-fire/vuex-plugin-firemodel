@@ -44,13 +44,14 @@ export const localConfig = <T>() =>
     },
 
     [FmConfigMutation.userLoggedIn](state, user: User) {
-      state.currentUser = {
+      Vue.set(state, "currentUser", {
         uid: user.uid,
         isAnonymous: user.isAnonymous,
         email: user.email,
         emailVerified: user.emailVerified,
         fullProfile: user
-      };
+      });
+
       Vue.set(
         state,
         "authenticated",
