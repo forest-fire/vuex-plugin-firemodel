@@ -78,14 +78,6 @@ export const pluginActions = <T>() =>
 
       if (auth.currentUser && !auth.currentUser.isAnonymous) {
         const anon = await auth.signInAnonymously();
-
-        commit(FmConfigMutation.userLoggedIn, {
-          uid: (anon.user as User).uid,
-          isAnonymous: true,
-          email: undefined,
-          emailVerified: false,
-          fullProfile: anon
-        });
       }
     },
 
