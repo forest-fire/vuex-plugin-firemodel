@@ -15,25 +15,41 @@ export const authChanged = <T>(
       isAnonymous: user ? user.isAnonymous : false,
       uid: user ? user.uid : "",
       emailVerified: user ? user.emailVerified : false,
-      email: user ? user.email : ""
+      email: user ? user.email : "",
+      fullProfile: user
     } as IFmAuthEventContext<T>);
 
   if (user) {
+    console.group("Login Event");
     console.info(
       `Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`
     );
-    if (!user.isAnonymous && _isAnonymous === true) {
-      console.log(`user ${_uid} was upgraded to user ${user.uid}`);
-      ctx().commit(FmConfigMutation.userUpgraded, { user, priorUid: _uid });
-      await runQueue(ctx(), "user-upgraded");
-    } else {
+
+    if (user) {
+      if (!user.isAnonymous && _isAnonymous === true) {
+        console.log(
+          `anonymous user ${_uid} was abandoned in favor of user ${user.uid}`
+        );
+        ctx().commit(FmConfigMutation.userAbandoned, { user, priorUid: _uid });
+        await runQueue(ctx(), "user-upgraded");
+      }
+
       ctx().commit(FmConfigMutation.userLoggedIn, user);
+    } else {
+      ctx().commit(FmConfigMutation.userLoggedOut, user);
     }
+
+    const token = await user.getIdTokenResult();
+    ctx().commit("SET_CUSTOM_CLAIMS", token.claims);
+    ctx().commit("SET_AUTH_TOKEN", token.token);
+
     _uid = user.uid;
     _isAnonymous = user.isAnonymous;
     await runQueue(ctx(), "logged-in");
+    console.groupEnd();
   } else {
-    console.info(`Logout detected`, user);
+    console.group("Logout Event");
+    console.info(`User`, user);
     ctx().commit(FmConfigMutation.userLoggedOut, user);
     await runQueue(ctx(), "logged-out");
     if (ctx().config.anonymousAuth) {
@@ -46,5 +62,6 @@ export const authChanged = <T>(
       };
       ctx().commit(FmConfigMutation.userLoggedIn, user);
     }
+    console.groupEnd();
   }
 };
