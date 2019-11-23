@@ -16,7 +16,9 @@ export interface IFiremodelState<T> {
   /** the configuration used to connect to the Firebase DB */
   config?: IFirebaseClientConfig;
   /** a list of custom claims that this user has */
-  claims?: string[];
+  claims?: IDictionary;
+  /** the Auth tokenId */
+  token?: string;
   /** the authentication status of the user */
   authenticated: false | "anonymous" | "logged-in";
   currentUser?: IFiremodelAbbreviatedUser;

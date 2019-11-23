@@ -50,6 +50,9 @@ exports.authMutations = () => ({
     },
     SET_CUSTOM_CLAIMS(state, claims) {
         state.claims = Object.keys(claims || {});
+    },
+    SET_AUTH_TOKEN(state, token) {
+        state.token = token;
     }
 });
 //# sourceMappingURL=auth.js.map
