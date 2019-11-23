@@ -11,19 +11,19 @@ import { IDictionary } from "firemock";
 export const authMutations = <T>() =>
   ({
     signInWithEmailAndPassword(state, userCredential: UserCredential) {
-      if (userCredential.user) {
-        const summary = {
-          email: userCredential.user.email,
-          emailVerified: userCredential.user.emailVerified,
-          uid: userCredential.user.uid,
-          isAnonymous: userCredential.user.isAnonymous
-        };
-        Vue.set(state, "currentUser", {
-          ...summary,
-          fullProfile: userCredential.user
-        });
-        state.authenticated = "logged-in";
-      }
+      // if (userCredential.user) {
+      //   const summary = {
+      //     email: userCredential.user.email,
+      //     emailVerified: userCredential.user.emailVerified,
+      //     uid: userCredential.user.uid,
+      //     isAnonymous: userCredential.user.isAnonymous
+      //   };
+      //   Vue.set(state, "currentUser", {
+      //     ...summary,
+      //     fullProfile: userCredential.user
+      //   });
+      //   state.authenticated = "logged-in";
+      // }
     },
     createUserWithEmailAndPassword(state, userCredential: UserCredential) {
       // no need to change state tree as the observer on onAuthChanged will address this
