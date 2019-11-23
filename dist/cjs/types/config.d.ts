@@ -158,7 +158,7 @@ export interface IFmLocalChange<T extends Model = Model> {
     timestamp: epoch;
 }
 export declare type IFmModelConstructor<T extends Model = Model> = new () => T;
-export declare type IFmLifecycleEvents = "connected" | "disconnected" | "logged-in" | "logged-out" | "user-upgraded" | "route-changed";
+export declare type IFmLifecycleEvents = "connected" | "disconnected" | "logged-in" | "logged-out" | "user-upgraded" | "user-abandoned" | "route-changed";
 export interface IFmQueuedAction<T> {
     /** a descriptive name for the queued action */
     name: string;

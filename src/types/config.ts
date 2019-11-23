@@ -186,6 +186,7 @@ export type IFmLifecycleEvents =
   | "logged-in"
   | "logged-out"
   | "user-upgraded"
+  | "user-abandoned"
   | "route-changed";
 
 export interface IFmQueuedAction<T> {

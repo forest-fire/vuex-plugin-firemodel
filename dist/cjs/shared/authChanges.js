@@ -11,8 +11,15 @@ exports.authChanged = (context) => async (user) => {
         console.info(`Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`);
         if (!user.isAnonymous && _isAnonymous === true) {
             console.log(`anonymous user ${_uid} was abandoned in favor of user ${user.uid}`);
-            ctx().commit("USER_ABANDONED" /* userAbandoned */, { user, priorUid: _uid });
-            await runQueue_1.runQueue(ctx(), "user-upgraded");
+            ctx().commit("USER_ABANDONED" /* userAbandoned */, {
+                uid: user.uid,
+                email: user.email,
+                emailVerified: user.emailVerified,
+                isAnonymous: user ? user.isAnonymous : false,
+                fullProfile: user,
+                priorUid: _uid
+            });
+            await runQueue_1.runQueue(ctx(), "user-abandoned");
         }
         ctx().commit("USER_LOGGED_IN" /* userLoggedIn */, user);
         const token = await user.getIdTokenResult();
