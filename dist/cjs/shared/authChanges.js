@@ -38,13 +38,7 @@ exports.authChanged = (context) => async (user) => {
         if (ctx().config.anonymousAuth) {
             const auth = await (await database_1.database()).auth();
             const anon = await auth.signInAnonymously();
-            const user = {
-                uid: anon.user.uid,
-                isAnonymous: true,
-                emailVerified: false,
-                fullProfile: anon.user
-            };
-            ctx().commit("USER_LOGGED_IN" /* userLoggedIn */, user);
+            ctx().commit("USER_LOGGED_IN" /* userLoggedIn */, anon);
         }
         console.groupEnd();
     }

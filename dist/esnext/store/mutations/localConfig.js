@@ -38,12 +38,15 @@ export const localConfig = () => ({
         });
         Vue.set(state, "authenticated", !user ? false : user.isAnonymous ? "anonymous" : "logged-in");
     },
-    ["USER_UPGRADED" /* userUpgraded */](state, { user: User, priorUid: string }) {
-        // TODO: implement
-    },
     ["USER_LOGGED_OUT" /* userLoggedOut */](state) {
         Vue.set(state, "currentUser", {});
         Vue.set(state, "authenticated", false);
+    },
+    ["USER_UPGRADED" /* userUpgraded */](state, payload) {
+        // TODO: implement
+    },
+    ["USER_ABANDONED" /* userAbandoned */](state, payload) {
+        // TODO: implement
     },
     ["QUEUE_EVENT_HOOK" /* queueHook */](state, item) {
         Vue.set(state, "queued", state.queued.concat(item));
