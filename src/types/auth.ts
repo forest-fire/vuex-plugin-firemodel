@@ -1,4 +1,7 @@
-import { Model } from "firemodel";
+import { Model, Watch, Record } from "firemodel";
+import { Store, Dispatch, Commit } from "vuex";
+import { IFiremodelState } from "./firemodel";
+import { IDictionary } from "firemock";
 
 export enum AuthPersistenceStrategy {
   /**
@@ -43,4 +46,10 @@ export interface ISignOutPayload<T extends Model = Model> {
 export interface IAuthProfile {
   displayName?: string;
   photoURL?: string;
+}
+
+export interface IAuthChangeContext<T> {
+  dispatch: Dispatch;
+  commit: Commit;
+  state: T;
 }

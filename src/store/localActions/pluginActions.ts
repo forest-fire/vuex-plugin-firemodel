@@ -7,10 +7,10 @@ import {
   IFmAuthEventContext,
   IFmUserInfo,
   IFiremodelConfig,
-  IFiremodelState
+  IFiremodelState,
+  IAuthChangeContext
 } from "../../types/index";
 
-import { User } from "@firebase/auth-types";
 import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
 import { configuration } from "../../index";
 import { FmConfigAction } from "../../types/actions/FmConfigActions";
@@ -74,10 +74,9 @@ export const pluginActions = <T>() =>
       const auth = await db.auth();
       let user: IFmUserInfo;
 
-      console.log(`checking anon login`, rootState);
-
       if (auth.currentUser && !auth.currentUser.isAnonymous) {
         const anon = await auth.signInAnonymously();
+        commit("ANON_SIGN_IN", anon);
       }
     },
 
@@ -95,13 +94,9 @@ export const pluginActions = <T>() =>
     async [FmConfigAction.firebaseAuth](store, config: IFiremodelConfig<T>) {
       const { commit, rootState, dispatch } = store;
 
-      const ctx: Partial<IFmAuthEventContext<T>> = {
-        Watch,
-        Record,
-        List,
+      const ctx: IAuthChangeContext<T> = {
         dispatch,
         commit,
-        config,
         state: rootState
       };
 

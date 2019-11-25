@@ -3,7 +3,7 @@ import { IFirebaseClientConfig } from "abstracted-client";
 import { Watch, Record, List, Model, IModelOptions } from "firemodel";
 import { RealTimeDB } from "abstracted-firebase";
 import { Commit, Dispatch } from "vuex";
-import { IAuthPersistenceStrategy } from "./auth";
+import { IAuthPersistenceStrategy, IAuthChangeContext } from "./auth";
 export interface IFmEventContext<T> {
     Watch: typeof Watch;
     Record: typeof Record;
@@ -184,7 +184,7 @@ export interface IFmWatchItem {
     /** where in the local state tree this record should be synced */
     localPath: string;
 }
-export declare type IFmQueueCallaback<T> = (ctx: IFmEventContext<T>) => Promise<void>;
+export declare type IFmQueueCallaback<T> = (ctx: IAuthChangeContext<T>) => Promise<void>;
 export interface IFmActionWatchRecord {
     id: string;
     model: IFmModelConstructor;
