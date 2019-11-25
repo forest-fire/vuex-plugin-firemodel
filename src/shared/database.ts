@@ -4,7 +4,7 @@ import { RealTimeDB } from "abstracted-firebase";
 import { FirebaseAuth } from "@firebase/auth-types";
 import { FireModel } from "firemodel";
 
-let _db: RealTimeDB<FirebaseAuth>;
+let _db: DB;
 let _config: IFirebaseClientConfig;
 /**
  * connects to a Firebase DB unless already connected in which case it

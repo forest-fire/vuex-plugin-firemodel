@@ -1,8 +1,4 @@
-import {
-  IFmAuthEventContext,
-  FmConfigMutation,
-  IAuthChangeContext
-} from "../types/index";
+import { FmConfigMutation, IFmAuthenticatatedContext } from "../types/index";
 import { User, UserCredential } from "@firebase/auth-types";
 import { database } from "./database";
 import { runQueue } from "./runQueue";
@@ -10,23 +6,9 @@ import { runQueue } from "./runQueue";
 let _uid: string;
 let _isAnonymous: boolean;
 
-export const authChanged = <T>(context: IAuthChangeContext<T>) => async (
+export const authChanged = <T>(context: IFmAuthenticatatedContext<T>) => async (
   user: User | null
 ) => {
-  if (user && (user as any).credential) {
-    // TODO: look into why this is happening
-    const e = new Error();
-    console.warn(
-      "Auth changed but it appears to have given us a UserCredential rather than a User object!",
-      e.stack
-    );
-    user = (user as any).user as User;
-  }
-  // const ctx = () =>
-  // ({
-  //   ...context
-  // } as IFmAuthEventContext<T>);
-
   if (user) {
     console.group("Login Event");
 
@@ -38,14 +20,14 @@ export const authChanged = <T>(context: IAuthChangeContext<T>) => async (
         `anonymous user ${_uid} was abandoned in favor of user ${user.uid}`
       );
       context.commit(FmConfigMutation.userAbandoned, {
-        user,
+        user: context.auth.currentUser,
         priorUid: _uid
       });
 
       await runQueue(context, "user-abandoned");
     }
 
-    context.commit(FmConfigMutation.userLoggedIn, user);
+    context.commit(FmConfigMutation.userLoggedIn, context.auth.currentUser);
 
     const token = await user.getIdTokenResult();
     context.commit("SET_CUSTOM_CLAIMS", token.claims);
@@ -58,14 +40,9 @@ export const authChanged = <T>(context: IAuthChangeContext<T>) => async (
   } else {
     console.group("Logout Event");
     console.info(`User`, user);
-    context.commit(FmConfigMutation.userLoggedOut, user);
+    context.commit(FmConfigMutation.userLoggedOut);
     await runQueue(context, "logged-out");
-    // if (ctx().config.anonymousAuth) {
-    //   // const auth = await (await database()).auth();
-    //   // const anon = await auth.signInAnonymously();
 
-    //   ctx().commit(FmConfigMutation.userLoggedOut, {});
-    // }
     console.groupEnd();
   }
 };

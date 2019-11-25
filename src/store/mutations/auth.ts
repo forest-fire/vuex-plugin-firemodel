@@ -62,7 +62,7 @@ export const authMutations = <T>() =>
       Vue.set(state, "token", token);
     },
 
-    ANON_SIGN_IN(state, payload) {
+    ANONYMOUS_LOGIN(state, payload) {
       // no-op
     }
   } as MutationTree<IFiremodelState<T>>);

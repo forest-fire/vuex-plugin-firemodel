@@ -1,9 +1,9 @@
 import {
-  IFmEventContext,
   IFmLifecycleEvents,
   IFmQueuedAction,
   FmConfigMutation,
-  IAuthChangeContext
+  IFmLifecycleContext,
+  IFiremodelState
 } from "../types/index";
 
 import StackTrace from "stacktrace-js";
@@ -14,13 +14,11 @@ import StackTrace from "stacktrace-js";
  * pulls items off the lifecycle queue which match the lifecycle event
  */
 export async function runQueue<T>(
-  ctx: IAuthChangeContext<T>,
+  ctx: IFmLifecycleContext<T>,
   lifecycle: IFmLifecycleEvents
 ) {
   const remainingQueueItems: IFmQueuedAction<T>[] = [];
-  const queued = ((ctx.state as any)["@firemodel"].queued as IFmQueuedAction<
-    T
-  >[]).filter(i => i.on === lifecycle);
+  const queued = ctx.state["@firemodel"].queued.filter(i => i.on === lifecycle);
 
   let errors = 0;
   let successes = 0;
@@ -33,7 +31,6 @@ export async function runQueue<T>(
       errors++;
 
       try {
-        let originPoint: string = "";
         const frames = await StackTrace.fromError(e, { offline: true });
         const stack = await frames
           .map(

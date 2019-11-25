@@ -47,9 +47,3 @@ export interface IAuthProfile {
   displayName?: string;
   photoURL?: string;
 }
-
-export interface IAuthChangeContext<T> {
-  dispatch: Dispatch;
-  commit: Commit;
-  state: T;
-}

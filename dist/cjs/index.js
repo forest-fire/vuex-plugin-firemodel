@@ -49,9 +49,7 @@ const FirePlugin = (config) => {
         firemodel_1.FireModel.dispatch = store.dispatch;
         store.subscribe((mutation, state) => {
             if (mutation.type === "route/ROUTE_CHANGED") {
-                store.dispatch(addNamespace_1.addNamespace(FmConfigActions_1.FmConfigAction.watchRouteChanges), Object.assign({ Watch: firemodel_1.Watch,
-                    Record: firemodel_1.Record,
-                    List: firemodel_1.List, dispatch: store.dispatch, state: store.state, commit: store.commit }, mutation.payload));
+                store.dispatch(addNamespace_1.addNamespace(FmConfigActions_1.FmConfigAction.watchRouteChanges), Object.assign({}, mutation.payload));
             }
         });
         store.registerModule("@firemodel", store_1.FiremodelModule());

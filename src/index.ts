@@ -65,14 +65,6 @@ const FirePlugin = <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => {
     store.subscribe((mutation, state) => {
       if (mutation.type === "route/ROUTE_CHANGED") {
         store.dispatch(addNamespace(FmConfigAction.watchRouteChanges), {
-          Watch,
-          Record,
-          List,
-
-          dispatch: store.dispatch,
-          state: store.state,
-          commit: store.commit,
-
           ...mutation.payload
         });
       }
