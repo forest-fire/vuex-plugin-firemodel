@@ -1,4 +1,5 @@
 import { Model } from "firemodel";
+import { Dispatch, Commit } from "vuex";
 export declare enum AuthPersistenceStrategy {
     /**
      * Indicates that the state will be persisted even when the browser window is closed
@@ -39,4 +40,9 @@ export interface ISignOutPayload<T extends Model = Model> {
 export interface IAuthProfile {
     displayName?: string;
     photoURL?: string;
+}
+export interface IAuthChangeContext<T> {
+    dispatch: Dispatch;
+    commit: Commit;
+    state: T;
 }

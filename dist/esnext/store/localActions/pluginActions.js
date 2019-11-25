@@ -50,9 +50,9 @@ export const pluginActions = () => ({
         const db = await database();
         const auth = await db.auth();
         let user;
-        console.log(`checking anon login`, rootState);
         if (auth.currentUser && !auth.currentUser.isAnonymous) {
             const anon = await auth.signInAnonymously();
+            commit("ANON_SIGN_IN", anon);
         }
     },
     /**
@@ -69,12 +69,8 @@ export const pluginActions = () => ({
     async [FmConfigAction.firebaseAuth](store, config) {
         const { commit, rootState, dispatch } = store;
         const ctx = {
-            Watch,
-            Record,
-            List,
             dispatch,
             commit,
-            config,
             state: rootState
         };
         try {

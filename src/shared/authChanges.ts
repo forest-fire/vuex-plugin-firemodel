@@ -1,4 +1,8 @@
-import { IFmAuthEventContext, FmConfigMutation } from "../types/index";
+import {
+  IFmAuthEventContext,
+  FmConfigMutation,
+  IAuthChangeContext
+} from "../types/index";
 import { User, UserCredential } from "@firebase/auth-types";
 import { database } from "./database";
 import { runQueue } from "./runQueue";
@@ -6,9 +10,9 @@ import { runQueue } from "./runQueue";
 let _uid: string;
 let _isAnonymous: boolean;
 
-export const authChanged = <T>(
-  context: Partial<IFmAuthEventContext<T>>
-) => async (user: User | null) => {
+export const authChanged = <T>(context: IAuthChangeContext<T>) => async (
+  user: User | null
+) => {
   if (user && (user as any).credential) {
     // TODO: look into why this is happening
     const e = new Error();
@@ -18,15 +22,10 @@ export const authChanged = <T>(
     );
     user = (user as any).user as User;
   }
-  const ctx = () =>
-    ({
-      ...context,
-      isAnonymous: user ? user.isAnonymous : false,
-      uid: user ? user.uid : "",
-      emailVerified: user ? user.emailVerified : false,
-      email: user ? user.email : "",
-      fullProfile: user
-    } as IFmAuthEventContext<T>);
+  // const ctx = () =>
+  // ({
+  //   ...context
+  // } as IFmAuthEventContext<T>);
 
   if (user) {
     console.group("Login Event");
@@ -38,35 +37,35 @@ export const authChanged = <T>(
       console.log(
         `anonymous user ${_uid} was abandoned in favor of user ${user.uid}`
       );
-      ctx().commit(FmConfigMutation.userAbandoned, {
+      context.commit(FmConfigMutation.userAbandoned, {
         user,
         priorUid: _uid
       });
 
-      await runQueue(ctx(), "user-abandoned");
+      await runQueue(context, "user-abandoned");
     }
 
-    ctx().commit(FmConfigMutation.userLoggedIn, user);
+    context.commit(FmConfigMutation.userLoggedIn, user);
 
     const token = await user.getIdTokenResult();
-    ctx().commit("SET_CUSTOM_CLAIMS", token.claims);
-    ctx().commit("SET_AUTH_TOKEN", token.token);
+    context.commit("SET_CUSTOM_CLAIMS", token.claims);
+    context.commit("SET_AUTH_TOKEN", token.token);
 
     _uid = user.uid;
     _isAnonymous = user.isAnonymous;
-    await runQueue(ctx(), "logged-in");
+    await runQueue(context, "logged-in");
     console.groupEnd();
   } else {
     console.group("Logout Event");
     console.info(`User`, user);
-    ctx().commit(FmConfigMutation.userLoggedOut, user);
-    await runQueue(ctx(), "logged-out");
-    if (ctx().config.anonymousAuth) {
-      const auth = await (await database()).auth();
-      const anon = await auth.signInAnonymously();
+    context.commit(FmConfigMutation.userLoggedOut, user);
+    await runQueue(context, "logged-out");
+    // if (ctx().config.anonymousAuth) {
+    //   // const auth = await (await database()).auth();
+    //   // const anon = await auth.signInAnonymously();
 
-      ctx().commit(FmConfigMutation.userLoggedIn, anon);
-    }
+    //   ctx().commit(FmConfigMutation.userLoggedOut, {});
+    // }
     console.groupEnd();
   }
 };

@@ -40,5 +40,8 @@ export const authMutations = () => ({
     },
     SET_AUTH_TOKEN(state, token) {
         Vue.set(state, "token", token);
+    },
+    ANON_SIGN_IN(state, payload) {
+        // no-op
     }
 });

@@ -2,7 +2,8 @@ import {
   IFmEventContext,
   IFmLifecycleEvents,
   IFmQueuedAction,
-  FmConfigMutation
+  FmConfigMutation,
+  IAuthChangeContext
 } from "../types/index";
 
 import StackTrace from "stacktrace-js";
@@ -13,7 +14,7 @@ import StackTrace from "stacktrace-js";
  * pulls items off the lifecycle queue which match the lifecycle event
  */
 export async function runQueue<T>(
-  ctx: IFmEventContext<T>,
+  ctx: IAuthChangeContext<T>,
   lifecycle: IFmLifecycleEvents
 ) {
   const remainingQueueItems: IFmQueuedAction<T>[] = [];
@@ -32,11 +33,16 @@ export async function runQueue<T>(
       errors++;
 
       try {
-        let originPoint: string=''
-        const frames = await StackTrace.fromError(e, {offline: true});
+        let originPoint: string = "";
+        const frames = await StackTrace.fromError(e, { offline: true });
         const stack = await frames
           .map(
-            i => ` - ${i.fileName?.replace('webpack-internal:///','')}:${i.functionName}(${i.args ? " " + i.args.join(', ')+ " " : ''}) at line ${i.lineNumber}, col ${i.columnNumber}`
+            i =>
+              ` - ${i.fileName?.replace("webpack-internal:///", "")}:${
+                i.functionName
+              }(${i.args ? " " + i.args.join(", ") + " " : ""}) at line ${
+                i.lineNumber
+              }, col ${i.columnNumber}`
           )
           .join("\n");
         console.error(
