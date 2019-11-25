@@ -34,23 +34,11 @@ exports.localConfig = () => ({
         vue_1.default.set(state, "errors", []);
     },
     ["USER_LOGGED_IN" /* userLoggedIn */](state, user) {
-        if (isUserCredential(user)) {
-            console.warn("A UserCredential was passed in instead of a User!", new Error().stack);
-            user = user.user;
-        }
-        vue_1.default.set(state, "currentUser", {
-            uid: user.uid,
-            isAnonymous: user.isAnonymous,
-            email: user.email,
-            emailVerified: user.emailVerified,
-            fullProfile: user
-        });
+        vue_1.default.set(state, "currentUser", user);
         vue_1.default.set(state, "authenticated", !user ? false : user.isAnonymous ? "anonymous" : "logged-in");
     },
-    ["USER_LOGGED_OUT" /* userLoggedOut */](state) {
-        vue_1.default.set(state, "currentUser", {
-            isAnonymous: false
-        });
+    ["USER_LOGGED_OUT" /* userLoggedOut */](state, user) {
+        vue_1.default.set(state, "currentUser", user);
         vue_1.default.set(state, "authenticated", false);
     },
     ["USER_UPGRADED" /* userUpgraded */](state, payload) {

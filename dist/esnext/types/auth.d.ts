@@ -40,3 +40,16 @@ export interface IAuthProfile {
     displayName?: string;
     photoURL?: string;
 }
+export interface ICurrentUser {
+    uid: string;
+    displayName: string | null;
+    email: string | null;
+    emailVerified: boolean;
+    isAnonymous: boolean;
+    isLoggedIn: boolean;
+    phoneNumber: string | null;
+    photoUrl: string | null;
+    refreshToken: string;
+    lastSignIn?: string;
+    createdAt?: string;
+}
