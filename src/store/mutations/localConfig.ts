@@ -67,7 +67,9 @@ export const localConfig = <T>() =>
     },
 
     [FmConfigMutation.userLoggedOut](state) {
-      Vue.set(state, "currentUser", {});
+      Vue.set(state, "currentUser", {
+        isAnonymous: false
+      });
       Vue.set(state, "authenticated", false);
     },
 

@@ -22,7 +22,6 @@ async function runQueue(ctx, lifecycle) {
         catch (e) {
             errors++;
             try {
-                let originPoint = "";
                 const frames = await stacktrace_js_1.default.fromError(e, { offline: true });
                 const stack = await frames
                     .map(i => {

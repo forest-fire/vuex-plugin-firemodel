@@ -4,28 +4,18 @@ const runQueue_1 = require("./runQueue");
 let _uid;
 let _isAnonymous;
 exports.authChanged = (context) => async (user) => {
-    if (user && user.credential) {
-        // TODO: look into why this is happening
-        const e = new Error();
-        console.warn("Auth changed but it appears to have given us a UserCredential rather than a User object!", e.stack);
-        user = user.user;
-    }
-    // const ctx = () =>
-    // ({
-    //   ...context
-    // } as IFmAuthEventContext<T>);
     if (user) {
         console.group("Login Event");
         console.info(`Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`);
         if (!user.isAnonymous && _isAnonymous === true) {
             console.log(`anonymous user ${_uid} was abandoned in favor of user ${user.uid}`);
             context.commit("USER_ABANDONED" /* userAbandoned */, {
-                user,
+                user: context.auth.currentUser,
                 priorUid: _uid
             });
             await runQueue_1.runQueue(context, "user-abandoned");
         }
-        context.commit("USER_LOGGED_IN" /* userLoggedIn */, user);
+        context.commit("USER_LOGGED_IN" /* userLoggedIn */, context.auth.currentUser);
         const token = await user.getIdTokenResult();
         context.commit("SET_CUSTOM_CLAIMS", token.claims);
         context.commit("SET_AUTH_TOKEN", token.token);
@@ -37,13 +27,8 @@ exports.authChanged = (context) => async (user) => {
     else {
         console.group("Logout Event");
         console.info(`User`, user);
-        context.commit("USER_LOGGED_OUT" /* userLoggedOut */, user);
+        context.commit("USER_LOGGED_OUT" /* userLoggedOut */);
         await runQueue_1.runQueue(context, "logged-out");
-        // if (ctx().config.anonymousAuth) {
-        //   // const auth = await (await database()).auth();
-        //   // const anon = await auth.signInAnonymously();
-        //   ctx().commit(FmConfigMutation.userLoggedOut, {});
-        // }
         console.groupEnd();
     }
 };

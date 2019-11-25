@@ -3,7 +3,7 @@ import { FmConfigAction } from "./types/actions/FmConfigActions";
 import { FireModelPluginError } from "./errors/FiremodelPluginError";
 import { addNamespace } from "./shared/addNamespace";
 import { coreServices } from "./coreServices";
-import { FireModel, Watch, Record, List } from "firemodel";
+import { FireModel } from "firemodel";
 import copy from "fast-copy";
 export * from "./types";
 export * from "./firemodelMutations/index";
@@ -41,9 +41,7 @@ const FirePlugin = (config) => {
         FireModel.dispatch = store.dispatch;
         store.subscribe((mutation, state) => {
             if (mutation.type === "route/ROUTE_CHANGED") {
-                store.dispatch(addNamespace(FmConfigAction.watchRouteChanges), Object.assign({ Watch,
-                    Record,
-                    List, dispatch: store.dispatch, state: store.state, commit: store.commit }, mutation.payload));
+                store.dispatch(addNamespace(FmConfigAction.watchRouteChanges), Object.assign({}, mutation.payload));
             }
         });
         store.registerModule("@firemodel", FiremodelModule());

@@ -43,7 +43,9 @@ export const localConfig = () => ({
         Vue.set(state, "authenticated", !user ? false : user.isAnonymous ? "anonymous" : "logged-in");
     },
     ["USER_LOGGED_OUT" /* userLoggedOut */](state) {
-        Vue.set(state, "currentUser", {});
+        Vue.set(state, "currentUser", {
+            isAnonymous: false
+        });
         Vue.set(state, "authenticated", false);
     },
     ["USER_UPGRADED" /* userUpgraded */](state, payload) {

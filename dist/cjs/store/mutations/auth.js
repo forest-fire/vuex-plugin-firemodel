@@ -46,7 +46,7 @@ exports.authMutations = () => ({
     SET_AUTH_TOKEN(state, token) {
         vue_1.default.set(state, "token", token);
     },
-    ANON_SIGN_IN(state, payload) {
+    ANONYMOUS_LOGIN(state, payload) {
         // no-op
     }
 });

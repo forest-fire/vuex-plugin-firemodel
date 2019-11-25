@@ -1,44 +1,81 @@
 import { IDictionary, epoch } from "common-types";
-import { IFirebaseClientConfig } from "abstracted-client";
+import { IFirebaseClientConfig, DB } from "abstracted-client";
 import { Watch, Record, List, Model, IModelOptions } from "firemodel";
-import { RealTimeDB } from "abstracted-firebase";
 import { Commit, Dispatch } from "vuex";
-import { IAuthPersistenceStrategy, IAuthChangeContext } from "./auth";
-export interface IFmEventContext<T> {
+import { IAuthPersistenceStrategy } from "./auth";
+import { FirebaseAuth } from "@firebase/auth-types";
+import { IFiremodelState } from "./firemodel";
+export declare type IFmLifecycleContext<T> = IFmAuthenticatatedContext<T> | IFmConnectedContext<T> | IFmLoginEventContext<T> | IFmUserChangeEventContext<T> | IFmRouteEventContext<T>;
+/** the base properties which all events have */
+export interface IFmEventBase<T> {
     Watch: typeof Watch;
     Record: typeof Record;
     List: typeof List;
-    db?: RealTimeDB;
+    /** dispatcher to Vuex for asynchronous change */
     dispatch: Dispatch;
+    /** commit to Vuex for direct state change */
     commit: Commit;
-    state: T;
+    /** the root state of Vuex */
+    state: T & {
+        "@firemodel": IFiremodelState<T>;
+    };
 }
-export interface IFmUserInfo {
+/**
+ * Once connected to the Auth API, the Auth API
+ * is provided as context for all subsequent events
+ */
+export interface IFmAuthenticatatedContext<T> extends IFmEventBase<T>, IFmConnectedContext<T> {
+    /** the full Firebase AUTH api */
+    auth: FirebaseAuth;
+}
+export interface IFmConnectedContext<T> extends IFmEventBase<T> {
+    /** the database configuration that was used */
+    config: IFiremodelConfig<T>;
+    /** the connection to the DB via `abstracted-client` */
+    db: DB;
+}
+/** Context provided to a _logged in_ user */
+export interface IFmLoginEventContext<T> extends IFmEventBase<T>, IFmConnectedContext<T>, IFmAuthenticatatedContext<T> {
+    /** the logged in user's `uid` */
     uid: string;
+    /** a flag indicating whether the user is anonymous or not */
     isAnonymous: boolean;
     email?: string | null;
     emailVerified: boolean;
 }
-export interface IFmAuthEventContext<T> extends IFmEventContext<T>, IFmUserInfo {
-    config: IFiremodelConfig<T>;
+/**
+ * Context provided to a user who is _connected_ but not _logged into_ the
+ * Firebase database
+ */
+export interface IFmLogoutEventContext<T> extends IFmConnectedContext<T>, IFmEventBase<T> {
 }
-export interface IFmLoginUpgradeEventContext<T> extends IFmEventContext<T> {
-    isAnonymous: false;
-    uid: string;
+/**
+ * When a Firebase user changes due to _abandonment_ of an anonymous user
+ * in favor of a logged in user there may be cases where aspects of the old
+ * profile need to be brought over to the new profile.
+ */
+export interface IFmUserChangeEventContext<T> extends IFmLoginEventContext<T> {
     priorUid: string;
-    email: string;
-    emailVerified: boolean;
+    /**
+     * this is a hash of user properties that are being moved from the old user
+     * to the new
+     */
+    priorProfile?: IDictionary;
 }
-export interface IFmRouteEventContext<T> extends IFmEventContext<T> {
+export interface IFmRouteEventContext<T> extends IFmEventBase<T> {
+    /** the route which was _left_ */
     leaving: string;
+    /** the route which was _entered_ */
     entering: string;
+    /** the Query parameters on the entering route */
+    queryParams: IDictionary;
 }
 export declare type FmCallback = () => Promise<void>;
-export declare type IFmOnConnect<T> = (ctx: IFmEventContext<T>) => Promise<void>;
-export declare type IFmOnDisconnect<T> = (ctx: IFmEventContext<T>) => Promise<void>;
-export declare type IFmOnLogin<T> = (ctx: IFmAuthEventContext<T>) => Promise<void>;
-export declare type IFmOnLogout<T> = (ctx: IFmAuthEventContext<T>) => Promise<void>;
-export declare type IFmUserUpgrade<T> = (ctx: IFmLoginUpgradeEventContext<T>) => Promise<void>;
+export declare type IFmOnConnect<T> = (ctx: IFmConnectedContext<T>) => Promise<void>;
+export declare type IFmOnDisconnect<T> = (ctx: IFmEventBase<T>) => Promise<void>;
+export declare type IFmOnLogin<T> = (ctx: IFmLoginEventContext<T>) => Promise<void>;
+export declare type IFmOnLogout<T> = (ctx: IFmAuthenticatatedContext<T>) => Promise<void>;
+export declare type IFmUserUpgrade<T> = (ctx: IFmUserChangeEventContext<T>) => Promise<void>;
 export declare type IFmRouteChanged<T> = (ctx: IFmRouteEventContext<T>) => Promise<void>;
 /**
  * **Firemodel Config**
@@ -168,7 +205,7 @@ export interface IFmQueuedAction<T> {
      */
     on?: IFmLifecycleEvents;
     /** the callback function */
-    cb: IFmQueueCallaback<T>;
+    cb: IFmQueueCallback<T>;
     /**
      * if this action was run but resulted in an error then
      * the error will be captured here
@@ -184,7 +221,7 @@ export interface IFmWatchItem {
     /** where in the local state tree this record should be synced */
     localPath: string;
 }
-export declare type IFmQueueCallaback<T> = (ctx: IAuthChangeContext<T>) => Promise<void>;
+export declare type IFmQueueCallback<T> = (ctx: IFmEventBase<T>) => Promise<void>;
 export interface IFmActionWatchRecord {
     id: string;
     model: IFmModelConstructor;

@@ -32,6 +32,8 @@ exports.pluginActions = () => ({
                 List: firemodel_1.List,
                 dispatch,
                 commit,
+                db,
+                config,
                 state: rootState
             };
             await runQueue_1.runQueue(ctx, "connected");
@@ -51,33 +53,37 @@ exports.pluginActions = () => ({
         const { commit, rootState } = store;
         const db = await database_1.database();
         const auth = await db.auth();
-        let user;
         if (auth.currentUser && !auth.currentUser.isAnonymous) {
             const anon = await auth.signInAnonymously();
-            commit("ANON_SIGN_IN", anon);
+            commit("ANONYMOUS_LOGIN", anon);
         }
     },
     /**
      * **firebaseAuth**
      *
-     * Watches Firebase Auth events and sends notifications of changes
-     * via `LOGGED_IN` and `LOGGED_OUT` mutations which in turn ensure
-     * that the `@firemodel` state tree has an up-to-date representation
-     * of the `currentUser`.
+     * Connects to the Firebase Auth API and then registers a callback for any auth
+     * event (login/logout).
      *
      * Also enables the appropriate lifecycle hooks: `onLogOut`, `onLogIn`, and
      * `onUserUpgrade` (when anonymous user logs into a known user)
      */
     async [FmConfigActions_1.FmConfigAction.firebaseAuth](store, config) {
         const { commit, rootState, dispatch } = store;
-        const ctx = {
-            dispatch,
-            commit,
-            state: rootState
-        };
         try {
             const db = await database_1.database();
             const auth = await db.auth();
+            firemodel_1.FireModel.defaultDb = db;
+            const ctx = {
+                Watch: firemodel_1.Watch,
+                Record: firemodel_1.Record,
+                List: firemodel_1.List,
+                auth,
+                db,
+                config,
+                dispatch,
+                commit,
+                state: rootState
+            };
             auth.onAuthStateChanged(authChanges_1.authChanged(ctx));
             auth.setPersistence(config.authPersistence || "session");
             console.log(`Auth state callback registered`, rootState["@firemodel"]);
@@ -92,7 +98,7 @@ exports.pluginActions = () => ({
      *
      * Enables lifecycle hooks for route changes
      */
-    async [FmConfigActions_1.FmConfigAction.watchRouteChanges]({ dispatch, commit, rootState }) {
+    async [FmConfigActions_1.FmConfigAction.watchRouteChanges]({ dispatch, commit, rootState }, payload) {
         if (index_1.configuration.onRouteChange) {
             const ctx = {
                 Watch: firemodel_1.Watch,
@@ -100,7 +106,10 @@ exports.pluginActions = () => ({
                 List: firemodel_1.List,
                 dispatch,
                 commit,
-                state: rootState
+                state: rootState,
+                leaving: payload.from.path,
+                entering: payload.to.path,
+                queryParams: payload.to.params
             };
             await runQueue_1.runQueue(ctx, "route-changed");
         }
