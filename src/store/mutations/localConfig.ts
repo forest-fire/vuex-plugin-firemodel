@@ -2,7 +2,8 @@ import { MutationTree } from "vuex";
 import {
   IFiremodelState,
   IFmLifecycleEvents,
-  IFmQueuedAction
+  IFmQueuedAction,
+  ICurrentUser
 } from "../../types";
 import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
 import { User, UserCredential } from "@firebase/auth-types";
@@ -43,21 +44,8 @@ export const localConfig = <T>() =>
       Vue.set(state, "errors", []);
     },
 
-    [FmConfigMutation.userLoggedIn](state, user: User | UserCredential) {
-      if (isUserCredential(user)) {
-        console.warn(
-          "A UserCredential was passed in instead of a User!",
-          new Error().stack
-        );
-        user = user.user as User;
-      }
-      Vue.set(state, "currentUser", {
-        uid: user.uid,
-        isAnonymous: user.isAnonymous,
-        email: user.email,
-        emailVerified: user.emailVerified,
-        fullProfile: user
-      });
+    [FmConfigMutation.userLoggedIn](state, user: ICurrentUser) {
+      Vue.set(state, "currentUser", user);
 
       Vue.set(
         state,
@@ -66,10 +54,8 @@ export const localConfig = <T>() =>
       );
     },
 
-    [FmConfigMutation.userLoggedOut](state) {
-      Vue.set(state, "currentUser", {
-        isAnonymous: false
-      });
+    [FmConfigMutation.userLoggedOut](state, user: ICurrentUser) {
+      Vue.set(state, "currentUser", user);
       Vue.set(state, "authenticated", false);
     },
 
