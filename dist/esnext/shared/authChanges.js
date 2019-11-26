@@ -3,29 +3,24 @@ import { configuration } from "..";
 let _uid;
 let _isAnonymous;
 export const authChanged = (context) => async (user) => {
-    if (context.auth.currentUser) {
+    if (user) {
         console.group("Login Event");
-        console.info(`Login detected [uid: ${context.auth.currentUser.uid}, anonymous: ${context.auth.currentUser.isAnonymous}]`);
-        if (!context.auth.currentUser.isAnonymous && _isAnonymous === true) {
-            console.log(`anonymous user ${_uid} was abandoned in favor of user ${context.auth.currentUser.uid}`);
+        console.info(`Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`);
+        if (!user.isAnonymous && _isAnonymous === true) {
+            console.log(`anonymous user ${_uid} was abandoned in favor of user ${user.uid}`);
             context.commit("USER_ABANDONED" /* userAbandoned */, {
-                user: context.auth.currentUser,
+                user: user,
                 priorUid: _uid
             });
             await runQueue(context, "user-abandoned");
         }
-        context.commit("USER_LOGGED_IN" /* userLoggedIn */, extractUserInfo(context.auth.currentUser));
-        if (context.auth.currentUser) {
-            console.log("Getting custom claims and token");
-            const token = await context.auth.currentUser.getIdTokenResult();
-            context.commit("SET_CUSTOM_CLAIMS", token.claims);
-            context.commit("SET_AUTH_TOKEN", token.token);
-        }
-        else {
-            console.warn("The currentUser property was not present on auth!");
-        }
-        _uid = context.auth.currentUser.uid;
-        _isAnonymous = context.auth.currentUser.isAnonymous;
+        context.commit("USER_LOGGED_IN" /* userLoggedIn */, extractUserInfo(user));
+        console.log("Getting custom claims and token");
+        const token = await user.getIdTokenResult();
+        context.commit("SET_CUSTOM_CLAIMS", token.claims);
+        context.commit("SET_AUTH_TOKEN", token.token);
+        _uid = user.uid;
+        _isAnonymous = user.isAnonymous;
         await runQueue(context, "logged-in");
         console.groupEnd();
     }
