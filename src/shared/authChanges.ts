@@ -47,6 +47,7 @@ export const authChanged = <T>(context: IFmAuthenticatatedContext<T>) => async (
         ...context,
         isLoggedIn: true,
         isAnonymous: user.isAnonymous,
+        uid: user.uid,
         email: user.email,
         emailVerified: user.emailVerified
       } as IFmLoginEventContext<T>,
