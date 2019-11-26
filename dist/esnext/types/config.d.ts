@@ -5,7 +5,7 @@ import { Commit, Dispatch } from "vuex";
 import { IAuthPersistenceStrategy } from "./auth";
 import { FirebaseAuth } from "@firebase/auth-types";
 import { IFiremodelState } from "./firemodel";
-export declare type IFmLifecycleContext<T> = IFmAuthenticatatedContext<T> | IFmConnectedContext<T> | IFmLoginEventContext<T> | IFmUserChangeEventContext<T> | IFmRouteEventContext<T>;
+export declare type IFmLifecycleContext<T> = IFmAuthenticatatedContext<T> | IFmConnectedContext<T> | IFmLoginEventContext<T> | IFmLogoutEventContext<T> | IFmUserChangeEventContext<T> | IFmRouteEventContext<T>;
 /** the base properties which all events have */
 export interface IFmEventBase<T> {
     Watch: typeof Watch;
@@ -27,6 +27,12 @@ export interface IFmEventBase<T> {
 export interface IFmAuthenticatatedContext<T> extends IFmEventBase<T>, IFmConnectedContext<T> {
     /** the full Firebase AUTH api */
     auth: FirebaseAuth;
+    /** the logged in user's UID (if logged in) */
+    uid?: string;
+    /** a flag indicating whether the user is anonymous or not */
+    isAnonymous?: boolean;
+    /** is there a logged in user; anonymous or otherwise */
+    isLoggedIn?: boolean;
 }
 export interface IFmConnectedContext<T> extends IFmEventBase<T> {
     /** the database configuration that was used */
@@ -38,10 +44,19 @@ export interface IFmConnectedContext<T> extends IFmEventBase<T> {
 export interface IFmLoginEventContext<T> extends IFmEventBase<T>, IFmConnectedContext<T>, IFmAuthenticatatedContext<T> {
     /** the logged in user's `uid` */
     uid: string;
-    /** a flag indicating whether the user is anonymous or not */
-    isAnonymous: boolean;
     email?: string | null;
     emailVerified: boolean;
+    /** a flag indicating whether the user is anonymous or not */
+    isAnonymous: boolean;
+    /** is there a logged in user; anonymous or otherwise */
+    isLoggedIn: true;
+}
+export interface IFmLogoutEventContext<T> extends IFmEventBase<T>, IFmConnectedContext<T>, IFmAuthenticatatedContext<T> {
+    uid: undefined;
+    email: null;
+    emailVerified: false;
+    isLoggedIn: false;
+    isAnonymous: false;
 }
 /**
  * Context provided to a user who is _connected_ but not _logged into_ the
