@@ -4,16 +4,18 @@ let _uid;
 let _isAnonymous;
 export const authChanged = (context) => async (user) => {
     if (user) {
-        console.group("Login Event");
-        console.info(`Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`);
         if (!user.isAnonymous && _isAnonymous === true) {
+            console.group('Starting "user-abandoned" event');
             console.log(`anonymous user ${_uid} was abandoned in favor of user ${user.uid}`);
             context.commit("USER_ABANDONED" /* userAbandoned */, {
                 user: user,
                 priorUid: _uid
             });
             await runQueue(context, "user-abandoned");
+            console.groupEnd();
         }
+        console.group("Login Event");
+        console.info(`Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`);
         context.commit("USER_LOGGED_IN" /* userLoggedIn */, extractUserInfo(user));
         console.log("Getting custom claims and token");
         const token = await user.getIdTokenResult();

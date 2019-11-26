@@ -16,12 +16,8 @@ export const authChanged = <T>(context: IFmAuthenticatatedContext<T>) => async (
   user: User | null
 ) => {
   if (user) {
-    console.group("Login Event");
-
-    console.info(
-      `Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`
-    );
     if (!user.isAnonymous && _isAnonymous === true) {
+      console.group('Starting "user-abandoned" event');
       console.log(
         `anonymous user ${_uid} was abandoned in favor of user ${user.uid}`
       );
@@ -31,7 +27,12 @@ export const authChanged = <T>(context: IFmAuthenticatatedContext<T>) => async (
       });
 
       await runQueue(context, "user-abandoned");
+      console.groupEnd();
     }
+    console.group("Login Event");
+    console.info(
+      `Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`
+    );
 
     context.commit(FmConfigMutation.userLoggedIn, extractUserInfo(user));
 
