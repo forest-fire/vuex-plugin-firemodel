@@ -190,7 +190,7 @@ export const authActions = () => ({
                 commit(`${localPath}/RESET`, { uid, email, model });
             }
             await auth.signOut();
-            commit("@firemodel/SIGNED_OUT", { uid, email, model });
+            // commit("@firemodel/SIGNED_OUT", { loggedOutUser: uid });
         }
         catch (e) {
             commit("error", {
