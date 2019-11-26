@@ -25,7 +25,7 @@ exports.authChanged = (context) => async (user) => {
         context.commit("SET_AUTH_TOKEN", token.token);
         _uid = user.uid;
         _isAnonymous = user.isAnonymous;
-        await runQueue_1.runQueue(Object.assign(Object.assign({}, context), { isLoggedIn: true, isAnonymous: user.isAnonymous, email: user.email, emailVerified: user.emailVerified }), "logged-in");
+        await runQueue_1.runQueue(Object.assign(Object.assign({}, context), { isLoggedIn: true, isAnonymous: user.isAnonymous, uid: user.uid, email: user.email, emailVerified: user.emailVerified }), "logged-in");
         console.groupEnd();
     }
     else {
