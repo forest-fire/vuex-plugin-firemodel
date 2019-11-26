@@ -1,10 +1,11 @@
 import {
   FmConfigMutation,
   IFmAuthenticatatedContext,
-  ICurrentUser
+  ICurrentUser,
+  IFmLoginEventContext,
+  IFmLogoutEventContext
 } from "../types/index";
-import { User, UserCredential } from "@firebase/auth-types";
-import { database } from "./database";
+import { User } from "@firebase/auth-types";
 import { runQueue } from "./runQueue";
 import { configuration } from "..";
 
@@ -40,13 +41,30 @@ export const authChanged = <T>(context: IFmAuthenticatatedContext<T>) => async (
     context.commit("SET_AUTH_TOKEN", token.token);
     _uid = user.uid;
     _isAnonymous = user.isAnonymous;
-    await runQueue(context, "logged-in");
+    await runQueue(
+      {
+        ...context,
+        isLoggedIn: true,
+        isAnonymous: user.isAnonymous,
+        email: user.email,
+        emailVerified: user.emailVerified
+      } as IFmLoginEventContext<T>,
+      "logged-in"
+    );
 
     console.groupEnd();
   } else {
     console.group("Logout event");
     context.commit(FmConfigMutation.userLoggedOut, extractUserInfo(user));
-    await runQueue(context, "logged-out");
+    await runQueue(
+      {
+        ...context,
+        isLoggedIn: false,
+        isAnonymous: false,
+        emailVerified: false
+      } as IFmLogoutEventContext<T>,
+      "logged-out"
+    );
     console.log("finished onLogout queue");
 
     if (configuration.anonymousAuth) {

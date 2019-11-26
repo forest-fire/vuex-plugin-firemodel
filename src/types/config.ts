@@ -11,6 +11,7 @@ export type IFmLifecycleContext<T> =
   | IFmAuthenticatatedContext<T>
   | IFmConnectedContext<T>
   | IFmLoginEventContext<T>
+  | IFmLogoutEventContext<T>
   | IFmUserChangeEventContext<T>
   | IFmRouteEventContext<T>;
 
@@ -36,6 +37,12 @@ export interface IFmAuthenticatatedContext<T>
     IFmConnectedContext<T> {
   /** the full Firebase AUTH api */
   auth: FirebaseAuth;
+  /** the logged in user's UID (if logged in) */
+  uid?: string;
+  /** a flag indicating whether the user is anonymous or not */
+  isAnonymous?: boolean;
+  /** is there a logged in user; anonymous or otherwise */
+  isLoggedIn?: boolean;
 }
 
 export interface IFmConnectedContext<T> extends IFmEventBase<T> {
@@ -52,10 +59,25 @@ export interface IFmLoginEventContext<T>
     IFmAuthenticatatedContext<T> {
   /** the logged in user's `uid` */
   uid: string;
-  /** a flag indicating whether the user is anonymous or not */
-  isAnonymous: boolean;
+
   email?: string | null;
   emailVerified: boolean;
+
+  /** a flag indicating whether the user is anonymous or not */
+  isAnonymous: boolean;
+  /** is there a logged in user; anonymous or otherwise */
+  isLoggedIn: true;
+}
+
+export interface IFmLogoutEventContext<T>
+  extends IFmEventBase<T>,
+    IFmConnectedContext<T>,
+    IFmAuthenticatatedContext<T> {
+  uid: undefined;
+  email: null;
+  emailVerified: false;
+  isLoggedIn: false;
+  isAnonymous: false;
 }
 
 /**

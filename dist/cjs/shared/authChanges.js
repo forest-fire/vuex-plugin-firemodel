@@ -23,13 +23,13 @@ exports.authChanged = (context) => async (user) => {
         context.commit("SET_AUTH_TOKEN", token.token);
         _uid = user.uid;
         _isAnonymous = user.isAnonymous;
-        await runQueue_1.runQueue(context, "logged-in");
+        await runQueue_1.runQueue(Object.assign(Object.assign({}, context), { isLoggedIn: true, isAnonymous: user.isAnonymous, email: user.email, emailVerified: user.emailVerified }), "logged-in");
         console.groupEnd();
     }
     else {
         console.group("Logout event");
         context.commit("USER_LOGGED_OUT" /* userLoggedOut */, extractUserInfo(user));
-        await runQueue_1.runQueue(context, "logged-out");
+        await runQueue_1.runQueue(Object.assign(Object.assign({}, context), { isLoggedIn: false, isAnonymous: false, emailVerified: false }), "logged-out");
         console.log("finished onLogout queue");
         if (__1.configuration.anonymousAuth) {
             console.info("logging in as a anonymous user (momentarily)");
