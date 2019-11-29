@@ -17,10 +17,9 @@ export const authChanged = (context) => async (user) => {
         console.group("Login Event");
         console.info(`Login detected [uid: ${user.uid}, anonymous: ${user.isAnonymous}]`);
         context.commit("USER_LOGGED_IN" /* userLoggedIn */, extractUserInfo(user));
-        console.log("Getting custom claims and token");
+        console.log("Getting auth token");
         const token = await user.getIdTokenResult();
-        context.commit("SET_CUSTOM_CLAIMS", token.claims);
-        context.commit("SET_AUTH_TOKEN", token.token);
+        context.commit("SET_AUTH_TOKEN", token);
         _uid = user.uid;
         _isAnonymous = user.isAnonymous;
         await runQueue(Object.assign(Object.assign({}, context), { isLoggedIn: true, isAnonymous: user.isAnonymous, uid: user.uid, email: user.email, emailVerified: user.emailVerified }), "logged-in");

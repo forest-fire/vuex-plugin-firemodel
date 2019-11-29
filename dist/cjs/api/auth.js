@@ -6,6 +6,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
+const FiremodelPluginError_1 = require("../errors/FiremodelPluginError");
 /**
  * Log into the Firebase AUTH sytem using email/password. If successful it returns
  * a Firebase "user credential".
@@ -43,6 +44,23 @@ async function signOut(payload) {
     });
 }
 exports.signOut = signOut;
+async function getIdToken(forceRefresh) {
+    var _a;
+    const fmState = this.getStore().state["@firemodel"];
+    if (fmState.token) {
+        return fmState.token;
+    }
+    const auth = await index_1.getAuth();
+    const tokenPromise = (_a = auth.currentUser) === null || _a === void 0 ? void 0 : _a.getIdTokenResult(forceRefresh);
+    if (tokenPromise) {
+        const token = await tokenPromise;
+        return token;
+    }
+    throw new FiremodelPluginError_1.FireModelPluginError(`Call to getIdToken() returned nothing! ${auth.currentUser
+        ? ""
+        : 'This was because -- for some reason -- the "userProfile" was not set!'}`, "firemodel-plugin/not-allowed");
+}
+exports.getIdToken = getIdToken;
 /**
  * Sends a password reset email to the given email address.
  * To complete the password reset, dispatch `confirmPasswordReset` with

@@ -36,10 +36,9 @@ export const authChanged = <T>(context: IFmAuthenticatatedContext<T>) => async (
 
     context.commit(FmConfigMutation.userLoggedIn, extractUserInfo(user));
 
-    console.log("Getting custom claims and token");
+    console.log("Getting auth token");
     const token = await user.getIdTokenResult();
-    context.commit("SET_CUSTOM_CLAIMS", token.claims);
-    context.commit("SET_AUTH_TOKEN", token.token);
+    context.commit("SET_AUTH_TOKEN", token);
     _uid = user.uid;
     _isAnonymous = user.isAnonymous;
     await runQueue(

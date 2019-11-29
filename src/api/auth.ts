@@ -4,10 +4,15 @@
  * used means to achieve **Firebase** _auth_ functions
  */
 
-import { getStore } from "../index";
-import { ActionCodeSettings, UserCredential } from "@firebase/auth-types";
-import { IAuthProfile } from "../types";
+import { getStore, getAuth } from "../index";
+import {
+  ActionCodeSettings,
+  UserCredential,
+  IdTokenResult
+} from "@firebase/auth-types";
+import { IAuthProfile, IFiremodelState } from "../types";
 import { IModelConstructor } from "firemodel";
+import { FireModelPluginError } from "../errors/FiremodelPluginError";
 
 /**
  * Log into the Firebase AUTH sytem using email/password. If successful it returns
@@ -55,6 +60,30 @@ export async function signOut(payload: {
     type: "@firemodel/signOut",
     payload
   });
+}
+
+export async function getIdToken(
+  forceRefresh?: boolean
+): Promise<IdTokenResult> {
+  const fmState = this.getStore().state["@firemodel"] as IFiremodelState<any>;
+  if (fmState.token && forceRefresh !== true) {
+    return fmState.token;
+  }
+  const auth = await getAuth();
+  const tokenPromise = auth.currentUser?.getIdTokenResult(forceRefresh);
+  if (tokenPromise) {
+    const token = await tokenPromise;
+    return token;
+  }
+
+  throw new FireModelPluginError(
+    `Call to getIdToken() returned nothing! ${
+      auth.currentUser
+        ? ""
+        : 'This was because -- for some reason -- the "userProfile" was not set!'
+    }`,
+    "firemodel-plugin/not-allowed"
+  );
 }
 
 /**
