@@ -3,7 +3,8 @@
  * which Firemodel provides but are type-safe and often are a more easily
  * used means to achieve **Firebase** _auth_ functions
  */
-import { getStore } from "../index";
+import { getStore, getAuth } from "../index";
+import { FireModelPluginError } from "../errors/FiremodelPluginError";
 /**
  * Log into the Firebase AUTH sytem using email/password. If successful it returns
  * a Firebase "user credential".
@@ -37,6 +38,22 @@ export async function signOut(payload) {
         type: "@firemodel/signOut",
         payload
     });
+}
+export async function getIdToken(forceRefresh) {
+    var _a;
+    const fmState = this.getStore().state["@firemodel"];
+    if (fmState.token) {
+        return fmState.token;
+    }
+    const auth = await getAuth();
+    const tokenPromise = (_a = auth.currentUser) === null || _a === void 0 ? void 0 : _a.getIdTokenResult(forceRefresh);
+    if (tokenPromise) {
+        const token = await tokenPromise;
+        return token;
+    }
+    throw new FireModelPluginError(`Call to getIdToken() returned nothing! ${auth.currentUser
+        ? ""
+        : 'This was because -- for some reason -- the "userProfile" was not set!'}`, "firemodel-plugin/not-allowed");
 }
 /**
  * Sends a password reset email to the given email address.

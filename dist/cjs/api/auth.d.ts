@@ -3,7 +3,7 @@
  * which Firemodel provides but are type-safe and often are a more easily
  * used means to achieve **Firebase** _auth_ functions
  */
-import { ActionCodeSettings, UserCredential } from "@firebase/auth-types";
+import { ActionCodeSettings, UserCredential, IdTokenResult } from "@firebase/auth-types";
 import { IAuthProfile } from "../types";
 import { IModelConstructor } from "firemodel";
 /**
@@ -28,6 +28,7 @@ export declare function signOut(payload: {
     /** model constructor or db path */
     model?: IModelConstructor | string;
 }): Promise<any>;
+export declare function getIdToken(forceRefresh?: boolean): Promise<IdTokenResult>;
 /**
  * Sends a password reset email to the given email address.
  * To complete the password reset, dispatch `confirmPasswordReset` with

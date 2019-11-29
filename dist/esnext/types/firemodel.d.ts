@@ -1,6 +1,6 @@
 import { IFirebaseClientConfig } from "abstracted-firebase";
 import { IFmQueuedAction } from ".";
-import { User } from "@firebase/auth-types";
+import { User, IdTokenResult } from "@firebase/auth-types";
 import { IFmLocalEvent, IWatcherEventContext } from "firemodel";
 import { IDictionary } from "common-types";
 export interface IFiremodelAbbreviatedUser {
@@ -15,8 +15,8 @@ export interface IFiremodelState<T> {
     config?: IFirebaseClientConfig;
     /** a list of custom claims that this user has */
     claims?: IDictionary;
-    /** the Auth tokenId */
-    token?: string;
+    /** the Auth tokenId and associated properties; which includes "custom claims" */
+    token?: IdTokenResult;
     /** the authentication status of the user */
     authenticated: false | "anonymous" | "logged-in";
     currentUser?: IFiremodelAbbreviatedUser;
