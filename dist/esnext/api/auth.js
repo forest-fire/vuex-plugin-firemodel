@@ -42,7 +42,7 @@ export async function signOut(payload) {
 export async function getIdToken(forceRefresh) {
     var _a;
     const fmState = this.getStore().state["@firemodel"];
-    if (fmState.token) {
+    if (fmState.token && forceRefresh !== true) {
         return fmState.token;
     }
     const auth = await getAuth();
@@ -127,5 +127,17 @@ export async function updateProfile(profile) {
 export async function sendEmailVerification() {
     return getStore().dispatch({
         type: "@firemodel/sendEmailVerification"
+    });
+}
+export async function reauthenticateWithCredential(credential) {
+    return getStore().dispatch({
+        type: "@firemodel/authenticateWithCredential",
+        credential
+    });
+}
+export async function linkWithCredential(credential) {
+    return getStore().dispatch({
+        type: "@firemodel/linkWithCredential",
+        credential
     });
 }

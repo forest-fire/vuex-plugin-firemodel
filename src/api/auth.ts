@@ -8,7 +8,8 @@ import { getStore, getAuth } from "../index";
 import {
   ActionCodeSettings,
   UserCredential,
-  IdTokenResult
+  IdTokenResult,
+  AuthCredential
 } from "@firebase/auth-types";
 import { IAuthProfile, IFiremodelState } from "../types";
 import { IModelConstructor } from "firemodel";
@@ -170,5 +171,21 @@ export async function updateProfile(profile: IAuthProfile) {
 export async function sendEmailVerification(): Promise<void> {
   return getStore().dispatch({
     type: "@firemodel/sendEmailVerification"
+  });
+}
+
+export async function reauthenticateWithCredential(
+  credential: AuthCredential
+): Promise<void> {
+  return getStore().dispatch({
+    type: "@firemodel/authenticateWithCredential",
+    credential
+  });
+}
+
+export async function linkWithCredential(credential: AuthCredential) {
+  return getStore().dispatch({
+    type: "@firemodel/linkWithCredential",
+    credential
   });
 }

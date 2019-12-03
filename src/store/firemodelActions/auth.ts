@@ -3,8 +3,13 @@ import { ActionTree } from "vuex";
 import { IFiremodelState, ISignOutPayload, IAuthProfile } from "../../index";
 import { database } from "../../shared/database";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
-import { ActionCodeSettings, UserCredential } from "@firebase/auth-types";
+import {
+  ActionCodeSettings,
+  UserCredential,
+  AuthCredential
+} from "@firebase/auth-types";
 import { Record } from "firemodel";
+import { FireModelProxyError } from "firemodel/dist/cjs/errors";
 
 /**
  * **authActions**
@@ -268,6 +273,30 @@ export const authActions = <T>() =>
           message: `Failure to sign out of Firebase: ${e.message}`
         });
         throw e;
+      }
+    },
+
+    async reauthenticateWithCredential({ commit }, credential: AuthCredential) {
+      try {
+        const db = await database();
+        Record.defaultDb = db;
+        const auth = await db.auth();
+
+        await auth.currentUser?.reauthenticateWithCredential(credential);
+      } catch (e) {
+        throw new FireModelProxyError(e, "authticateWithCredential");
+      }
+    },
+
+    async linkWithCredential({ commit }, credential: AuthCredential) {
+      try {
+        const db = await database();
+        Record.defaultDb = db;
+        const auth = await db.auth();
+
+        await auth.currentUser?.linkWithCredential(credential);
+      } catch (e) {
+        throw new FireModelProxyError(e, "linkWithCredential");
       }
     }
   } as ActionTree<IFiremodelState<T>, T>);
