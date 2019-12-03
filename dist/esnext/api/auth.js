@@ -129,3 +129,15 @@ export async function sendEmailVerification() {
         type: "@firemodel/sendEmailVerification"
     });
 }
+export async function reauthenticateWithCredential(credential) {
+    return getStore().dispatch({
+        type: "@firemodel/authenticateWithCredential",
+        credential
+    });
+}
+export async function linkWithCredential(credential) {
+    return getStore().dispatch({
+        type: "@firemodel/linkWithCredential",
+        credential
+    });
+}

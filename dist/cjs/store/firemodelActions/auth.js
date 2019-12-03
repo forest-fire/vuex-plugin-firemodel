@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("../../shared/database");
 const FiremodelPluginError_1 = require("../../errors/FiremodelPluginError");
 const firemodel_1 = require("firemodel");
+const errors_1 = require("firemodel/dist/cjs/errors");
 /**
  * **authActions**
  *
@@ -220,6 +221,30 @@ exports.authActions = () => ({
                 message: `Failure to sign out of Firebase: ${e.message}`
             });
             throw e;
+        }
+    },
+    async reauthenticateWithCredential({ commit }, credential) {
+        var _a;
+        try {
+            const db = await database_1.database();
+            firemodel_1.Record.defaultDb = db;
+            const auth = await db.auth();
+            await ((_a = auth.currentUser) === null || _a === void 0 ? void 0 : _a.reauthenticateWithCredential(credential));
+        }
+        catch (e) {
+            throw new errors_1.FireModelProxyError(e, "authticateWithCredential");
+        }
+    },
+    async linkWithCredential({ commit }, credential) {
+        var _a;
+        try {
+            const db = await database_1.database();
+            firemodel_1.Record.defaultDb = db;
+            const auth = await db.auth();
+            await ((_a = auth.currentUser) === null || _a === void 0 ? void 0 : _a.linkWithCredential(credential));
+        }
+        catch (e) {
+            throw new errors_1.FireModelProxyError(e, "linkWithCredential");
         }
     }
 });

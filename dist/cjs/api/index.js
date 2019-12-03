@@ -5,4 +5,5 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./auth"));
 __export(require("./other"));
+__export(require("./providers/EmailAuthProvider"));
 //# sourceMappingURL=index.js.map

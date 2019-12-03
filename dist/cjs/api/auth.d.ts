@@ -3,7 +3,7 @@
  * which Firemodel provides but are type-safe and often are a more easily
  * used means to achieve **Firebase** _auth_ functions
  */
-import { ActionCodeSettings, UserCredential, IdTokenResult } from "@firebase/auth-types";
+import { ActionCodeSettings, UserCredential, IdTokenResult, AuthCredential } from "@firebase/auth-types";
 import { IAuthProfile } from "../types";
 import { IModelConstructor } from "firemodel";
 /**
@@ -67,3 +67,5 @@ export declare function updateProfile(profile: IAuthProfile): Promise<any>;
  * Sends a verification email to the currently logged in user
  */
 export declare function sendEmailVerification(): Promise<void>;
+export declare function reauthenticateWithCredential(credential: AuthCredential): Promise<void>;
+export declare function linkWithCredential(credential: AuthCredential): Promise<any>;

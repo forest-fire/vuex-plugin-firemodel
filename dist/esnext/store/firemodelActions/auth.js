@@ -1,6 +1,7 @@
 import { database } from "../../shared/database";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
 import { Record } from "firemodel";
+import { FireModelProxyError } from "firemodel/dist/cjs/errors";
 /**
  * **authActions**
  *
@@ -218,6 +219,30 @@ export const authActions = () => ({
                 message: `Failure to sign out of Firebase: ${e.message}`
             });
             throw e;
+        }
+    },
+    async reauthenticateWithCredential({ commit }, credential) {
+        var _a;
+        try {
+            const db = await database();
+            Record.defaultDb = db;
+            const auth = await db.auth();
+            await ((_a = auth.currentUser) === null || _a === void 0 ? void 0 : _a.reauthenticateWithCredential(credential));
+        }
+        catch (e) {
+            throw new FireModelProxyError(e, "authticateWithCredential");
+        }
+    },
+    async linkWithCredential({ commit }, credential) {
+        var _a;
+        try {
+            const db = await database();
+            Record.defaultDb = db;
+            const auth = await db.auth();
+            await ((_a = auth.currentUser) === null || _a === void 0 ? void 0 : _a.linkWithCredential(credential));
+        }
+        catch (e) {
+            throw new FireModelProxyError(e, "linkWithCredential");
         }
     }
 });

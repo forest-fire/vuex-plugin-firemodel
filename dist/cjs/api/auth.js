@@ -142,4 +142,18 @@ async function sendEmailVerification() {
     });
 }
 exports.sendEmailVerification = sendEmailVerification;
+async function reauthenticateWithCredential(credential) {
+    return index_1.getStore().dispatch({
+        type: "@firemodel/authenticateWithCredential",
+        credential
+    });
+}
+exports.reauthenticateWithCredential = reauthenticateWithCredential;
+async function linkWithCredential(credential) {
+    return index_1.getStore().dispatch({
+        type: "@firemodel/linkWithCredential",
+        credential
+    });
+}
+exports.linkWithCredential = linkWithCredential;
 //# sourceMappingURL=auth.js.map
