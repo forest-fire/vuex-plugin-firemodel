@@ -1,7 +1,5 @@
 import { DB, IFirebaseClientConfig } from "abstracted-client";
 import { FireModelPluginError } from "../errors/FiremodelPluginError";
-import { RealTimeDB } from "abstracted-firebase";
-import { FirebaseAuth } from "@firebase/auth-types";
 import { FireModel } from "firemodel";
 
 let _db: DB;
