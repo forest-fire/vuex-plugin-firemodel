@@ -1,11 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const store_1 = require("../../store");
+const database_1 = require("../../shared/database");
+const FiremodelPluginError_1 = require("../../errors/FiremodelPluginError");
 class EmailAuthProvider {
     static async credential(email, password) {
-        var _a;
-        const db = await store_1.database();
-        return (_a = db.authProviders) === null || _a === void 0 ? void 0 : _a.EmailAuthProvider.credential(email, password);
+        const db = await database_1.database();
+        if (!db.authProviders) {
+            throw new FiremodelPluginError_1.FireModelPluginError(`Attempt to call connect() was not possible because the current DB connection -- via abstracted-client -- does not have a "authProviders" API available yet.`);
+        }
+        return db.authProviders.EmailAuthProvider.credential(email, password);
     }
 }
 exports.EmailAuthProvider = EmailAuthProvider;
