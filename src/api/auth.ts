@@ -178,7 +178,7 @@ export async function reauthenticateWithCredential(
   credential: AuthCredential
 ): Promise<void> {
   return getStore().dispatch({
-    type: "@firemodel/authenticateWithCredential",
+    type: "@firemodel/reauthenticateWithCredential",
     credential
   });
 }
