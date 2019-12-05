@@ -1,7 +1,7 @@
 import { MutationTree } from "vuex";
 import { IFiremodelState } from "../..";
 import { UserCredential } from "@firebase/auth-types";
-import { IFiremodelAbbreviatedUser } from "../../types";
+import { IFiremodelAbbreviatedUser, ICurrentUser } from "../../types";
 import Vue from "vue";
 import { IDictionary } from "firemock";
 
@@ -12,6 +12,7 @@ export const authMutations = <T>() =>
   ({
     signInWithEmailAndPassword(state, userCredential: UserCredential) {
       console.debug("user signed in with email/password");
+      Vue.set(state, "userCredential", userCredential.credential);
       // the @firemodel.currentUser will be updated by the `changeAuth` function
     },
     createUserWithEmailAndPassword(state, userCredential: UserCredential) {
@@ -32,7 +33,7 @@ export const authMutations = <T>() =>
 
     updatedEmail(state, email: string) {
       Vue.set(state, "currentUser", {
-        ...(state.currentUser as IFiremodelAbbreviatedUser),
+        ...(state.currentUser as ICurrentUser),
         ...{ email }
       });
     },

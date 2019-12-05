@@ -5,6 +5,7 @@ import Vue from "vue";
 export const authMutations = () => ({
     signInWithEmailAndPassword(state, userCredential) {
         console.debug("user signed in with email/password");
+        Vue.set(state, "userCredential", userCredential.credential);
         // the @firemodel.currentUser will be updated by the `changeAuth` function
     },
     createUserWithEmailAndPassword(state, userCredential) {

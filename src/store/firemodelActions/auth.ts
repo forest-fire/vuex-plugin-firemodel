@@ -10,6 +10,7 @@ import {
 } from "@firebase/auth-types";
 import { Record } from "firemodel";
 import { FireModelProxyError } from "firemodel/dist/cjs/errors";
+import { User } from "firemock";
 
 /**
  * **authActions**
@@ -160,8 +161,9 @@ export const authActions = <T>() =>
       }
 
       try {
-        const user = state.currentUser;
-        await user.fullProfile.updateEmail(newEmail);
+        const db = await database();
+        const user = (await db.auth()).currentUser as User;
+        await user.updateEmail(newEmail);
         commit("updatedEmail", { uid: user.uid, email: newEmail });
       } catch (e) {
         commit("error", {
@@ -191,8 +193,9 @@ export const authActions = <T>() =>
       }
 
       try {
-        const user = state.currentUser;
-        await user.fullProfile.updatePassword(password);
+        const db = await database();
+        const user = (await db.auth()).currentUser as User;
+        await user.updatePassword(password);
         commit("updatedPassword", { uid: user.uid, password: "*****" });
       } catch (e) {
         commit("error", {
@@ -209,14 +212,16 @@ export const authActions = <T>() =>
      */
     async updateProfile({ commit, state }, profile: IAuthProfile) {
       try {
-        const user = state.currentUser;
+        const db = await database();
+        const auth = await db.auth();
+        const user = auth.currentUser;
         if (!user) {
           throw new FireModelPluginError(
             `Attempt to updateProfile() before currentUser is set in Firebase identity system!`,
             "not-ready"
           );
         }
-        await user.fullProfile.updateProfile(profile);
+        await user.updateProfile(profile);
         commit("updatedProfile", profile);
       } catch (e) {
         commit("error", {
@@ -281,10 +286,19 @@ export const authActions = <T>() =>
         const db = await database();
         Record.defaultDb = db;
         const auth = await db.auth();
+        if (!auth.currentUser) {
+          throw new FireModelPluginError(
+            `Attempt to call reauthenticateWithCredential() requires that the "auth.currentUser" be set and it is not!`,
+            "auth/not-allowed"
+          );
+        }
 
-        await auth.currentUser?.reauthenticateWithCredential(credential);
+        await auth.currentUser.reauthenticateWithCredential(credential);
       } catch (e) {
-        throw new FireModelProxyError(e, "authticateWithCredential");
+        throw new FireModelProxyError(
+          e,
+          "firemodelActions/auth.ts[reauthenticateWithCredential]"
+        );
       }
     },
 
