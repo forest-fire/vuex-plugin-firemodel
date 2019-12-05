@@ -121,8 +121,9 @@ exports.authActions = () => ({
             throw new FiremodelPluginError_1.FireModelPluginError(`The updateEmail dispatch was dispatched but the current user profile is empty!`, "not-ready");
         }
         try {
-            const user = state.currentUser;
-            await user.fullProfile.updateEmail(newEmail);
+            const db = await database_1.database();
+            const user = (await db.auth()).currentUser;
+            await user.updateEmail(newEmail);
             commit("updatedEmail", { uid: user.uid, email: newEmail });
         }
         catch (e) {
@@ -145,8 +146,9 @@ exports.authActions = () => ({
             throw new FiremodelPluginError_1.FireModelPluginError(`The updateEmail dispatch was dispatched but the current user profile is empty!`, "not-ready");
         }
         try {
-            const user = state.currentUser;
-            await user.fullProfile.updatePassword(password);
+            const db = await database_1.database();
+            const user = (await db.auth()).currentUser;
+            await user.updatePassword(password);
             commit("updatedPassword", { uid: user.uid, password: "*****" });
         }
         catch (e) {
@@ -163,11 +165,13 @@ exports.authActions = () => ({
      */
     async updateProfile({ commit, state }, profile) {
         try {
-            const user = state.currentUser;
+            const db = await database_1.database();
+            const auth = await db.auth();
+            const user = auth.currentUser;
             if (!user) {
                 throw new FiremodelPluginError_1.FireModelPluginError(`Attempt to updateProfile() before currentUser is set in Firebase identity system!`, "not-ready");
             }
-            await user.fullProfile.updateProfile(profile);
+            await user.updateProfile(profile);
             commit("updatedProfile", profile);
         }
         catch (e) {
@@ -224,15 +228,17 @@ exports.authActions = () => ({
         }
     },
     async reauthenticateWithCredential({ commit }, credential) {
-        var _a;
         try {
             const db = await database_1.database();
             firemodel_1.Record.defaultDb = db;
             const auth = await db.auth();
-            await ((_a = auth.currentUser) === null || _a === void 0 ? void 0 : _a.reauthenticateWithCredential(credential));
+            if (!auth.currentUser) {
+                throw new FiremodelPluginError_1.FireModelPluginError(`Attempt to call reauthenticateWithCredential() requires that the "auth.currentUser" be set and it is not!`, "auth/not-allowed");
+            }
+            await auth.currentUser.reauthenticateWithCredential(credential);
         }
         catch (e) {
-            throw new errors_1.FireModelProxyError(e, "authticateWithCredential");
+            throw new errors_1.FireModelProxyError(e, "firemodelActions/auth.ts[reauthenticateWithCredential]");
         }
     },
     async linkWithCredential({ commit }, credential) {

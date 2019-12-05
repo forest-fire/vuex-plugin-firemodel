@@ -1,8 +1,9 @@
 import { IFirebaseClientConfig } from "abstracted-firebase";
 import { IFmQueuedAction, IFmWatchItem, IFmLocalChange } from ".";
-import { User, IdTokenResult } from "@firebase/auth-types";
+import { User, IdTokenResult, AuthCredential } from "@firebase/auth-types";
 import { IFmLocalEvent, IWatcherEventContext } from "firemodel";
 import { IDictionary } from "common-types";
+import { ICurrentUser } from "./auth";
 
 export interface IFiremodelAbbreviatedUser {
   uid: string;
@@ -21,7 +22,9 @@ export interface IFiremodelState<T> {
   token?: IdTokenResult;
   /** the authentication status of the user */
   authenticated: false | "anonymous" | "logged-in";
-  currentUser?: IFiremodelAbbreviatedUser;
+  /** the AuthCredential received when logging in */
+  userCredential?: AuthCredential;
+  currentUser?: ICurrentUser;
   /** the DB connection status */
   status:
     | "unconfigured"
