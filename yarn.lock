@@ -776,12 +776,6 @@
     "@types/glob" "*"
     "@types/node" "*"
 
-"@types/stacktrace-js@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@types/stacktrace-js/-/stacktrace-js-2.0.3.tgz#e1f05814826acf248af92a2b9a4b0f28a6bd66d1"
-  dependencies:
-    stacktrace-js "*"
-
 "@vue/babel-helper-vue-jsx-merge-props@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@vue/babel-helper-vue-jsx-merge-props/-/babel-helper-vue-jsx-merge-props-1.0.0.tgz#048fe579958da408fb7a8b2a3ec050b50a661040"
@@ -1167,7 +1161,7 @@ abstracted-client@^0.35.3:
     serialized-query "^0.9.3"
     typed-conversions "^0.10.1"
 
-abstracted-firebase@^0.35.0, abstracted-firebase@^0.35.2:
+abstracted-firebase@^0.35.2, abstracted-firebase@^0.35.3:
   version "0.35.3"
   resolved "https://registry.yarnpkg.com/abstracted-firebase/-/abstracted-firebase-0.35.3.tgz#4b27f1b1bb8893258a55ebf6dce6750e9580ee99"
   dependencies:
@@ -2055,7 +2049,7 @@ common-tags@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/common-tags/-/common-tags-1.8.0.tgz#8e3153e542d4a39e9b10554434afaaf98956a937"
 
-common-types@^1.12.1, common-types@^1.12.12, common-types@^1.12.13, common-types@^1.12.9, common-types@^1.9.6, common-types@^1.9.7:
+common-types@^1.12.1, common-types@^1.12.12, common-types@^1.12.13, common-types@^1.9.6, common-types@^1.9.7:
   version "1.12.13"
   resolved "https://registry.yarnpkg.com/common-types/-/common-types-1.12.13.tgz#d0f871b28f76b45d90d942bfd650342ada3bac99"
   dependencies:
@@ -2426,7 +2420,7 @@ date-fns@^1.30.1:
   version "1.30.1"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
 
-date-fns@^2.8.0:
+date-fns@^2.8.1:
   version "2.8.1"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.8.1.tgz#2109362ccb6c87c3ca011e9e31f702bc09e4123b"
 
@@ -3185,7 +3179,7 @@ firebase-key@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/firebase-key/-/firebase-key-2.0.2.tgz#44ffdc460faeb774ef95e04a43027042974cfe5c"
 
-firemock@^0.35.6:
+firemock@^0.35.7:
   version "0.35.7"
   resolved "https://registry.yarnpkg.com/firemock/-/firemock-0.35.7.tgz#95bd8968e89cde13c031360f285ec5bd1a46a950"
   dependencies:
@@ -3208,20 +3202,20 @@ firemock@^0.35.6:
     serialized-query "^0.9.1"
     typed-conversions "^0.10.1"
 
-firemodel@^0.35.1:
-  version "0.35.1"
-  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.35.1.tgz#63f7cd0ebb1a2fe2fbc9c9a57075df4c425ce9f6"
+firemodel@^0.35.3:
+  version "0.35.3"
+  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.35.3.tgz#175389d1fe98004d453fd60a0f01b42f29f2c476"
   dependencies:
-    abstracted-firebase "^0.35.0"
-    common-types "^1.12.12"
-    date-fns "^2.8.0"
+    abstracted-firebase "^0.35.3"
+    common-types "^1.12.13"
+    date-fns "^2.8.1"
     fast-copy "2.0.3"
     fast-deep-equal "^2.0.1"
     firebase-key "^2.0.2"
     get-value "^3.0.1"
     pluralize "^8.0.0"
     reflect-metadata "^0.1.13"
-    serialized-query "^0.9.1"
+    serialized-query "^0.9.3"
     set-value "^3.0.0"
     typed-conversions "^0.10.1"
     wait-in-parallel "^1.2.6"
@@ -6122,10 +6116,10 @@ serialize-javascript@^2.1.0:
   resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-2.1.1.tgz#952907a04a3e3a75af7f73d92d15e233862048b2"
 
 serialized-query@^0.9.1, serialized-query@^0.9.3:
-  version "0.9.3"
-  resolved "https://registry.yarnpkg.com/serialized-query/-/serialized-query-0.9.3.tgz#6fb1e1d5ba01e5db525d158780d7d2f276a6260f"
+  version "0.9.4"
+  resolved "https://registry.yarnpkg.com/serialized-query/-/serialized-query-0.9.4.tgz#ff9e0f86c4bc4edc4d554cf7535503392bfedf72"
   dependencies:
-    common-types "^1.12.9"
+    common-types "^1.12.13"
 
 serve-index@^1.9.1:
   version "1.9.1"
@@ -6406,7 +6400,7 @@ stacktrace-gps@^3.0.3:
     source-map "0.5.6"
     stackframe "^1.1.0"
 
-stacktrace-js@*, stacktrace-js@^2.0.1:
+stacktrace-js@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/stacktrace-js/-/stacktrace-js-2.0.1.tgz#ebdb0e9a16e6f171f96ca7878404e7f15c3d42ba"
   dependencies:
