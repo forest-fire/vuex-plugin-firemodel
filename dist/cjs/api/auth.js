@@ -144,7 +144,7 @@ async function sendEmailVerification() {
 exports.sendEmailVerification = sendEmailVerification;
 async function reauthenticateWithCredential(credential) {
     return index_1.getStore().dispatch({
-        type: "@firemodel/authenticateWithCredential",
+        type: "@firemodel/reauthenticateWithCredential",
         credential
     });
 }

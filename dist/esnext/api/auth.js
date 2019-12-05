@@ -131,7 +131,7 @@ export async function sendEmailVerification() {
 }
 export async function reauthenticateWithCredential(credential) {
     return getStore().dispatch({
-        type: "@firemodel/authenticateWithCredential",
+        type: "@firemodel/reauthenticateWithCredential",
         credential
     });
 }
