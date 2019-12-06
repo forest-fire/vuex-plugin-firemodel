@@ -225,7 +225,7 @@ export const authActions = () => ({
             throw e;
         }
     },
-    async reauthenticateWithCredential({ commit }, credential) {
+    async reauthenticateWithCredential({ commit }, { credential }) {
         try {
             const db = await database();
             Record.defaultDb = db;
@@ -239,7 +239,7 @@ export const authActions = () => ({
             throw new FireModelProxyError(e, "firemodelActions/auth.ts[reauthenticateWithCredential]");
         }
     },
-    async linkWithCredential({ commit }, credential) {
+    async linkWithCredential({ commit }, { credential }) {
         var _a;
         try {
             const db = await database();
