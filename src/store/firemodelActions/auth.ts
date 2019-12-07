@@ -281,7 +281,7 @@ export const authActions = <T>() =>
       }
     },
 
-    async reauthenticateWithCredential({ commit }, credential: AuthCredential) {
+    async reauthenticateWithCredential({ commit }, { credential } : { credential: AuthCredential }) {
       try {
         const db = await database();
         Record.defaultDb = db;
@@ -302,7 +302,7 @@ export const authActions = <T>() =>
       }
     },
 
-    async linkWithCredential({ commit }, credential: AuthCredential) {
+    async linkWithCredential({ commit }, { credential }: { credential: AuthCredential }) {
       try {
         const db = await database();
         Record.defaultDb = db;
