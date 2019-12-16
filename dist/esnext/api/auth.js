@@ -41,7 +41,7 @@ export async function signOut(payload) {
 }
 export async function getIdToken(forceRefresh) {
     var _a;
-    const fmState = this.getStore().state["@firemodel"];
+    const fmState = getStore().state["@firemodel"];
     if (fmState.token && forceRefresh !== true) {
         return fmState.token;
     }
