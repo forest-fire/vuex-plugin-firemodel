@@ -14,13 +14,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 function serverConfirms(propOffset) {
     return {
         ["ADD_CONFIRMATION" /* serverAddConfirm */](state, payload) {
-            console.log("server add confirmed", payload.value.id);
+            // console.log("server add confirmed", payload.value.id);
         },
         ["CHANGE_CONFIRMATION" /* serverChangeConfirm */](state, payload) {
-            console.log("server change confirmed", payload.value.id);
+            //
         },
         ["REMOVE_CONFIRMATION" /* serverRemoveConfirm */](state, payload) {
-            console.log("server remove confirmed", payload);
+            // console.log("server remove confirmed", payload);
         }
     };
 }

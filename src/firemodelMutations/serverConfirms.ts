@@ -18,15 +18,15 @@ export function serverConfirms<T extends Model>(
 ): MutationTree<T> {
   return {
     [FmCrudMutation.serverAddConfirm](state, payload: IFmWatchEvent<Model>) {
-      console.log("server add confirmed", payload.value.id);
+      // console.log("server add confirmed", payload.value.id);
     },
 
     [FmCrudMutation.serverChangeConfirm](state, payload: IFmWatchEvent<Model>) {
-      console.log("server change confirmed", payload.value.id);
+      //
     },
 
     [FmCrudMutation.serverRemoveConfirm](state, payload: IFmWatchEvent<Model>) {
-      console.log("server remove confirmed", payload);
+      // console.log("server remove confirmed", payload);
     }
   };
 }
