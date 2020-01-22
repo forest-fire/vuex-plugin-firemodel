@@ -17,7 +17,7 @@ module.exports = {
     },
     autometa: {
       site: {
-        name: "FireModel Vuex Plugin"
+        name: "Firemodel Vuex Plugin"
       },
       canonical_base: "https://vuex.firemodel.info",
       author: {
@@ -26,8 +26,8 @@ module.exports = {
       }
     }
   },
-  title: "FireModel Vuex Plugin",
-  description: "A FireModel Vuex Plugin to remove all the Cruft of Vuex",
+  title: "Firemodel Vuex Plugin",
+  description: "A Firemodel Vuex Plugin to remove all the Cruft of Vuex",
   head: [
     ["meta", { name: "apple-mobile-web-app-capable", content: "yes" }],
     ["meta", { name: "application-name", content: "FireModel Vuex Plugin" }],
@@ -176,11 +176,7 @@ module.exports = {
     editLinks: true,
     nav: [
       {
-        text: "Getting Started",
-        link: "/"
-      },
-      {
-        text: "Config",
+        text: "Configure",
         link: "/configuration/"
       },
       {

@@ -2,7 +2,7 @@
 
 ## Using a Mock DB
 
-Because you are using **FireModel**, you have the ability to start your application with a
+Because you are using **Firemodel**, you have the ability to start your application with a
 _mocked_ database instead of a real one. This is a very powerful tool as it allows you to
 create a fully isolated state machine for both a development sandbox as well as your unit
 and E2E tests.
@@ -69,7 +69,7 @@ const config = {
 ### Passing in data from a Callback
 
 Alternatively, you may also want to define a callback which will be passed a reference to
-both **FireModel**'s `Mock()` function as well as the mock database itself. With these two
+both **Firemodel**'s `Mock()` function as well as the mock database itself. With these two
 references you can either insert discrete data or mock data into the database (or both):
 
 ```typescript

@@ -1,6 +1,6 @@
 ---
 lineNumbers: true
-sidebarDepth: 3
+sidebarDepth: 2
 next: "/events/"
 ---
 

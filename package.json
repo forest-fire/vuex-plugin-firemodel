@@ -37,11 +37,12 @@
   "dependencies": {
     "@firebase/auth-types": "^0.9.3",
     "abstracted-client": "^0.36.1",
+    "common-types": "^1.12.18",
     "fast-copy": "^2.0.4",
-    "firemodel": "^0.36.2",
+    "firemodel": "^0.36.4",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
-    "stacktrace-js": "^2.0.1",
+    "stacktrace-js": "^2.0.2",
     "vuex": "^3.1.2"
   },
   "devDependencies": {
