@@ -171,7 +171,7 @@ module.exports = {
   ],
   themeConfig: {
     repo: "forest-fire/vuex-plugin-firemodel",
-    repoLabel: "contribute",
+    repoLabel: "github",
     docsDir: "docs",
     smoothScroll: true,
     editLinks: true,

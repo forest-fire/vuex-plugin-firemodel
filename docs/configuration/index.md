@@ -16,6 +16,7 @@ about.
 
 ## Basics
 
+### Example Config 
 Let's take the theory down a notch and look at an example configuration:
 
 ```typescript
@@ -58,12 +59,15 @@ const store = new Vuex.Store<IRootState>({
 }
 ```
 
-The details of this configuration will be explored in the following two sections:
+The details of this configuration will be explored in the following three sections:
 
-- **Core Services** - there are some opt-in/out services that you get out of the box like `connect` and `useAuth`.
-- **Lifecycle Hooks** - certain application lifecycle events are predictable and this plug-in makes it easy to take actions whenever these events are fired (all of the config under `lifecycle`) relates to that.
+1. **DB Configuration** - you must provide the normal Firebase client configuration so this plugin can connect to the database for you (alternatively you can provide config for a "mock database" ... more on that later)
+2. **Core Services** - there are core services that you get out of the box which you can opt-in/out of.
+3. **Lifecycle Hooks** - certain application lifecycle events are predictable and this plug-in makes it easy to take actions whenever these events are fired (all of the config under `lifecycle`) relates to that.
 
-But before we move into these two sections let's look at some key _typings_ that will help you configure correctly:
+### Correct `IRootState` typings
+
+But before we move into these sections let's look at some key _typings_ that will help you configure correctly:
 
 - `IFiremodelConfig<T>` - your configuration is fully typed and beyond just a "signature", it also includes comments:
 
@@ -87,25 +91,6 @@ But before we move into these two sections let's look at some key _typings_ that
 
 ## Core Services
 
-### Connect
-
-We **must** provide this plugin with the appropriate Firebase config to allow it
-to _connect_ to the database. This is nothing more than the data that Firebase
-provides to you as part of the "app settings". How you get there has changed a
-bit recently (and may change again) but the first step is to choose "project
-settings" (see below):
-
-![project settings](./project-settings.png)
-
-And from there you _now_ need to configure an "app" which can be a mobile or web
-based app. That is a 10 second process and then you'll be presented with a
-screen like you see below.
-
-![app settings](./app-settings.png)
-
-> Note: when landing on this page the radio button will have a lot of code which
-> you don't need so just choose "config" and it will isolate it to just the
-> configuration you'll need.
 
 ### When to Connect
 
@@ -115,9 +100,7 @@ it to connect right away you can set the `connect` property to false. If you do
 this then you would take on responsibility to **dispatch** the
 `@firemodel/connect` action at the point where you _do_ want to connect.
 
-## Core Auth
-
-### Watch Auth
+### Firebase Auth
 
 Authentication and Authorization are critical features of almost every app and
 Firebase provides a great set of services to make this sometimes tricky process
@@ -153,7 +136,7 @@ things:
 
 By default, this service is turned on.
 
-### Anonymous Authentication
+#### Anonymous Authentication
 
 In addition to just stating that you'd like to use Firebase's
 authentication/authorization system, you can also opt-in to `anonymousAuth`.
@@ -166,220 +149,6 @@ This means that everyone interacting with the site _will_ be a tracked user of
 some sort. Some will be "known users" and others will be "anonymous users" but
 all will have a unique ID that tracks the identity of the user.
 
-## Auth Dispatch Events
-
-Beyond the two core features that this plugin provides, the plugin also makes
-parts of the Firebase Auth API surface as Vuex _actions_ that you can dispatch.
-These include:
-
-### `signInWithEmailAndPassword`
-
-Allows an existing user to sign into Firebase with just an email and password.
-
-You dispatch with:
-
-```typescript
-const { dispatch } from './store';
-let user: UserCredential;
-try {
-  const user = await dispatch('@firemodel/signInWithEmailAndPassword', {
-    email: string,
-    password: string
-  })
-} catch (e) {
-  // error handling
-}
-```
-
-Errors include:
-
-- `auth/invalid-email`
-- `auth/user-disabled`
-- `auth/user-not-found`
-- `auth/wrong-password`
-
-### `createUserWithEmailAndPassword`
-
-Creates a new user from an email and password
-
-You dispatch with:
-
-```typescript
-const { dispatch } from './store';
-let user: UserCredential;
-try {
-  const user = await dispatch('@firemodel/createUserWithEmailAndPassord', {
-    email: string,
-    password: string
-  })
-} catch (e) {
-  // error handling
-}
-```
-
-Errors include:
-
-- `auth/email-already-in-use`
-- `auth/invalid-email`
-- `auth/operation-not-allowed`
-- `auth/weak-password`
-
-For more info, check the **Firebase** docs:
-[createUserWithEmailAndPassword](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#create-user-with-email-and-password)
-
-### `sendPasswordResetEmail`
-
-Sends a user an email with a link to reset their password.
-
-You dispatch with:
-
-```typescript
-const { dispatch } from './store';
-try {
-  await dispatch('@firemodel/sendPasswordResetEmail', {
-    email: string,
-    actionCodeSettings?: ActionCodeSettings | null
-  })
-} catch (e) {
-  // error handling
-}
-```
-
-Errors include:
-
-- `auth/invalid-email`
-- `auth/missing-continue-uri`
-- `auth/invalid-continue-uri`
-- `auth/unauthorized-continue-uri`
-- `auth/user-not-found`
-
-For more info, check the **Firebase** docs:
-[sendPasswordResetEmail](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#send-password-reset-email)
-
-### `confirmPasswordReset`
-
-Completes the password reset process, given a _confirmation code_ and new
-_password_.
-
-You dispatch with:
-
-```typescript
-const { dispatch } from './store';
-try {
-  await dispatch('@firemodel/confirmPasswordReset', {
-    email: string,
-    newPassword: string
-  })
-} catch (e) {
-  // error handling
-}
-```
-
-Errors include:
-
-- `auth/expired-action-code`
-- `auth/invalid-action-code`
-- `auth/user-disabled`
-- `auth/user-not-found`
-- `auth/weak-password`
-
-See the **Firebase** docs for more:
-[confirmPasswordReset](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#confirm-password-reset)
-
-### `verifyPasswordResetCode`
-
-Checks whether an out-of-band reset code was correct; if correct it will return
-the user's email. Call structure would look like:
-
-```typescript
-const { dispatch } from './store';
-let validatedEmail;
-try {
-  validatedEmail = await dispatch('@firemodel/verifyPasswordResetCode', '12345');
-} catch(e) {
-  // error handling
-}
-```
-
-Failing conditions include:
-
-- `auth/expired-action-code`
-- `auth/invalid-action-code`
-- `auth/user-disabled`
-- `auth/user-not-found`
-
-See the **Firebase** docs for more:
-[verifyPasswordResetCode](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#verify-password-reset-code)
-
-### `updateEmail`
-
-Updates the user's email for login/auth.
-
-```typescript
-const { dispatch } from './store';
-try {
-await dispatch('@firemodel/updateEmail', newEmail: string);
-} catch(e) {
-// error handling
-}
-```
-
-Failing conditions include:
-
-- `auth/invalid-email`
-- `auth/email-already-in-use`
-- `auth/requires-recent-login`
-
-See the **Firebase** docs for more:
-[updateEmail](https://firebase.google.com/docs/reference/node/firebase.User.html#update-email)
-
-### `updatePassword`
-
-Updates the user's password for login/auth.
-
-```typescript
-const { dispatch } from './store';
-try {
-  await dispatch('@firemodel/updatePassword', newPassword: string);
-} catch(e) {
-  // error handling
-}
-```
-
-Failing conditions include:
-
-- `auth/weak-password`
-- `auth/requires-recent-login`
-
-See the **Firebase** docs for more:
-[updatePassword](https://firebase.google.com/docs/reference/node/firebase.User.html#update-password)
-
-### `signOut`
-
-Signs the user out of a non-anonymous account (and if anonymous authentication
-is on it will log you in as an anonymous user for tracking purposes)
-
-You will dispatch with:
-
-```typescript
-const { dispatch } from './store';
-try {
-  await dispatch('@firemodel/signOut')
-} catch (e) {
-  // error handling
-}
-```
-
-Errors include:
-
-- `auth/email-already-in-use`
-- `auth/invalid-email`
-- `auth/operation-not-allowed`
-- `auth/weak-password`
-
-For more info, check the **Firebase** docs:
-[signOut](https://firebase.google.com/docs/reference/node/firebase.auth.Auth.html#sign-out)
-
 ## Lifecycle Hooks
 
 ### Overview
@@ -388,105 +157,27 @@ This plugin provides the following lifecycle events which you can plug into to
 add/remove/update the paths in the database which you are interested in (aka,
 which paths you are "watching"):
 
-- `onConnect(initial: boolean) => void` - as soon as the database is connected;
+- `onConnect()` - as soon as the database is connected;
   this is the initial connection but also applies to subsequent connections if
   the database had gone down sometime after the initial connection.
-- `onDisconnect() => void` - if the database disconnects at any point after the
+- `onDisconnect()` - if the database disconnects at any point after the
   initial connection.
+
+For configurations that are using Firebase's Auth solution, the following events
+will also be available:
+
+- `onAuth()` - When a user first arrives on the site/app, there is a two step process
+  where first we must 
 - `onLogin(uid: string, isAnonymous: boolean, ...) => void` - as soon as a user
   is logged in then this event is fired
 - `onLogout(uid: string, isAnonymous: boolean, ...) => void` - as soon as a user
   is logged out this event is fired, allowing you to cleanup/change watchers
 
-> **Note 1:** all lifecycle hook functions are `async` functions
+Finally, for those users who have configured their state tree to include the apps
+current route, then you will also receive:
 
-> **Note 2:** the `onConnect()` and `onDisconnect()` events are listened to by
-> this plugin and they in turn ensure that the `@firemodel` state tree always
-> has a up-to-date view on this for your application.
+- `onRouteChanged()`
 
-### Examples of Usage
+> **Note:** all lifecycle hook functions are `async` functions
 
-Let's now take a look at a few examples of what you might do with these hooks:
 
-#### Listen to `UserProfile` on Login
-
-Imagine that when you login using Firebase's identity system, you want to then
-start watching the database on the given logged in user's "user profile":
-
-```typescript
-export async onLogin({ uid }) {
-  await Watch.record(UserProfile, uid, { name: 'user-profile' });
-}
-```
-
-#### Get all `Products` once connected
-
-Imagine we have a store application and as soon as possible we want to pull down
-a list of products (and inventory levels) from the store and then be kept
-up-to-date if anything changes.
-
-```typescript
-export async onConnect() {
-  await Watch.list(Product).all();
-}
-```
-
-#### On logging out, Stop watching `UserProfile`
-
-Once we've logged out we should have no interest in watching the user profile of
-the user who _had_ been logged in (we also probably have no rights to anymore).
-In order to remove our interest in the old user's `UserProfile` we could:
-
-```typescript
-export async onLogout() {
-  await Watch.stop(Watch.findByName('user-profile'));
-}
-```
-
-## Advanced Use Cases
-
-### Watching Lists of Records with `list().ids(...)`
-
-There are situations where you will want to setup a **list** watcher which is attached to an array of `id`'s but because you don't have permissions to see the whole list you can not use the simple syntax of:
-
-```typescript
-const watcher = await Watch.list(MyModel).where('uid', '1234');
-```
-
-but must rely instead on:
-
-```typescript
-const watcher = await Watch.list(MyModel).ids(anArrayOfIds);
-```
-
-This alternative isn't hard so long as you have the list of `id`s but when doing this it can potentially leads to an edge case that's worth understanding.
-
-To illustrate, imagine the scenario where you have a list of orders but the logged in user only has read permission to read orders which they own. We might watch the user's orders by first watching the UserProfile like so:
-
-```typescript
-await Watch.record(UserProfile, '1234');
-```
-
-And assuming, that you have a relationship setup between `UserProfile` and `Order` you might then:
-
-```typescript
-const recentOrders = Object.keys(state.userProfile.orders).slice(0,3);
-await Watch.list(Order).ids(recentOrders);
-```
-
-This will achieve all the results you want when the user logging in has `recentOrders` but imagine that a new user has logged in and they have no orders but our application requires that there is always at least _one_ order. Well this shouldn't be hard, right? You can just add the order with:
-
-```typescript
-const newOrder = await Record.add(Order, { ... })
-await user.associate(orders, newOrder.id)
-```
-
-This in fact _does_ work in most ways but one ... the problem you're going to find is that since the `Order` you've just added does not have a "watcher" associated with the path yet you'll get a Vuex mutation to `order/add` but in your local state tree you've configured to have a _list_ of orders and therefore the local state tree expects the mutation to be `orders/add` (aka, plural).
-
-Once you have setup a list watcher on `Order` -- which you can do right after you've added the record -- all future updates to the record will be correctly mutated to the plural "**orders**" because the watcher is in place. How can we get around this _chicken-and-egg_ problem? The answer lies in a property in the optional _options_ hash:
-
-```typescript
-const newOrder = await Record.add(Order, { ... }, { pluralizeLocalPath: true })
-```
-
-This will ensure that the Vuex mutation is sent to the right place the first time and then -- assuming you setup the list watcher -- all subsequent items will be as well.
