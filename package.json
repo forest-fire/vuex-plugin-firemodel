@@ -33,7 +33,7 @@
   "bugs": {
     "url": "https://github.com/forest-fire/vuex-plugin-firemodel/issues"
   },
-  "homepage": "https://github.com/forest-fire/vuex-plugin-firemodel#readme",
+  "homepage": "https://vuex.firemodel.info",
   "dependencies": {
     "@firebase/auth-types": "^0.9.3",
     "abstracted-client": "^0.36.1",

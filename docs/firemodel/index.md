@@ -1,6 +1,6 @@
 ---
-prev: "../abc/"
-next: ../mocking
+prev: /abc-api/
+next: /mocking/
 ---
 # Firemodel API
 
