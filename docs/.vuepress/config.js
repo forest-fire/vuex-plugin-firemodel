@@ -183,19 +183,19 @@ module.exports = {
       },
       {
         text: "Lifecycle Events",
-        link: "/events/"
+        link: "/lifecycle/"
       },
       {
-        text: "ABC",
+        text: "ABC API",
         link: "/abc-api/"
       },
       {
-        text: "Firemodel",
+        text: "Firemodel API",
         link: "/firemodel/"
       },
 
       {
-        text: "Mock",
+        text: "Mock DB",
         link: "/mocking/"
       }
     ],

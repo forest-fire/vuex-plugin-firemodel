@@ -1,7 +1,7 @@
 ---
 lineNumbers: true
 sidebarDepth: 2
-next: "/events/"
+next: "/lifecycle/"
 ---
 
 # Plugin Configuration

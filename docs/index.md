@@ -12,7 +12,7 @@ features:
   link: /wrapper
 - title: Authentication
   details: Plug into Firebase's authentication services with ease and hook into useful auth lifecycle events to help manage your state
-- title: ABC
+- title: Multi-Level Caching
   details: Provides a compact "get and/or watch" API that supports the idea of ABC (always be caching); this strategy leverages Vuex, IndexedDB, and Firebase to achieve a high performance data environment 
 
 footer: MIT Licensed | Copyright © Inocan Group
