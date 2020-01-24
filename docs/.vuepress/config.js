@@ -173,16 +173,27 @@ module.exports = {
     repo: "forest-fire/vuex-plugin-firemodel",
     repoLabel: "contribute",
     docsDir: "docs",
+    smoothScroll: true,
     editLinks: true,
+    nextLinks: true,
     nav: [
       {
         text: "Configure",
         link: "/configuration/"
       },
       {
-        text: "Events",
+        text: "Lifecycle Events",
         link: "/events/"
       },
+      {
+        text: "ABC",
+        link: "/abc/"
+      },
+      {
+        text: "Firemodel",
+        link: "/firemodel/"
+      },
+
       {
         text: "Mock",
         link: "/mocking/"

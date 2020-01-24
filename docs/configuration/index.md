@@ -4,7 +4,7 @@ sidebarDepth: 2
 next: "/events/"
 ---
 
-# Configuration
+# Plugin Configuration
 
 What you get out of this plugin in in large part related to how you configure
 it. The idea behind this configuration is to take full advantage of
@@ -20,23 +20,25 @@ Let's take the theory down a notch and look at an example configuration:
 
 ```typescript
 const config: IFirebaseConfig<IRootConfig> = {
-  // config for Firebase DB
+  // Firebase config
   db: {
     apiKey: "...",
     authDomain: "...",
     databaseURL: "...",
     projectId: "..."
   },
-  // connect db when initialized (true is the default)
+  // core services
   connect: true,
-  // Auth Features
   useAuth: true,
-  anonymousAuth: true,
   // Lifecycle hooks
   lifecycle: {
+    // for all users
     onConnect,
+    // only if using Firebase Auth
+    onAuth,
     onLogin,
     onLogout,
+    // only if using vuex-plugin-router
     onRouteChange
   }
 };
@@ -119,12 +121,28 @@ this then you would take on responsibility to **dispatch** the
 
 Authentication and Authorization are critical features of almost every app and
 Firebase provides a great set of services to make this sometimes tricky process
-easy. There are, of course, other solutions out there so this plugin does _not_
-assume you are using Firebase's Auth/Auth services but opting in is very easy:
+relatively easy. There are, of course, entitled to use other solutions out there 
+so you can set this to false if you don't plan on using it:
 
 ```typescript
-useAuth: true;
+useAuth: false;
 ```
+
+If you _are_ using Firebase authentication you can simply opt-in by setting the
+configuration value to `true` but there are options and if you choose to set these
+then you would replace the boolean flag with an options dictionary, where:
+
+- `presistence` - provides a way to state how long the Firebase client should
+remember the user for. The options are: _none_, _session_, and _local_ and if 
+not stated the default is _local_. For more details see the docs: 
+[Auth State Persistence](https://firebase.google.com/docs/auth/web/auth-state-persistence)
+- `anonymousAuth` - a powerful feature of the Firebase Auth is to give visitors
+an "anonymous user" account when they land. By doing so the user is now more 
+easily tracked and this can be quite helpful for understanding how non-users of
+your solution are viewing the site prior to (hopefully) signing up. By default
+this is turned off but by setting to _true_ you will immediately have visitors
+either be "known users" or "anonymous users" and thereby always have a `uid` to
+use for tracking.
 
 This flag, when set to true, will setup a callback with Firebase which allows
 the plugin to be informed of any _auth_ related events. In turn it will do two
@@ -133,7 +151,7 @@ things:
 1. Keep the `@firebase/currentUser` up to date
 2. Call the `onLoggedIn` / `onLoggedOut` lifecycle events as appropriate.
 
-By default, this service is turned off.
+By default, this service is turned on.
 
 ### Anonymous Authentication
 
