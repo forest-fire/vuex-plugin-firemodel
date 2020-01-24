@@ -223,6 +223,51 @@ async onLogin({ uid }) {
 
 This example illustrates the use of both types of queries while also recognizing under which lifecycle event these types of data should be gathered. It also shows a good practice in parallelizing requests that can be done in parallel.
 
+### Watching what we Get
+
+To take full advantage of a real-time database we must be able to setup "watchers" in a way that makes sense and that is in partnership with the more request/response mechanisms of _getting_. Why is that we emphasize the importance of the _partnership_ between `get` and `watch`? Why would we do both? The short answer is that, while many records in the database are useful context for our application, in most apps the vast majority of the data is no longer "active" or "changing". This leads to two conclusions:
+
+1. **Watcher Value:** there is limited to no value in watching a record which has completed it's workflow and will no longer change
+2. **Watcher Cost:** while the cost of every watcher on the database is not that well known, it's unlikely to be zero
+3. **Getting Visibility**: before we _get_ records we typically do not have the visibility to know if records are useful to watch or not. As an example, _orders_ for a given user may be of interest for our app but just looking at an array of foreign keys we can't tell which are orders that are actively being updated versus those which have reached a final state like "complete" or "cancelled". 
+
+For this reason we recommend the get-first approach to watching in many/most cases. To do this we would simply do this:
+
+```typescript
+import { getOrders } from '@/store';
+
+async onLogin() {
+  const watch = (o: Order) => !['completed', 'cancelled'].includes(o.status)
+  await getOrders( where('customer', uid), { watch }) )
+}
+```
+
+There are situations, however, where we _will_ want to just jump right into a watching stance. Continuing our example from above, we will likely want to watch not only those orders in an "active state" but also any new orders. In this case we can just use the standard Firebase API:
+
+```typescript
+import { getOrders } from '@/store';
+
+async onLogin() {
+  const watch = (o: Order) => !['completed', 'cancelled'].includes(o.status);
+  await getOrders( where('customer', uid), { watch }) );
+  await Watch.list.since(new Date.getTime()).start();
+}
+```
+
+However, because this pattern of watching _some_ ID's but also being interested in new records, we do also include the following option:
+
+```typescript
+import { getOrders } from '@/store';
+
+async onLogin() {
+  const watch = (o: Order) => !['completed', 'cancelled'].includes(o.status)
+  await getOrders( where('customer', uid), { watch, watchNew: true }) )
+}
+```
+
+Watching is very important to good use of Firebase and the ABC API provides helpful shortcuts where it can. Note that the examples you've seen here are examples of using the _options_ dictionary which the get-based API's provide. There will be more on that topic in the next section.
+
+
 ### The `get` Signature
 
 As was evidenced in the configuration section, the `get` symbol is a higher-order function where the first call to the function is intended for configuration purposes, the second call is used by developers to actually _get_ the data. This section will explore this second call signature to understand what can be done beyond just the examples we've seen so far.
