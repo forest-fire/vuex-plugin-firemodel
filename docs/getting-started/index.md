@@ -1,7 +1,7 @@
 ---
 lineNumbers: true
 sidebarDepth: 2
-next: "/lifecycle/"
+next: "/firemodel/"
 ---
 
 # Getting Started
@@ -223,15 +223,17 @@ We make the following assumptions when using this plugin:
 
 Based on these assumptions -- and assuming you have a `UserProfile` and `Product` module you want use in your app -- you might expect to find a directory structure something like this:
 
+![directory structure](./file-structure.png)
 
+The main focus at the moment is section #2 where we'll put our Vuex module configuration.
 
 ### Example Configuration
 
-While you don't strictly have to have a separate file for each module definition, we do recommend it. So imagining that we have a `UserProfile` and `Product` model that we're uing in our app ... we'd example to have a Vuex module definition files for each. They'd look almost identical (at least to start), for instance:
+Picking up with the idea that we have a `UserProfile` and `Product` model that we're using in our app ... we'd need to have a Vuex module definition file for each. They'd look almost identical (at least to start), for instance:
 
-**`src/store/product.ts`**
+**`src/store/modules/product.ts`**
 
-```typescript{13}
+```typescript{3,13}
 import { Product } from 'my-models-repo'
 import { Module, GetterTree, MutationTree } from 'vuex'
 import { firemodelMutations } from 'vuex-plugin-firemodel'
@@ -261,4 +263,12 @@ If you've used Vuex's typing classes a lot of this may look familiar and you'd b
 
 ### Super Powers
 
-Why did we say the example module configuration had "super-powers"? Well outside a flare for the dramatic it's 
+Why did we say the example module configuration had "super-powers"? Well, outside a flare for the dramatic, it's because without writing a single **Mutation** all of your mutations are already written! This is accomplished with the lines highlighted in the example above. 
+
+How this is achieved is more an implementation detail but if you dial your browser's devtools to the Vue module you'll start to see mutations like `products/SERVER_ADD` when you're watching the products or `products/ADDED_LOCALLY` and `products/SERVER_CONFIRMED` when you add a new record with something like:
+
+```typescript
+await Record.add(Product, { ... });
+```
+
+This will all start to make more sense as you learn about the Firemodel and ABC API's and see how this impacts your Vuex mutations and state. For now just bask in your new found super powers ... I hear Amazon has a sale on superhero capes at the moment if you're in the mood.

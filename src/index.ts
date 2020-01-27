@@ -55,7 +55,7 @@ export let initialState: IDictionary;
 
 export type IFiremodel<T> = { "@firemodel": IFiremodelState<T> };
 
-const FirePlugin = <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => {
+const FiremodelPlugin = <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => {
   configuration = config;
   type IRootState = T & { "@firemodel": IFiremodelState<T> };
   return (store: Store<IRootState>) => {
@@ -79,7 +79,7 @@ const FirePlugin = <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => {
   };
 };
 
-export default FirePlugin;
+export default FiremodelPlugin;
 
 async function queueLifecycleEvents<T>(
   store: Store<T>,

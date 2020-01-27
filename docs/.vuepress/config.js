@@ -191,16 +191,16 @@ module.exports = {
         link: "/getting-started/"
       },
       {
-        text: "Lifecycle Hooks",
-        link: "/lifecycle/"
+        text: "Firemodel API",
+        link: "/firemodel/"
       },
       {
         text: "ABC API",
         link: "/abc-api/"
       },
       {
-        text: "Firemodel API",
-        link: "/firemodel/"
+        text: "Lifecycle Hooks",
+        link: "/lifecycle/"
       },
 
       {

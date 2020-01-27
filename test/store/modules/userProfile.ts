@@ -1,6 +1,6 @@
 import { Module, GetterTree } from "vuex";
-import { IRootState } from "./index";
-import { firemodelMutations } from "../../src";
+import { IRootState } from "../index";
+import { firemodelMutations } from "../../../src";
 
 export type IUserProfileState = {
   name: {

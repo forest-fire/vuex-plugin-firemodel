@@ -1,7 +1,8 @@
 import Vuex from "vuex";
-import FirePlugin, { IFiremodelState, IFiremodelConfig } from "../../src/index";
-import { IProductsState } from "./products";
-import { IUserProfileState } from "./userProfile";
+import FiremodelPlugin, { IFiremodelState } from "../../src/index";
+import products, { IProductsState } from "./modules/products";
+import userProfile, { IUserProfileState } from "./modules/userProfile";
+import { config } from './config'
 
 export interface IRootState {
   products: IProductsState;
@@ -19,16 +20,9 @@ export const store = (fns: Array<Function>) =>
   new Vuex.Store<IRootState>({
     modules: {
       products,
-      userProfiles
+      userProfile
     },
     plugins: [
-      FirePlugin({
-        db: { mocking: true },
-        connect: true,
-        watchAuth: true,
-        anonymousAuth: true,
-
-        ...fns
-      } as IFiremodelConfig) // TODO needs proper fixing
+      FiremodelPlugin(config)
     ]
   });
