@@ -21,7 +21,8 @@ export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
 export { database } from "./store";
-export * from "./api";
+export * from "./auth/api";
+export * from "./abc/index"
 
 export let configuration: IFiremodelPluginConfig<any>;
 export let dbConfig: IFirebaseClientConfig;

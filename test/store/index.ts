@@ -1,10 +1,12 @@
 import Vuex from "vuex";
 import FirePlugin, { IFiremodelState, IFiremodelConfig } from "../../src/index";
+import { IProductsState } from "./products";
+import { IUserProfileState } from "./userProfile";
 
 export interface IRootState {
   products: IProductsState;
   userProfiles: IUserProfileState;
-  ["@firemodel"]: IFiremodelState;
+  ["@firemodel"]: IFiremodelState<IRootState>;
 }
 
 /**

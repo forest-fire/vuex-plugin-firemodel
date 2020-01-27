@@ -24,7 +24,16 @@ module.exports = {
         name: "Ken Snyder",
         twitter: "yankeeinlondon"
       }
-    }
+    },
+    "@vuepress/container": [
+      {
+        type: 'align',
+        before: alignment => `<div class="align-${alignment}" style="text-align: ${alignment}">`,
+        after: '</div'
+      }
+    ]
+
+
   },
   title: "Firemodel Vuex Plugin",
   description: "A Firemodel Vuex Plugin to remove all the Cruft of Vuex",
@@ -60,7 +69,7 @@ module.exports = {
     ],
     [
       ("link",
-      { rel: "icon", href: "/icon/icon-rounded-32.png", sizes: "32x32" })
+        { rel: "icon", href: "/icon/icon-rounded-32.png", sizes: "32x32" })
     ],
     [
       "link",
@@ -178,11 +187,11 @@ module.exports = {
     nextLinks: true,
     nav: [
       {
-        text: "Configure",
-        link: "/configuration/"
+        text: "Getting Started",
+        link: "/getting-started/"
       },
       {
-        text: "Lifecycle Events",
+        text: "Lifecycle Hooks",
         link: "/lifecycle/"
       },
       {

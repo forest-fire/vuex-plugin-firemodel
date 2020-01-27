@@ -75,17 +75,17 @@ import { configApi, get } from 'vuex-plugin-firemodel';
 // in this example, however, these config values ARE the normal defaults
 configApi({
   useIndexedDb: true,
-  plural: true
+  isList: true
 })
-export const getProducts = get({ model: Product });
-export const getOrders = get({ model: Order });
-export const getUserProfile = get({ model: UserProfile, plural: false });
-export const getCompany = get({ model: Company, plural: false });
+export const getProducts = getRecords(Product);
+export const getOrders = getRecords(Order);
+export const getUserProfile = getRecords(UserProfile, { isList: false });
+export const getCompany = getRecords(Company, { isList: false });
 ```
 
 With this config in place, methods like `getProducts` -- for all your major entities/models -- become available.
 
-> Note: precisely the same sort of configuration can be done with `load` as we've shown here for `get`.
+> Note: precisely the same sort of configuration can be done with `loadRecords` as we've shown here for `getRecords`.
 
 ### Security and IndexedDB
 
@@ -94,7 +94,7 @@ There may be cases where you recognize that while entities like `Product`s and t
 This security sensitivity must be considered when caching to IndexedDB and one option to limit this exposure is simply to decide to NOT store certain models in IndexedDB. 
 
 ```typescript
-export const getOrders = get({ model: Order, useIndexedDb: false });
+export const getOrders = getRecords({ model: Order, useIndexedDb: false });
 ```
 
 Other options to reduce the risk include:
@@ -127,7 +127,7 @@ Other options to reduce the risk include:
     For private key encryption to be an effective tool, however, you must have a means to provide a private key. There are range of ways you can do this but in the end you must include it in the configuration for the model (or as part of the the default config hash). Here's how we might do that:
 
     ```typescript
-    import { get, configApi } from 'vuex-plugin-firemodel';
+    import { configApi } from 'vuex-plugin-firemodel';
 
     // as a static string (obviously this has some strong security limitations)
     configApi = {
@@ -155,7 +155,7 @@ We started out with a simple example, in this section we will go into a bit more
 
 ### Discrete versus Query based
 
-To understand how we use the `get`-_derived_ functions we should break usage into two broad categories:
+To understand how we use the `getRecords`-_derived_ functions we should break usage into two broad categories:
 
 - **Discrete ID's**
 
@@ -169,7 +169,7 @@ To understand how we use the `get`-_derived_ functions we should break usage int
 
     By using this approach we gradually build up a set of records for a given model (_products_ in this example) and each time we add to the list we cache the results so that any subsequent request is able to leverage what we already know. 
 
-    > Note: the `get` API is smart enough to update Vuex from cached results in IndexedDB for those records we already have and then in parallel request records it doesn't yet have in cache from Firebase. You may optionally decide to _warm_ the cached entries in this case too (more on that in the options section)
+    > Note: the `getRecords` API is smart enough to update Vuex from cached results in IndexedDB for those records we already have and then in parallel request records it doesn't yet have in cache from Firebase. You may optionally decide to _warm_ the cached entries in this case too (more on that in the options section)
 
 - **Query Based**
 
@@ -196,7 +196,13 @@ To understand how we use the `get`-_derived_ functions we should break usage int
 
     - `since( timestamp )`
     
-        Returns a list of records which have changed since a given timestamp. This type of query is _particularly_ useful for caching architectures because it is very common to want to only get those records that have changed since the last time your cache was in sync. This ensures you get a compact dataset that will get your cache up to date with the server.
+        Returns a list of records which have changed since a given timestamp. This will ensure that your IndexedDB is caught up to Firebase and will load all the new records into Vuex.
+
+        > **Note:** this query helper is similar to "refresh" but unlike refresh it does not ensure that all of the IndexedDB records are in Vuex; only that you have a locally cached version of all records that are in Firebase. Both are useful but be sure to understand the subtle differences.
+
+    - `refresh( timestamp )`
+
+        Immediately gets ALL records from IndexedDB and pushes them into Vuex; it then queries Firebase using a "since" query. This type of query is _particularly_ useful for caching architectures because it is very common to want to only get those records that have changed since the last time your cache was in sync. This ensures you get a compact dataset from Firebase that will get your cache up to date with the server.
 
         Because this is so commonly used and because it's usage depends on having knowledge of the _last time_ this query was run, this plugin allows you to leave off the `timestamp` property and it will manage all of this for you by storing all _since_-dates in a cookie (on a per model basis).
 
@@ -225,11 +231,11 @@ This example illustrates the use of both types of queries while also recognizing
 
 ### Watching what we Get
 
-To take full advantage of a real-time database we must be able to setup "watchers" in a way that makes sense and that is in partnership with the more request/response mechanisms of _getting_. Why is that we emphasize the importance of the _partnership_ between `get` and `watch`? Why would we do both? The short answer is that, while many records in the database are useful context for our application, in most apps the vast majority of the data is no longer "active" or "changing". This leads to two conclusions:
+To take full advantage of a real-time database we must be able to setup "watchers" in a way that makes sense and that is in partnership with the more request/response mechanisms of _getting_. Why is that we emphasize the importance of the _partnership_ between _getting_ and _watch_? Why would we do both? The short answer is that, while many records in the database are useful context for our application, in most apps the vast majority of the data is no longer "active" or "changing". This leads to two conclusions:
 
 1. **Watcher Value:** there is limited to no value in watching a record which has completed it's workflow and will no longer change
 2. **Watcher Cost:** while the cost of every watcher on the database is not that well known, it's unlikely to be zero
-3. **Getting Visibility**: before we _get_ records we typically do not have the visibility to know if records are useful to watch or not. As an example, _orders_ for a given user may be of interest for our app but just looking at an array of foreign keys we can't tell which are orders that are actively being updated versus those which have reached a final state like "complete" or "cancelled". 
+3. **Getting Visibility**: before we _get_ records we typically do not have the visibility to know if records are useful to watch or not. As an example, _orders_ for a given user may be of interest for our app but just looking at an array of foreign keys we can't tell which are orders that are actively being updated versus those which have reached a final state such as "complete" or "cancelled". 
 
 For this reason we recommend the get-first approach to watching in many/most cases. To do this we would simply do this:
 
@@ -238,7 +244,7 @@ import { getOrders } from '@/store';
 
 async onLogin() {
   const watch = (o: Order) => !['completed', 'cancelled'].includes(o.status)
-  await getOrders( where('customer', uid), { watch }) )
+  await getOrders( where('customer', uid), { watch } )
 }
 ```
 
@@ -265,41 +271,52 @@ async onLogin() {
 }
 ```
 
-Watching is very important to good use of Firebase and the ABC API provides helpful shortcuts where it can. Note that the examples you've seen here are examples of using the _options_ dictionary which the get-based API's provide. There will be more on that topic in the next section.
+Watching is an important aspect to getting good use of Firebase and the ABC API provides helpful shortcuts where it can. Note that the examples you've seen here are examples of using the _options_ dictionary which the get-based API's provide. There will be more on that topic in the next section.
 
 
-### The `get` Signature
+### The Request Signature
 
-As was evidenced in the configuration section, the `get` symbol is a higher-order function where the first call to the function is intended for configuration purposes, the second call is used by developers to actually _get_ the data. This section will explore this second call signature to understand what can be done beyond just the examples we've seen so far.
+As was evidenced in the configuration section, the `get` and `load` symbols are higher-order functions where the first call to the function is intended for configuration purposes, the second call is used by developers to actually _get_/_load_ the data. This section will explore this second explicit call signature to understand what can be done beyond just the examples we've seen so far.
 
 So, without further ado, here are the two call signatures you'll find:
 
 ```typescript
 // for discrete requests
-export type GetDiscreteIds = (...args: IPrimaryKey[], options?: IGetOptions)
+type IAbcDiscreteRequest = (pks: (IPrimaryKey<T>)[], options?: IAbcOptions)
 // for query requests
-export type GetQuery = (query: GetQuerySelector, options?: IGetOptions)
+type IAbcQueryRequest = (query: IAbcQueryHelper, options?: IAbcOptions)
 ```
 
-So while we've already seen examples of both we have not yet explored the options that both types of `get` queries allow for. First off, it's important to know that rather than just being an options hash that's passed in you must 
-use the `getOptions` symbol to facilitate this:
+In the prior section we saw the use of the `watch` option but here is the full list of options provided by `get` and `load` calls:
 
-```typescript
-import { getOptions } from 'vuex-plugin-firemodel';
+- **`watch`**
 
-await getOrders('1234', '4567, getOptions({ ... }) )
-```
+  As described in the prior section; this allows you to filter down the resulting records to a the subset that you'd like to watch.
 
-Why do we need this? In large part because the discrete query signature is a destructured array of foreign keys and it _optionally_ has the options hash at the end. Unlike some functional languages that might support this better, in JS/TS the last parameter must be made unambiguos as to whether it's another primary key or the options. By using `getOptions` we can be 100% certain which is which. Ok, now onto the more interesting stuff ...
+  ```typescript
+  const watch = (o: Order) => !['completed', 'cancelled'].includes(o.status)
+  await loadOrders( since(), { watch }) )
+  ```
 
-Here are the options you may choose from:
+- **`watchNew`**
 
-- Foo
-- Bar
-- Baz
+  While we talked about watching after a get/load event; often this achieves only part of our intended goal. We _have_ watched models which are "active" but we're _not watching_ for NEW records. This can be achieved by simply turning on this boolean switch.
+
+  ```typescript
+  await loadOrders( since(), { watchNew: true } )
+  ```
+
+  When activated this plugin will start a watcher called `new-[`_`model`_`]-watch`; if a watcher with this name already exists it will skip creating another one (as it would always be redundant). 
+
+  > **Note:** this watcher created by this option has nothing to do with the _scope_ of the query/primary keys in the first parameter slot. This means that it often will contextually make more sense with a "load" event then a "get" event (although this option is available in both APIs). 
+
 
 ## Create, Update, and Delete
 
 We discussed the ABC API and we've only mentioned _getting_ data not writing it. We might consider at some point in the future adding `add`, `update` and `remove` API's but it really isn't needed at the moment. If you want to change data in any way you just use the **Firemodel** API to make the change and it will then flow through the system in the appropriate manner. This _includes_ updating the IndexedDB once the server has confirmed the change.
 
 Hopefully this is clear but if not please dig into the next section about the Firemodel API.
+
+:: align center
+This is a test
+::

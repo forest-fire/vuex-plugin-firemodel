@@ -4,7 +4,7 @@ heroTitle: Firemodel Vuex Plugin
 heroImage: /images/logo.png
 tagline: Seemlessly connecting Firemodel and Firebase to a VueJS/Vuex application
 actionText: Get Started →
-actionLink: /getting-started
+actionLink: /getting-started/
 
 features:
 - title: Firemodel Integration
