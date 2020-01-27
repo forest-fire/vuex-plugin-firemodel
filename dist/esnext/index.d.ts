@@ -7,7 +7,8 @@ export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
 export { database } from "./store";
-export * from "./api";
+export * from "./auth/api";
+export * from "./abc/index";
 export declare let configuration: IFiremodelPluginConfig<any>;
 export declare let dbConfig: IFirebaseClientConfig;
 export declare let firemodelVuex: Store<any>;
@@ -19,7 +20,7 @@ export declare let initialState: IDictionary;
 export declare type IFiremodel<T> = {
     "@firemodel": IFiremodelState<T>;
 };
-declare const FirePlugin: <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => (store: Store<T & {
+declare const FiremodelPlugin: <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => (store: Store<T & {
     "@firemodel": IFiremodelState<T>;
 }>) => void;
-export default FirePlugin;
+export default FiremodelPlugin;

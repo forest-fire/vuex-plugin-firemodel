@@ -12,7 +12,7 @@ let since = function since<T extends Model = IDictionary>(timestamp: number) {
     // if indexedDB, get from IndexedDb
     // 
 
-    return [];
+    return Promise.resolve([]);
   }
 
 }

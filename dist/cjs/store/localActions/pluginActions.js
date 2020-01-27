@@ -85,7 +85,7 @@ exports.pluginActions = () => ({
                 state: rootState
             };
             auth.onAuthStateChanged(authChanges_1.authChanged(ctx));
-            auth.setPersistence(config.authPersistence || "session");
+            auth.setPersistence(typeof config.auth === 'object' ? config.auth.persistence || "session" : "session");
             console.log(`Auth state callback registered`, rootState["@firemodel"]);
         }
         catch (e) {

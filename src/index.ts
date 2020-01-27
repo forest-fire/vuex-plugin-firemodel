@@ -13,7 +13,7 @@ import { FireModelPluginError } from "./errors/FiremodelPluginError";
 import { addNamespace } from "./shared/addNamespace";
 import { coreServices } from "./coreServices";
 import { FirebaseAuth } from "@firebase/auth-types";
-import { FireModel, Watch, Record, List } from "firemodel";
+import { FireModel } from "firemodel";
 import { IDictionary } from "firemock";
 import copy from "fast-copy";
 
@@ -94,6 +94,7 @@ async function queueLifecycleEvents<T>(
   }
   const iterable = [
     ["onConnect", "connected"],
+    ["onAuth", "auth-event"],
     ["onLogin", "logged-in"],
     ["onLogout", "logged-out"],
     ["onDisconnect", "disconnected"],
@@ -104,7 +105,6 @@ async function queueLifecycleEvents<T>(
   for (const i of iterable) {
     const [name, event] = i;
     if (config[name as keyof IFiremodelPluginConfig<T>]) {
-      const empty = () => Promise.resolve();
       const cb: FmCallback = config[
         name as keyof IFiremodelPluginConfig<T>
       ] as any;

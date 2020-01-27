@@ -1,6 +1,8 @@
-import { Model, IPrimaryKey } from "firemodel";
+import { Model } from "firemodel";
 import { IAbcOptions, IAbcDiscreteRequest, AbcRequestCommand } from "../../../types";
 import { AbcApi } from "../AbcApi";
+import { getStore } from "../../../index";
+import get from "lodash.get";
 
 /**
  * Retrieves records from:
@@ -13,15 +15,23 @@ import { AbcApi } from "../AbcApi";
  * Results are always put into Vuex as soon as they are available.
  */
 export async function retrieveKeys<T extends Model>(command: AbcRequestCommand, ids: IAbcDiscreteRequest<T>, options: IAbcOptions<T>, context: AbcApi<T>): Promise<T[]> {
+  const records: T[] = []
+  const store = getStore();
+  const localState = get(store.state, `${context.about.modelMeta.localPrefix}`)
 
   if (!AbcApi.indexedDbConnected) {
     await AbcApi.connectIndexedDb()
   }
 
   if (context.config.useIndexedDb) {
-    const table = await AbcApi.dexieTable(context.about.model.pascal);
+    const waitFor: any[] = [];
+    ids.forEach(id => waitFor.push(
+      context.dexieRecord.get(id).then(rec => records.push(rec))
+    ))
+    await Promise.all(waitFor);
 
   }
 
+  return []
 }
 

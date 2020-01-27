@@ -23,7 +23,7 @@ export async function coreServices<T>(
     );
   }
 
-  if (config.useAuth) {
+  if (config.auth) {
     console.log("using Auth");
 
     starting.push(
@@ -31,7 +31,7 @@ export async function coreServices<T>(
     );
   }
 
-  if (config.watchRouteChanges) {
+  if (config.routeChanges) {
     starting.push(
       store.dispatch(addNamespace(FmConfigAction.watchRouteChanges))
     );

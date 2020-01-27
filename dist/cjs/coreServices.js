@@ -14,11 +14,11 @@ async function coreServices(store, config) {
         console.log("db connected");
         starting.push(store.dispatch(addNamespace_1.addNamespace(actions_1.FmConfigAction.connect), config.db));
     }
-    if (config.useAuth) {
+    if (config.auth) {
         console.log("using Auth");
         starting.push(store.dispatch(addNamespace_1.addNamespace(actions_1.FmConfigAction.firebaseAuth), config));
     }
-    if (config.watchRouteChanges) {
+    if (config.routeChanges) {
         starting.push(store.dispatch(addNamespace_1.addNamespace(actions_1.FmConfigAction.watchRouteChanges)));
     }
     await Promise.all(starting);

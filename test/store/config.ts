@@ -13,5 +13,5 @@ export const config: IFiremodelConfig<IRootState> = {
   connect: true,
   auth: true,
 
-  lifecycle
+  ...lifecycle
 }

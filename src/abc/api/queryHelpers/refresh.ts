@@ -17,9 +17,9 @@ let refresh = function refresh<T extends Model = IDictionary>(timestamp: number)
   return <T>(command: AbcRequestCommand, options: IAbcOptions<T>, context: AbcApi<T>): Promise<T[]> => {
     // if indexedDB, get all from IndexedDb and load into Vuex
     // if NOT then error (as the utility is not there)
-    if(context.config.useIndexedDb) {
+    if (context.config.useIndexedDb) {
 
-      
+
 
     } else {
       throw new AbcError(`You have tried to ${command} the ${context.about.model.pascal} model with the "refresh" query helper but this has no real utility because this model has been configured to NOT use IndexedDB.`, `not-allowed`);
@@ -29,7 +29,7 @@ let refresh = function refresh<T extends Model = IDictionary>(timestamp: number)
 
     // request from Firebase
 
-    return [];
+    return Promise.resolve([]);
   }
 
 }
