@@ -5,7 +5,7 @@ import { AbcApi } from '../src/abc/api/AbcApi';
 import { fakeIndexedDb } from './helpers/fakeIndexedDb';
 import { Company } from './models/Company';
 
-describe.only("ABC API Basics => ", () => {
+describe("ABC API Basics => ", () => {
   beforeEach(async () => {
     await fakeIndexedDb();
     AbcApi.clear();
@@ -72,7 +72,7 @@ describe.only("ABC API Basics => ", () => {
   })
 
 
-  it('Afer connecting to IndexedDB, can access dexieList property and gain access to the Dexie List API', async () => {
+  it('After connecting to IndexedDB, can access dexieList property and gain access to the Dexie List API', async () => {
     const peeps = new AbcApi(Person);
     await AbcApi.connectIndexedDb();
     expect(peeps.dexieList).to.exist;
@@ -80,7 +80,7 @@ describe.only("ABC API Basics => ", () => {
     expect(peeps.dexieList.since).to.be.a('function')
   })
 
-  it('Afer connecting to IndexedDB, can access dexieRecord property and gain access to the Dexie Record API', async () => {
+  it('After connecting to IndexedDB, can access dexieRecord property and gain access to the Dexie Record API', async () => {
     const peeps = new AbcApi(Person);
     await AbcApi.connectIndexedDb();
     expect(peeps.dexieRecord).to.exist;

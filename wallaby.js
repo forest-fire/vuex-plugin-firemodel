@@ -10,7 +10,7 @@ module.exports = function (w) {
       { pattern: 'test/testing/test-console.ts', instrument: false },
       { pattern: 'test/data/*', instrument: false },
       { pattern: 'test/models/*', instrument: false },
-      { pattern: 'test/store/*', instrument: false },
+      { pattern: 'test/store/**/*.ts', instrument: false },
       { pattern: 'test/helpers/*', instrument: false },
     ],
 

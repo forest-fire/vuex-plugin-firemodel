@@ -1,5 +1,6 @@
 import { Model } from 'firemodel';
-import { IAbcPostWatcher } from '../../types';
+import { IAbcPostWatcher, IDiscreteLocalResults, IDiscreteServerResults } from '../../types';
+import { AbcApi } from './AbcApi';
 
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
@@ -8,7 +9,9 @@ import { IAbcPostWatcher } from '../../types';
  * watch certain elements of the returned resultset.
  */
 export class AbcResult<T extends Model> {
-  
+
+  constructor(private _context: AbcApi<T>, private _results: { local: IDiscreteLocalResults<T>, server?: IDiscreteServerResults<T> }) { }
+
   get results(): T[] {
     return [];
   }
@@ -29,7 +32,7 @@ export class AbcResult<T extends Model> {
    * @param fn the callback function to call
    */
   watch(fn: IAbcPostWatcher<T>) {
-    const watcherIds =  fn(this.results); 
+    const watcherIds = fn(this.results);
 
   }
 }

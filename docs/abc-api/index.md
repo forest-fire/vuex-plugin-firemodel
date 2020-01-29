@@ -310,6 +310,12 @@ In the prior section we saw the use of the `watch` option but here is the full l
 
   > **Note:** this watcher created by this option has nothing to do with the _scope_ of the query/primary keys in the first parameter slot. This means that it often will contextually make more sense with a "load" event then a "get" event (although this option is available in both APIs). 
 
+- **`force`**
+
+  If force is set to `true` then the get/load request always asks Firebase regardless if the records exist in Vuex and/or IndexedDB. The `get` command will still returns it's promise when  
+  
+  **Note:** this overloads all "strategy" settings.
+
 
 ## Create, Update, and Delete
 

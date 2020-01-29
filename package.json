@@ -39,10 +39,11 @@
     "abstracted-client": "^0.36.1",
     "common-types": "^1.12.18",
     "fast-copy": "^2.0.4",
-    "firemodel": "^0.36.11",
+    "firemodel": "^0.36.12",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "stacktrace-js": "^2.0.2",
+    "typed-conversions": "^0.10.1",
     "vuex": "^3.1.2"
   },
   "devDependencies": {
@@ -65,6 +66,7 @@
     "ts-node": "^8.5.4",
     "tslint": "^5.20.1",
     "typescript": "^3.7.3",
+    "vue": "^2.6.11",
     "vuepress": "^1.2.0",
     "vuepress-plugin-container": "^2.1.2"
   }
