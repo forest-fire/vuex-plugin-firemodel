@@ -115,10 +115,10 @@ export const pluginActions = <T>() =>
         };
 
         auth.onAuthStateChanged(authChanged(ctx));
-        auth.setPersistence(typeof config.auth === 'object' ? config.auth.persistence || "session" : "session");
-        console.log(
-          `Auth state callback registered`,
-          (rootState as any)["@firemodel"]
+        auth.setPersistence(
+          typeof config.auth === "object"
+            ? config.auth.persistence || "session"
+            : "session"
         );
       } catch (e) {
         console.log("Problem hooking into onAuthStateChanged: ", e.message);

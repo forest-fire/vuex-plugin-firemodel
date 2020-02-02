@@ -24,8 +24,6 @@ export async function coreServices<T>(
   }
 
   if (config.auth) {
-    console.log("using Auth");
-
     starting.push(
       store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config)
     );

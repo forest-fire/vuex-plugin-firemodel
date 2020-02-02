@@ -68,7 +68,11 @@ export const authChanged = <T>(context: IFmAuthenticatatedContext<T>) => async (
     );
     console.log("finished onLogout queue");
 
-    if (configuration.auth && typeof configuration.auth === 'object' && configuration.auth.anonymous) {
+    if (
+      configuration.auth &&
+      typeof configuration.auth === "object" &&
+      configuration.auth.anonymous
+    ) {
       console.info("logging in as a anonymous user (momentarily)");
       // async but we don't need to wait for it
       context.auth.signInAnonymously();
@@ -86,27 +90,27 @@ export const authChanged = <T>(context: IFmAuthenticatatedContext<T>) => async (
 function extractUserInfo(input: User | null): ICurrentUser {
   return input
     ? {
-      uid: input.uid,
-      isAnonymous: input.isAnonymous,
-      isLoggedIn: true,
-      displayName: input.displayName,
-      email: input.email,
-      emailVerified: input.emailVerified,
-      phoneNumber: input.phoneNumber,
-      photoUrl: input.photoURL,
-      refreshToken: input.refreshToken,
-      lastSignIn: input.metadata.lastSignInTime,
-      createdAt: input.metadata.creationTime
-    }
+        uid: input.uid,
+        isAnonymous: input.isAnonymous,
+        isLoggedIn: true,
+        displayName: input.displayName,
+        email: input.email,
+        emailVerified: input.emailVerified,
+        phoneNumber: input.phoneNumber,
+        photoUrl: input.photoURL,
+        refreshToken: input.refreshToken,
+        lastSignIn: input.metadata.lastSignInTime,
+        createdAt: input.metadata.creationTime
+      }
     : {
-      uid: "",
-      isAnonymous: false,
-      isLoggedIn: false,
-      displayName: null,
-      email: null,
-      emailVerified: false,
-      phoneNumber: null,
-      photoUrl: null,
-      refreshToken: ""
-    };
+        uid: "",
+        isAnonymous: false,
+        isLoggedIn: false,
+        displayName: null,
+        email: null,
+        emailVerified: false,
+        phoneNumber: null,
+        photoUrl: null,
+        refreshToken: ""
+      };
 }

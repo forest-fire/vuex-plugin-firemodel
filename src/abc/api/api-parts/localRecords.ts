@@ -1,4 +1,4 @@
-import { Model, Record } from "firemodel";
+import { Model, Record, IPrimaryKey } from "firemodel";
 import {
   IAbcOptions,
   IAbcDiscreteRequest,
@@ -19,15 +19,18 @@ import get from "lodash.get";
  */
 export async function localRecords<T extends Model>(
   command: AbcRequestCommand,
-  ids: IAbcDiscreteRequest<T>,
+  requestPks: IPrimaryKey<T>[],
   options: IAbcOptions<T>,
   context: AbcApi<T>
-): Promise<IDiscreteLocalResults<T>> {
+): Promise<Omit<IDiscreteLocalResults<T>, "overallCachePerformance">> {
   const idxRecords: T[] = [];
-  const vuexRecords: T[] = [];
   const store = getStore();
 
-  const localState = get(store.state, `${context.about.modelMeta.localPrefix}`);
+  const vuexRecords: T[] = get(
+    store.state,
+    context.about.vuex.fullPath.replace(/\//g, "."),
+    []
+  );
 
   if (!AbcApi.indexedDbConnected) {
     await AbcApi.connectIndexedDb();
@@ -35,7 +38,7 @@ export async function localRecords<T extends Model>(
 
   if (context.config.useIndexedDb) {
     const waitFor: any[] = [];
-    ids.forEach(id =>
+    requestPks.forEach(id =>
       waitFor.push(
         context.dexieRecord.get(id).then(rec => {
           if (rec) idxRecords.push(rec);
@@ -44,32 +47,32 @@ export async function localRecords<T extends Model>(
     );
     await Promise.all(waitFor);
   }
-
-  const model = context.modelConstructor;
-  const vuexIds = vuexRecords.map(v => Record.create(model, v).compositeKeyRef);
-  const idxIds = idxRecords.map(i => Record.create(model, i).compositeKeyRef);
+  const model = context.model.constructor;
+  const vuexPks = vuexRecords.map(v => Record.compositeKeyRef(model, v));
+  const idxPks = idxRecords.map(i => Record.compositeKeyRef(model, i));
 
   const localIds = Array.from(
-    new Set<string>([...vuexIds, ...idxIds])
+    new Set<string>([...vuexPks, ...idxPks])
   );
-  const missingIds = ids
+
+  const missingIds = requestPks
     .map(pk =>
       typeof pk === "string" ? pk : Record.create(model, pk).compositeKeyRef
     )
     .filter(pk => !localIds.includes(pk));
 
   const modulePostfix = context.about.modelMeta.localPostfix as string;
-  const vuexModuleName = (context.config.moduleName ||
-    context.about.modelMeta.localModelName) as string;
   const moduleIsList = context.about.config.isList as boolean;
+  const vuexModuleName = (context.config.moduleName || moduleIsList
+    ? context.about.model.plural
+    : context.about.modelMeta.localModelName) as string;
 
   return {
     cacheHits: localIds.length,
     cacheMisses: missingIds.length,
-    overallCachePerformance: context.cachePerformance,
-    foundInIndexedDb: idxIds,
-    foundInVuex: vuexIds,
-    foundExclusivelyInIndexedDb: idxIds.filter(i => !vuexIds.includes(i)),
+    foundInIndexedDb: idxPks,
+    foundInVuex: vuexPks,
+    foundExclusivelyInIndexedDb: idxPks.filter(i => !vuexPks.includes(i)),
     allFoundLocally: missingIds.length === 0 ? true : false,
     records: [...idxRecords, ...vuexRecords],
     missing: missingIds,

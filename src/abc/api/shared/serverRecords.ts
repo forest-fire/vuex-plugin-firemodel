@@ -9,9 +9,9 @@ export async function serverRecords<T extends Model>(
   pks: pk[],
   allPks: pk[]
 ): Promise<IDiscreteServerResults<T>> {
-  const records = (await List.ids(context.modelConstructor, ...pks)).data;
-  const recordIds = records.map(
-    i => Record.create(context.modelConstructor, i).compositeKeyRef
+  const records = (await List.ids(context.model.constructor, ...pks)).data;
+  const recordIds = records.map(i =>
+    Record.compositeKeyRef(context.model.constructor, i)
   );
   const missing = pks.filter(i => !recordIds.includes(i));
 

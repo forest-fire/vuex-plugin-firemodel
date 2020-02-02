@@ -1,20 +1,19 @@
 import { Module, GetterTree } from "vuex";
 import { IRootState } from "../index";
 import { firemodelMutations } from "../../../src";
-import { Company } from "../../models/Company"
+import { Company } from "../../models/Company";
 
 export type ICompaniesState = {
-  all: Company[]
+  all: Company[];
 };
 
 export const state: ICompaniesState = {
   all: []
 };
 
-export const getters: GetterTree<ICompaniesState, IRootState> = {
-};
+export const getters: GetterTree<ICompaniesState, IRootState> = {};
 
-const userProfileModule: Module<ICompaniesState, IRootState> = {
+const companiesModule: Module<ICompaniesState, IRootState> = {
   state,
   mutations: firemodelMutations(),
   getters,

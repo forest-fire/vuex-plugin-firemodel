@@ -3,6 +3,7 @@ import { Model, IPrimaryKey, fk, ICompositeKey } from "firemodel";
 import { IDictionary } from "firemock";
 import { AbcApi } from "../abc/api/AbcApi";
 import { DB } from "abstracted-client";
+import { AbcResult } from "../abc";
 
 export interface IAbcApiConfig<T extends Model> {
   /**
@@ -69,33 +70,32 @@ export interface IAbcPostWatcher<T extends Model> {
 }
 
 /** An **ABC** request for discrete primary keys */
-export type IAbcDiscreteRequest<T extends Model> = IPrimaryKey<T>[];
+export interface IAbcDiscreteRequest<T extends Model> extends IAbcRequest<T> {
+  (pks: IPrimaryKey<T>[], options?: IAbcOptions<T>): Promise<AbcResult<T>>;
+}
+
+export type IAbcParam<T> = IPrimaryKey<T>[] | IAbcQueryHelper<T>;
 
 /** An **ABC** request for records using a Query Helper */
-export interface IAbcQueryRequest<T extends Model> {
-  (query: IAbcQueryHelper<T>, options?: IAbcOptions<T>): IAbcConfiguredQuery<T>;
+export interface IAbcQueryRequest<T extends Model> extends IAbcRequest<T> {
+  (query: IAbcQueryHelper<T>, options?: IAbcOptions<T>): Promise<AbcResult<T>>;
+}
+
+/**
+ * Any valid ABC request including both Discrete and Query based requests
+ */
+export interface IAbcRequest<T> {
+  (param: IAbcParam<T>, options?: IAbcOptions<T>): Promise<AbcResult<T>>;
 }
 
 export function isDiscreteRequest<T>(
-  request: IAbcDiscreteRequest<T> | IAbcConfiguredQuery<T>
-): request is IAbcDiscreteRequest<T> {
+  request: IAbcParam<T>
+): request is IPrimaryKey<T>[] {
   return typeof request !== "function";
 }
 
 /** The specific **ABC** request command */
 export type AbcRequestCommand = "get" | "load";
-
-/**
- * once the consumer has configured a helper query it must still be passed
- * additional context by the `AbcApi` to help complete the task.
- */
-export interface IAbcConfiguredQuery<T> {
-  (
-    command: AbcRequestCommand,
-    options: IAbcOptions<T>,
-    context: AbcApi<T>
-  ): Promise<T[]>;
-}
 
 /**
  * Results from an ABC get/load which were retrieved from
@@ -140,6 +140,11 @@ export interface IDiscreteLocalResults<T, K = IDictionary>
    * found in the local caches.
    */
   missing: string[];
+}
+
+export interface IAbcFirebaseUpdate<T> {
+  local: IDiscreteLocalResults<T>;
+  server: IDiscreteServerResults<T>;
 }
 
 export interface ICachePerformance {
@@ -209,7 +214,7 @@ export enum AbcMutation {
    * array of records in the case of a _list_ and a hash replacement
    * in the case of singular _record_ based module.
    */
-  ABC_LOCAL_CACHE_UPDATE = "ABC_LOCAL_CACHE_UPDATE",
+  ABC_VUEX_UPDATE_FROM_IDX = "ABC_VUEX_UPDATE_FROM_IDX",
   /**
    * Attempt to get additional information from IndexedDB but currently
    * Vuex has all of the records that IndexedDB has
@@ -230,11 +235,12 @@ export enum AbcMutation {
   /**
    * Vuex was updated from the server results
    */
-  ABC_SERVER_UPDATE = "ABC_SERVER_UPDATE",
+  ABC_FIREBASE_TO_VUEX_UPDATE = "ABC_FIREBASE_TO_VUEX_UPDATE",
   /**
    * The IndexedDB was updated from Firebase
    */
-  ABC_INDEXED_UPDATED = "ABC_INDEXED_UPDATED"
+  ABC_FIREBASE_REFRESH_INDEXED_DB = "ABC_FIREBASE_REFRESH_INDEXED_DB",
+  ABC_INDEXED_DB_REFRESH_FAILED = "ABC_INDEXED_DB_REFRESH_FAILED"
 }
 
 export enum AbcDataSource {
