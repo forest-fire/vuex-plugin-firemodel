@@ -13,7 +13,8 @@ import {
   AbcMutation,
   IDiscreteLocalResults,
   IAbcParam,
-  AbcRequestCommand
+  AbcRequestCommand,
+  IDiscreteResult
 } from "../../types/abc";
 import { getDefaultApiConfig } from "../configuration/configApi";
 import { capitalize } from "../../shared";
@@ -21,7 +22,7 @@ import { IDictionary } from "firemock";
 import { IFmModelConstructor } from "../../types";
 import { AbcError } from "../../errors";
 import { localRecords } from "./api-parts/localRecords";
-import { getStore } from "../../../src/index";
+import { getStore, IAbcQueryDefinition } from "../../../src/index";
 import { AbcResult } from "./AbcResult";
 import { serverRecords } from "./shared/serverRecords";
 import { Product } from "../../../test/models/Product";
@@ -191,30 +192,43 @@ export class AbcApi<T extends Model> {
       /** the ABC API's configuration */
       config: this._config,
       dbOffset: this._dbOffset,
-      dynamicPathComponents: this._dynamicPathComponents,
+      dynamicPathComponents: this._dynamicPathComponents
+    };
+  }
+
+  /**
+   * Information about the Vuex location
+   */
+  get vuex() {
+    return {
       /**
-       * Information about the Vuex location
+       * Indicates whether this module has been configured as a _list_
+       * or a _record_.
        */
-      vuex: {
-        /**
-         * Path to the root of the module
-         */
-        modulePath: this.config.isList
-          ? this.model.plural
-          : this.model.singular,
-        /**
-         * An optional offset to the module to store record(s)
-         */
-        modulePostfix: this.config.isList
-          ? this._modelMeta.localPostfix || "all"
-          : "",
-        /**
-         * The full path to where the record(s) reside
-         */
-        fullPath: this.config.isList
-          ? pathJoin(this.model.plural, this._modelMeta.localPostfix || "all")
-          : this.model.singular
-      }
+      isList: this.config.isList,
+      /**
+       * Path to the root of the module
+       */
+      modulePath: this.config.isList ? this.model.plural : this.model.singular,
+      /**
+       * The name of the Vuex module who's state
+       * is being queried
+       */
+      moduleName: (this.config.moduleName || this.config.isList
+        ? this.about.model.plural
+        : this.about.modelMeta.localModelName) as string,
+      /**
+       * An optional offset to the module to store record(s)
+       */
+      modulePostfix: this.config.isList
+        ? this._modelMeta.localPostfix || "all"
+        : "",
+      /**
+       * The full path to where the record(s) reside
+       */
+      fullPath: this.config.isList
+        ? pathJoin(this.model.plural, this._modelMeta.localPostfix || "all")
+        : this.model.singular
     };
   }
 
@@ -245,8 +259,7 @@ export class AbcApi<T extends Model> {
     if (isDiscreteRequest(request)) {
       return this.getDiscrete("get", request, options);
     } else {
-      // return request("get", options, this);
-      return new AbcResult(this, { local: {} } as any);
+      return request("get", this);
     }
   }
 
@@ -284,30 +297,34 @@ export class AbcApi<T extends Model> {
       );
     }
 
+    const localResult: IDiscreteResult<T> = {
+      type: "discrete",
+      local,
+      vuex: this.vuex
+    };
+
     if (local.cacheHits === 0) {
       // No results locally
-      store.commit(`${local.vuexModuleName}/${AbcMutation.ABC_NO_CACHE}`, {
+      store.commit(`${this.vuex.moduleName}/${AbcMutation.ABC_NO_CACHE}`, {
         local
       });
     } else if (this.config.useIndexedDb) {
       // Using IndexedDB
       if (local.foundExclusivelyInIndexedDb) {
         store.commit(
-          `${local.vuexModuleName}/${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`,
-          local
+          `${this.vuex.moduleName}/${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`,
+          localResult
         );
       } else {
         store.commit(
-          `${local.vuexModuleName}/${AbcMutation.ABC_INDEXED_SKIPPED}`,
-          local
+          `${this.vuex.moduleName}/${AbcMutation.ABC_INDEXED_SKIPPED}`,
+          localResult
         );
       }
     }
 
     if (local.allFoundLocally) {
-      return new AbcResult(this, {
-        local
-      });
+      return new AbcResult(this, localResult);
     }
 
     const server = await serverRecords(
@@ -317,14 +334,18 @@ export class AbcApi<T extends Model> {
       requestIds
     );
 
+    const serverResults: IDiscreteResult<T> = {
+      type: "discrete",
+      vuex: this.vuex,
+      local,
+      server
+    };
+
     // Update Vuex with server results
     if (command === "get") {
       store.commit(
-        `${local.vuexModuleName}/${AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`,
-        {
-          local,
-          server
-        }
+        `${this.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`,
+        serverResults
       );
     }
 
@@ -343,18 +364,23 @@ export class AbcApi<T extends Model> {
         });
         await Promise.all(waitFor);
         store.commit(
-          `${local.vuexModuleName}/${AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`,
-          server
+          `${this.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`,
+          serverResults
         );
       } catch (e) {
         store.commit(
-          `${local.vuexModuleName}/${AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED}`,
-          { ...server, errorMessage: e.message, errorStack: e.stack }
+          `${this.vuex.moduleName}/${AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED}`,
+          { ...serverResults, errorMessage: e.message, errorStack: e.stack }
         );
       }
     }
 
-    return new AbcResult(this, { local, server });
+    return new AbcResult(this, {
+      type: "discrete",
+      vuex: this.vuex,
+      local,
+      server
+    });
   }
 
   /**
@@ -436,7 +462,7 @@ export class AbcApi<T extends Model> {
     if (isDiscreteRequest(request)) {
       return this.getDiscrete("load", request, options);
     } else {
-      return request("load", options, this);
+      return request("get", this);
     }
   }
 

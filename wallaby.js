@@ -7,7 +7,7 @@ module.exports = function(w) {
       "scripts/**/*.ts",
       { pattern: "env.yml", instrument: false },
       { pattern: "test/testing/test-console.ts", instrument: false },
-      { pattern: "test/data/*", instrument: true },
+      { pattern: "test/data/**/*.ts", instrument: true },
       { pattern: "test/models/*", instrument: true },
       { pattern: "test/store/**/*.ts", instrument: true },
       { pattern: "test/helpers/*", instrument: true }
@@ -29,22 +29,22 @@ module.exports = function(w) {
         process.env.AWS_STAGE = "test";
       }
 
-      if (!console._restored) {
-        console.log("console.log stream returned to normal for test purposes");
-        console.log = function() {
-          return require("console").Console.prototype.log.apply(
-            this,
-            arguments
-          );
-        };
-        console.error = function() {
-          return require("console").Console.prototype.error.apply(
-            this,
-            arguments
-          );
-        };
-        console._restored = true;
-      }
+      // if (!console._restored) {
+      //   console.log("console.log stream returned to normal for test purposes");
+      //   console.log = function() {
+      //     return require("console").Console.prototype.log.apply(
+      //       this,
+      //       arguments
+      //     );
+      //   };
+      //   console.error = function() {
+      //     return require("console").Console.prototype.error.apply(
+      //       this,
+      //       arguments
+      //     );
+      //   };
+      //   console._restored = true;
+      // }
     },
 
     testFramework: "mocha",

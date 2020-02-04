@@ -28,7 +28,7 @@ export async function localRecords<T extends Model>(
 
   const vuexRecords: T[] = get(
     store.state,
-    context.about.vuex.fullPath.replace(/\//g, "."),
+    context.vuex.fullPath.replace(/\//g, "."),
     []
   );
 
@@ -77,9 +77,6 @@ export async function localRecords<T extends Model>(
     records: [...idxRecords, ...vuexRecords],
     missing: missingIds,
     apiCommand: command,
-    modelConfig: context.config,
-    moduleIsList,
-    modulePostfix,
-    vuexModuleName
+    modelConfig: context.config
   };
 }

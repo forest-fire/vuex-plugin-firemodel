@@ -2,7 +2,11 @@ import { Model } from "firemodel";
 import {
   IAbcPostWatcher,
   IDiscreteLocalResults,
-  IDiscreteServerResults
+  IDiscreteServerResults,
+  IQueryServerResults,
+  IQueryLocalResults,
+  QueryType,
+  IAbcResult
 } from "../../types";
 import { AbcApi } from "./AbcApi";
 
@@ -13,13 +17,7 @@ import { AbcApi } from "./AbcApi";
  * watch certain elements of the returned resultset.
  */
 export class AbcResult<T extends Model> {
-  constructor(
-    private _context: AbcApi<T>,
-    private _results: {
-      local: IDiscreteLocalResults<T>;
-      server?: IDiscreteServerResults<T>;
-    }
-  ) {}
+  constructor(private _context: AbcApi<T>, private _results: IAbcResult<T>) {}
 
   /**
    * All of the updated records in Vuex that originated from either IndexedDB or Firebase
@@ -32,7 +30,7 @@ export class AbcResult<T extends Model> {
    * All of the updated records in Vuex that originated from IndexedDB
    */
   get localRecords(): T[] {
-    return this._results.local.records;
+    return this._results.local.records || [];
   }
 
   /**

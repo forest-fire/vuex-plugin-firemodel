@@ -39,6 +39,7 @@
     "abstracted-client": "^0.36.1",
     "common-types": "^1.12.18",
     "fast-copy": "^2.0.4",
+    "fast-equals": "^2.0.0",
     "firemodel": "^0.36.19",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",

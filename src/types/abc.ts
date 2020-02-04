@@ -4,6 +4,7 @@ import { IDictionary } from "firemock";
 import { AbcApi } from "../abc/api/AbcApi";
 import { DB } from "abstracted-client";
 import { AbcResult } from "../abc";
+import { epochWithMilliseconds } from "common-types";
 
 export interface IAbcApiConfig<T extends Model> {
   /**
@@ -47,7 +48,7 @@ export interface IAbcApiConfig<T extends Model> {
  * `all`, `since`, and `where`
  */
 export interface IAbcQueryHelper<T> {
-  (...args: any[]): Promise<any>;
+  (defn: IAbcAllQueryDefinition<T>): IAbcQueryRequest<T>;
   isQueryHelper: true;
 }
 
@@ -74,11 +75,11 @@ export interface IAbcDiscreteRequest<T extends Model> extends IAbcRequest<T> {
   (pks: IPrimaryKey<T>[], options?: IAbcOptions<T>): Promise<AbcResult<T>>;
 }
 
-export type IAbcParam<T> = IPrimaryKey<T>[] | IAbcQueryHelper<T>;
+export type IAbcParam<T> = IPrimaryKey<T>[] | IAbcQueryRequest<T>;
 
 /** An **ABC** request for records using a Query Helper */
-export interface IAbcQueryRequest<T extends Model> extends IAbcRequest<T> {
-  (query: IAbcQueryHelper<T>, options?: IAbcOptions<T>): Promise<AbcResult<T>>;
+export interface IAbcQueryRequest<T extends Model> {
+  (command: AbcRequestCommand, ctx: AbcApi<T>): Promise<AbcResult<T>>;
 }
 
 /**
@@ -97,6 +98,29 @@ export function isDiscreteRequest<T>(
 /** The specific **ABC** request command */
 export type AbcRequestCommand = "get" | "load";
 
+export interface IQueryLocalResults<T, K = IDictionary> {
+  records: T[];
+  localPks: string[];
+  vuexPks: string[];
+  indexedDbPks: string[];
+}
+
+/**
+ * Results from a Query request to Firebase server
+ */
+export interface IQueryServerResults<T, K = IDictionary> {
+  records: T[];
+  /** all of the primary keys which were received by the Firebase query */
+  serverPks: string[];
+  /** the primary keys which were found by Firebase but not known by local state */
+  newPks: string[];
+  /** the primary keys which had been correctly represented in local/cache state */
+  cacheHits: string[];
+  /** the primary keys which had stale data in local state */
+  stalePks: string[];
+  overallCachePerformance: ICachePerformance;
+}
+
 /**
  * Results from an ABC get/load which were retrieved from
  * the combined knowledge of Vuex and IndexedDB. The records
@@ -104,8 +128,7 @@ export type AbcRequestCommand = "get" | "load";
  * is ever a conflict.
  */
 export interface IDiscreteLocalResults<T, K = IDictionary>
-  extends IAbcVuexMeta<K>,
-    IAbcResultsMeta<T> {
+  extends IAbcResultsMeta<T> {
   /** How many of the records _were_ found locally */
   cacheHits: number;
   /**
@@ -142,11 +165,6 @@ export interface IDiscreteLocalResults<T, K = IDictionary>
   missing: string[];
 }
 
-export interface IAbcFirebaseUpdate<T> {
-  local: IDiscreteLocalResults<T>;
-  server: IDiscreteServerResults<T>;
-}
-
 export interface ICachePerformance {
   hits: number;
   misses: number;
@@ -154,8 +172,7 @@ export interface ICachePerformance {
 }
 
 export interface IDiscreteServerResults<T extends Model, K = IDictionary>
-  extends IAbcVuexMeta<K>,
-    IAbcResultsMeta<T> {
+  extends IAbcResultsMeta<T> {
   /**
    * The primary keys being requested from the server
    */
@@ -187,24 +204,6 @@ export interface IAbcResultsMeta<T> {
    * with the options included in the API call
    */
   modelConfig: IAbcApiConfig<T>;
-}
-
-export interface IAbcVuexMeta<K> {
-  /**
-   * The name of the Vuex module who's state
-   * is being queried
-   */
-  vuexModuleName: string;
-  /**
-   * Flag to indicate whether the given Vuex module has a
-   * _list_ of records or just a singular _record_.
-   */
-  moduleIsList: boolean;
-  /**
-   * Typically used only for _list_-based modules; it represents the
-   * property name which the list is hung off of and defaults to 'all'.
-   */
-  modulePostfix: keyof K & string;
 }
 
 export enum AbcMutation {
@@ -240,6 +239,18 @@ export enum AbcMutation {
    * The IndexedDB was updated from Firebase
    */
   ABC_FIREBASE_REFRESH_INDEXED_DB = "ABC_FIREBASE_REFRESH_INDEXED_DB",
+  /**
+   * A Query was run against IndexedDB and it's results will be added/updated
+   * into the current Vuex state
+   */
+  ABC_LOCAL_QUERY_TO_VUEX = "ABC_LOCAL_QUERY_TO_VUEX",
+  /**
+   * A Query was run against IndexedDB but no results were returned
+   */
+  ABC_LOCAL_QUERY_EMPTY = "ABC_LOCAL_QUERY_EMPTY",
+  /**
+   * An attempt to refresh the IndexedDB failed
+   */
   ABC_INDEXED_DB_REFRESH_FAILED = "ABC_INDEXED_DB_REFRESH_FAILED"
 }
 
@@ -248,3 +259,81 @@ export enum AbcDataSource {
   indexedDb = "indexedDb",
   firebase = "firebase"
 }
+
+export enum QueryType {
+  all = "all",
+  where = "where",
+  since = "since"
+}
+
+export type IAbcQueryDefinition<T> = (
+  | IAbcAllQueryDefinition<T>
+  | IAbcWhereQueryDefinition<T>
+  | IAbcSinceQueryDefinition<T>
+) & { queryType: keyof typeof QueryType; isQueryHelper: true };
+
+export interface IAbcAllQueryDefinition<T> extends IAbcQueryBaseDefinition {
+  queryType: QueryType.all;
+}
+
+export interface IAbcWhereQueryBase<T> extends IAbcQueryBaseDefinition {
+  queryType: QueryType.where;
+  property: keyof T & string;
+  equals?: any;
+  greaterThan?: any;
+  lessThan?: any;
+}
+
+/**
+ * Allows definition of a _property_ on the model and an operation
+ * to use for comparison/filtering purposes
+ */
+export type IAbcWhereQueryDefinition<T> = (
+  | { equals: any; greaterThan: undefined; lessThan: undefined }
+  | { equals: undefined; greaterThan: any; lessThan: undefined }
+  | { equals: undefined; greaterThan: undefined; lessThan: any }
+) &
+  IAbcWhereQueryBase<T>;
+
+export interface IAbcSinceQueryDefinition<T> extends IAbcQueryBaseDefinition {
+  queryType: QueryType.since;
+  /**
+   * Look for records which have been modified since the given timestamp;
+   * if left _undefined_ the value will be
+   */
+  timestamp?: epochWithMilliseconds;
+}
+
+export interface IAbcQueryBaseDefinition {
+  queryType?: string;
+  limit?: number;
+  offset?: number;
+}
+
+/**
+ * A discrete request's result (`IDiscreteLocalResults`) which definitely has
+ * a "local" response and optionally also includes a "server" response. Also
+ * includes meta for Vuex.
+ */
+export interface IDiscreteResult<T, K = any> {
+  type: "discrete";
+  vuex: AbcApi<T>["vuex"];
+  local: IDiscreteLocalResults<T, K>;
+  server?: IDiscreteServerResults<T, K>;
+}
+
+/**
+ * A query result (`IQueryLocalResults`) which definitely has a "local" response
+ * and optionally also includes a "server" response. Also includes meta for Vuex.
+ */
+export interface IQueryResult<T, K = any> {
+  type: "query";
+  vuex: AbcApi<T>["vuex"];
+  local: IQueryLocalResults<T, K>;
+  server?: IQueryServerResults<T, K>;
+}
+
+/**
+ * The results from either a Discrete or Query-based request.
+ */
+export type IAbcResult<T, K = any> = IDiscreteResult<T, K> | IQueryResult<T, K>;

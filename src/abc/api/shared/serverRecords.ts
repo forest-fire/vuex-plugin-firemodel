@@ -15,11 +15,6 @@ export async function serverRecords<T extends Model>(
   );
   const missing = pks.filter(i => !recordIds.includes(i));
 
-  const modulePostfix = context.about.modelMeta.localPostfix as string;
-  const vuexModuleName = (context.config.moduleName ||
-    context.about.modelMeta.localModelName) as string;
-  const moduleIsList = context.about.config.isList as boolean;
-
   return {
     pks,
     allPks,
@@ -28,10 +23,6 @@ export async function serverRecords<T extends Model>(
 
     apiCommand,
     overallCachePerformance: context.cachePerformance,
-
-    vuexModuleName,
-    moduleIsList,
-    modulePostfix,
 
     modelConfig: context.config
   };
