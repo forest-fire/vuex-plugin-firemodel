@@ -297,25 +297,30 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       "overall records should have the two records retrieved from server"
     );
 
+    expect(eventCounts[`products/ABC_LOCAL_QUERY_TO_VUEX`]).to.equal(1);
+    expect(eventCounts["products/ABC_FIREBASE_TO_VUEX_UPDATE"]).to.equal(1);
+    // expect(eventCounts["products/ABC_PRUNE_STALE_VUEX_RECORDS"]).to.equal(
+    //   1,
+    //   "Pruning of stale Vuex records has happened"
+    // );
+    // expect(eventCounts["products/ABC_PRUNE_STALE_IDX_RECORDS"]).to.equal(
+    //   1,
+    //   "Pruning of stale IDX records has happened"
+    // );
+
     // ApiResult.records have only products priced at 452
     results.records.forEach(r => expect(r.price).to.equal(452));
     // Same with the Vuex state
     store.state.products.all.forEach((r: Product) =>
       expect(r.price).to.equal(452)
     );
+
+    console.log(
+      events.find(i => i[0] === "products/ABC_PRUNE_STALE_VUEX_RECORDS")
+    );
+
     // Vuex should also ONLY have those records which came back from Server
     expect(store.state.products.all).to.have.lengthOf(2);
-
-    expect(eventCounts[`products/ABC_LOCAL_QUERY_TO_VUEX`]).to.equal(1);
-    expect(eventCounts["products/ABC_PRUNE_STALE_VUEX_RECORDS"]).to.equal(1);
-    expect(eventCounts["products/ABC_FIREBASE_TO_VUEX_UPDATE"]).to.equal(
-      1,
-      "Pruning of stale Vuex records has happened"
-    );
-    // expect(eventCounts["products/ABC_PRUNE_STALE_IDX_RECORDS"]).to.equal(
-    //   1,
-    //   "Pruning of stale IDX records has happened"
-    // );
 
     const localMutation = events.find(
       i => i[0] === "products/ABC_LOCAL_QUERY_TO_VUEX"

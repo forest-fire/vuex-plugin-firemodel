@@ -108,6 +108,10 @@ export interface IQueryServerResults<T, K = IDictionary> {
   cacheHits: string[];
   /** the primary keys which had stale data in local state */
   stalePks: string[];
+  /** pks removed from IndexedDB */
+  removeFromIdx: string[];
+  /** pks removed from Vuex */
+  removeFromVuex: string[];
   overallCachePerformance: ICachePerformance;
 }
 
