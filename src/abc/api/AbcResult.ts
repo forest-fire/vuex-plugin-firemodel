@@ -17,9 +17,15 @@ export class AbcResult<T extends Model> {
    * All of the updated records in Vuex that originated from either IndexedDB or Firebase
    */
   get records(): T[] {
-    const local = arrayToHash(this.localRecords);
-    const server = arrayToHash(this.serverRecords);
-    return hashToArray({ ...local, ...server });
+    if (!this.options.mergeRecords) {
+      return this.serverRecords.length > 0
+        ? this.serverRecords
+        : this.localRecords;
+    } else {
+      const local = arrayToHash(this.localRecords);
+      const server = arrayToHash(this.serverRecords);
+      return hashToArray({ ...local, ...server });
+    }
   }
 
   /**

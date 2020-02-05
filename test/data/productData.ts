@@ -24,7 +24,7 @@ export const productData = {
     bbbb: {
       id: "bbbb",
       name: "Purple People Eater",
-      price: 12,
+      price: 452,
       lastUpdated: 114,
       createdAt: 114
     }

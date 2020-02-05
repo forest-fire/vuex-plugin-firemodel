@@ -12,6 +12,9 @@ import {
 } from "../types";
 import { IDictionary } from "common-types";
 import { AbcResult } from "../abc/api/AbcResult";
+import { AbcApi } from "../abc/api/AbcApi";
+import set = require("lodash.set");
+import get = require("lodash.get");
 
 export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
   return {
@@ -20,7 +23,7 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
       payload: AbcResult<any>
     ) {
       if (payload.vuex.isList) {
-        Vue.set(state, payload.vuex.modulePostfix, payload.records);
+        Vue.set(state, payload.vuex.fullPath, payload.records);
       } else {
         if (!validResultSize(payload, "local")) {
           return;
@@ -46,7 +49,8 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
           ...arrayToHash(vuexRecords || []),
           ...arrayToHash(payload.records || [])
         });
-        Vue.set(state, payload.vuex.modulePostfix, updated);
+
+        Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
       } else {
         if (!validResultSize(payload, "server")) {
           return;
@@ -79,6 +83,12 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
     [AbcMutation.ABC_NO_CACHE]<T>(state: T, payload: IDiscreteResult<any>) {
       // nothing to do; mutation is purely for informational/debugging purposes
     },
+    [AbcMutation.ABC_LOCAL_QUERY_EMPTY]<T>(
+      state: T,
+      payload: IDiscreteResult<any>
+    ) {
+      // nothing to do; mutation is purely for informational/debugging purposes
+    },
 
     [AbcMutation.ABC_LOCAL_QUERY_TO_VUEX]<T extends IDictionary>(
       state: T,
@@ -91,6 +101,29 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
           return;
         }
         changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
+      }
+    },
+
+    [AbcMutation.ABC_PRUNE_STALE_IDX_RECORDS]<T extends IDictionary>(
+      state: T,
+      payload: { pks: string[]; vuex: AbcApi<T>["vuex"] }
+    ) {
+      // nothing to do; mutation is purely for informational/debugging purposes
+    },
+
+    [AbcMutation.ABC_PRUNE_STALE_VUEX_RECORDS]<T extends IDictionary>(
+      state: T,
+      payload: { pks: string[]; vuex: AbcApi<T>["vuex"] }
+    ) {
+      if (payload.vuex.isList) {
+        const current: any[] = get(state, payload.vuex.modulePostfix, []);
+        Vue.set(
+          state,
+          payload.vuex.modulePostfix,
+          current.filter(i => !payload.pks.includes(i))
+        );
+      } else {
+        changeRoot<T>(state, null, payload.vuex.moduleName);
       }
     }
   };

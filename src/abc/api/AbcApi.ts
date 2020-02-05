@@ -14,7 +14,6 @@ import {
   IDiscreteLocalResults,
   IAbcParam,
   AbcRequestCommand,
-  IDiscreteResult,
   IDiscreteOptions
 } from "../../types/abc";
 import { getDefaultApiConfig } from "../configuration/configApi";
@@ -23,10 +22,9 @@ import { IDictionary } from "firemock";
 import { IFmModelConstructor } from "../../types";
 import { AbcError } from "../../errors";
 import { localRecords } from "./api-parts/localRecords";
-import { getStore, IAbcQueryDefinition } from "../../../src/index";
+import { getStore } from "../../../src/index";
 import { AbcResult } from "./AbcResult";
 import { serverRecords } from "./shared/serverRecords";
-import { Product } from "../../../test/models/Product";
 import { pathJoin } from "common-types";
 
 /**
@@ -265,7 +263,7 @@ export class AbcApi<T extends Model> {
    */
   async get(
     request: IAbcParam<T>,
-    options: IDiscreteOptions<T> = {}
+    options: IAbcOptions<T> = {}
   ): Promise<AbcResult<T>> {
     if (isDiscreteRequest(request)) {
       return this.getDiscrete("get", request, options);
@@ -389,7 +387,7 @@ export class AbcApi<T extends Model> {
 
     return new AbcResult(this, {
       type: "discrete",
-      vuex: this.vuex,
+      options,
       local,
       server
     });

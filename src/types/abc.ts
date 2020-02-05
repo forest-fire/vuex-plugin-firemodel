@@ -52,16 +52,6 @@ export interface IAbcQueryHelper<T> {
   isQueryHelper: true;
 }
 
-export interface IAbcOptions<T> {
-  watch?: IAbcPostWatcher<T>;
-  watchNew?: boolean;
-  /**
-   * If you are using a Query Helper you can state that you
-   * want to have ALL locally cached state in IndexedDB
-   */
-  allLocally?: boolean;
-}
-
 /**
  * Recieves a _list_ of type T and returns either the same
  * list or a subset of it.
@@ -252,7 +242,17 @@ export enum AbcMutation {
   /**
    * An attempt to refresh the IndexedDB failed
    */
-  ABC_INDEXED_DB_REFRESH_FAILED = "ABC_INDEXED_DB_REFRESH_FAILED"
+  ABC_INDEXED_DB_REFRESH_FAILED = "ABC_INDEXED_DB_REFRESH_FAILED",
+  /**
+   * when a query from IndexedDb returns id's which the server doesn't return
+   * then these records are assumed to be "stale" and are removed from IndexedDb
+   */
+  ABC_PRUNE_STALE_IDX_RECORDS = "ABC_PRUNE_STALE_IDX_RECORDS",
+  /**
+   * when a record is detected as no longer available (on the back of a server response), this
+   * mutation will remove the record from Vuex.
+   */
+  ABC_PRUNE_STALE_VUEX_RECORDS = "ABC_PRUNE_STALE_VUEX_RECORDS"
 }
 
 export enum AbcDataSource {
@@ -276,24 +276,39 @@ export interface IAbcAllQueryDefinition<T> extends IAbcQueryBaseDefinition {
   queryType: QueryType.all;
 }
 
-export interface IAbcWhereQueryBase<T> extends IAbcQueryBaseDefinition {
-  queryType: QueryType.where;
+export interface IAbcWhereQueryEquals<T extends Model>
+  extends IAbcQueryBaseDefinition {
+  // queryType: QueryType.where;
   property: keyof T & string;
-  equals?: any;
-  greaterThan?: any;
-  lessThan?: any;
+  equals: any;
+  lessThan?: never;
+  greaterThan?: never;
+}
+export interface IAbcWhereQueryGreaterThan<T extends Model>
+  extends IAbcQueryBaseDefinition {
+  // queryType: QueryType.where;
+  property: keyof T & string;
+  equals?: never;
+  lessThan?: never;
+  greaterThan: any;
+}
+export interface IAbcWhereQueryLessThan<T extends Model>
+  extends IAbcQueryBaseDefinition {
+  // queryType: QueryType.where;
+  property: keyof T & string;
+  equals?: never;
+  lessThan: any;
+  greaterThan?: never;
 }
 
 /**
  * Allows definition of a _property_ on the model and an operation
  * to use for comparison/filtering purposes
  */
-export type IAbcWhereQueryDefinition<T> = (
-  | { equals: any; greaterThan: undefined; lessThan: undefined }
-  | { equals: undefined; greaterThan: any; lessThan: undefined }
-  | { equals: undefined; greaterThan: undefined; lessThan: any }
-) &
-  IAbcWhereQueryBase<T>;
+export type IAbcWhereQueryDefinition<T extends Model> =
+  | IAbcWhereQueryEquals<T>
+  | IAbcWhereQueryGreaterThan<T>
+  | IAbcWhereQueryLessThan<T>;
 
 export interface IAbcSinceQueryDefinition<T> extends IAbcQueryBaseDefinition {
   queryType: QueryType.since;
@@ -339,7 +354,7 @@ export interface IQueryResult<T, K = any> {
  */
 export type IAbcResult<T, K = any> = IDiscreteResult<T, K> | IQueryResult<T, K>;
 
-export interface IQueryOptions<T> {
+export interface IQueryOptions<T> extends IUniversalOptions<T> {
   /**
    * If the `Model` being queries has a dynamic path then you will need to
    * state the dynamic path segments so the the database path for Firebase
@@ -348,7 +363,7 @@ export interface IQueryOptions<T> {
   offsets?: Partial<T>;
 }
 
-export interface IDiscreteOptions<T> {
+export interface IDiscreteOptions<T> extends IUniversalOptions<T> {
   /**
    * If the `Model` involved has dynamic paths, you can state the dynamic properties
    * as an option and then just state the `id` properties for the records you want.
@@ -357,4 +372,49 @@ export interface IDiscreteOptions<T> {
    * involved in identifying the various Pks.
    */
   offsets?: Partial<T>;
+}
+
+export interface IUniversalOptions<T> {
+  /**
+   * When set, this flag tells any local & server based response to merge
+   * the combined knowledge into the `AbcResult.records` array. By default
+   * this option is `false`.
+   */
+  mergeRecords?: boolean;
+}
+
+// export interface IAbcOptions<T> {
+//   watch?: IAbcPostWatcher<T>;
+//   watchNew?: boolean;
+//   /**
+//    * If you are using a Query Helper you can state that you
+//    * want to have ALL locally cached state in IndexedDB
+//    */
+//   allLocally?: boolean;
+// }
+
+export type IAbcOptions<T> = IDiscreteOptions<T> | IQueryOptions<T>;
+
+/** the shape of the get/load endpoints for Discrete requests */
+export interface IAbcDiscreteApi<T> {
+  get: (
+    props: IPrimaryKey<T>[],
+    options: IDiscreteOptions<T>
+  ) => Promise<AbcResult<T>>;
+  load: (
+    props: IPrimaryKey<T>[],
+    options: IDiscreteOptions<T>
+  ) => Promise<AbcResult<T>>;
+}
+
+/** the shape of the get/load endpoints for Query requests */
+export interface IAbcQueryApi<T> {
+  get: (
+    defn: IAbcQueryDefinition<T>,
+    options: IQueryOptions<T>
+  ) => Promise<AbcResult<T>>;
+  load: (
+    props: IAbcQueryDefinition<T>,
+    options: IQueryOptions<T>
+  ) => Promise<AbcResult<T>>;
 }

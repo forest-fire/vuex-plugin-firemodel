@@ -4,17 +4,10 @@ import {
   AbcMutation,
   IQueryLocalResults,
   IQueryServerResults,
-  IAbcQueryRequest,
   QueryType
 } from "../../../types";
 import { AbcApi } from "../AbcApi";
-import {
-  getStore,
-  AbcResult,
-  IAbcResult,
-  IQueryResult,
-  IQueryOptions
-} from "../../..";
+import { getStore, AbcResult, IQueryOptions } from "../../..";
 import get = require("lodash.get");
 import { Record, List, IListOptions } from "firemodel";
 import { deepEqual } from "fast-equals";
@@ -66,9 +59,15 @@ let all = function all<T>(
       });
 
       if (idxRecords.length > 0) {
-        store.commit(AbcMutation.ABC_LOCAL_QUERY_TO_VUEX, localResults);
+        store.commit(
+          `${ctx.vuex.moduleName}/${AbcMutation.ABC_LOCAL_QUERY_TO_VUEX}`,
+          localResults
+        );
       } else {
-        store.commit(AbcMutation.ABC_LOCAL_QUERY_EMPTY, localResults);
+        store.commit(
+          `${ctx.vuex.moduleName}/${AbcMutation.ABC_LOCAL_QUERY_EMPTY}`,
+          localResults
+        );
       }
     } else {
       local = {
@@ -111,16 +110,20 @@ let all = function all<T>(
       overallCachePerformance: ctx.cachePerformance
     };
 
-    const response: IAbcResult<T> = {
+    const response = new AbcResult(ctx, {
       type: "query",
       queryDefn,
       local,
       server,
       options
-    };
-    store.commit(AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE, response);
+    });
 
-    return new AbcResult(ctx, response);
+    store.commit(
+      `${ctx.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`,
+      response
+    );
+
+    return response;
   };
 };
 
