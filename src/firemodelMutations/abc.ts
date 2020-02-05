@@ -7,29 +7,25 @@ import {
   AbcMutation,
   IDiscreteLocalResults,
   IDiscreteServerResults,
-  IQueryLocalResults,
   IAbcResult,
-  IQueryServerResults,
-  IQueryResult,
   IDiscreteResult
 } from "../types";
 import { IDictionary } from "common-types";
+import { AbcResult } from "../abc/api/AbcResult";
 
 export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
   return {
     [AbcMutation.ABC_VUEX_UPDATE_FROM_IDX]<T extends IDictionary>(
       state: T,
-      payload: IAbcResult<any, T>
+      payload: AbcResult<any>
     ) {
       if (payload.vuex.isList) {
-        console.log(state);
-
-        Vue.set(state, payload.vuex.modulePostfix, payload.local.records);
+        Vue.set(state, payload.vuex.modulePostfix, payload.records);
       } else {
         if (!validResultSize(payload, "local")) {
           return;
         }
-        changeRoot<T>(state, payload.local.records[0], payload.vuex.moduleName);
+        changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
       }
     },
 
@@ -42,26 +38,20 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
 
     [AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE]<T extends IDictionary>(
       state: T,
-      payload: IAbcResult<any> & {
-        server: IDiscreteServerResults<T> | IQueryServerResults<T>;
-      }
+      payload: AbcResult<T>
     ) {
       if (payload.vuex.isList) {
-        const currentList = state[payload.vuex.modulePostfix];
+        const vuexRecords = state[payload.vuex.modulePostfix];
         const updated = hashToArray({
-          ...arrayToHash(currentList),
-          ...arrayToHash(payload.server.records)
+          ...arrayToHash(vuexRecords || []),
+          ...arrayToHash(payload.records || [])
         });
         Vue.set(state, payload.vuex.modulePostfix, updated);
       } else {
         if (!validResultSize(payload, "server")) {
           return;
         }
-        changeRoot<T>(
-          state,
-          payload.server.records[0],
-          payload.vuex.moduleName
-        );
+        changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
       }
     },
 
@@ -92,28 +82,25 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
 
     [AbcMutation.ABC_LOCAL_QUERY_TO_VUEX]<T extends IDictionary>(
       state: T,
-      payload: IQueryResult<any, T>
+      payload: AbcResult<T>
     ) {
       if (payload.vuex.isList) {
-        Vue.set(state, payload.vuex.modulePostfix, payload.local.records);
+        Vue.set(state, payload.vuex.modulePostfix, payload.records);
       } else {
         if (!validResultSize(payload)) {
           return;
         }
-        changeRoot<T>(state, payload.local.records[0], payload.vuex.moduleName);
+        changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
       }
     }
   };
 }
 
 function validResultSize<T>(
-  payload: IAbcResult<T, any>,
+  payload: AbcResult<T>,
   where: ("local" | "server") & keyof IAbcResult<T, any> = "server"
 ) {
-  const records =
-    where && payload[where]
-      ? (payload[where] as IAbcResult<T, any>["local"]).records
-      : payload.local.records;
+  const records = payload.records;
   if (records.length > 1) {
     console.warn(
       `There were ${records.length} records in the payload of the ${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX} mutation for the ${payload.vuex.moduleName} Vuex module; this module is configured as for storage of a SINGULAR record not a list of records! This mutation will be ignored until this problem is corrected.`,

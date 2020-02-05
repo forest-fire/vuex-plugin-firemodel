@@ -10,7 +10,8 @@ module.exports = function(w) {
       { pattern: "test/data/**/*.ts", instrument: true },
       { pattern: "test/models/*", instrument: true },
       { pattern: "test/store/**/*.ts", instrument: true },
-      { pattern: "test/helpers/*", instrument: true }
+      { pattern: "test/helpers/*", instrument: true },
+      { pattern: "node_modules/fake-indexeddb/**/*.js", instrument: true }
     ],
 
     tests: ["test/**/*-spec.ts"],

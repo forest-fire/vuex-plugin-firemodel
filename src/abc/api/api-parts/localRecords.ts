@@ -3,7 +3,8 @@ import {
   IAbcOptions,
   IAbcDiscreteRequest,
   AbcRequestCommand,
-  IDiscreteLocalResults
+  IDiscreteLocalResults,
+  IDiscreteOptions
 } from "../../../types";
 import { AbcApi } from "../AbcApi";
 import { getStore } from "../../../index";
@@ -20,7 +21,7 @@ import get from "lodash.get";
 export async function localRecords<T extends Model>(
   command: AbcRequestCommand,
   requestPks: IPrimaryKey<T>[],
-  options: IAbcOptions<T>,
+  options: IDiscreteOptions<T>,
   context: AbcApi<T>
 ): Promise<Omit<IDiscreteLocalResults<T>, "overallCachePerformance">> {
   const idxRecords: T[] = [];

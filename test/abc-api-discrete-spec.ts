@@ -32,7 +32,7 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
   afterEach(async () => {
     store.state.products.all = [];
     await AbcApi.getModelApi(Product).dexieTable.clear();
-    AbcApi.clear();
+    await AbcApi.clear();
   });
 
   it("getProducts() with empty IndexedDB gets results from Firebase, saves to both IndexedDb and Vuex", async () => {
@@ -276,7 +276,7 @@ describe("ABC API Discrete - queries a Model with no IndexedDB layer => ", () =>
 
   afterEach(async () => {
     store.state.companies.all = [];
-    AbcApi.clear();
+    await AbcApi.clear();
   });
 
   it("getCompanies() with nothing in Vuex gets results from Firebase, saves to Vuex (no IndexedDB activity)", async () => {

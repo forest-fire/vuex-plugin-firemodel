@@ -1,14 +1,8 @@
 import { Model } from "firemodel";
-import {
-  IAbcPostWatcher,
-  IDiscreteLocalResults,
-  IDiscreteServerResults,
-  IQueryServerResults,
-  IQueryLocalResults,
-  QueryType,
-  IAbcResult
-} from "../../types";
+import { IAbcPostWatcher, IAbcResult } from "../../types";
 import { AbcApi } from "./AbcApi";
+import { arrayToHash, hashToArray } from "typed-conversions";
+import { AbcError } from "../../errors";
 
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
@@ -23,7 +17,9 @@ export class AbcResult<T extends Model> {
    * All of the updated records in Vuex that originated from either IndexedDB or Firebase
    */
   get records(): T[] {
-    return this.localRecords.concat(...this.serverRecords);
+    const local = arrayToHash(this.localRecords);
+    const server = arrayToHash(this.serverRecords);
+    return hashToArray({ ...local, ...server });
   }
 
   /**
@@ -42,6 +38,29 @@ export class AbcResult<T extends Model> {
 
   get cachePerformance() {
     return this._context.cachePerformance;
+  }
+
+  get vuex() {
+    return this._context.vuex;
+  }
+
+  /**
+   * The options passed in for the specific request which led to this result
+   */
+  get options() {
+    return this._results.options;
+  }
+
+  /** the query definition used to arrive at these results */
+  get queryDefn() {
+    if (this._results.type !== "query") {
+      throw new AbcError(
+        `The attempt to reference the result's "queryDefn" is invalid in non-query based results!`,
+        "not-allowed"
+      );
+    }
+
+    return this._results.queryDefn;
   }
 
   /**

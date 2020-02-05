@@ -14,7 +14,8 @@ import {
   IDiscreteLocalResults,
   IAbcParam,
   AbcRequestCommand,
-  IDiscreteResult
+  IDiscreteResult,
+  IDiscreteOptions
 } from "../../types/abc";
 import { getDefaultApiConfig } from "../configuration/configApi";
 import { capitalize } from "../../shared";
@@ -109,7 +110,17 @@ export class AbcApi<T extends Model> {
   /**
    * Clears the **ABC** API from all models that are being managed and disconnects for IndexedDB
    */
-  public static clear() {
+  public static async clear() {
+    const waitFor: any[] = [];
+    Object.keys(AbcApi._modelsManaged).forEach(key => {
+      const ref = AbcApi.getModelApi(
+        AbcApi._modelsManaged[key].model.constructor
+      );
+      if (ref.config.useIndexedDb) {
+        waitFor.push(ref.dexieTable.clear());
+      }
+    });
+    await Promise.all(waitFor);
     AbcApi._modelsManaged = {};
     if (AbcApi.indexedDbConnected) {
       AbcApi.disconnect();
@@ -254,7 +265,7 @@ export class AbcApi<T extends Model> {
    */
   async get(
     request: IAbcParam<T>,
-    options: IAbcOptions<T> = {}
+    options: IDiscreteOptions<T> = {}
   ): Promise<AbcResult<T>> {
     if (isDiscreteRequest(request)) {
       return this.getDiscrete("get", request, options);
@@ -269,7 +280,7 @@ export class AbcApi<T extends Model> {
   private async getDiscrete(
     command: AbcRequestCommand,
     request: IPrimaryKey<T>[],
-    options: IAbcOptions<T> = {}
+    options: IDiscreteOptions<T> = {}
   ): Promise<AbcResult<T>> {
     const store = getStore();
 
@@ -297,17 +308,18 @@ export class AbcApi<T extends Model> {
       );
     }
 
-    const localResult: IDiscreteResult<T> = {
+    const localResult = new AbcResult(this, {
       type: "discrete",
       local,
-      vuex: this.vuex
-    };
+      options
+    });
 
     if (local.cacheHits === 0) {
       // No results locally
-      store.commit(`${this.vuex.moduleName}/${AbcMutation.ABC_NO_CACHE}`, {
-        local
-      });
+      store.commit(
+        `${this.vuex.moduleName}/${AbcMutation.ABC_NO_CACHE}`,
+        localResult
+      );
     } else if (this.config.useIndexedDb) {
       // Using IndexedDB
       if (local.foundExclusivelyInIndexedDb) {
@@ -324,7 +336,7 @@ export class AbcApi<T extends Model> {
     }
 
     if (local.allFoundLocally) {
-      return new AbcResult(this, localResult);
+      return localResult;
     }
 
     const server = await serverRecords(
@@ -334,12 +346,12 @@ export class AbcApi<T extends Model> {
       requestIds
     );
 
-    const serverResults: IDiscreteResult<T> = {
+    const serverResults = new AbcResult(this, {
       type: "discrete",
-      vuex: this.vuex,
       local,
-      server
-    };
+      server,
+      options
+    });
 
     // Update Vuex with server results
     if (command === "get") {

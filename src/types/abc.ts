@@ -241,7 +241,8 @@ export enum AbcMutation {
   ABC_FIREBASE_REFRESH_INDEXED_DB = "ABC_FIREBASE_REFRESH_INDEXED_DB",
   /**
    * A Query was run against IndexedDB and it's results will be added/updated
-   * into the current Vuex state
+   * into the current Vuex state (until/if the server provides an updated set of
+   * records)
    */
   ABC_LOCAL_QUERY_TO_VUEX = "ABC_LOCAL_QUERY_TO_VUEX",
   /**
@@ -266,11 +267,10 @@ export enum QueryType {
   since = "since"
 }
 
-export type IAbcQueryDefinition<T> = (
+export type IAbcQueryDefinition<T> =
   | IAbcAllQueryDefinition<T>
   | IAbcWhereQueryDefinition<T>
-  | IAbcSinceQueryDefinition<T>
-) & { queryType: keyof typeof QueryType; isQueryHelper: true };
+  | IAbcSinceQueryDefinition<T>;
 
 export interface IAbcAllQueryDefinition<T> extends IAbcQueryBaseDefinition {
   queryType: QueryType.all;
@@ -317,9 +317,9 @@ export interface IAbcQueryBaseDefinition {
  */
 export interface IDiscreteResult<T, K = any> {
   type: "discrete";
-  vuex: AbcApi<T>["vuex"];
   local: IDiscreteLocalResults<T, K>;
   server?: IDiscreteServerResults<T, K>;
+  options: IDiscreteOptions<T>;
 }
 
 /**
@@ -328,12 +328,33 @@ export interface IDiscreteResult<T, K = any> {
  */
 export interface IQueryResult<T, K = any> {
   type: "query";
-  vuex: AbcApi<T>["vuex"];
+  queryDefn: IAbcQueryDefinition<T>;
   local: IQueryLocalResults<T, K>;
   server?: IQueryServerResults<T, K>;
+  options: IQueryOptions<T>;
 }
 
 /**
  * The results from either a Discrete or Query-based request.
  */
 export type IAbcResult<T, K = any> = IDiscreteResult<T, K> | IQueryResult<T, K>;
+
+export interface IQueryOptions<T> {
+  /**
+   * If the `Model` being queries has a dynamic path then you will need to
+   * state the dynamic path segments so the the database path for Firebase
+   * can be determined (and so IndexedDB can use a more involved query)
+   */
+  offsets?: Partial<T>;
+}
+
+export interface IDiscreteOptions<T> {
+  /**
+   * If the `Model` involved has dynamic paths, you can state the dynamic properties
+   * as an option and then just state the `id` properties for the records you want.
+   *
+   * **Note:** you may also ignore this option but you must then state the full Composite Key
+   * involved in identifying the various Pks.
+   */
+  offsets?: Partial<T>;
+}

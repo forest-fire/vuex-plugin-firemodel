@@ -4,19 +4,31 @@ import {
   AbcMutation,
   IQueryLocalResults,
   IQueryServerResults,
-  IAbcQueryRequest
+  IAbcQueryRequest,
+  QueryType
 } from "../../../types";
 import { AbcApi } from "../AbcApi";
-import { getStore, AbcResult, IAbcResult, IQueryResult } from "../../..";
+import {
+  getStore,
+  AbcResult,
+  IAbcResult,
+  IQueryResult,
+  IQueryOptions
+} from "../../..";
 import get = require("lodash.get");
 import { Record, List, IListOptions } from "firemodel";
 import { deepEqual } from "fast-equals";
 import { findPk } from "../shared/findPk";
 
 let all = function all<T>(
-  defn?: Omit<IAbcAllQueryDefinition<T>, "queryType">,
-  options?: IListOptions<T>
+  defn: Omit<IAbcAllQueryDefinition<T>, "queryType"> = {},
+  options: IQueryOptions<T> = {}
 ) {
+  const queryDefn: IAbcAllQueryDefinition<T> = {
+    ...defn,
+    queryType: QueryType.all
+  };
+
   return async (
     command: AbcRequestCommand,
     ctx: AbcApi<T>
@@ -33,11 +45,7 @@ let all = function all<T>(
 
     let idxRecords: T[] = [];
     let local: IQueryLocalResults<T, any>;
-    const vuexMeta = {
-      vuexModuleName: ctx.vuex.fullPath,
-      moduleIsList: ctx.config.isList || true,
-      modulePostfix: ctx.vuex.modulePostfix || "all"
-    };
+
     if (command === "get" && ctx.config.useIndexedDb) {
       // Populate Vuex with what IndexedDB knows
       idxRecords = await ctx.dexieList.all();
@@ -48,30 +56,27 @@ let all = function all<T>(
         records: idxRecords,
         vuexPks,
         indexedDbPks,
-        localPks: Array.from(new Set(vuexPks.concat(...indexedDbPks))),
-        ...vuexMeta
+        localPks: Array.from(new Set(vuexPks.concat(...indexedDbPks)))
       };
+      const localResults = new AbcResult(ctx, {
+        type: "query",
+        queryDefn,
+        local,
+        options
+      });
 
       if (idxRecords.length > 0) {
-        store.commit(AbcMutation.ABC_LOCAL_QUERY_TO_VUEX, {
-          type: "query",
-          local,
-          vuex: this.vuex
-        } as IQueryResult<T>);
+        store.commit(AbcMutation.ABC_LOCAL_QUERY_TO_VUEX, localResults);
       } else {
-        store.commit(AbcMutation.ABC_LOCAL_QUERY_EMPTY, {
-          local,
-          vuex: this.vuex
-        } as IQueryResult<T>);
+        store.commit(AbcMutation.ABC_LOCAL_QUERY_EMPTY, localResults);
       }
     } else {
       local = {
         records: vuexRecords,
         vuexPks,
         indexedDbPks: [],
-        localPks: vuexPks,
-        ...vuexMeta
-      };
+        localPks: vuexPks
+      } as IQueryLocalResults<T>;
     }
 
     const serverRecords = (await List.all(ctx.model.constructor)).data;
@@ -108,9 +113,10 @@ let all = function all<T>(
 
     const response: IAbcResult<T> = {
       type: "query",
+      queryDefn,
       local,
       server,
-      vuex: ctx.vuex
+      options
     };
     store.commit(AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE, response);
 
