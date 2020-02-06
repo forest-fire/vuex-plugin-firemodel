@@ -18,7 +18,8 @@ __export(require("./firemodelMutations/index"));
 __export(require("firemodel"));
 var store_2 = require("./store");
 exports.database = store_2.database;
-__export(require("./api"));
+__export(require("./auth/api"));
+__export(require("./abc/index"));
 let _store;
 exports.setStore = (store) => {
     _store = store;
@@ -41,7 +42,7 @@ function setAuth(auth) {
     _auth = auth;
 }
 exports.setAuth = setAuth;
-const FirePlugin = (config) => {
+const FiremodelPlugin = (config) => {
     exports.configuration = config;
     return (store) => {
         exports.initialState = fast_copy_1.default(store.state);
@@ -56,7 +57,7 @@ const FirePlugin = (config) => {
         queueLifecycleEvents(store, config).then(() => coreServices_1.coreServices(store, Object.assign({ connect: true }, config)));
     };
 };
-exports.default = FirePlugin;
+exports.default = FiremodelPlugin;
 async function queueLifecycleEvents(store, config) {
     if (!config) {
         throw new FiremodelPluginError_1.FireModelPluginError(`There was no configuration sent into the FiremodelPlugin!`, "not-allowed");
@@ -64,6 +65,7 @@ async function queueLifecycleEvents(store, config) {
     }
     const iterable = [
         ["onConnect", "connected"],
+        ["onAuth", "auth-event"],
         ["onLogin", "logged-in"],
         ["onLogout", "logged-out"],
         ["onDisconnect", "disconnected"],
@@ -73,7 +75,6 @@ async function queueLifecycleEvents(store, config) {
     for (const i of iterable) {
         const [name, event] = i;
         if (config[name]) {
-            const empty = () => Promise.resolve();
             const cb = config[name];
             await store.commit(addNamespace_1.addNamespace("QUEUE_EVENT_HOOK" /* queueHook */), {
                 on: event,

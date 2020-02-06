@@ -5,6 +5,7 @@ import { serverEvents } from "./serverEvents";
 import { serverRollbacks } from "./serverRollbacks";
 import { serverConfirms } from "./serverConfirms";
 import { reset } from "./reset";
+import { abc } from "./abc";
 import { IDictionary } from "firemock";
 import { watchEvents } from "./watchEvents";
 
@@ -51,6 +52,7 @@ export function firemodelMutations<T extends IDictionary>(
 ): MutationTree<T> {
   const a: MutationTree<T> = {
     ...addedLocally<T>(propOffset),
+    ...abc<T>(propOffset),
     ...serverEvents<T>(propOffset),
     ...serverRollbacks<T>(propOffset),
     ...serverConfirms<T>(propOffset),

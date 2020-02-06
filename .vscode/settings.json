@@ -1,3 +1,6 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "mocha.requires": ["ts-node/register"],
+  "mocha.files.glob": "test/**/*-spec.ts",
+  "editor.formatOnSave": true
 }

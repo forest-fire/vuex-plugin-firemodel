@@ -89,6 +89,7 @@ export declare type FmCallback = () => Promise<void>;
 export declare type IFmOnConnect<T> = (ctx: IFmConnectedContext<T>) => Promise<void>;
 export declare type IFmOnDisconnect<T> = (ctx: IFmEventBase<T>) => Promise<void>;
 export declare type IFmOnLogin<T> = (ctx: IFmLoginEventContext<T>) => Promise<void>;
+export declare type IFmOnAuth<T> = (ctx: IFmLoginEventContext<T>) => Promise<void>;
 export declare type IFmOnLogout<T> = (ctx: IFmAuthenticatatedContext<T>) => Promise<void>;
 export declare type IFmUserUpgrade<T> = (ctx: IFmUserChangeEventContext<T>) => Promise<void>;
 export declare type IFmRouteChanged<T> = (ctx: IFmRouteEventContext<T>) => Promise<void>;
@@ -110,35 +111,17 @@ export interface IFiremodelConfig<T> extends IFiremodelLifecycleHooks<T>, IFirem
      * in an instance of abstracted client here as well.
      */
     db: IFirebaseClientConfig;
-    /**
-     * A flag which which determines whether the database connection should be
-     * established immediately on this plugin's initialization.
-     *
-     * Default is `true`
-     */
-    connect?: boolean;
 }
-export interface IFiremodelPluginCoreServices {
+export interface IAuthConfig {
     /**
-     * **Use Auth**
+     * The Firebase persistance model you would like to use. The types and descriptions
+     * are made available on the `AuthPersistenceStrategy` enumeration and the description
+     * of what these states means can be found in the
+     * [Firebase Reference Doc](https://firebase.google.com/docs/auth/web/auth-state-persistence)
      *
-     * This turns on usage of Firebase's Authentication/Authorization
-     * solution. When this is turned on this plugin will ensure
-     * that the `@firemodel/currentUser` is kept up-to-date
-     * and also that the `onLoggedIn` and `onLoggedOut` lifecycle
-     * events are fired.
-     *
-     * If not stated, this option defaults to `false`.
+     * If not stated, this option defaults to `local` (the longest duration)
      */
-    useAuth?: boolean;
-    /**
-     * If you are using Firebase's **Auth** module you can state the
-     * persistance model you would like to use. The types and descriptions
-     * are made available on the `AuthPersistenceStrategy` enumeration.
-     *
-     * [Reference Doc](https://firebase.google.com/docs/auth/web/auth-state-persistence)
-     */
-    authPersistence?: IAuthPersistenceStrategy;
+    persistence: IAuthPersistenceStrategy;
     /**
      * **Anonymous Auth**
      *
@@ -151,13 +134,39 @@ export interface IFiremodelPluginCoreServices {
      *
      * If not stated, this option defaults to `false`.
      */
-    anonymousAuth?: boolean;
+    anonymous: boolean;
+}
+export interface IFiremodelPluginCoreServices {
+    /**
+     * A flag which which determines whether the database connection should be
+     * established immediately on this plugin's initialization.
+     *
+     * Default is `true`
+     */
+    connect?: boolean;
+    /**
+     * **Firebase Auth**
+     *
+     * This turns on usage of Firebase's Authentication/Authorization
+     * solution. When this is turned on this plugin will keep
+     * the `@firemodel/currentUser` property up-to-date as well as
+     * fire the
+     *
+     * - `onAuth`,
+     * - `onLogin`,
+     * - and `onLogOut` lifecycle hooks
+     *
+     * This option defaults to `true`; you can set to `false` or you can
+     * add a configuration dictionary if you want to move beyond the
+     * default configuration.
+     */
+    auth?: boolean | IAuthConfig;
     /**
      * **Watch Route Changes**
      *
      * if your project is using the popular vuex plugin
      */
-    watchRouteChanges?: boolean;
+    routeChanges?: boolean;
 }
 export interface IFiremodelLifecycleHooks<T> {
     /**
@@ -170,6 +179,13 @@ export interface IFiremodelLifecycleHooks<T> {
      * database is disconnected
      */
     onDisconnect?: IFmOnDisconnect<T>;
+    /**
+     * Immediately prior to the `onLogin` and `onLogout` events,
+     * the `onAuth` event will fire. Also, when a user first lands
+     * on the app the `onAuth` event is guarenteed to fire (whereas
+     * if the user isn't logged in then neither login/logout will).
+     */
+    onAuth?: IFmOnAuth<T>;
     /**
      * A callback function which is executed when firebase
      * logs in; this is true for both anonymous and known

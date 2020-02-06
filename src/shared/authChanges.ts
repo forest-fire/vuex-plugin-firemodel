@@ -68,7 +68,11 @@ export const authChanged = <T>(context: IFmAuthenticatatedContext<T>) => async (
     );
     console.log("finished onLogout queue");
 
-    if (configuration.anonymousAuth) {
+    if (
+      configuration.auth &&
+      typeof configuration.auth === "object" &&
+      configuration.auth.anonymous
+    ) {
       console.info("logging in as a anonymous user (momentarily)");
       // async but we don't need to wait for it
       context.auth.signInAnonymously();

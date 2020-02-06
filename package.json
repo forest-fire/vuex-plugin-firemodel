@@ -1,6 +1,6 @@
 {
   "name": "vuex-plugin-firemodel",
-  "version": "1.0.0-beta.88",
+  "version": "1.0.0-beta.90",
   "description": "A Vuex plugin which reponds to all FireModel actions as well as providing mutations which can be imported by your state tree.",
   "files": [
     "dist"
@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint src/**/*.ts",
     "clean:nuclear": "rimraf lib dist node_modules && yarn cache clean && rm yarn.lock && yarn && yarn upgrade",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "yarn do test",
     "docs": "vuepress dev docs",
     "build": "yarn tsc -P tsconfig.esnext.json && yarn tsc -P tsconfig.cjs.json",
     "watch": "yarn tsc --watch -P tsconfig.json",
@@ -33,19 +33,24 @@
   "bugs": {
     "url": "https://github.com/forest-fire/vuex-plugin-firemodel/issues"
   },
-  "homepage": "https://github.com/forest-fire/vuex-plugin-firemodel#readme",
+  "homepage": "https://vuex.firemodel.info",
   "dependencies": {
     "@firebase/auth-types": "^0.9.3",
     "abstracted-client": "^0.36.1",
+    "common-types": "^1.12.18",
     "fast-copy": "^2.0.4",
-    "firemodel": "^0.36.2",
+    "fast-equals": "^2.0.0",
+    "firemodel": "^0.36.19",
+    "js-cookie": "^2.2.1",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
-    "stacktrace-js": "^2.0.1",
+    "stacktrace-js": "^2.0.2",
+    "typed-conversions": "^0.10.1",
     "vuex": "^3.1.2"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
+    "@types/js-cookie": "^2.2.4",
     "@types/lodash.get": "^4.4.6",
     "@types/lodash.set": "^4.3.6",
     "@types/mocha": "^5.2.7",
@@ -57,12 +62,16 @@
     "chai": "^4.2.0",
     "do-devops": "^0.3.2",
     "eslint-plugin-vue": "^6.0.1",
+    "fake-indexeddb": "^3.0.0",
     "firemock": "^0.36.0",
     "mocha": "^6.2.2",
+    "nyc": "^15.0.0",
     "rimraf": "^3.0.0",
     "ts-node": "^8.5.4",
     "tslint": "^5.20.1",
     "typescript": "^3.7.3",
-    "vuepress": "^1.2.0"
+    "vue": "^2.6.11",
+    "vuepress": "^1.2.0",
+    "vuepress-plugin-container": "^2.1.2"
   }
 }

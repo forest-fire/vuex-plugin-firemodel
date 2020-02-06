@@ -1,32 +1,59 @@
-import Vuex from "vuex";
-import FirePlugin, { IFiremodelState, IFiremodelConfig } from "../../src/index";
+import Vuex, { Store } from "vuex";
+import FiremodelPlugin, { IFiremodelState, abc, AbcApi } from "../../src/index";
+import products, { IProductsState } from "./modules/products";
+import userProfile, { IUserProfileState } from "./modules/userProfile";
+import companies, { ICompaniesState } from "./modules/companies";
+import { config } from "./config";
+import { Product } from "../models/Product";
+import { Company } from "../models/Company";
+import { Person } from "../models/Person";
+import Vue from "vue";
+import { IDictionary } from "common-types";
+
+export type AsyncMockData = () => Promise<IDictionary>;
+
+Vue.use(Vuex);
 
 export interface IRootState {
   products: IProductsState;
   userProfiles: IUserProfileState;
-  ["@firemodel"]: IFiremodelState;
+  companies: ICompaniesState;
+  ["@firemodel"]: IFiremodelState<IRootState>;
 }
+
+export let store: Store<IRootState>;
 
 /**
  * Store
  *
- * Sets up a Vuex store for testing purposes where you can pass in 0 or more
- * handler functions.
+ * Sets up a Vuex store for testing purposes; note that DB data can be passed in
+ * as a parameter
  */
-export const store = (fns: Array<Function>) =>
-  new Vuex.Store<IRootState>({
+export const setupStore = (data?: IDictionary | AsyncMockData) => {
+  store = new Vuex.Store<IRootState>({
     modules: {
       products,
-      userProfiles
+      userProfile,
+      companies
     },
-    plugins: [
-      FirePlugin({
-        db: { mocking: true },
-        connect: true,
-        watchAuth: true,
-        anonymousAuth: true,
-
-        ...fns
-      } as IFiremodelConfig) // TODO needs proper fixing
-    ]
+    plugins: [FiremodelPlugin(config(data))]
   });
+  return store;
+};
+
+export const getAbc = () => {
+  const [getProducts, loadProducts] = abc(Product);
+  const [getCompanies, loadCompanies] = abc(Company, {
+    useIndexedDb: false
+  });
+  const [getUserProfile, loadUserProfile] = abc(Person, { isList: false });
+
+  return {
+    getProducts,
+    loadProducts,
+    getCompanies,
+    loadCompanies,
+    getUserProfile,
+    loadUserProfile
+  };
+};

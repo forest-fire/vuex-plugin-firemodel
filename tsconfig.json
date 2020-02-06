@@ -12,8 +12,8 @@
     "removeComments": false,
     "strictNullChecks": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "test/**/*", "wallaby.js"],
   "exclude": ["node_modules", "**/*-spec.ts"]
 }

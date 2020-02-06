@@ -23,15 +23,13 @@ export async function coreServices<T>(
     );
   }
 
-  if (config.useAuth) {
-    console.log("using Auth");
-
+  if (config.auth) {
     starting.push(
       store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config)
     );
   }
 
-  if (config.watchRouteChanges) {
+  if (config.routeChanges) {
     starting.push(
       store.dispatch(addNamespace(FmConfigAction.watchRouteChanges))
     );

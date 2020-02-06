@@ -13,7 +13,7 @@ import { FireModelPluginError } from "./errors/FiremodelPluginError";
 import { addNamespace } from "./shared/addNamespace";
 import { coreServices } from "./coreServices";
 import { FirebaseAuth } from "@firebase/auth-types";
-import { FireModel, Watch, Record, List } from "firemodel";
+import { FireModel } from "firemodel";
 import { IDictionary } from "firemock";
 import copy from "fast-copy";
 
@@ -21,7 +21,8 @@ export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";
 export { database } from "./store";
-export * from "./api";
+export * from "./auth/api";
+export * from "./abc/index"
 
 export let configuration: IFiremodelPluginConfig<any>;
 export let dbConfig: IFirebaseClientConfig;
@@ -54,7 +55,7 @@ export let initialState: IDictionary;
 
 export type IFiremodel<T> = { "@firemodel": IFiremodelState<T> };
 
-const FirePlugin = <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => {
+const FiremodelPlugin = <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => {
   configuration = config;
   type IRootState = T & { "@firemodel": IFiremodelState<T> };
   return (store: Store<IRootState>) => {
@@ -78,7 +79,7 @@ const FirePlugin = <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => {
   };
 };
 
-export default FirePlugin;
+export default FiremodelPlugin;
 
 async function queueLifecycleEvents<T>(
   store: Store<T>,
@@ -93,6 +94,7 @@ async function queueLifecycleEvents<T>(
   }
   const iterable = [
     ["onConnect", "connected"],
+    ["onAuth", "auth-event"],
     ["onLogin", "logged-in"],
     ["onLogout", "logged-out"],
     ["onDisconnect", "disconnected"],
@@ -103,7 +105,6 @@ async function queueLifecycleEvents<T>(
   for (const i of iterable) {
     const [name, event] = i;
     if (config[name as keyof IFiremodelPluginConfig<T>]) {
-      const empty = () => Promise.resolve();
       const cb: FmCallback = config[
         name as keyof IFiremodelPluginConfig<T>
       ] as any;

@@ -17,17 +17,26 @@ module.exports = {
     },
     autometa: {
       site: {
-        name: "FireModel Vuex Plugin"
+        name: "Firemodel Vuex Plugin"
       },
       canonical_base: "https://vuex.firemodel.info",
       author: {
         name: "Ken Snyder",
         twitter: "yankeeinlondon"
       }
-    }
+    },
+    "@vuepress/container": [
+      {
+        type: 'align',
+        before: alignment => `<div class="align-${alignment}" style="text-align: ${alignment}">`,
+        after: '</div'
+      }
+    ]
+
+
   },
-  title: "FireModel Vuex Plugin",
-  description: "A FireModel Vuex Plugin to remove all the Cruft of Vuex",
+  title: "Firemodel Vuex Plugin",
+  description: "A Firemodel Vuex Plugin to remove all the Cruft of Vuex",
   head: [
     ["meta", { name: "apple-mobile-web-app-capable", content: "yes" }],
     ["meta", { name: "application-name", content: "FireModel Vuex Plugin" }],
@@ -60,7 +69,7 @@ module.exports = {
     ],
     [
       ("link",
-      { rel: "icon", href: "/icon/icon-rounded-32.png", sizes: "32x32" })
+        { rel: "icon", href: "/icon/icon-rounded-32.png", sizes: "32x32" })
     ],
     [
       "link",
@@ -171,24 +180,31 @@ module.exports = {
   ],
   themeConfig: {
     repo: "forest-fire/vuex-plugin-firemodel",
-    repoLabel: "contribute",
+    repoLabel: "github",
     docsDir: "docs",
+    smoothScroll: true,
     editLinks: true,
+    nextLinks: true,
     nav: [
       {
         text: "Getting Started",
-        link: "/"
+        link: "/getting-started/"
       },
       {
-        text: "Config",
-        link: "/configuration/"
+        text: "Firemodel API",
+        link: "/firemodel/"
       },
       {
-        text: "Events",
-        link: "/events/"
+        text: "ABC API",
+        link: "/abc-api/"
       },
       {
-        text: "Mock",
+        text: "Lifecycle Hooks",
+        link: "/lifecycle/"
+      },
+
+      {
+        text: "Mock DB",
         link: "/mocking/"
       }
     ],

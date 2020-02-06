@@ -1,4 +1,3 @@
 # Local Actions
 
-The actions which are dispatched locally to this vuex-plugin rather than from an
-external source such as **Firemodel**.
+The actions which target this plugins own state (e.g., the `@firemodel` state tree in Vuex) and who's scope is separate from userland state.

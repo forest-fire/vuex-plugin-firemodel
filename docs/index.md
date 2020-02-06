@@ -1,41 +1,28 @@
 ---
-next: "/configuration/"
+home: true
+heroTitle: Firemodel Vuex Plugin
+heroImage: /images/logo.png
+tagline: Seemlessly connecting Firemodel and Firebase to a VueJS/Vuex application
+actionText: Get Started →
+actionLink: /getting-started/
+
+features:
+- title: Firemodel Integration
+  details: Easily connect your Firemodel model's to Vuex to ensure that state stays in sync between Firebase and Vuex while also gaining full access to Firemodel's powerful mocking capabilities
+  link: /wrapper
+- title: Authentication
+  details: Plug into Firebase's authentication services with ease and hook into useful auth lifecycle events to help manage your state
+- title: Multi-Level Caching
+  details: Provides a compact "get and/or watch" API that supports the idea of ABC (always be caching); this strategy leverages Vuex, IndexedDB, and Firebase to achieve a high performance data environment 
+
+footer: MIT Licensed | Copyright © Inocan Group
 ---
 
-# Getting Started
-
-A plugin that removes all the cruft in responding to **FireModel** actions.
-
-## Installing
-
-To install this plugin, go to the root of your VueJS project root and type:
 
 ```sh
 npm install --save vuex-plugin-firemodel
+# or
+yarn add vuex-plugin-firemodel
 ```
 
-You then must add this plugin into Vuex's "plugin" array configuration. You'll do this
-whereever you initialize your store, typically in
 
-- `src/store/index.ts`, but also
-- `src/store.ts` is pretty common for smaller projects
-
-```typescript{8}
-import { FirePlugin } from vuex-plugin-firemodel;
-
-const store = new Vuex.Store<IRootState>({
-  modules: {
-    ...
-  },
-  plugins: [
-    FirePlugin<IRootState>( config ),
-    // any other plugins you are using
-  ],
-})
-```
-
-> See the `configuration` section for more on how to configure
-
-## Using
-
-Using the Vuex devtool plugin have a look at your state tree and you'll notice that even without any configuration you'll now have a `@firemodel` branch in your state tree. Congrats, you are now started but to get real use out of this plugin continue onto the [configuration](/configuration/) section.
