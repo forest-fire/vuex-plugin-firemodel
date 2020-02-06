@@ -13,7 +13,6 @@ export async function coreServices(store, config) {
         starting.push(store.dispatch(addNamespace(FmConfigAction.connect), config.db));
     }
     if (config.auth) {
-        console.log("using Auth");
         starting.push(store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config));
     }
     if (config.routeChanges) {

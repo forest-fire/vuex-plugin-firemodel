@@ -1,5 +1,6 @@
-import { Model } from 'firemodel';
-import { IAbcPostWatcher } from '../../types';
+import { Model } from "firemodel";
+import { IAbcPostWatcher, IAbcResult } from "../../types";
+import { AbcApi } from "./AbcApi";
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
  * respond with this class. The classes goal is to pass back not only
@@ -7,12 +8,39 @@ import { IAbcPostWatcher } from '../../types';
  * watch certain elements of the returned resultset.
  */
 export declare class AbcResult<T extends Model> {
-    get results(): T[];
+    private _context;
+    private _results;
+    constructor(_context: AbcApi<T>, _results: IAbcResult<T>);
+    /**
+     * All of the updated records in Vuex that originated from either IndexedDB or Firebase
+     */
+    get records(): T[];
+    /**
+     * All of the updated records in Vuex that originated from IndexedDB
+     */
+    get localRecords(): T[];
+    /**
+     * All of the updated records in Vuex that originated from Firebase
+     */
+    get serverRecords(): T[];
     get cachePerformance(): {
         hits: number;
         misses: number;
-        skips: number;
+        ignores: number;
     };
+    get vuex(): {
+        isList: boolean | undefined;
+        modulePath: string;
+        moduleName: string;
+        modulePostfix: string;
+        fullPath: string;
+    };
+    /**
+     * The options passed in for the specific request which led to this result
+     */
+    get options(): import("../../types").IDiscreteOptions<T> | import("../../types").IQueryOptions<T>;
+    /** the query definition used to arrive at these results */
+    get queryDefn(): import("../../types").IAbcQueryDefinition<T>;
     /**
      * Runs a callback which filters down the set of results
      * which should be watched. This list is then filtered down

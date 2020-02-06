@@ -15,7 +15,6 @@ async function coreServices(store, config) {
         starting.push(store.dispatch(addNamespace_1.addNamespace(actions_1.FmConfigAction.connect), config.db));
     }
     if (config.auth) {
-        console.log("using Auth");
         starting.push(store.dispatch(addNamespace_1.addNamespace(actions_1.FmConfigAction.firebaseAuth), config));
     }
     if (config.routeChanges) {

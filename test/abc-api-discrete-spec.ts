@@ -153,6 +153,7 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
       Object.keys(productData.products)
     );
     const numOfRecords = Object.keys(productData.products).length;
+    console.log(numOfRecords);
 
     expect(products.records).to.have.lengthOf(
       numOfRecords,

@@ -5,6 +5,7 @@ const serverEvents_1 = require("./serverEvents");
 const serverRollbacks_1 = require("./serverRollbacks");
 const serverConfirms_1 = require("./serverConfirms");
 const reset_1 = require("./reset");
+const abc_1 = require("./abc");
 const watchEvents_1 = require("./watchEvents");
 /**
  * **firebaseMutations**
@@ -41,7 +42,7 @@ function firemodelMutations(
  * and it will honored.
  */
 propOffset) {
-    const a = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, addedLocally_1.addedLocally(propOffset)), serverEvents_1.serverEvents(propOffset)), serverRollbacks_1.serverRollbacks(propOffset)), serverConfirms_1.serverConfirms(propOffset)), watchEvents_1.watchEvents(propOffset)), reset_1.reset(propOffset));
+    const a = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, addedLocally_1.addedLocally(propOffset)), abc_1.abc(propOffset)), serverEvents_1.serverEvents(propOffset)), serverRollbacks_1.serverRollbacks(propOffset)), serverConfirms_1.serverConfirms(propOffset)), watchEvents_1.watchEvents(propOffset)), reset_1.reset(propOffset));
     return a;
 }
 exports.firemodelMutations = firemodelMutations;

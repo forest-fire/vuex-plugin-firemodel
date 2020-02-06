@@ -1,6 +1,7 @@
-import { Model, IFmModelMeta, DexieDb } from "firemodel";
-import { IAbcApiConfig, IAbcDiscreteRequest, IAbcConfiguredQuery, IAbcOptions } from "../../types/abc";
+import { Model, IFmModelMeta, DexieDb, IPrimaryKey } from "firemodel";
+import { IAbcApiConfig, IAbcOptions, IAbcParam } from "../../types/abc";
 import { IFmModelConstructor } from "../../types";
+import { AbcResult } from "./AbcResult";
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
  * including meta-data properties too.
@@ -31,7 +32,7 @@ export declare class AbcApi<T extends Model> {
      * Returns a list of `Model`'s that have been configured
      * for use with the **ABC** API.
      */
-    static get configuredModels(): string[];
+    static get configuredFiremodelModels(): string[];
     /**
      * Returns constructors for the `Model`s which will be managed by the IndexedDB
      */
@@ -39,11 +40,11 @@ export declare class AbcApi<T extends Model> {
     /**
      * returns an `AbcApi` instance for a given `Model`
      */
-    static getModelApi(name: string): AbcApi<any>;
+    static getModelApi<T extends Model>(model: IFmModelConstructor<T>): AbcApi<T>;
     /**
      * Clears the **ABC** API from all models that are being managed and disconnects for IndexedDB
      */
-    static clear(): void;
+    static clear(): Promise<void>;
     static disconnect(): void;
     /**
      * Connects to the IndexedDB; using all the models the ABC API knows
@@ -61,12 +62,26 @@ export declare class AbcApi<T extends Model> {
     private _cacheIgnores;
     constructor(model: IFmModelConstructor<T>, config?: IAbcApiConfig<T>);
     /**
+     * Different naming conventions for the model along with the model's
+     * constructor
+     */
+    get model(): {
+        constructor: IFmModelConstructor<T>;
+        singular: string;
+        plural: string;
+        pascal: string;
+    };
+    /**
      * Everything you wanted to know about this instance of the **ABC** API
      * but were afraid to ask. :)
      */
     get about(): {
-        /** the `Model`'s name in different contexts */
+        /**
+         * Different naming conventions for the model along with the model's
+         * constructor
+         */
         model: {
+            constructor: IFmModelConstructor<T>;
             singular: string;
             plural: string;
             pascal: string;
@@ -77,6 +92,33 @@ export declare class AbcApi<T extends Model> {
         config: IAbcApiConfig<T>;
         dbOffset: string;
         dynamicPathComponents: false | (keyof T & string)[];
+    };
+    /**
+     * Information about the Vuex location
+     */
+    get vuex(): {
+        /**
+         * Indicates whether this module has been configured as a _list_
+         * or a _record_.
+         */
+        isList: boolean | undefined;
+        /**
+         * Path to the root of the module
+         */
+        modulePath: string;
+        /**
+         * The name of the Vuex module who's state
+         * is being queried
+         */
+        moduleName: string;
+        /**
+         * An optional offset to the module to store record(s)
+         */
+        modulePostfix: string;
+        /**
+         * The full path to where the record(s) reside
+         */
+        fullPath: string;
     };
     /**
      * Look at the performance of caching of your data for
@@ -95,7 +137,11 @@ export declare class AbcApi<T extends Model> {
      *
      * @request either a Query Helper (since, where, etc.) or an array of primary keys
      */
-    get(request: IAbcConfiguredQuery<T> | IAbcDiscreteRequest<T>, options?: IAbcOptions<T>): Promise<T[]>;
+    get(request: IAbcParam<T>, options?: IAbcOptions<T>): Promise<AbcResult<T>>;
+    /**
+     * Handles GET requests for Discrete ID requests
+     */
+    private getDiscrete;
     /**
      * Provides access to the Firebase database
      */
@@ -104,25 +150,33 @@ export declare class AbcApi<T extends Model> {
      * The **ABC** configuration for this instance's `Model`
      */
     get config(): IAbcApiConfig<T>;
+    get dexieModels(): {
+        name: string;
+        schema: import("dexie").Dexie.TableSchema;
+    }[];
     /**
-   * Provides access to this `Model`'s Dexie **Table API**
-   */
-    get dexieTable(): import("dexie").Dexie.Table<T, import("firemodel").IPrimaryKey<T>>;
+     * Provides access to this Dexie **Table API**
+     */
+    get dexieTable(): import("dexie").Dexie.Table<T, IPrimaryKey<T>>;
     /**
-     * Provides access to this `Model`'s Dexie **Record API**
+     * Provides access to this Dexie **Record API**
      */
     get dexieRecord(): import("firemodel").DexieRecord<T>;
     /**
-     * Provides access to this `Model`'s Dexie **List API**
+     * Provides access to this Dexie **List API**
      */
     get dexieList(): import("firemodel").DexieList<T>;
     protected get dexie(): DexieDb;
+    /**
+     * Connects Dexie to IndexedDB for _all_ Firemodel Models
+     */
+    connectDexie(): Promise<void>;
     /**
      * Load records using the **ABC** API
      *
      * @request either a Query Helper (since, where, etc.) or an array of primary keys
      */
-    load(request: IAbcConfiguredQuery<T> | IAbcDiscreteRequest<T>, options?: IAbcOptions<T>): Promise<T[]>;
+    load(request: IAbcParam<T>, options?: IAbcOptions<T>): Promise<AbcResult<T>>;
     /**
      * Watch records using the **ABC** API
      */

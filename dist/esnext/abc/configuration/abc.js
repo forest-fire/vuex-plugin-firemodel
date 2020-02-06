@@ -1,6 +1,6 @@
 import { AbcApi } from "../api/AbcApi";
 /**
- * Constructs a `AbcApi` object instance for the given `Model`
+ * Returns an array of **AbcApi** API's: `get`, `load`, and `watch`
  */
 export function abc(model, config = {}) {
     const api = new AbcApi(model, config);

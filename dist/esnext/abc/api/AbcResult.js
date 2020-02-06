@@ -1,3 +1,5 @@
+import { arrayToHash, hashToArray } from "typed-conversions";
+import { AbcError } from "../../errors";
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
  * respond with this class. The classes goal is to pass back not only
@@ -5,15 +7,55 @@
  * watch certain elements of the returned resultset.
  */
 export class AbcResult {
-    get results() {
-        return [];
+    constructor(_context, _results) {
+        this._context = _context;
+        this._results = _results;
+    }
+    /**
+     * All of the updated records in Vuex that originated from either IndexedDB or Firebase
+     */
+    get records() {
+        if (!this.options.mergeRecords) {
+            return this.serverRecords.length > 0
+                ? this.serverRecords
+                : this.localRecords;
+        }
+        else {
+            const local = arrayToHash(this.localRecords);
+            const server = arrayToHash(this.serverRecords);
+            return hashToArray(Object.assign(Object.assign({}, local), server));
+        }
+    }
+    /**
+     * All of the updated records in Vuex that originated from IndexedDB
+     */
+    get localRecords() {
+        return this._results.local.records || [];
+    }
+    /**
+     * All of the updated records in Vuex that originated from Firebase
+     */
+    get serverRecords() {
+        return this._results.server ? this._results.server.records : [];
     }
     get cachePerformance() {
-        return {
-            hits: 0,
-            misses: 0,
-            skips: 0
-        };
+        return this._context.cachePerformance;
+    }
+    get vuex() {
+        return this._context.vuex;
+    }
+    /**
+     * The options passed in for the specific request which led to this result
+     */
+    get options() {
+        return this._results.options;
+    }
+    /** the query definition used to arrive at these results */
+    get queryDefn() {
+        if (this._results.type !== "query") {
+            throw new AbcError(`The attempt to reference the result's "queryDefn" is invalid in non-query based results!`, "not-allowed");
+        }
+        return this._results.queryDefn;
     }
     /**
      * Runs a callback which filters down the set of results
@@ -23,6 +65,6 @@ export class AbcResult {
      * @param fn the callback function to call
      */
     watch(fn) {
-        const watcherIds = fn(this.results);
+        // const watcherIds = fn(this.results);
     }
 }

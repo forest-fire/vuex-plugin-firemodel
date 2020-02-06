@@ -1,20 +1,17 @@
 import {
-  IAbcAllQueryDefinition,
   AbcRequestCommand,
   AbcMutation,
   IQueryLocalResults,
   IQueryServerResults,
-  QueryType,
   IAbcQueryDefinition,
   IAbcOptions
 } from "../../../types";
 import { AbcApi } from "../AbcApi";
-import { getStore, AbcResult, IQueryOptions } from "../../..";
-import get = require("lodash.get");
-import { Record, List, IListOptions } from "firemodel";
+import { getStore, AbcResult } from "../../..";
+import get from "lodash.get";
+import { Record } from "firemodel";
 import { deepEqual } from "fast-equals";
 import { findPk } from "../shared/findPk";
-import { localRecords } from "../api-parts/localRecords";
 
 export interface IGeneralizedQuery<T> {
   (): Promise<T[]>;

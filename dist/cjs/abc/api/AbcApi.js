@@ -5,7 +5,11 @@ const abc_1 = require("../../types/abc");
 const configApi_1 = require("../configuration/configApi");
 const shared_1 = require("../../shared");
 const errors_1 = require("../../errors");
-const get_1 = require("./api-parts/get");
+const localRecords_1 = require("./api-parts/localRecords");
+const index_1 = require("../../../src/index");
+const AbcResult_1 = require("./AbcResult");
+const serverRecords_1 = require("./shared/serverRecords");
+const common_types_1 = require("common-types");
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
  * including meta-data properties too.
@@ -16,15 +20,21 @@ class AbcApi {
         this._cacheHits = 0;
         this._cacheMisses = 0;
         this._cacheIgnores = 0;
-        if (!config.db && firemodel_1.FireModel.defaultDb) {
-            throw new errors_1.AbcError(`You must provide a way to access the database before you instantiate the ABC API! You can pass it in explicitly as a part of the config or it will pickup the FireModel.defaultDb if that's available.`, 'not-ready');
-        }
+        // if (!config.db && FireModel.defaultDb) {
+        //   throw new AbcError(`You must provide a way to access the database before you instantiate the ABC API! You can pass it in explicitly as a part of the config or it will pickup the FireModel.defaultDb if that's available.`, 'not-ready')
+        // }
         this._modelConstructor = model;
         this._config = Object.assign(Object.assign({}, configApi_1.getDefaultApiConfig()), config);
         const rec = firemodel_1.Record.create(this._modelConstructor);
-        this._dynamicPathComponents = rec.hasDynamicPath ? rec.dynamicPathComponents : false;
+        this._dynamicPathComponents = rec.hasDynamicPath
+            ? rec.dynamicPathComponents
+            : false;
         this._dbOffset = rec.dbOffset;
-        this._modelName = { singular: rec.modelName, plural: rec.pluralName, pascal: shared_1.capitalize(rec.modelName) };
+        this._modelName = {
+            singular: rec.modelName,
+            plural: rec.pluralName,
+            pascal: shared_1.capitalize(rec.modelName)
+        };
         this._modelMeta = rec.META;
         AbcApi.addModel(this);
     }
@@ -50,7 +60,7 @@ class AbcApi {
      * Returns a list of `Model`'s that have been configured
      * for use with the **ABC** API.
      */
-    static get configuredModels() {
+    static get configuredFiremodelModels() {
         return Object.keys(AbcApi._modelsManaged);
     }
     /**
@@ -58,22 +68,32 @@ class AbcApi {
      */
     static get indexedDbModelConstructors() {
         return Object.keys(AbcApi._modelsManaged)
-            .filter(m => AbcApi.getModelApi(m).config.useIndexedDb)
-            .map(m => AbcApi.getModelApi(m)._modelConstructor);
+            .filter(m => AbcApi._modelsManaged[m].config.useIndexedDb)
+            .map(m => AbcApi._modelsManaged[m]._modelConstructor);
     }
     /**
      * returns an `AbcApi` instance for a given `Model`
      */
-    static getModelApi(name) {
+    static getModelApi(model) {
+        const r = firemodel_1.Record.create(model);
+        const name = shared_1.capitalize(r.modelName);
         if (!AbcApi._modelsManaged[name]) {
-            throw new errors_1.AbcError(`You attempted to get an AbcApi for the model ${name} but it is not yet configured!`, 'abc-api/invalid-model');
+            throw new errors_1.AbcError(`You attempted to get an AbcApi for the model ${name} but it is not yet configured!`, "abc-api/invalid-model");
         }
         return AbcApi._modelsManaged[name];
     }
     /**
      * Clears the **ABC** API from all models that are being managed and disconnects for IndexedDB
      */
-    static clear() {
+    static async clear() {
+        const waitFor = [];
+        Object.keys(AbcApi._modelsManaged).forEach(key => {
+            const ref = AbcApi.getModelApi(AbcApi._modelsManaged[key].model.constructor);
+            if (ref.config.useIndexedDb) {
+                waitFor.push(ref.dexieTable.clear());
+            }
+        });
+        await Promise.all(waitFor);
         AbcApi._modelsManaged = {};
         if (AbcApi.indexedDbConnected) {
             AbcApi.disconnect();
@@ -95,8 +115,15 @@ class AbcApi {
             }
         }
         else {
-            console.info('ABC API has no models using IndexedDB');
+            console.info("ABC API has no models using IndexedDB");
         }
+    }
+    /**
+     * Different naming conventions for the model along with the model's
+     * constructor
+     */
+    get model() {
+        return Object.assign(Object.assign({}, this._modelName), { constructor: this._modelConstructor });
     }
     /**
      * Everything you wanted to know about this instance of the **ABC** API
@@ -104,14 +131,52 @@ class AbcApi {
      */
     get about() {
         return {
-            /** the `Model`'s name in different contexts */
-            model: this._modelName,
+            /**
+             * Different naming conventions for the model along with the model's
+             * constructor
+             */
+            model: this.model,
             /** The meta infomation associated with the `Model` */
             modelMeta: this._modelMeta,
             /** the ABC API's configuration */
             config: this._config,
             dbOffset: this._dbOffset,
-            dynamicPathComponents: this._dynamicPathComponents,
+            dynamicPathComponents: this._dynamicPathComponents
+        };
+    }
+    /**
+     * Information about the Vuex location
+     */
+    get vuex() {
+        return {
+            /**
+             * Indicates whether this module has been configured as a _list_
+             * or a _record_.
+             */
+            isList: this.config.isList,
+            /**
+             * Path to the root of the module
+             */
+            modulePath: this.config.isList ? this.model.plural : this.model.singular,
+            /**
+             * The name of the Vuex module who's state
+             * is being queried
+             */
+            moduleName: (this.config.moduleName || this.config.isList
+                ? this.about.model.plural
+                : this.about.modelMeta.localModelName),
+            /**
+             * An optional offset to the module to store record(s)
+             */
+            modulePostfix: this.config.isList
+                ? this._modelMeta.localPostfix || "all"
+                : "",
+            /**
+             * The full path to where the record(s) reside
+             */
+            fullPath: this.config.isList
+                ? common_types_1.pathJoin(this.model.plural, this._modelMeta.localPostfix || "all")
+                : this.model.singular
         };
     }
     /**
@@ -135,11 +200,79 @@ class AbcApi {
      */
     async get(request, options = {}) {
         if (abc_1.isDiscreteRequest(request)) {
-            return get_1.retrieveKeys('get', request, options, this);
+            return this.getDiscrete("get", request, options);
         }
         else {
-            return request('get', options, this);
+            return request("get", this);
         }
+    }
+    /**
+     * Handles GET requests for Discrete ID requests
+     */
+    async getDiscrete(command, request, options = {}) {
+        const store = index_1.getStore();
+        const requestIds = request.map(i => firemodel_1.Record.compositeKeyRef(this._modelConstructor, i));
+        let results = await localRecords_1.localRecords(command, requestIds, options, this);
+        this._cacheHits += results.cacheHits;
+        this._cacheMisses += results.cacheMisses;
+        const local = Object.assign(Object.assign({}, results), { overallCachePerformance: this.cachePerformance });
+        if (!this.config.useIndexedDb && command === "load") {
+            throw new errors_1.AbcError(`There was a call to load${shared_1.capitalize(this.model.plural)}() but this is not allowed for models like ${this.model.pascal} which have been configured in ABC to not have IndexedDB support; use get${shared_1.capitalize(this.model.plural)}() instead.`, "not-allowed");
+        }
+        const localResult = new AbcResult_1.AbcResult(this, {
+            type: "discrete",
+            local,
+            options
+        });
+        if (local.cacheHits === 0) {
+            // No results locally
+            store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_NO_CACHE}`, localResult);
+        }
+        else if (this.config.useIndexedDb) {
+            // Using IndexedDB
+            if (local.foundExclusivelyInIndexedDb) {
+                store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`, localResult);
+            }
+            else {
+                store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_INDEXED_SKIPPED}`, localResult);
+            }
+        }
+        if (local.allFoundLocally) {
+            return localResult;
+        }
+        const server = await serverRecords_1.serverRecords(command, this, local.missing, requestIds);
+        const serverResults = new AbcResult_1.AbcResult(this, {
+            type: "discrete",
+            local,
+            server,
+            options
+        });
+        // Update Vuex with server results
+        if (command === "get") {
+            store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`, serverResults);
+        }
+        // cache results to IndexedDB
+        if (this.config.useIndexedDb) {
+            try {
+                const waitFor = [];
+                const now = new Date().getTime();
+                server.records.forEach(record => {
+                    const newRec = Object.assign(Object.assign({}, record), { lastUpdated: now, createdAt: record.createdAt || now });
+                    waitFor.push(this.dexieTable.put(newRec));
+                });
+                await Promise.all(waitFor);
+                store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`, serverResults);
+            }
+            catch (e) {
+                store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED}`, Object.assign(Object.assign({}, serverResults), { errorMessage: e.message, errorStack: e.stack }));
+            }
+        }
+        return new AbcResult_1.AbcResult(this, {
+            type: "discrete",
+            options,
+            local,
+            server
+        });
     }
     /**
      * Provides access to the Firebase database
@@ -157,26 +290,41 @@ class AbcApi {
     get config() {
         return this._config;
     }
+    get dexieModels() {
+        return this.dexie.dexieTables;
+    }
     /**
-   * Provides access to this `Model`'s Dexie **Table API**
-   */
+     * Provides access to this Dexie **Table API**
+     */
     get dexieTable() {
         return this.dexie.table(this._modelConstructor);
     }
     /**
-     * Provides access to this `Model`'s Dexie **Record API**
+     * Provides access to this Dexie **Record API**
      */
     get dexieRecord() {
         return this.dexie.record(this._modelConstructor);
     }
     /**
-     * Provides access to this `Model`'s Dexie **List API**
+     * Provides access to this Dexie **List API**
      */
     get dexieList() {
         return this.dexie.list(this._modelConstructor);
     }
     get dexie() {
+        if (!this.about.config.useIndexedDb) {
+            throw new errors_1.AbcError(`You are attempting to access Dexie while connected to the ABC API with the model ${this.about.model.pascal} which is configured NOT to use IndexedDB!`, "not-allowed");
+        }
+        if (!AbcApi._dexieDb) {
+            throw new errors_1.AbcError(`The Dexie database is not yet connected; calls to get() or load() will automatically connect it but if you want to access it prior to that you must call connectDexie()`, "not-ready");
+        }
         return AbcApi._dexieDb;
+    }
+    /**
+     * Connects Dexie to IndexedDB for _all_ Firemodel Models
+     */
+    async connectDexie() {
+        return AbcApi.connectIndexedDb();
     }
     /**
      * Load records using the **ABC** API
@@ -185,10 +333,10 @@ class AbcApi {
      */
     async load(request, options = {}) {
         if (abc_1.isDiscreteRequest(request)) {
-            return get_1.retrieveKeys('load', request, options, this);
+            return this.getDiscrete("load", request, options);
         }
         else {
-            return request('load', options, this);
+            return request("get", this);
         }
     }
     /**

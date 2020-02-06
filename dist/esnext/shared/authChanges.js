@@ -30,7 +30,9 @@ export const authChanged = (context) => async (user) => {
         context.commit("USER_LOGGED_OUT" /* userLoggedOut */, extractUserInfo(user));
         await runQueue(Object.assign(Object.assign({}, context), { isLoggedIn: false, isAnonymous: false, emailVerified: false }), "logged-out");
         console.log("finished onLogout queue");
-        if (configuration.auth && typeof configuration.auth === 'object' && configuration.auth.anonymous) {
+        if (configuration.auth &&
+            typeof configuration.auth === "object" &&
+            configuration.auth.anonymous) {
             console.info("logging in as a anonymous user (momentarily)");
             // async but we don't need to wait for it
             context.auth.signInAnonymously();

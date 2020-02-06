@@ -5,11 +5,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *
  * Gets all records _since_ a certain timestamp (`epoch` with milliseconds)
  */
-let since = function since(timestamp) {
-    return (command, context) => {
-        // if indexedDB, get from IndexedDb
-        // 
-        return Promise.resolve([]);
+let since = function since(defn) {
+    return function all(defn) {
+        return async (command, ctx) => { };
     };
 };
 exports.since = since;

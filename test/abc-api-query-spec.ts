@@ -207,7 +207,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     expect(eventCounts["products/ABC_FIREBASE_TO_VUEX_UPDATE"]).to.equal(1);
   });
 
-  it.only("get.where() when local has all records", async () => {
+  it("get.where() when local has all records", async () => {
     const store = getStore();
     store.subscribe(subscription);
     const tbl = AbcApi.getModelApi(Product).dexieTable;
@@ -251,7 +251,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     expect(eventCounts["products/ABC_FIREBASE_TO_VUEX_UPDATE"]).to.equal(1);
   });
 
-  it.only("get.where() when local has more records", async () => {
+  it("get.where() when local has more records", async () => {
     const store = getStore();
     store.subscribe(subscription);
     const tbl = AbcApi.getModelApi(Product).dexieTable;

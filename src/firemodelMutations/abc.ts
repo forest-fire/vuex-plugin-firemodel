@@ -13,8 +13,7 @@ import {
 import { IDictionary } from "common-types";
 import { AbcResult } from "../abc/api/AbcResult";
 import { AbcApi } from "../abc/api/AbcApi";
-import set = require("lodash.set");
-import get = require("lodash.get");
+import get from "lodash.get";
 
 export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
   return {
