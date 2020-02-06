@@ -129,7 +129,7 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
     );
   });
 
-  it("getProducts() with partial products in IndexedDb returns partial cache hit rate; Firebase called for missing", async () => {
+  it("getProducts() with partial products in IndexedDb returns partial cache hit rate; Firebase called for all", async () => {
     await addProductsToIndexedDB(2);
 
     expect(AbcApi.configuredFiremodelModels).contains(
@@ -153,8 +153,6 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
       Object.keys(productData.products)
     );
     const numOfRecords = Object.keys(productData.products).length;
-    console.log(numOfRecords);
-
     expect(products.records).to.have.lengthOf(
       numOfRecords,
       "correct number of records returned"
@@ -164,8 +162,8 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
       "local records should have returned all the records"
     );
     expect(products.serverRecords).to.have.lengthOf(
-      numOfRecords - 2,
-      "server records should have returned nothing"
+      numOfRecords,
+      "server records returns all records (two new, two to refresh idx"
     );
     expect(products.cachePerformance.hits).to.equal(
       numOfRecords - 2,
@@ -300,7 +298,7 @@ describe("ABC API Discrete - queries a Model with no IndexedDB layer => ", () =>
     }
   });
 
-  it("getCompanies() with Vuex partially ready; gets missing from Firebase, saves to Vuex (no IndexedDB activity)", async () => {
+  it("getCompanies() with Vuex partially ready; gets all from Firebase, saves to Vuex (no IndexedDB activity)", async () => {
     try {
       const subset = 2;
       const numOfRecords = Object.keys(companyData.companies).length;
@@ -315,7 +313,7 @@ describe("ABC API Discrete - queries a Model with no IndexedDB layer => ", () =>
 
       const results = await getCompanies(Object.keys(companyData.companies));
       expect(results.localRecords).to.have.lengthOf(subset);
-      expect(results.serverRecords).to.have.lengthOf(numOfRecords - subset);
+      expect(results.serverRecords).to.have.lengthOf(numOfRecords);
       expect(results.records).to.have.lengthOf(numOfRecords);
       expect(store.state.companies.all).to.have.lengthOf(
         numOfRecords,

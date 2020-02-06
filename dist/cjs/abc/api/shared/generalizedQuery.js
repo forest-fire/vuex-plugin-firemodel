@@ -21,7 +21,9 @@ async function generalizedQuery(queryDefn, command, dexieQuery, firemodelQuery, 
     let local;
     if (command === "get" && ctx.config.useIndexedDb) {
         // Populate Vuex with what IndexedDB knows
-        idxRecords = await dexieQuery();
+        idxRecords = await dexieQuery().catch(e => {
+            throw e;
+        });
         const indexedDbPks = idxRecords.map(i => firemodel_1.Record.compositeKeyRef(ctx.model.constructor, i));
         local = {
             records: idxRecords,
@@ -72,17 +74,16 @@ async function generalizedQuery(queryDefn, command, dexieQuery, firemodelQuery, 
         ctx.cachePerformance.misses + stalePks.length + newPks.length;
     // PRUNE
     const removeFromIdx = local.indexedDbPks.filter(i => !serverPks.includes(i));
-    const removeFromVuex = local.vuexPks.filter(i => !serverPks.includes(i));
+    // Vuex at this point will have both it's old state and whatever IndexedDB
+    // contributed
+    const removeFromVuex = local.localPks.filter(i => !serverPks.includes(i));
     console.log({ removeFromIdx, removeFromVuex });
     if (removeFromVuex.length > 0) {
         store.commit(`${ctx.vuex.moduleName}/${types_1.AbcMutation.ABC_PRUNE_STALE_VUEX_RECORDS}`, { pks: removeFromVuex, vuex: ctx.vuex });
     }
     if (removeFromIdx.length > 0) {
-        ctx.dexieTable.bulkDelete(stalePks).then(() => {
-            // NOTE: this is making the async component (which will be short) not part of the
-            // critical path for this query's completion. This is intended.
-            store.commit(`${ctx.vuex.moduleName}/${types_1.AbcMutation.ABC_PRUNE_STALE_IDX_RECORDS}`, { pks: removeFromIdx, vuex: ctx.vuex });
-        });
+        await ctx.dexieTable.bulkDelete(removeFromIdx);
+        store.commit(`${ctx.vuex.moduleName}/${types_1.AbcMutation.ABC_PRUNE_STALE_IDX_RECORDS}`, { pks: removeFromIdx, vuex: ctx.vuex });
     }
     const server = {
         records: serverRecords,

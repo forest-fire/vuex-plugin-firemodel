@@ -204,6 +204,10 @@ export declare enum AbcMutation {
      */
     ABC_FIREBASE_TO_VUEX_UPDATE = "ABC_FIREBASE_TO_VUEX_UPDATE",
     /**
+     * Vuex was reset with new results from Firebase
+     */
+    ABC_FIREBASE_TO_VUEX_SET = "ABC_FIREBASE_TO_VUEX_UPDATE",
+    /**
      * The IndexedDB was updated from Firebase
      */
     ABC_FIREBASE_REFRESH_INDEXED_DB = "ABC_FIREBASE_REFRESH_INDEXED_DB",
@@ -270,7 +274,6 @@ export interface IAbcWhereQueryLessThan<T extends Model> extends IAbcQueryBaseDe
  */
 export declare type IAbcWhereQueryDefinition<T extends Model> = IAbcWhereQueryEquals<T> | IAbcWhereQueryGreaterThan<T> | IAbcWhereQueryLessThan<T>;
 export interface IAbcSinceQueryDefinition<T> extends IAbcQueryBaseDefinition {
-    queryType: QueryType.since;
     /**
      * Look for records which have been modified since the given timestamp;
      * if left _undefined_ the value will be
@@ -345,3 +348,4 @@ export interface IAbcQueryApi<T> {
     get: (defn: IAbcQueryDefinition<T>, options: IQueryOptions<T>) => Promise<AbcResult<T>>;
     load: (props: IAbcQueryDefinition<T>, options: IQueryOptions<T>) => Promise<AbcResult<T>>;
 }
+export declare const SINCE_LAST_COOKIE = "slc";

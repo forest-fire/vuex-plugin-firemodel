@@ -70,7 +70,7 @@ function abc(propOffset) {
         [types_1.AbcMutation.ABC_PRUNE_STALE_VUEX_RECORDS](state, payload) {
             if (payload.vuex.isList) {
                 const current = lodash_get_1.default(state, payload.vuex.modulePostfix, []);
-                vue_1.default.set(state, payload.vuex.modulePostfix, current.filter(i => !payload.pks.includes(i)));
+                vue_1.default.set(state, payload.vuex.modulePostfix, current.filter(i => !payload.pks.includes(i.id)));
             }
             else {
                 changeRoot_1.changeRoot(state, null, payload.vuex.moduleName);

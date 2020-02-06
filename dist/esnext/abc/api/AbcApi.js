@@ -88,7 +88,9 @@ export class AbcApi {
         Object.keys(AbcApi._modelsManaged).forEach(key => {
             const ref = AbcApi.getModelApi(AbcApi._modelsManaged[key].model.constructor);
             if (ref.config.useIndexedDb) {
-                waitFor.push(ref.dexieTable.clear());
+                waitFor.push(ref.dexieTable.clear().catch(e => {
+                    console.warn(e);
+                }));
             }
         });
         await Promise.all(waitFor);
@@ -238,7 +240,7 @@ export class AbcApi {
         if (local.allFoundLocally) {
             return localResult;
         }
-        const server = await serverRecords(command, this, local.missing, requestIds);
+        const server = await serverRecords(command, this, requestIds, requestIds);
         const serverResults = new AbcResult(this, {
             type: "discrete",
             local,

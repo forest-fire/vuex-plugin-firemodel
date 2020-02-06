@@ -32,6 +32,10 @@ export var AbcMutation;
      */
     AbcMutation["ABC_FIREBASE_TO_VUEX_UPDATE"] = "ABC_FIREBASE_TO_VUEX_UPDATE";
     /**
+     * Vuex was reset with new results from Firebase
+     */
+    AbcMutation["ABC_FIREBASE_TO_VUEX_SET"] = "ABC_FIREBASE_TO_VUEX_UPDATE";
+    /**
      * The IndexedDB was updated from Firebase
      */
     AbcMutation["ABC_FIREBASE_REFRESH_INDEXED_DB"] = "ABC_FIREBASE_REFRESH_INDEXED_DB";
@@ -72,3 +76,4 @@ export var QueryType;
     QueryType["where"] = "where";
     QueryType["since"] = "since";
 })(QueryType || (QueryType = {}));
+export const SINCE_LAST_COOKIE = "slc";

@@ -1,11 +1,13 @@
 import { AbcApi } from "../AbcApi";
-import { IDictionary } from "common-types";
 import { Model } from "firemodel";
-import { AbcRequestCommand, IAbcSinceQueryDefinition, IAbcAllQueryDefinition } from "../../../types";
+import { AbcRequestCommand, IAbcSinceQueryDefinition, QueryType, IQueryOptions } from "../../../types";
+import { AbcResult } from "../AbcResult";
 /**
  * **since**
  *
  * Gets all records _since_ a certain timestamp (`epoch` with milliseconds)
  */
-declare let since: <T extends Model = IDictionary<any>>(defn: Pick<IAbcSinceQueryDefinition<T>, "limit" | "offset" | "timestamp">) => <T_1>(defn?: Pick<IAbcAllQueryDefinition<T_1>, "limit" | "offset"> | undefined) => (command: AbcRequestCommand, ctx: AbcApi<T_1>) => Promise<void>;
+declare let since: <T extends Model, K extends keyof T>(defn: IAbcSinceQueryDefinition<T> | (IAbcSinceQueryDefinition<T> & {
+    queryType: QueryType.since;
+}), options?: IQueryOptions<T>) => (command: AbcRequestCommand, ctx: AbcApi<T>) => Promise<AbcResult<T>>;
 export { since };

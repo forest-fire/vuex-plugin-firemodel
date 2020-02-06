@@ -116,10 +116,11 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
     ) {
       if (payload.vuex.isList) {
         const current: any[] = get(state, payload.vuex.modulePostfix, []);
+
         Vue.set(
           state,
           payload.vuex.modulePostfix,
-          current.filter(i => !payload.pks.includes(i))
+          current.filter(i => !payload.pks.includes(i.id))
         );
       } else {
         changeRoot<T>(state, null, payload.vuex.moduleName);

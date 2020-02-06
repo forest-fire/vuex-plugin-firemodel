@@ -65,7 +65,7 @@ export function abc(propOffset) {
         [AbcMutation.ABC_PRUNE_STALE_VUEX_RECORDS](state, payload) {
             if (payload.vuex.isList) {
                 const current = get(state, payload.vuex.modulePostfix, []);
-                Vue.set(state, payload.vuex.modulePostfix, current.filter(i => !payload.pks.includes(i)));
+                Vue.set(state, payload.vuex.modulePostfix, current.filter(i => !payload.pks.includes(i.id)));
             }
             else {
                 changeRoot(state, null, payload.vuex.moduleName);

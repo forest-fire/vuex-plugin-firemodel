@@ -115,7 +115,11 @@ export class AbcApi<T extends Model> {
         AbcApi._modelsManaged[key].model.constructor
       );
       if (ref.config.useIndexedDb) {
-        waitFor.push(ref.dexieTable.clear());
+        waitFor.push(
+          ref.dexieTable.clear().catch(e => {
+            console.warn(e);
+          })
+        );
       }
     });
     await Promise.all(waitFor);
@@ -337,12 +341,7 @@ export class AbcApi<T extends Model> {
       return localResult;
     }
 
-    const server = await serverRecords(
-      command,
-      this,
-      local.missing,
-      requestIds
-    );
+    const server = await serverRecords(command, this, requestIds, requestIds);
 
     const serverResults = new AbcResult(this, {
       type: "discrete",

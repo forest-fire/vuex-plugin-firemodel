@@ -32,7 +32,11 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     getProducts = abc.getProducts;
     loadProducts = abc.loadProducts;
     await AbcApi.connectIndexedDb();
-    expect(AbcApi.getModelApi(Product).db.isConnected);
+    expect(
+      AbcApi.getModelApi(Product).db.isConnected,
+      "Product is connected in IndexedDB"
+    );
+    expect(AbcApi.indexedDbConnected).to.equal(true);
   });
 
   afterEach(async () => {
@@ -182,6 +186,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       property: "price",
       equals: 452
     });
+    console.log(await tbl.toArray());
     const results = await getProducts(q).catch(e => {
       console.log(e);
       throw e;
@@ -298,15 +303,14 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     );
 
     expect(eventCounts[`products/ABC_LOCAL_QUERY_TO_VUEX`]).to.equal(1);
-    expect(eventCounts["products/ABC_FIREBASE_TO_VUEX_UPDATE"]).to.equal(1);
-    // expect(eventCounts["products/ABC_PRUNE_STALE_VUEX_RECORDS"]).to.equal(
-    //   1,
-    //   "Pruning of stale Vuex records has happened"
-    // );
-    // expect(eventCounts["products/ABC_PRUNE_STALE_IDX_RECORDS"]).to.equal(
-    //   1,
-    //   "Pruning of stale IDX records has happened"
-    // );
+    expect(eventCounts["products/ABC_FIREBASE_TO_VUEX_UPDATE"]).to.equal(
+      1,
+      "Vuex update mutation was fired"
+    );
+    expect(eventCounts["products/ABC_PRUNE_STALE_IDX_RECORDS"]).to.equal(
+      1,
+      "Vuex mutation for pruning of stale IDX records has happened"
+    );
 
     // ApiResult.records have only products priced at 452
     results.records.forEach(r => expect(r.price).to.equal(452));
@@ -315,9 +319,13 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       expect(r.price).to.equal(452)
     );
 
-    console.log(
-      events.find(i => i[0] === "products/ABC_PRUNE_STALE_VUEX_RECORDS")
+    const pruneVuex = events.find(
+      i => i[0] === "products/ABC_PRUNE_STALE_VUEX_RECORDS"
     );
+    if (pruneVuex) {
+      expect(pruneVuex[1].pks).to.be.an("array");
+      expect(pruneVuex[1].pks).to.include("zzzz2");
+    }
 
     // Vuex should also ONLY have those records which came back from Server
     expect(store.state.products.all).to.have.lengthOf(2);
@@ -326,7 +334,10 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       i => i[0] === "products/ABC_LOCAL_QUERY_TO_VUEX"
     );
     if (localMutation) {
-      expect(localMutation[1].localRecords).to.have.lengthOf(3);
+      expect(localMutation[1].localRecords).to.have.lengthOf(
+        3,
+        "all three records from IndexedDB come back"
+      );
       expect(localMutation[1].serverRecords).to.have.lengthOf(0);
     } else {
       throw new Error("local mutation was incorrectly structured");
@@ -350,7 +361,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
   });
 });
 
-let events: Array<[string, AbcResult<Product>]> = [];
+let events: Array<[string, any]> = [];
 let eventCounts: IDictionary<number> = {};
 
 function subscription(mutation: MutationPayload, state: IDictionary): void {
