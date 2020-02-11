@@ -68,7 +68,7 @@ async function queueLifecycleEvents(store, config) {
         const [name, event] = i;
         if (config[name]) {
             const cb = config[name];
-            await store.commit(addNamespace("QUEUE_EVENT_HOOK" /* queueHook */), {
+            store.commit(addNamespace("QUEUE_EVENT_HOOK" /* queueHook */), {
                 on: event,
                 name: `lifecycle-event-${event}`,
                 cb
