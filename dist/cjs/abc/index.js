@@ -5,5 +5,6 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./configuration/abc"));
 __export(require("./configuration/configApi"));
+__export(require("./configuration/get"));
 __export(require("./api"));
 //# sourceMappingURL=index.js.map
