@@ -22,7 +22,7 @@ import { IDictionary } from "firemock";
 import { IFmModelConstructor } from "../../types/index";
 import { AbcError } from "../../errors/index";
 import { localRecords } from "./api-parts/localRecords";
-import { getStore } from "../../../src/index";
+import { getStore } from "../../index";
 import { AbcResult } from "./AbcResult";
 import { serverRecords } from "./shared/serverRecords";
 import { pathJoin } from "common-types";

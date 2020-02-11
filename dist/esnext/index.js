@@ -18,6 +18,9 @@ let _store;
 export const setStore = (store) => {
     _store = store;
 };
+/**
+ * Get the Store from elsewhere in the library
+ */
 export function getStore() {
     return _store;
 }

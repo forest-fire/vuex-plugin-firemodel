@@ -24,6 +24,9 @@ let _store;
 exports.setStore = (store) => {
     _store = store;
 };
+/**
+ * Get the Store from elsewhere in the library
+ */
 function getStore() {
     return _store;
 }

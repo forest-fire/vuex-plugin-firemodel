@@ -31,6 +31,9 @@ let _store: Store<any>;
 export const setStore = <T>(store: Store<T>) => {
   _store = store;
 };
+/**
+ * Get the Store from elsewhere in the library
+ */
 export function getStore<T = any>() {
   return _store as Store<T>;
 }
