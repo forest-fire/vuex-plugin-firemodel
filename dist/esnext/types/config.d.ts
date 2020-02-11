@@ -112,30 +112,6 @@ export interface IFiremodelConfig<T> extends IFiremodelLifecycleHooks<T>, IFirem
      */
     db: IFirebaseClientConfig;
 }
-export interface IAuthConfig {
-    /**
-     * The Firebase persistance model you would like to use. The types and descriptions
-     * are made available on the `AuthPersistenceStrategy` enumeration and the description
-     * of what these states means can be found in the
-     * [Firebase Reference Doc](https://firebase.google.com/docs/auth/web/auth-state-persistence)
-     *
-     * If not stated, this option defaults to `local` (the longest duration)
-     */
-    persistence: IAuthPersistenceStrategy;
-    /**
-     * **Anonymous Auth**
-     *
-     * Once Firebase has connected to the DB, this service
-     * will ensure that the user is logged in. Of course if
-     * a user already had a valid token/session then it's
-     * normal for **Firebase** to reconnect you but in the
-     * cases where there is no valid token, this service will
-     * login the user as an _anonymous_ user.
-     *
-     * If not stated, this option defaults to `false`.
-     */
-    anonymous: boolean;
-}
 export interface IFiremodelPluginCoreServices {
     /**
      * A flag which which determines whether the database connection should be
@@ -167,6 +143,30 @@ export interface IFiremodelPluginCoreServices {
      * if your project is using the popular vuex plugin
      */
     routeChanges?: boolean;
+}
+export interface IAuthConfig {
+    /**
+     * The Firebase persistance model you would like to use. The types and descriptions
+     * are made available on the `AuthPersistenceStrategy` enumeration and the description
+     * of what these states means can be found in the
+     * [Firebase Reference Doc](https://firebase.google.com/docs/auth/web/auth-state-persistence)
+     *
+     * If not stated, this option defaults to `local` (the longest duration)
+     */
+    persistence: IAuthPersistenceStrategy;
+    /**
+     * **Anonymous Auth**
+     *
+     * Once Firebase has connected to the DB, this service
+     * will ensure that the user is logged in. Of course if
+     * a user already had a valid token/session then it's
+     * normal for **Firebase** to reconnect you but in the
+     * cases where there is no valid token, this service will
+     * login the user as an _anonymous_ user.
+     *
+     * If not stated, this option defaults to `false`.
+     */
+    anonymous: boolean;
 }
 export interface IFiremodelLifecycleHooks<T> {
     /**
