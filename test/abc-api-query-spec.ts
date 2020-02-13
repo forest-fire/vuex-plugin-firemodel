@@ -6,7 +6,8 @@ import {
   IAbcQueryRequest,
   AbcResult,
   AbcMutation,
-  where
+  where,
+  AbcGetStrategy
 } from "../src/index";
 import { expect } from "chai";
 import { Product } from "./models/Product";
@@ -49,6 +50,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     const store = getStore();
     store.subscribe(subscription);
     const tbl = AbcApi.getModelApi(Product).dexieTable;
+
     const numProducts = Object.keys(productData.products).length;
     expect(store.state.products.all).to.have.lengthOf(0, "Vuex starts empty");
     expect(await tbl.toArray()).to.have.lengthOf(0, "IndexedDB starts empty");
@@ -344,19 +346,33 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     }
   });
 
-  it("get.since(timestamp) when local state is empty", async () => {
+  // it('get.all({strategy: "local-only"}) only retrieves records from IndexedDB and puts in Vuex', async () => {
+  //   const store = getStore();
+  //   store.subscribe(subscription);
+  //   const tbl = AbcApi.getModelApi(Product).dexieTable;
+  //   const numProducts = Object.keys(productData.products).length;
+  //   expect(store.state.products.all).to.have.lengthOf(0, "Vuex starts empty");
+  //   expect(await tbl.toArray()).to.have.lengthOf(0, "IndexedDB starts empty");
+  //   expect(events).to.have.lengthOf(0, "No dispatches yet");
+  //   const q: IAbcQueryRequest<Product> = all({
+  //     strategy: AbcGetStrategy.localOnly
+  //   });
+  //   const results = await getProducts(q);
+  });
+
+  it.skip("get.since(timestamp) when local state is empty", async () => {
     throw new Error("test not written");
   });
 
-  it("get.since(timestamp) when local state has all records", async () => {
+  it.skip("get.since(timestamp) when local state has all records", async () => {
     throw new Error("test not written");
   });
 
-  it("load.since(timestamp) when local state is empty", async () => {
+  it.skip("load.since(timestamp) when local state is empty", async () => {
     throw new Error("test not written");
   });
 
-  it("load.since() when local state is empty", async () => {
+  it.skip("load.since() when local state is empty", async () => {
     throw new Error("test not written");
   });
 });

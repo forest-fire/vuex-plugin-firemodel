@@ -115,14 +115,12 @@ export class AbcApi<T extends Model> {
         AbcApi._modelsManaged[key].model.constructor
       );
       if (ref.config.useIndexedDb) {
-        waitFor.push(
-          ref.dexieTable.clear().catch(e => {
-            console.warn(e);
-          })
-        );
+        waitFor.push(ref.dexieTable.clear());
       }
     });
-    await Promise.all(waitFor);
+    await Promise.all(waitFor).catch(e => {
+      console.warn(e);
+    });
     AbcApi._modelsManaged = {};
     if (AbcApi.indexedDbConnected) {
       AbcApi.disconnect();
