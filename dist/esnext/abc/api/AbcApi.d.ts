@@ -1,6 +1,6 @@
 import { Model, IFmModelMeta, DexieDb, IPrimaryKey } from "firemodel";
 import { IAbcApiConfig, IAbcOptions, IAbcParam } from "../../types/abc";
-import { IFmModelConstructor } from "../../types";
+import { IFmModelConstructor } from "../../types/index";
 import { AbcResult } from "./AbcResult";
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also

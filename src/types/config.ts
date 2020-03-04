@@ -34,7 +34,7 @@ export interface IFmEventBase<T> {
  */
 export interface IFmAuthenticatatedContext<T>
   extends IFmEventBase<T>,
-  IFmConnectedContext<T> {
+    IFmConnectedContext<T> {
   /** the full Firebase AUTH api */
   auth: FirebaseAuth;
   /** the logged in user's UID (if logged in) */
@@ -55,8 +55,8 @@ export interface IFmConnectedContext<T> extends IFmEventBase<T> {
 /** Context provided to a _logged in_ user */
 export interface IFmLoginEventContext<T>
   extends IFmEventBase<T>,
-  IFmConnectedContext<T>,
-  IFmAuthenticatatedContext<T> {
+    IFmConnectedContext<T>,
+    IFmAuthenticatatedContext<T> {
   /** the logged in user's `uid` */
   uid: string;
 
@@ -71,8 +71,8 @@ export interface IFmLoginEventContext<T>
 
 export interface IFmLogoutEventContext<T>
   extends IFmEventBase<T>,
-  IFmConnectedContext<T>,
-  IFmAuthenticatatedContext<T> {
+    IFmConnectedContext<T>,
+    IFmAuthenticatatedContext<T> {
   uid: undefined;
   email: null;
   emailVerified: false;
@@ -86,7 +86,7 @@ export interface IFmLogoutEventContext<T>
  */
 export interface IFmLogoutEventContext<T>
   extends IFmConnectedContext<T>,
-  IFmEventBase<T> { }
+    IFmEventBase<T> {}
 
 /**
  * When a Firebase user changes due to _abandonment_ of an anonymous user
@@ -139,7 +139,7 @@ export type IFmRouteChanged<T> = (
  */
 export interface IFiremodelConfig<T>
   extends IFiremodelLifecycleHooks<T>,
-  IFiremodelPluginCoreServices {
+    IFiremodelPluginCoreServices {
   /**
    * Firemodel must be able to connect to the database -- using
    * `abstracted-client` to do so -- and therefore the configuration
@@ -150,13 +150,48 @@ export interface IFiremodelConfig<T>
   db: IFirebaseClientConfig;
 }
 
+export interface IFiremodelPluginCoreServices {
+  /**
+   * A flag which which determines whether the database connection should be
+   * established immediately on this plugin's initialization.
+   *
+   * Default is `true`
+   */
+  connect?: boolean;
+
+  /**
+   * **Firebase Auth**
+   *
+   * This turns on usage of Firebase's Authentication/Authorization
+   * solution. When this is turned on this plugin will keep
+   * the `@firemodel/currentUser` property up-to-date as well as
+   * fire the
+   *
+   * - `onAuth`,
+   * - `onLogin`,
+   * - and `onLogOut` lifecycle hooks
+   *
+   * This option defaults to `true`; you can set to `false` or you can
+   * add a configuration dictionary if you want to move beyond the
+   * default configuration.
+   */
+  auth?: boolean | IAuthConfig;
+
+  /**
+   * **Watch Route Changes**
+   *
+   * if your project is using the popular vuex plugin
+   */
+  routeChanges?: boolean;
+}
+
 export interface IAuthConfig {
   /**
    * The Firebase persistance model you would like to use. The types and descriptions
    * are made available on the `AuthPersistenceStrategy` enumeration and the description
-   * of what these states means can be found in the 
+   * of what these states means can be found in the
    * [Firebase Reference Doc](https://firebase.google.com/docs/auth/web/auth-state-persistence)
-   * 
+   *
    * If not stated, this option defaults to `local` (the longest duration)
    */
   persistence: IAuthPersistenceStrategy;
@@ -175,41 +210,6 @@ export interface IAuthConfig {
   anonymous: boolean;
 }
 
-export interface IFiremodelPluginCoreServices {
-  /**
-   * A flag which which determines whether the database connection should be
-   * established immediately on this plugin's initialization.
-   *
-   * Default is `true`
-   */
-  connect?: boolean;
-
-  /**
-   * **Firebase Auth**
-   *
-   * This turns on usage of Firebase's Authentication/Authorization
-   * solution. When this is turned on this plugin will keep
-   * the `@firemodel/currentUser` property up-to-date as well as
-   * fire the 
-   * 
-   * - `onAuth`, 
-   * - `onLogin`, 
-   * - and `onLogOut` lifecycle hooks
-   *
-   * This option defaults to `true`; you can set to `false` or you can
-   * add a configuration dictionary if you want to move beyond the 
-   * default configuration.
-   */
-  auth?: boolean | IAuthConfig;
-
-  /**
-   * **Watch Route Changes**
-   *
-   * if your project is using the popular vuex plugin
-   */
-  routeChanges?: boolean;
-}
-
 export interface IFiremodelLifecycleHooks<T> {
   /**
    * A callback function which is executed any time the
@@ -222,9 +222,9 @@ export interface IFiremodelLifecycleHooks<T> {
    */
   onDisconnect?: IFmOnDisconnect<T>;
   /**
-   * Immediately prior to the `onLogin` and `onLogout` events, 
+   * Immediately prior to the `onLogin` and `onLogout` events,
    * the `onAuth` event will fire. Also, when a user first lands
-   * on the app the `onAuth` event is guarenteed to fire (whereas 
+   * on the app the `onAuth` event is guarenteed to fire (whereas
    * if the user isn't logged in then neither login/logout will).
    */
   onAuth?: IFmOnAuth<T>;

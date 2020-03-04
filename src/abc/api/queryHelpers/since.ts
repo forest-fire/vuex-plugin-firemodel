@@ -1,5 +1,4 @@
 import { AbcApi } from "../AbcApi";
-import { IDictionary } from "common-types";
 import { Model, List } from "firemodel";
 import {
   AbcRequestCommand,

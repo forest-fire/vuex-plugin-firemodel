@@ -4,9 +4,9 @@ const firemodel_1 = require("firemodel");
 const abc_1 = require("../../types/abc");
 const configApi_1 = require("../configuration/configApi");
 const shared_1 = require("../../shared");
-const errors_1 = require("../../errors");
+const index_1 = require("../../errors/index");
 const localRecords_1 = require("./api-parts/localRecords");
-const index_1 = require("../../../src/index");
+const index_2 = require("../../index");
 const AbcResult_1 = require("./AbcResult");
 const serverRecords_1 = require("./shared/serverRecords");
 const common_types_1 = require("common-types");
@@ -51,7 +51,7 @@ class AbcApi {
     static addModel(model) {
         const modelName = model.about.model.pascal;
         if (AbcApi._modelsManaged[modelName]) {
-            throw new errors_1.AbcError(`You have attempted to register the model ${modelName} twice!`, `abc-api/invalid-model-registration`);
+            throw new index_1.AbcError(`You have attempted to register the model ${modelName} twice!`, `abc-api/invalid-model-registration`);
         }
         AbcApi._modelsManaged[modelName] = model;
         return model;
@@ -78,7 +78,7 @@ class AbcApi {
         const r = firemodel_1.Record.create(model);
         const name = shared_1.capitalize(r.modelName);
         if (!AbcApi._modelsManaged[name]) {
-            throw new errors_1.AbcError(`You attempted to get an AbcApi for the model ${name} but it is not yet configured!`, "abc-api/invalid-model");
+            throw new index_1.AbcError(`You attempted to get an AbcApi for the model ${name} but it is not yet configured!`, "abc-api/invalid-model");
         }
         return AbcApi._modelsManaged[name];
     }
@@ -212,14 +212,14 @@ class AbcApi {
      * Handles GET requests for Discrete ID requests
      */
     async getDiscrete(command, request, options = {}) {
-        const store = index_1.getStore();
+        const store = index_2.getStore();
         const requestIds = request.map(i => firemodel_1.Record.compositeKeyRef(this._modelConstructor, i));
         let results = await localRecords_1.localRecords(command, requestIds, options, this);
         this._cacheHits += results.cacheHits;
         this._cacheMisses += results.cacheMisses;
         const local = Object.assign(Object.assign({}, results), { overallCachePerformance: this.cachePerformance });
         if (!this.config.useIndexedDb && command === "load") {
-            throw new errors_1.AbcError(`There was a call to load${shared_1.capitalize(this.model.plural)}() but this is not allowed for models like ${this.model.pascal} which have been configured in ABC to not have IndexedDB support; use get${shared_1.capitalize(this.model.plural)}() instead.`, "not-allowed");
+            throw new index_1.AbcError(`There was a call to load${shared_1.capitalize(this.model.plural)}() but this is not allowed for models like ${this.model.pascal} which have been configured in ABC to not have IndexedDB support; use get${shared_1.capitalize(this.model.plural)}() instead.`, "not-allowed");
         }
         const localResult = new AbcResult_1.AbcResult(this, {
             type: "discrete",
@@ -282,7 +282,7 @@ class AbcApi {
     get db() {
         const db = this.config.db || firemodel_1.FireModel.defaultDb;
         if (!db) {
-            throw new errors_1.AbcError(`Attempt to access the database via the db getter failed which means that the ABC API was not given a database connector and there is no "defaultDb" set with Firemodel.`);
+            throw new index_1.AbcError(`Attempt to access the database via the db getter failed which means that the ABC API was not given a database connector and there is no "defaultDb" set with Firemodel.`);
         }
         return db;
     }
@@ -315,10 +315,10 @@ class AbcApi {
     }
     get dexie() {
         if (!this.about.config.useIndexedDb) {
-            throw new errors_1.AbcError(`You are attempting to access Dexie while connected to the ABC API with the model ${this.about.model.pascal} which is configured NOT to use IndexedDB!`, "not-allowed");
+            throw new index_1.AbcError(`You are attempting to access Dexie while connected to the ABC API with the model ${this.about.model.pascal} which is configured NOT to use IndexedDB!`, "not-allowed");
         }
         if (!AbcApi._dexieDb) {
-            throw new errors_1.AbcError(`The Dexie database is not yet connected; calls to get() or load() will automatically connect it but if you want to access it prior to that you must call connectDexie()`, "not-ready");
+            throw new index_1.AbcError(`The Dexie database is not yet connected; calls to get() or load() will automatically connect it but if you want to access it prior to that you must call connectDexie()`, "not-ready");
         }
         return AbcApi._dexieDb;
     }

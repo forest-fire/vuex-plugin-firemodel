@@ -22,7 +22,7 @@ export * from "./firemodelMutations/index";
 export * from "firemodel";
 export { database } from "./store";
 export * from "./auth/api";
-export * from "./abc/index"
+export * from "./abc/index";
 
 export let configuration: IFiremodelPluginConfig<any>;
 export let dbConfig: IFirebaseClientConfig;
@@ -31,6 +31,9 @@ let _store: Store<any>;
 export const setStore = <T>(store: Store<T>) => {
   _store = store;
 };
+/**
+ * Get the Store from elsewhere in the library
+ */
 export function getStore<T = any>() {
   return _store as Store<T>;
 }
@@ -55,7 +58,9 @@ export let initialState: IDictionary;
 
 export type IFiremodel<T> = { "@firemodel": IFiremodelState<T> };
 
-const FiremodelPlugin = <T>(config: IFiremodelPluginConfig<T & IFiremodel<T>>) => {
+const FiremodelPlugin = <T>(
+  config: IFiremodelPluginConfig<T & IFiremodel<T>>
+) => {
   configuration = config;
   type IRootState = T & { "@firemodel": IFiremodelState<T> };
   return (store: Store<IRootState>) => {
@@ -108,7 +113,7 @@ async function queueLifecycleEvents<T>(
       const cb: FmCallback = config[
         name as keyof IFiremodelPluginConfig<T>
       ] as any;
-      await store.commit(addNamespace(FmConfigMutation.queueHook), {
+      store.commit(addNamespace(FmConfigMutation.queueHook), {
         on: event,
         name: `lifecycle-event-${event}`,
         cb

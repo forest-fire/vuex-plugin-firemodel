@@ -18,6 +18,9 @@ let _store;
 export const setStore = (store) => {
     _store = store;
 };
+/**
+ * Get the Store from elsewhere in the library
+ */
 export function getStore() {
     return _store;
 }
@@ -68,7 +71,7 @@ async function queueLifecycleEvents(store, config) {
         const [name, event] = i;
         if (config[name]) {
             const cb = config[name];
-            await store.commit(addNamespace("QUEUE_EVENT_HOOK" /* queueHook */), {
+            store.commit(addNamespace("QUEUE_EVENT_HOOK" /* queueHook */), {
                 on: event,
                 name: `lifecycle-event-${event}`,
                 cb
