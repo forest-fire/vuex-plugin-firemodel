@@ -79,9 +79,7 @@ export interface IAbcRequest<T> {
   (param: IAbcParam<T>, options?: IAbcOptions<T>): Promise<AbcResult<T>>;
 }
 
-export function isDiscreteRequest<T>(
-  request: IAbcParam<T>
-): request is IPrimaryKey<T>[] {
+export function isDiscreteRequest<T>(request: IAbcParam<T>): request is IPrimaryKey<T>[] {
   return typeof request !== "function";
 }
 
@@ -121,8 +119,7 @@ export interface IQueryServerResults<T, K = IDictionary> {
  * presented will favor data in Vuex over IndexedDB if there
  * is ever a conflict.
  */
-export interface IDiscreteLocalResults<T, K = IDictionary>
-  extends IAbcResultsMeta<T> {
+export interface IDiscreteLocalResults<T, K = IDictionary> extends IAbcResultsMeta<T> {
   /** How many of the records _were_ found locally */
   cacheHits: number;
   /**
@@ -165,8 +162,7 @@ export interface ICachePerformance {
   ignores: number;
 }
 
-export interface IDiscreteServerResults<T extends Model, K = IDictionary>
-  extends IAbcResultsMeta<T> {
+export interface IDiscreteServerResults<T extends Model, K = IDictionary> extends IAbcResultsMeta<T> {
   /**
    * The primary keys being requested from the server
    */
@@ -284,24 +280,21 @@ export interface IAbcAllQueryDefinition<T> extends IAbcQueryBaseDefinition {
   queryType: QueryType.all;
 }
 
-export interface IAbcWhereQueryEquals<T extends Model>
-  extends IAbcQueryBaseDefinition {
+export interface IAbcWhereQueryEquals<T extends Model> extends IAbcQueryBaseDefinition {
   // queryType: QueryType.where;
   property: keyof T & string;
   equals: any;
   lessThan?: never;
   greaterThan?: never;
 }
-export interface IAbcWhereQueryGreaterThan<T extends Model>
-  extends IAbcQueryBaseDefinition {
+export interface IAbcWhereQueryGreaterThan<T extends Model> extends IAbcQueryBaseDefinition {
   // queryType: QueryType.where;
   property: keyof T & string;
   equals?: never;
   lessThan?: never;
   greaterThan: any;
 }
-export interface IAbcWhereQueryLessThan<T extends Model>
-  extends IAbcQueryBaseDefinition {
+export interface IAbcWhereQueryLessThan<T extends Model> extends IAbcQueryBaseDefinition {
   // queryType: QueryType.where;
   property: keyof T & string;
   equals?: never;
@@ -401,30 +394,29 @@ export interface IUniversalOptions<T> {
 //   allLocally?: boolean;
 // }
 
-export type IAbcOptions<T> = IDiscreteOptions<T> | IQueryOptions<T>;
+export type IAbcOptions<T> = (IDiscreteOptions<T> | IQueryOptions<T>) & IAnyOptions<T>;
+
+export interface IAnyOptions<T> {
+  watch: boolean | IWatchCallback<T>;
+  watchNew: boolean;
+  // TODO: this should be more strongly typed AND scoped to get versus load
+  strategy: string;
+}
+
+export interface IWatchCallback<T> {
+  (r: T): boolean;
+}
 
 /** the shape of the get/load endpoints for Discrete requests */
 export interface IAbcDiscreteApi<T> {
-  get: (
-    props: IPrimaryKey<T>[],
-    options: IDiscreteOptions<T>
-  ) => Promise<AbcResult<T>>;
-  load: (
-    props: IPrimaryKey<T>[],
-    options: IDiscreteOptions<T>
-  ) => Promise<AbcResult<T>>;
+  get: (props: IPrimaryKey<T>[], options: IDiscreteOptions<T>) => Promise<AbcResult<T>>;
+  load: (props: IPrimaryKey<T>[], options: IDiscreteOptions<T>) => Promise<AbcResult<T>>;
 }
 
 /** the shape of the get/load endpoints for Query requests */
 export interface IAbcQueryApi<T> {
-  get: (
-    defn: IAbcQueryDefinition<T>,
-    options: IQueryOptions<T>
-  ) => Promise<AbcResult<T>>;
-  load: (
-    props: IAbcQueryDefinition<T>,
-    options: IQueryOptions<T>
-  ) => Promise<AbcResult<T>>;
+  get: (defn: IAbcQueryDefinition<T>, options: IQueryOptions<T>) => Promise<AbcResult<T>>;
+  load: (props: IAbcQueryDefinition<T>, options: IQueryOptions<T>) => Promise<AbcResult<T>>;
 }
 
 export const SINCE_LAST_COOKIE = "slc";
