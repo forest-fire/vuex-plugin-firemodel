@@ -2,5 +2,8 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "mocha.requires": ["ts-node/register"],
   "mocha.files.glob": "test/**/*-spec.ts",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "prettier.packageManager": "yarn",
+  "prettier.printWidth": 120,
+  "prettier.proseWrap": "always"
 }
