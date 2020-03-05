@@ -48,7 +48,7 @@ export interface IAbcApiConfig<T extends Model> {
  * `all`, `since`, and `where`
  */
 export interface IAbcQueryHelper {
-  <T extends Model>(defn: IAbcQueryDefinition<T>): IAbcQueryRequest<T>;
+  <T extends Model>(defn?: IAbcQueryDefinition<T>): IAbcQueryRequest<T>;
   // isQueryHelper: true;
 }
 
