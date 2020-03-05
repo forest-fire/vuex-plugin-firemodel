@@ -337,7 +337,15 @@ export interface IUniversalOptions<T> {
      */
     mergeRecords?: boolean;
 }
-export declare type IAbcOptions<T> = IDiscreteOptions<T> | IQueryOptions<T>;
+export declare type IAbcOptions<T> = (IDiscreteOptions<T> | IQueryOptions<T>) & IAnyOptions<T>;
+export interface IAnyOptions<T> {
+    watch?: boolean | IWatchCallback<T>;
+    watchNew?: boolean;
+    strategy?: string;
+}
+export interface IWatchCallback<T> {
+    (r: T): boolean;
+}
 /** the shape of the get/load endpoints for Discrete requests */
 export interface IAbcDiscreteApi<T> {
     get: (props: IPrimaryKey<T>[], options: IDiscreteOptions<T>) => Promise<AbcResult<T>>;
@@ -349,3 +357,13 @@ export interface IAbcQueryApi<T> {
     load: (props: IAbcQueryDefinition<T>, options: IQueryOptions<T>) => Promise<AbcResult<T>>;
 }
 export declare const SINCE_LAST_COOKIE = "slc";
+/**
+ * Strategies for "get" requests for Query's.
+ *
+ * A "strategy" is a modifier in the default path/strategy
+ * of getting data from the various sources (e.g., Vuex, IndexedDb, Firebase)
+ */
+export declare enum AbcGetStrategy {
+    /** Queries will request data from */
+    localOnly = "localOnly"
+}

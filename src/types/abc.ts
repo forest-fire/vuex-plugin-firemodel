@@ -397,10 +397,10 @@ export interface IUniversalOptions<T> {
 export type IAbcOptions<T> = (IDiscreteOptions<T> | IQueryOptions<T>) & IAnyOptions<T>;
 
 export interface IAnyOptions<T> {
-  watch: boolean | IWatchCallback<T>;
-  watchNew: boolean;
+  watch?: boolean | IWatchCallback<T>;
+  watchNew?: boolean;
   // TODO: this should be more strongly typed AND scoped to get versus load
-  strategy: string;
+  strategy?: string;
 }
 
 export interface IWatchCallback<T> {
