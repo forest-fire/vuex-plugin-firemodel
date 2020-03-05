@@ -43,7 +43,8 @@ let where = function where<T extends Model, K extends keyof T>(
       const list = await List.where(
         ctx.model.constructor,
         defn.property,
-        valueOp
+        valueOp,
+        options || {}
       );
       return list.data;
     };

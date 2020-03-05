@@ -50,7 +50,8 @@ let since = function since<T extends Model, K extends keyof T>(
     const firemodelQuery = async () => {
       const list = await List.since(
         ctx.model.constructor,
-        defn.timestamp as number
+        defn.timestamp as number,
+        options || {}
       );
       return list.data;
     };

@@ -24,7 +24,7 @@ let since = function since(defn, options = {}) {
         };
         // The query to use for Firebase
         const firemodelQuery = async () => {
-            const list = await List.since(ctx.model.constructor, defn.timestamp);
+            const list = await List.since(ctx.model.constructor, defn.timestamp, options || {});
             return list.data;
         };
         return generalizedQuery(defn, command, dexieQuery, firemodelQuery, ctx, options);

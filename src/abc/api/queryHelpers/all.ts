@@ -27,7 +27,7 @@ let all = function all<T>(
 
     // The query to use for Firebase
     const firemodelQuery = async () => {
-      const list = await List.all(ctx.model.constructor);
+      const list = await List.all(ctx.model.constructor, options || {});
       return list.data;
     };
 

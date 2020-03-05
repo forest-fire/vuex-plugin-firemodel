@@ -22,7 +22,7 @@ let where = function where(defn, options = {}) {
         };
         // The query to use for Firebase
         const firemodelQuery = async () => {
-            const list = await List.where(ctx.model.constructor, defn.property, valueOp);
+            const list = await List.where(ctx.model.constructor, defn.property, valueOp, options || {});
             return list.data;
         };
         return generalizedQuery(defn, command, dexieQuery, firemodelQuery, ctx, options);

@@ -13,7 +13,7 @@ let all = function all(defn = {}, options = {}) {
         };
         // The query to use for Firebase
         const firemodelQuery = async () => {
-            const list = await firemodel_1.List.all(ctx.model.constructor);
+            const list = await firemodel_1.List.all(ctx.model.constructor, options || {});
             return list.data;
         };
         return shared_1.generalizedQuery(defn, command, dexieQuery, firemodelQuery, ctx, options);
