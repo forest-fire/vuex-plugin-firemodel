@@ -203,7 +203,7 @@ export class AbcApi {
             return this.getDiscrete("get", request, options);
         }
         else {
-            return request("get", this);
+            return request("get", this, options);
         }
     }
     /**
@@ -336,7 +336,7 @@ export class AbcApi {
             return this.getDiscrete("load", request, options);
         }
         else {
-            return request("get", this);
+            return request("get", this, options);
         }
     }
     /**

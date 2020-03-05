@@ -9,11 +9,11 @@ import {
 import { AbcApi } from "../AbcApi";
 import { getStore, AbcResult } from "../../..";
 import get from "lodash.get";
-import { Record } from "firemodel";
+import { Record, Model } from "firemodel";
 import { deepEqual } from "fast-equals";
 import { findPk } from "../shared/findPk";
 
-export interface IGeneralizedQuery<T> {
+export interface IGeneralizedQuery<T extends Model> {
   (): Promise<T[]>;
 }
 
@@ -21,7 +21,7 @@ export interface IGeneralizedQuery<T> {
  * A generalized flow for queries; specific query helpers
  * should use this flow to standarize their approach.
  */
-export async function generalizedQuery<T>(
+export async function generalizedQuery<T extends Model>(
   queryDefn: IAbcQueryDefinition<T>,
   command: AbcRequestCommand,
   dexieQuery: IGeneralizedQuery<T>,

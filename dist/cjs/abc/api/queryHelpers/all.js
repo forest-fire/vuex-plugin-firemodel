@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../../../types");
 const firemodel_1 = require("firemodel");
 const shared_1 = require("../shared");
-let all = function all(defn = {}, options = {}) {
-    return async (command, ctx) => {
+exports.all = function all(defn = {}) {
+    return async (command, ctx, options = {}) => {
         defn = Object.assign(Object.assign({}, defn), { queryType: types_1.QueryType.all });
         // The query to use for IndexedDB
         const dexieQuery = async () => {
@@ -19,6 +19,5 @@ let all = function all(defn = {}, options = {}) {
         return shared_1.generalizedQuery(defn, command, dexieQuery, firemodelQuery, ctx, options);
     };
 };
-exports.all = all;
-all.prototype.isQueryHelper = true;
+exports.all.prototype.isQueryHelper = true;
 //# sourceMappingURL=all.js.map

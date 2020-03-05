@@ -5,7 +5,8 @@ import {
   IAbcSinceQueryDefinition,
   QueryType,
   IQueryOptions,
-  SINCE_LAST_COOKIE
+  SINCE_LAST_COOKIE,
+  IAbcQueryHelper
 } from "../../../types";
 import { AbcResult } from "../AbcResult";
 import { generalizedQuery } from "../shared";
@@ -16,16 +17,12 @@ import cookies from "js-cookie";
  *
  * Gets all records _since_ a certain timestamp (`epoch` with milliseconds)
  */
-let since = function since<T extends Model, K extends keyof T>(
+export const since: IAbcQueryHelper = function since <T extends Model>(
   defn:
     | IAbcSinceQueryDefinition<T>
-    | (IAbcSinceQueryDefinition<T> & { queryType: QueryType.since }),
-  options: IQueryOptions<T> = {}
-) {
-  return async (
-    command: AbcRequestCommand,
-    ctx: AbcApi<T>
-  ): Promise<AbcResult<T>> => {
+    | (IAbcSinceQueryDefinition<T> & { queryType: QueryType.since })
+)  {
+  return async (command, ctx: AbcApi<T>, options: IQueryOptions<T> = {}): Promise<AbcResult<T>> => {
     defn = { ...defn, queryType: QueryType.since };
     if (!defn.timestamp) {
       const last = (cookies.getJSON(SINCE_LAST_COOKIE) || {})[ctx.model.pascal];
@@ -66,7 +63,3 @@ let since = function since<T extends Model, K extends keyof T>(
     );
   };
 };
-
-since.prototype.isQueryHelper = true;
-
-export { since };

@@ -43,9 +43,8 @@ export interface IAbcApiConfig<T extends Model> {
  * Any of the provided Query Helpers which include
  * `all`, `since`, and `where`
  */
-export interface IAbcQueryHelper<T> {
-    (defn: IAbcAllQueryDefinition<T>): IAbcQueryRequest<T>;
-    isQueryHelper: true;
+export interface IAbcQueryHelper {
+    <T extends Model>(defn: IAbcQueryDefinition<T>): IAbcQueryRequest<T>;
 }
 /**
  * Recieves a _list_ of type T and returns either the same
@@ -61,7 +60,7 @@ export interface IAbcDiscreteRequest<T extends Model> extends IAbcRequest<T> {
 export declare type IAbcParam<T> = IPrimaryKey<T>[] | IAbcQueryRequest<T>;
 /** An **ABC** request for records using a Query Helper */
 export interface IAbcQueryRequest<T extends Model> {
-    (command: AbcRequestCommand, ctx: AbcApi<T>): Promise<AbcResult<T>>;
+    (command: AbcRequestCommand, ctx: AbcApi<T>, options: IQueryOptions<T>): Promise<AbcResult<T>>;
 }
 /**
  * Any valid ABC request including both Discrete and Query based requests

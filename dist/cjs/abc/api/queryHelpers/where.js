@@ -8,9 +8,9 @@ const shared_1 = require("../shared");
  * provides and then provides an implementation that is aligned with the ABC `get`
  * and `load` endpoints.
  */
-let where = function where(defn, options = {}) {
+exports.where = function where(defn) {
     defn = Object.assign(Object.assign({}, defn), { queryType: types_1.QueryType.where });
-    return async (command, ctx) => {
+    return async (command, ctx, options = {}) => {
         // The value and operation to be used
         const valueOp = defn.equals !== undefined
             ? defn.equals
@@ -30,6 +30,5 @@ let where = function where(defn, options = {}) {
         return shared_1.generalizedQuery(defn, command, dexieQuery, firemodelQuery, ctx, options);
     };
 };
-exports.where = where;
-where.prototype.isQueryHelper = true;
+exports.where.prototype.isQueryHelper = true;
 //# sourceMappingURL=where.js.map

@@ -1,8 +1,8 @@
 import { QueryType } from "../../../types";
 import { List } from "firemodel";
 import { generalizedQuery } from "../shared";
-let all = function all(defn = {}, options = {}) {
-    return async (command, ctx) => {
+export const all = function all(defn = {}) {
+    return async (command, ctx, options = {}) => {
         defn = Object.assign(Object.assign({}, defn), { queryType: QueryType.all });
         // The query to use for IndexedDB
         const dexieQuery = async () => {
@@ -18,4 +18,3 @@ let all = function all(defn = {}, options = {}) {
     };
 };
 all.prototype.isQueryHelper = true;
-export { all };

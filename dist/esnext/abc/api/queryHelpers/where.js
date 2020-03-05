@@ -6,9 +6,9 @@ import { generalizedQuery } from "../shared";
  * provides and then provides an implementation that is aligned with the ABC `get`
  * and `load` endpoints.
  */
-let where = function where(defn, options = {}) {
+export const where = function where(defn) {
     defn = Object.assign(Object.assign({}, defn), { queryType: QueryType.where });
-    return async (command, ctx) => {
+    return async (command, ctx, options = {}) => {
         // The value and operation to be used
         const valueOp = defn.equals !== undefined
             ? defn.equals
@@ -29,4 +29,3 @@ let where = function where(defn, options = {}) {
     };
 };
 where.prototype.isQueryHelper = true;
-export { where };
