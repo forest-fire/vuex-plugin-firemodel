@@ -282,6 +282,7 @@ export class AbcApi<T extends Model> {
     request: IPrimaryKey<T>[],
     options: IDiscreteOptions<T> = {}
   ): Promise<AbcResult<T>> {
+    const t0 = performance.now();
     const store = getStore();
 
     const requestIds = request.map(i =>
@@ -308,11 +309,13 @@ export class AbcApi<T extends Model> {
       );
     }
 
+    const t1 = performance.now();
+    const perfLocal = t1 - t0;
     const localResult = new AbcResult(this, {
       type: "discrete",
       local,
       options
-    });
+    }, { perfLocal });
 
     if (local.cacheHits === 0) {
       // No results locally
@@ -341,12 +344,14 @@ export class AbcApi<T extends Model> {
 
     const server = await serverRecords(command, this, requestIds, requestIds);
 
+    const t2 = performance.now();
+    const perfServer = t2 - t1;
     const serverResults = new AbcResult(this, {
       type: "discrete",
       local,
       server,
       options
-    });
+    }, { perfLocal, perfServer });
 
     // Update Vuex with server results
     if (command === "get") {
@@ -382,12 +387,13 @@ export class AbcApi<T extends Model> {
       }
     }
 
+    const perfOverall = t2 - t0;
     return new AbcResult(this, {
       type: "discrete",
       options,
       local,
       server
-    });
+    }, {perfOverall, perfLocal, perfServer});
   }
 
   /**

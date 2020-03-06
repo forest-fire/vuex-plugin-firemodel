@@ -9,11 +9,14 @@ import { findPk } from "../shared/findPk";
  * should use this flow to standarize their approach.
  */
 export async function generalizedQuery(queryDefn, command, dexieQuery, firemodelQuery, ctx, options) {
+    const t0 = performance.now();
     const store = getStore();
     const vuexRecords = get(store.state, ctx.vuex.fullPath.replace(/\//g, "."), []);
     const vuexPks = vuexRecords.map(v => Record.compositeKeyRef(ctx.model.constructor, v));
     let idxRecords = [];
     let local;
+    const t1 = performance.now();
+    const perfLocal = t1 - t0;
     if (command === "get" && ctx.config.useIndexedDb) {
         // Populate Vuex with what IndexedDB knows
         idxRecords = await dexieQuery().catch(e => {
@@ -31,7 +34,7 @@ export async function generalizedQuery(queryDefn, command, dexieQuery, firemodel
             queryDefn,
             local,
             options
-        });
+        }, { perfLocal });
         if (idxRecords.length > 0) {
             store.commit(`${ctx.vuex.moduleName}/${AbcMutation.ABC_LOCAL_QUERY_TO_VUEX}`, localResults);
         }
@@ -90,13 +93,15 @@ export async function generalizedQuery(queryDefn, command, dexieQuery, firemodel
         removeFromVuex,
         overallCachePerformance: ctx.cachePerformance
     };
+    const t2 = performance.now();
+    const perfServer = t2 - t1;
     const response = new AbcResult(ctx, {
         type: "query",
         queryDefn,
         local,
         server,
         options
-    });
+    }, { perfLocal, perfServer });
     store.commit(`${ctx.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`, response);
     return response;
 }

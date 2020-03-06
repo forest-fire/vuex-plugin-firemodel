@@ -3,6 +3,7 @@ import { IAbcPostWatcher, IAbcResult } from "../../types";
 import { AbcApi } from "./AbcApi";
 import { arrayToHash, hashToArray } from "typed-conversions";
 import { AbcError } from "../../errors";
+import { IDictionary } from "firemock";
 
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
@@ -11,7 +12,7 @@ import { AbcError } from "../../errors";
  * watch certain elements of the returned resultset.
  */
 export class AbcResult<T extends Model> {
-  constructor(private _context: AbcApi<T>, private _results: IAbcResult<T>) {}
+  constructor(private _context: AbcApi<T>, private _results: IAbcResult<T>, private _performance: IDictionary) {}
 
   /**
    * All of the updated records in Vuex that originated from either IndexedDB or Firebase
@@ -44,6 +45,10 @@ export class AbcResult<T extends Model> {
 
   get cachePerformance() {
     return this._context.cachePerformance;
+  }
+
+  get requestPerformance() {
+    return this._performance;
   }
 
   get vuex() {

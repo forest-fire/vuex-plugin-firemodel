@@ -14,11 +14,14 @@ const findPk_1 = require("../shared/findPk");
  * should use this flow to standarize their approach.
  */
 async function generalizedQuery(queryDefn, command, dexieQuery, firemodelQuery, ctx, options) {
+    const t0 = performance.now();
     const store = __1.getStore();
     const vuexRecords = lodash_get_1.default(store.state, ctx.vuex.fullPath.replace(/\//g, "."), []);
     const vuexPks = vuexRecords.map(v => firemodel_1.Record.compositeKeyRef(ctx.model.constructor, v));
     let idxRecords = [];
     let local;
+    const t1 = performance.now();
+    const perfLocal = t1 - t0;
     if (command === "get" && ctx.config.useIndexedDb) {
         // Populate Vuex with what IndexedDB knows
         idxRecords = await dexieQuery().catch(e => {
@@ -36,7 +39,7 @@ async function generalizedQuery(queryDefn, command, dexieQuery, firemodelQuery, 
             queryDefn,
             local,
             options
-        });
+        }, { perfLocal });
         if (idxRecords.length > 0) {
             store.commit(`${ctx.vuex.moduleName}/${types_1.AbcMutation.ABC_LOCAL_QUERY_TO_VUEX}`, localResults);
         }
@@ -95,13 +98,15 @@ async function generalizedQuery(queryDefn, command, dexieQuery, firemodelQuery, 
         removeFromVuex,
         overallCachePerformance: ctx.cachePerformance
     };
+    const t2 = performance.now();
+    const perfServer = t2 - t1;
     const response = new __1.AbcResult(ctx, {
         type: "query",
         queryDefn,
         local,
         server,
         options
-    });
+    }, { perfLocal, perfServer });
     store.commit(`${ctx.vuex.moduleName}/${types_1.AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`, response);
     return response;
 }

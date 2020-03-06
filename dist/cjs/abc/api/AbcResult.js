@@ -9,9 +9,10 @@ const errors_1 = require("../../errors");
  * watch certain elements of the returned resultset.
  */
 class AbcResult {
-    constructor(_context, _results) {
+    constructor(_context, _results, _performance) {
         this._context = _context;
         this._results = _results;
+        this._performance = _performance;
     }
     /**
      * All of the updated records in Vuex that originated from either IndexedDB or Firebase
@@ -42,6 +43,9 @@ class AbcResult {
     }
     get cachePerformance() {
         return this._context.cachePerformance;
+    }
+    get requestPerformance() {
+        return this._performance;
     }
     get vuex() {
         return this._context.vuex;

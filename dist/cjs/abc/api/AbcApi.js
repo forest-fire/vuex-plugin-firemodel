@@ -212,6 +212,7 @@ class AbcApi {
      * Handles GET requests for Discrete ID requests
      */
     async getDiscrete(command, request, options = {}) {
+        const t0 = performance.now();
         const store = index_2.getStore();
         const requestIds = request.map(i => firemodel_1.Record.compositeKeyRef(this._modelConstructor, i));
         let results = await localRecords_1.localRecords(command, requestIds, options, this);
@@ -221,11 +222,13 @@ class AbcApi {
         if (!this.config.useIndexedDb && command === "load") {
             throw new index_1.AbcError(`There was a call to load${shared_1.capitalize(this.model.plural)}() but this is not allowed for models like ${this.model.pascal} which have been configured in ABC to not have IndexedDB support; use get${shared_1.capitalize(this.model.plural)}() instead.`, "not-allowed");
         }
+        const t1 = performance.now();
+        const perfLocal = t1 - t0;
         const localResult = new AbcResult_1.AbcResult(this, {
             type: "discrete",
             local,
             options
-        });
+        }, { perfLocal });
         if (local.cacheHits === 0) {
             // No results locally
             store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_NO_CACHE}`, localResult);
@@ -243,12 +246,14 @@ class AbcApi {
             return localResult;
         }
         const server = await serverRecords_1.serverRecords(command, this, requestIds, requestIds);
+        const t2 = performance.now();
+        const perfServer = t2 - t1;
         const serverResults = new AbcResult_1.AbcResult(this, {
             type: "discrete",
             local,
             server,
             options
-        });
+        }, { perfLocal, perfServer });
         // Update Vuex with server results
         if (command === "get") {
             store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`, serverResults);
@@ -269,12 +274,13 @@ class AbcApi {
                 store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED}`, Object.assign(Object.assign({}, serverResults), { errorMessage: e.message, errorStack: e.stack }));
             }
         }
+        const perfOverall = t2 - t0;
         return new AbcResult_1.AbcResult(this, {
             type: "discrete",
             options,
             local,
             server
-        });
+        }, { perfOverall, perfLocal, perfServer });
     }
     /**
      * Provides access to the Firebase database

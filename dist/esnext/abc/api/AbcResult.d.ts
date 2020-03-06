@@ -1,6 +1,7 @@
 import { Model } from "firemodel";
 import { IAbcPostWatcher, IAbcResult } from "../../types";
 import { AbcApi } from "./AbcApi";
+import { IDictionary } from "firemock";
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
  * respond with this class. The classes goal is to pass back not only
@@ -10,7 +11,8 @@ import { AbcApi } from "./AbcApi";
 export declare class AbcResult<T extends Model> {
     private _context;
     private _results;
-    constructor(_context: AbcApi<T>, _results: IAbcResult<T>);
+    private _performance;
+    constructor(_context: AbcApi<T>, _results: IAbcResult<T>, _performance: IDictionary);
     /**
      * All of the updated records in Vuex that originated from either IndexedDB or Firebase
      */
@@ -28,6 +30,7 @@ export declare class AbcResult<T extends Model> {
         misses: number;
         ignores: number;
     };
+    get requestPerformance(): IDictionary<any>;
     get vuex(): {
         isList: boolean | undefined;
         modulePath: string;

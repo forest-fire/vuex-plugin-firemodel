@@ -29,6 +29,7 @@ export async function generalizedQuery<T extends Model>(
   ctx: AbcApi<T>,
   options: IAbcOptions<T>
 ) {
+  const t0 = performance.now();
   const store = getStore();
   const vuexRecords = get<T[]>(
     store.state,
@@ -42,6 +43,8 @@ export async function generalizedQuery<T extends Model>(
   let idxRecords: T[] = [];
   let local: IQueryLocalResults<T, any>;
 
+  const t1 = performance.now();
+  const perfLocal = t1 - t0;
   if (command === "get" && ctx.config.useIndexedDb) {
     // Populate Vuex with what IndexedDB knows
     idxRecords = await dexieQuery().catch(e => {
@@ -62,7 +65,7 @@ export async function generalizedQuery<T extends Model>(
       queryDefn,
       local,
       options
-    });
+    }, { perfLocal });
 
     if (idxRecords.length > 0) {
       store.commit(
@@ -139,13 +142,15 @@ export async function generalizedQuery<T extends Model>(
     overallCachePerformance: ctx.cachePerformance
   };
 
+  const t2 = performance.now();
+  const perfServer = t2 - t1;
   const response = new AbcResult(ctx, {
     type: "query",
     queryDefn,
     local,
     server,
     options
-  });
+  }, { perfLocal, perfServer });
 
   store.commit(
     `${ctx.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`,
