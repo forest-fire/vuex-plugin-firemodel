@@ -291,7 +291,7 @@ export interface IAbcQueryBaseDefinition {
  */
 export interface IDiscreteResult<T, K = any> {
     type: "discrete";
-    local: IDiscreteLocalResults<T, K>;
+    local?: IDiscreteLocalResults<T, K>;
     server?: IDiscreteServerResults<T, K>;
     options: IDiscreteOptions<T>;
 }
@@ -302,7 +302,7 @@ export interface IDiscreteResult<T, K = any> {
 export interface IQueryResult<T, K = any> {
     type: "query";
     queryDefn: IAbcQueryDefinition<T>;
-    local: IQueryLocalResults<T, K>;
+    local?: IQueryLocalResults<T, K>;
     server?: IQueryServerResults<T, K>;
     options: IQueryOptions<T>;
 }

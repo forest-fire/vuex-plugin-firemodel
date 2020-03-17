@@ -31,7 +31,8 @@ export class AbcResult {
      * All of the updated records in Vuex that originated from IndexedDB
      */
     get localRecords() {
-        return this._results.local.records || [];
+        var _a;
+        return ((_a = this._results.local) === null || _a === void 0 ? void 0 : _a.records) || [];
     }
     /**
      * All of the updated records in Vuex that originated from Firebase

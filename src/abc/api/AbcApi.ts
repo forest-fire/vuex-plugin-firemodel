@@ -288,13 +288,16 @@ export class AbcApi<T extends Model> {
     const requestIds = request.map(i =>
       Record.compositeKeyRef(this._modelConstructor, i)
     );
-    let results = await localRecords(command, requestIds, options, this);
-    this._cacheHits += results.cacheHits;
-    this._cacheMisses += results.cacheMisses;
-    const local: IDiscreteLocalResults<T> = {
-      ...results,
-      overallCachePerformance: this.cachePerformance
-    };
+    let results = command === "load" ? undefined : await localRecords(command, requestIds, options, this);
+    let local: IDiscreteLocalResults<T> | undefined = undefined;
+    if (results) {
+      this._cacheHits += results.cacheHits;
+      this._cacheMisses += results.cacheMisses;
+      local = {
+        ...results,
+        overallCachePerformance: this.cachePerformance
+      };
+    }
 
     if (!this.config.useIndexedDb && command === "load") {
       throw new AbcError(
@@ -317,7 +320,7 @@ export class AbcApi<T extends Model> {
       options
     }, { perfLocal });
 
-    if (local.cacheHits === 0) {
+    if (local?.cacheHits === 0) {
       // No results locally
       store.commit(
         `${this.vuex.moduleName}/${AbcMutation.ABC_NO_CACHE}`,
@@ -325,7 +328,7 @@ export class AbcApi<T extends Model> {
       );
     } else if (this.config.useIndexedDb) {
       // Using IndexedDB
-      if (local.foundExclusivelyInIndexedDb) {
+      if (local?.foundExclusivelyInIndexedDb) {
         store.commit(
           `${this.vuex.moduleName}/${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`,
           localResult
@@ -338,7 +341,8 @@ export class AbcApi<T extends Model> {
       }
     }
 
-    if (local.allFoundLocally) {
+    // TODO: Add GetFirebase strategy to conditional once implemented
+    if (local?.allFoundLocally) {
       return localResult;
     }
 
@@ -475,7 +479,7 @@ export class AbcApi<T extends Model> {
     if (isDiscreteRequest(request)) {
       return this.getDiscrete("load", request, options);
     } else {
-      return request("get", this, options);
+      return request("load", this, options);
     }
   }
 

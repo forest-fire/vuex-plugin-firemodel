@@ -33,7 +33,7 @@ export class AbcResult<T extends Model> {
    * All of the updated records in Vuex that originated from IndexedDB
    */
   get localRecords(): T[] {
-    return this._results.local.records || [];
+    return this._results.local?.records || [];
   }
 
   /**

@@ -60,18 +60,35 @@ async function generalizedQuery(queryDefn, command, dexieQuery, firemodelQuery, 
     const newPks = serverPks.filter(i => !local.localPks.includes(i));
     const cacheHits = [];
     const stalePks = [];
-    serverRecords.forEach(rec => {
-        const pk = firemodel_1.Record.compositeKeyRef(ctx.model.constructor, rec);
-        if (!newPks.includes(pk)) {
-            const localRec = findPk_1.findPk(pk, local.records);
-            if (fast_equals_1.deepEqual(rec, localRec)) {
-                cacheHits.push(pk);
+    const waitFor = [];
+    const now = new Date().getTime();
+    try {
+        serverRecords.forEach(rec => {
+            const newRec = Object.assign(Object.assign({}, rec), { lastUpdated: now, createdAt: rec.createdAt || now });
+            waitFor.push(ctx.dexieTable.put(newRec));
+            const pk = firemodel_1.Record.compositeKeyRef(ctx.model.constructor, rec);
+            if (!newPks.includes(pk)) {
+                const localRec = findPk_1.findPk(pk, local.records);
+                if (fast_equals_1.deepEqual(rec, localRec)) {
+                    cacheHits.push(pk);
+                }
+                else {
+                    stalePks.push(pk);
+                }
             }
-            else {
-                stalePks.push(pk);
-            }
+        });
+        // cache results to IndexedDB
+        if (ctx.config.useIndexedDb) {
+            await Promise.all(waitFor);
+            store.commit(`${ctx.vuex.moduleName}/${types_1.AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`, serverRecords);
         }
-    });
+    }
+    catch (e) {
+        // cache results to IndexedDB
+        if (ctx.config.useIndexedDb) {
+            store.commit(`${ctx.vuex.moduleName}/${types_1.AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED}`, Object.assign(Object.assign({}, serverRecords), { errorMessage: e.message, errorStack: e.stack }));
+        }
+    }
     ctx.cachePerformance.hits = ctx.cachePerformance.hits + cacheHits.length;
     ctx.cachePerformance.misses =
         ctx.cachePerformance.misses + stalePks.length + newPks.length;

@@ -215,10 +215,13 @@ class AbcApi {
         const t0 = performance.now();
         const store = index_2.getStore();
         const requestIds = request.map(i => firemodel_1.Record.compositeKeyRef(this._modelConstructor, i));
-        let results = await localRecords_1.localRecords(command, requestIds, options, this);
-        this._cacheHits += results.cacheHits;
-        this._cacheMisses += results.cacheMisses;
-        const local = Object.assign(Object.assign({}, results), { overallCachePerformance: this.cachePerformance });
+        let results = command === "load" ? undefined : await localRecords_1.localRecords(command, requestIds, options, this);
+        let local = undefined;
+        if (results) {
+            this._cacheHits += results.cacheHits;
+            this._cacheMisses += results.cacheMisses;
+            local = Object.assign(Object.assign({}, results), { overallCachePerformance: this.cachePerformance });
+        }
         if (!this.config.useIndexedDb && command === "load") {
             throw new index_1.AbcError(`There was a call to load${shared_1.capitalize(this.model.plural)}() but this is not allowed for models like ${this.model.pascal} which have been configured in ABC to not have IndexedDB support; use get${shared_1.capitalize(this.model.plural)}() instead.`, "not-allowed");
         }
@@ -229,20 +232,21 @@ class AbcApi {
             local,
             options
         }, { perfLocal });
-        if (local.cacheHits === 0) {
+        if ((local === null || local === void 0 ? void 0 : local.cacheHits) === 0) {
             // No results locally
             store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_NO_CACHE}`, localResult);
         }
         else if (this.config.useIndexedDb) {
             // Using IndexedDB
-            if (local.foundExclusivelyInIndexedDb) {
+            if (local === null || local === void 0 ? void 0 : local.foundExclusivelyInIndexedDb) {
                 store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`, localResult);
             }
             else {
                 store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_INDEXED_SKIPPED}`, localResult);
             }
         }
-        if (local.allFoundLocally) {
+        // TODO: Add GetFirebase strategy to conditional once implemented
+        if (local === null || local === void 0 ? void 0 : local.allFoundLocally) {
             return localResult;
         }
         const server = await serverRecords_1.serverRecords(command, this, requestIds, requestIds);
@@ -344,7 +348,7 @@ class AbcApi {
             return this.getDiscrete("load", request, options);
         }
         else {
-            return request("get", this, options);
+            return request("load", this, options);
         }
     }
     /**

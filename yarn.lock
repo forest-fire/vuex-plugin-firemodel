@@ -4149,10 +4149,10 @@ firemock@^0.37.1:
     serialized-query "^0.11.0"
     typed-conversions "^0.10.2"
 
-firemodel@^0.37.1:
-  version "0.37.1"
-  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.37.1.tgz#17ec2dec8c1078e07d9751fcd27d3ab2ba990578"
-  integrity sha512-TFCvUZ6tEyPlUhX1tou+vHiQDGIXePM9J2PntWQJr30sRKoHZEr3J6W9Cxk9Dk20JxG/S8S5wnHRCPIvlZ1AXg==
+firemodel@^0.37.2:
+  version "0.37.2"
+  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.37.2.tgz#84c95ac9bfb8f5e4d8888f932fa05b3b8d591047"
+  integrity sha512-TbDJwicFj1F0RI21q0ewyneXT8JvuIX2JKmHi9A9cIoVyPhT3KwqvPmUBlug927aFj4otvyUKq4YX87m/0b0yA==
   dependencies:
     abstracted-firebase "^0.37.3"
     common-types "^1.12.18"

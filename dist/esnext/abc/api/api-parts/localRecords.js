@@ -13,11 +13,13 @@ import get from "lodash.get";
 export async function localRecords(command, requestPks, options, context) {
     const idxRecords = [];
     const store = getStore();
-    const vuexRecords = get(store.state, context.vuex.fullPath.replace(/\//g, "."), []);
-    if (!AbcApi.indexedDbConnected) {
-        await AbcApi.connectIndexedDb();
-    }
+    const moduleIsList = context.about.config.isList;
+    const data = get(store.state, context.vuex.fullPath.replace(/\//g, "."), []);
+    const vuexRecords = moduleIsList ? data : [data];
     if (context.config.useIndexedDb) {
+        if (!AbcApi.indexedDbConnected) {
+            await AbcApi.connectIndexedDb();
+        }
         const waitFor = [];
         requestPks.forEach(id => waitFor.push(context.dexieRecord.get(id).then(rec => {
             if (rec)
@@ -26,6 +28,7 @@ export async function localRecords(command, requestPks, options, context) {
         await Promise.all(waitFor);
     }
     const model = context.model.constructor;
+    console.log(Array.isArray(vuexRecords), typeof vuexRecords, Object.getPrototypeOf(vuexRecords), Object.keys(vuexRecords));
     const vuexPks = vuexRecords.map(v => Record.compositeKeyRef(model, v));
     const idxPks = idxRecords.map(i => Record.compositeKeyRef(model, i));
     const localIds = Array.from(new Set([...vuexPks, ...idxPks]));
@@ -33,7 +36,6 @@ export async function localRecords(command, requestPks, options, context) {
         .map(pk => typeof pk === "string" ? pk : Record.create(model, pk).compositeKeyRef)
         .filter(pk => !localIds.includes(pk));
     const modulePostfix = context.about.modelMeta.localPostfix;
-    const moduleIsList = context.about.config.isList;
     const vuexModuleName = (context.config.moduleName || moduleIsList
         ? context.about.model.plural
         : context.about.modelMeta.localModelName);
@@ -44,7 +46,7 @@ export async function localRecords(command, requestPks, options, context) {
         foundInVuex: vuexPks,
         foundExclusivelyInIndexedDb: idxPks.filter(i => !vuexPks.includes(i)),
         allFoundLocally: missingIds.length === 0 ? true : false,
-        records: [...idxRecords, ...vuexRecords],
+        records: Object.assign(Object.assign({}, vuexRecords), idxRecords),
         missing: missingIds,
         apiCommand: command,
         modelConfig: context.config

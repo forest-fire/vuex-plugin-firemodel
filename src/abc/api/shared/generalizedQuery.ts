@@ -94,17 +94,43 @@ export async function generalizedQuery<T extends Model>(
   const newPks = serverPks.filter(i => !local.localPks.includes(i));
   const cacheHits: string[] = [];
   const stalePks: string[] = [];
-  serverRecords.forEach(rec => {
-    const pk = Record.compositeKeyRef(ctx.model.constructor, rec);
-    if (!newPks.includes(pk)) {
-      const localRec = findPk(pk, local.records);
-      if (deepEqual(rec, localRec)) {
-        cacheHits.push(pk);
-      } else {
-        stalePks.push(pk);
+  const waitFor: any[] = [];
+  const now = new Date().getTime();
+  try {
+    serverRecords.forEach(rec => {
+      const newRec = {
+        ...rec,
+        lastUpdated: now,
+        createdAt: rec.createdAt || now
+      };
+      waitFor.push(ctx.dexieTable.put(newRec));
+      const pk = Record.compositeKeyRef(ctx.model.constructor, rec);
+      if (!newPks.includes(pk)) {
+        const localRec = findPk(pk, local.records);
+        if (deepEqual(rec, localRec)) {
+          cacheHits.push(pk);
+        } else {
+          stalePks.push(pk);
+        }
       }
+    });
+    // cache results to IndexedDB
+    if (ctx.config.useIndexedDb) {
+      await Promise.all(waitFor);
+      store.commit(
+        `${ctx.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`,
+        serverRecords
+      );
     }
-  });
+  } catch (e) {
+    // cache results to IndexedDB
+    if (ctx.config.useIndexedDb) {
+      store.commit(
+        `${ctx.vuex.moduleName}/${AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED}`,
+        { ...serverRecords, errorMessage: e.message, errorStack: e.stack }
+      );
+    }
+  }
 
   ctx.cachePerformance.hits = ctx.cachePerformance.hits + cacheHits.length;
   ctx.cachePerformance.misses =
