@@ -5,11 +5,11 @@ const abc_1 = require("../../types/abc");
 const configApi_1 = require("../configuration/configApi");
 const shared_1 = require("../../shared");
 const index_1 = require("../../errors/index");
-const localRecords_1 = require("./api-parts/localRecords");
-const index_2 = require("../../index");
 const AbcResult_1 = require("./AbcResult");
-const serverRecords_1 = require("./shared/serverRecords");
 const common_types_1 = require("common-types");
+const index_2 = require("./api-parts/getDiscrete/index");
+const saveToIndexedDb_1 = require("./api-parts/getDiscrete/saveToIndexedDb");
+const __1 = require("../..");
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
  * including meta-data properties too.
@@ -120,6 +120,12 @@ class AbcApi {
             console.info("ABC API has no models using IndexedDB");
         }
     }
+    cacheHits(hits) {
+        this._cacheHits += hits;
+    }
+    cacheMisses(misses) {
+        this._cacheMisses += misses;
+    }
     /**
      * Different naming conventions for the model along with the model's
      * constructor
@@ -202,7 +208,7 @@ class AbcApi {
      */
     async get(request, options = {}) {
         if (abc_1.isDiscreteRequest(request)) {
-            return this.getDiscrete("get", request, options);
+            return this.getDiscrete(request, options);
         }
         else {
             return request("get", this, options);
@@ -211,80 +217,71 @@ class AbcApi {
     /**
      * Handles GET requests for Discrete ID requests
      */
-    async getDiscrete(command, request, options = {}) {
-        const t0 = performance.now();
-        const store = index_2.getStore();
+    async getDiscrete(request, options = {}) {
+        const store = __1.getStore();
+        // const t0 = performance.now();
+        let idxRecords = [];
         const requestIds = request.map(i => firemodel_1.Record.compositeKeyRef(this._modelConstructor, i));
-        let results = command === "load" ? undefined : await localRecords_1.localRecords(command, requestIds, options, this);
-        let local = undefined;
-        if (results) {
-            this._cacheHits += results.cacheHits;
-            this._cacheMisses += results.cacheMisses;
-            local = Object.assign(Object.assign({}, results), { overallCachePerformance: this.cachePerformance });
-        }
-        if (!this.config.useIndexedDb && command === "load") {
-            throw new index_1.AbcError(`There was a call to load${shared_1.capitalize(this.model.plural)}() but this is not allowed for models like ${this.model.pascal} which have been configured in ABC to not have IndexedDB support; use get${shared_1.capitalize(this.model.plural)}() instead.`, "not-allowed");
-        }
-        const t1 = performance.now();
-        const perfLocal = t1 - t0;
-        const localResult = new AbcResult_1.AbcResult(this, {
-            type: "discrete",
-            local,
-            options
-        }, { perfLocal });
-        if ((local === null || local === void 0 ? void 0 : local.cacheHits) === 0) {
-            // No results locally
-            store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_NO_CACHE}`, localResult);
-        }
-        else if (this.config.useIndexedDb) {
-            // Using IndexedDB
-            if (local === null || local === void 0 ? void 0 : local.foundExclusivelyInIndexedDb) {
-                store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`, localResult);
-            }
-            else {
-                store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_INDEXED_SKIPPED}`, localResult);
-            }
-        }
-        // TODO: Add GetFirebase strategy to conditional once implemented
-        if (local === null || local === void 0 ? void 0 : local.allFoundLocally) {
-            return localResult;
-        }
-        const server = await serverRecords_1.serverRecords(command, this, requestIds, requestIds);
-        const t2 = performance.now();
-        const perfServer = t2 - t1;
-        const serverResults = new AbcResult_1.AbcResult(this, {
-            type: "discrete",
-            local,
-            server,
-            options
-        }, { perfLocal, perfServer });
-        // Update Vuex with server results
-        if (command === "get") {
-            store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`, serverResults);
-        }
-        // cache results to IndexedDB
+        // get from Vuex
+        const vuexRecords = await index_2.getFromVuex(this);
         if (this.config.useIndexedDb) {
-            try {
-                const waitFor = [];
-                const now = new Date().getTime();
-                server.records.forEach(record => {
-                    const newRec = Object.assign(Object.assign({}, record), { lastUpdated: now, createdAt: record.createdAt || now });
-                    waitFor.push(this.dexieTable.put(newRec));
-                });
-                await Promise.all(waitFor);
-                store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`, serverResults);
-            }
-            catch (e) {
-                store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED}`, Object.assign(Object.assign({}, serverResults), { errorMessage: e.message, errorStack: e.stack }));
-            }
+            // get from indexedDB
+            idxRecords = await index_2.getFromIndexedDb(this.dexieRecord, requestIds);
         }
-        const perfOverall = t2 - t0;
+        const local = index_2.mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
+        const localResult = new AbcResult_1.AbcResult(this, {
+            type: 'discrete',
+            local,
+            options
+        }, {});
+        // no records found
+        let server = undefined;
+        if (!(local === null || local === void 0 ? void 0 : local.records)) {
+            // get from firebase
+            const { server, serverResults } = await index_2.getFromFirebase(this, local, options, requestIds);
+            // cache results to IndexedDB
+            if (this.config.useIndexedDb) {
+                // save to indexedDB
+                saveToIndexedDb_1.saveToIndexedDB(server, this.dexieTable);
+            }
+            store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`, serverResults);
+        }
+        else {
+            store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`, localResult);
+        }
+        // const perfOverall = t2 - t0;
         return new AbcResult_1.AbcResult(this, {
             type: "discrete",
             options,
             local,
             server
-        }, { perfOverall, perfLocal, perfServer });
+        }, { /* perfOverall, perfLocal, perfServer */});
+    }
+    /**
+     * Handles LOAD requests for Discrete ID requests
+     */
+    async loadDiscrete(request, options = {}) {
+        // const t0 = performance.now();
+        const requestIds = request.map(i => firemodel_1.Record.compositeKeyRef(this._modelConstructor, i));
+        const local = undefined;
+        const { server, serverResults } = await index_2.getFromFirebase(this, local, options, requestIds);
+        // cache results to IndexedDB
+        if (this.config.useIndexedDb) {
+            // save to indexedDB
+            await saveToIndexedDb_1.saveToIndexedDB(server, this.dexieTable);
+        }
+        if (options.strategy === abc_1.AbcStrategy.loadVuex) {
+            const store = __1.getStore();
+            // load data into vuex
+            store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`, serverResults);
+        }
+        // const perfOverall = t2 - t0;
+        return new AbcResult_1.AbcResult(this, {
+            type: "discrete",
+            options,
+            local,
+            server
+        }, { /* perfOverall, perfLocal, perfServer */});
     }
     /**
      * Provides access to the Firebase database
@@ -345,7 +342,7 @@ class AbcApi {
      */
     async load(request, options = {}) {
         if (abc_1.isDiscreteRequest(request)) {
-            return this.getDiscrete("load", request, options);
+            return this.loadDiscrete(request, options);
         }
         else {
             return request("load", this, options);

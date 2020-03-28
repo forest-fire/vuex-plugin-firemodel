@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const firemodel_1 = require("firemodel");
 const typed_conversions_1 = require("typed-conversions");
 const errors_1 = require("../../errors");
 /**
@@ -19,14 +20,25 @@ class AbcResult {
      */
     get records() {
         if (!this.options.mergeRecords) {
+            // Models without dynamic paths
             return this.serverRecords.length > 0
                 ? this.serverRecords
                 : this.localRecords;
         }
         else {
-            const local = typed_conversions_1.arrayToHash(this.localRecords);
+            // Models with dynamic paths
+            let localPathProps = firemodel_1.Record.compositeKey(this._context.model.constructor, this.serverRecords[0]);
+            delete localPathProps.id;
+            const where = Object.keys(localPathProps).reduce((agg, curr) => {
+                const value = typeof localPathProps[curr] === 'string' ? `"${localPathProps[curr]}"` : localPathProps[curr];
+                agg.push(`${curr} != ${value}`);
+                return agg;
+            }, []).join(' AND ');
+            // select *  WHERE x!= v1 AND y !=v2
+            const localOffDynamicPath = {}; // arrayToHash( this._context.dexieTable.where(where).  );
+            //TODO: add the right Dexie query
             const server = typed_conversions_1.arrayToHash(this.serverRecords);
-            return typed_conversions_1.hashToArray(Object.assign(Object.assign({}, local), server));
+            return typed_conversions_1.hashToArray(Object.assign(Object.assign({}, localOffDynamicPath), server));
         }
     }
     /**

@@ -1,3 +1,4 @@
+import { Record } from "firemodel";
 import { arrayToHash, hashToArray } from "typed-conversions";
 import { AbcError } from "../../errors";
 /**
@@ -17,14 +18,25 @@ export class AbcResult {
      */
     get records() {
         if (!this.options.mergeRecords) {
+            // Models without dynamic paths
             return this.serverRecords.length > 0
                 ? this.serverRecords
                 : this.localRecords;
         }
         else {
-            const local = arrayToHash(this.localRecords);
+            // Models with dynamic paths
+            let localPathProps = Record.compositeKey(this._context.model.constructor, this.serverRecords[0]);
+            delete localPathProps.id;
+            const where = Object.keys(localPathProps).reduce((agg, curr) => {
+                const value = typeof localPathProps[curr] === 'string' ? `"${localPathProps[curr]}"` : localPathProps[curr];
+                agg.push(`${curr} != ${value}`);
+                return agg;
+            }, []).join(' AND ');
+            // select *  WHERE x!= v1 AND y !=v2
+            const localOffDynamicPath = {}; // arrayToHash( this._context.dexieTable.where(where).  );
+            //TODO: add the right Dexie query
             const server = arrayToHash(this.serverRecords);
-            return hashToArray(Object.assign(Object.assign({}, local), server));
+            return hashToArray(Object.assign(Object.assign({}, localOffDynamicPath), server));
         }
     }
     /**

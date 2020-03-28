@@ -60,6 +60,8 @@ export declare class AbcApi<T extends Model> {
     private _cacheHits;
     private _cacheMisses;
     private _cacheIgnores;
+    cacheHits(hits: number): void;
+    cacheMisses(misses: number): void;
     constructor(model: IFmModelConstructor<T>, config?: IAbcApiConfig<T>);
     /**
      * Different naming conventions for the model along with the model's
@@ -142,6 +144,10 @@ export declare class AbcApi<T extends Model> {
      * Handles GET requests for Discrete ID requests
      */
     private getDiscrete;
+    /**
+     * Handles LOAD requests for Discrete ID requests
+     */
+    private loadDiscrete;
     /**
      * Provides access to the Firebase database
      */

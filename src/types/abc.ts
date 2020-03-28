@@ -188,7 +188,7 @@ export interface IAbcResultsMeta<T> {
   /**
    * The **ABC** API command used when originating this request
    */
-  apiCommand: AbcRequestCommand;
+  apiCommand?: AbcRequestCommand;
   /**
    * The combination of the `Model`'s ABC configuration merged
    * with the options included in the API call
@@ -258,6 +258,8 @@ export enum AbcMutation {
    */
   ABC_PRUNE_STALE_VUEX_RECORDS = "ABC_PRUNE_STALE_VUEX_RECORDS"
 }
+
+export type IAbcMutation = keyof typeof AbcMutation
 
 export enum AbcDataSource {
   vuex = "vuex",
@@ -334,7 +336,7 @@ export interface IAbcQueryBaseDefinition {
 export interface IDiscreteResult<T, K = any> {
   type: "discrete";
   local?: IDiscreteLocalResults<T, K>;
-  server?: IDiscreteServerResults<T, K>;
+  server?: IDiscreteServerResults<T, K> | undefined;
   options: IDiscreteOptions<T>;
 }
 
@@ -356,8 +358,9 @@ export interface IQueryResult<T, K = any> {
 export type IAbcResult<T, K = any> = IDiscreteResult<T, K> | IQueryResult<T, K>;
 
 export interface IQueryOptions<T> extends IUniversalOptions<T> {
+  watchNew?: boolean;
   /**
-   * If the `Model` being queries has a dynamic path then you will need to
+   * If the `Model` being queried has a dynamic path then you will need to
    * state the dynamic path segments so the the database path for Firebase
    * can be determined (and so IndexedDB can use a more involved query)
    */
@@ -373,9 +376,24 @@ export interface IDiscreteOptions<T> extends IUniversalOptions<T> {
    * involved in identifying the various Pks.
    */
   offsets?: Partial<T>;
+  strategy?: IAbcStrategy;
 }
 
+export enum AbcStrategy {
+  loadVuex = 'loadVuex',
+  /**
+   * Forces **get** based queries to always go to firebase (however promise is returned after 
+   * local query); this does not affect _discrete_ gets or any load queries.
+   */
+  getFirebase = 'getFirebase'
+}
+
+export type IAbcStrategy = keyof typeof AbcStrategy
+
 export interface IUniversalOptions<T> {
+  watch?: boolean | IWatchCallback<T>;
+  // TODO: this should be more strongly typed AND scoped to get versus load
+  strategy?: string;
   /**
    * When set, this flag tells any local & server based response to merge
    * the combined knowledge into the `AbcResult.records` array. By default
@@ -394,14 +412,7 @@ export interface IUniversalOptions<T> {
 //   allLocally?: boolean;
 // }
 
-export type IAbcOptions<T> = (IDiscreteOptions<T> | IQueryOptions<T>) & IAnyOptions<T>;
-
-export interface IAnyOptions<T> {
-  watch?: boolean | IWatchCallback<T>;
-  watchNew?: boolean;
-  // TODO: this should be more strongly typed AND scoped to get versus load
-  strategy?: string;
-}
+export type IAbcOptions<T> = IDiscreteOptions<T> | IQueryOptions<T>;
 
 export interface IWatchCallback<T> {
   (r: T): boolean;
@@ -420,14 +431,3 @@ export interface IAbcQueryApi<T> {
 }
 
 export const SINCE_LAST_COOKIE = "slc";
-
-/**
- * Strategies for "get" requests for Query's.
- *
- * A "strategy" is a modifier in the default path/strategy
- * of getting data from the various sources (e.g., Vuex, IndexedDb, Firebase)
- */
-export enum AbcGetStrategy {
-  /** Queries will request data from */
-  localOnly = "localOnly"
-}

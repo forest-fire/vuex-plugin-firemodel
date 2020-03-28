@@ -79,16 +79,14 @@ var QueryType;
     QueryType["where"] = "where";
     QueryType["since"] = "since";
 })(QueryType = exports.QueryType || (exports.QueryType = {}));
+var AbcStrategy;
+(function (AbcStrategy) {
+    AbcStrategy["loadVuex"] = "loadVuex";
+    /**
+     * Forces **get** based queries to always go to firebase (however promise is returned after
+     * local query); this does not affect _discrete_ gets or any load queries.
+     */
+    AbcStrategy["getFirebase"] = "getFirebase";
+})(AbcStrategy = exports.AbcStrategy || (exports.AbcStrategy = {}));
 exports.SINCE_LAST_COOKIE = "slc";
-/**
- * Strategies for "get" requests for Query's.
- *
- * A "strategy" is a modifier in the default path/strategy
- * of getting data from the various sources (e.g., Vuex, IndexedDb, Firebase)
- */
-var AbcGetStrategy;
-(function (AbcGetStrategy) {
-    /** Queries will request data from */
-    AbcGetStrategy["localOnly"] = "localOnly";
-})(AbcGetStrategy = exports.AbcGetStrategy || (exports.AbcGetStrategy = {}));
 //# sourceMappingURL=abc.js.map

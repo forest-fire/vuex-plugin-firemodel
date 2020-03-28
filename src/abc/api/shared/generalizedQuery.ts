@@ -4,7 +4,8 @@ import {
   IQueryLocalResults,
   IQueryServerResults,
   IAbcQueryDefinition,
-  IAbcOptions
+  IAbcOptions,
+  AbcStrategy
 } from "../../../types";
 import { AbcApi } from "../AbcApi";
 import { getStore, AbcResult } from "../../..";
@@ -87,86 +88,91 @@ export async function generalizedQuery<T extends Model>(
     } as IQueryLocalResults<T>;
   }
 
-  const serverRecords = await firemodelQuery();
-  const serverPks = serverRecords.map(i =>
-    Record.compositeKeyRef(ctx.model.constructor, i)
-  );
-  const newPks = serverPks.filter(i => !local.localPks.includes(i));
   const cacheHits: string[] = [];
   const stalePks: string[] = [];
   const waitFor: any[] = [];
   const now = new Date().getTime();
-  try {
-    serverRecords.forEach(rec => {
-      const newRec = {
-        ...rec,
-        lastUpdated: now,
-        createdAt: rec.createdAt || now
-      };
-      waitFor.push(ctx.dexieTable.put(newRec));
-      const pk = Record.compositeKeyRef(ctx.model.constructor, rec);
-      if (!newPks.includes(pk)) {
-        const localRec = findPk(pk, local.records);
-        if (deepEqual(rec, localRec)) {
-          cacheHits.push(pk);
-        } else {
-          stalePks.push(pk);
+  let server: IQueryServerResults<T> | undefined;
+  if (command === "get" && options.strategy === AbcStrategy.getFirebase) {
+    // get data from firebase
+    const serverRecords = await firemodelQuery();
+    const serverPks = serverRecords.map(i =>
+      Record.compositeKeyRef(ctx.model.constructor, i)
+    );
+    const newPks = serverPks.filter(i => !local.localPks.includes(i));
+    try {
+      serverRecords.forEach(rec => {
+        const newRec = {
+          ...rec,
+          lastUpdated: now,
+          createdAt: rec.createdAt || now
+        };
+        waitFor.push(ctx.dexieTable.put(newRec));
+        const pk = Record.compositeKeyRef(ctx.model.constructor, rec);
+        if (!newPks.includes(pk)) {
+          const localRec = findPk(pk, local.records);
+          if (deepEqual(rec, localRec)) {
+            cacheHits.push(pk);
+          } else {
+            stalePks.push(pk);
+          }
         }
+      });
+      // cache results to IndexedDB
+      if (ctx.config.useIndexedDb) {
+        await Promise.all(waitFor);
+        store.commit(
+          `${ctx.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`,
+          serverRecords
+        );
       }
-    });
-    // cache results to IndexedDB
-    if (ctx.config.useIndexedDb) {
-      await Promise.all(waitFor);
+    } catch (e) {
+      // cache results to IndexedDB
+      if (ctx.config.useIndexedDb) {
+        store.commit(
+          `${ctx.vuex.moduleName}/${AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED}`,
+          { ...serverRecords, errorMessage: e.message, errorStack: e.stack }
+        );
+      }
+    }
+
+    ctx.cachePerformance.hits = ctx.cachePerformance.hits + cacheHits.length;
+    ctx.cachePerformance.misses =
+      ctx.cachePerformance.misses + stalePks.length + newPks.length;
+  
+    // PRUNE
+    const removeFromIdx = local.indexedDbPks.filter(i => !serverPks.includes(i));
+    // Vuex at this point will have both it's old state and whatever IndexedDB
+    // contributed
+    const removeFromVuex = local.localPks.filter(i => !serverPks.includes(i));
+    console.log({ removeFromIdx, removeFromVuex });
+  
+    if (removeFromVuex.length > 0) {
       store.commit(
-        `${ctx.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`,
-        serverRecords
+        `${ctx.vuex.moduleName}/${AbcMutation.ABC_PRUNE_STALE_VUEX_RECORDS}`,
+        { pks: removeFromVuex, vuex: ctx.vuex }
       );
     }
-  } catch (e) {
-    // cache results to IndexedDB
-    if (ctx.config.useIndexedDb) {
+    if (removeFromIdx.length > 0) {
+      await ctx.dexieTable.bulkDelete(removeFromIdx);
       store.commit(
-        `${ctx.vuex.moduleName}/${AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED}`,
-        { ...serverRecords, errorMessage: e.message, errorStack: e.stack }
+        `${ctx.vuex.moduleName}/${AbcMutation.ABC_PRUNE_STALE_IDX_RECORDS}`,
+        { pks: removeFromIdx, vuex: ctx.vuex }
       );
     }
+  
+    server = {
+      records: serverRecords,
+      serverPks,
+      newPks,
+      cacheHits,
+      stalePks,
+      removeFromIdx,
+      removeFromVuex,
+      overallCachePerformance: ctx.cachePerformance
+    };
   }
 
-  ctx.cachePerformance.hits = ctx.cachePerformance.hits + cacheHits.length;
-  ctx.cachePerformance.misses =
-    ctx.cachePerformance.misses + stalePks.length + newPks.length;
-
-  // PRUNE
-  const removeFromIdx = local.indexedDbPks.filter(i => !serverPks.includes(i));
-  // Vuex at this point will have both it's old state and whatever IndexedDB
-  // contributed
-  const removeFromVuex = local.localPks.filter(i => !serverPks.includes(i));
-  console.log({ removeFromIdx, removeFromVuex });
-
-  if (removeFromVuex.length > 0) {
-    store.commit(
-      `${ctx.vuex.moduleName}/${AbcMutation.ABC_PRUNE_STALE_VUEX_RECORDS}`,
-      { pks: removeFromVuex, vuex: ctx.vuex }
-    );
-  }
-  if (removeFromIdx.length > 0) {
-    await ctx.dexieTable.bulkDelete(removeFromIdx);
-    store.commit(
-      `${ctx.vuex.moduleName}/${AbcMutation.ABC_PRUNE_STALE_IDX_RECORDS}`,
-      { pks: removeFromIdx, vuex: ctx.vuex }
-    );
-  }
-
-  const server: IQueryServerResults<T> = {
-    records: serverRecords,
-    serverPks,
-    newPks,
-    cacheHits,
-    stalePks,
-    removeFromIdx,
-    removeFromVuex,
-    overallCachePerformance: ctx.cachePerformance
-  };
 
   const t2 = performance.now();
   const perfServer = t2 - t1;

@@ -1,4 +1,4 @@
-import { Model } from "firemodel";
+import { Model, Record, ICompositeKey } from "firemodel";
 import { IAbcPostWatcher, IAbcResult } from "../../types";
 import { AbcApi } from "./AbcApi";
 import { arrayToHash, hashToArray } from "typed-conversions";
@@ -19,13 +19,24 @@ export class AbcResult<T extends Model> {
    */
   get records(): T[] {
     if (!this.options.mergeRecords) {
+      // Models without dynamic paths
       return this.serverRecords.length > 0
         ? this.serverRecords
         : this.localRecords;
     } else {
-      const local = arrayToHash(this.localRecords);
+      // Models with dynamic paths
+      let localPathProps = Record.compositeKey(this._context.model.constructor, this.serverRecords[0])  
+      delete localPathProps.id
+      const where = Object.keys(localPathProps).reduce((agg, curr: keyof ICompositeKey<T> & string) => {
+        const value = typeof localPathProps[curr] === 'string' ? `"${localPathProps[curr]}"` : localPathProps[curr]
+        agg.push(`${curr} != ${value}`)
+        return agg;
+      }, [] as string[]).join(' AND ')
+      // select *  WHERE x!= v1 AND y !=v2
+      const localOffDynamicPath =  {}; // arrayToHash( this._context.dexieTable.where(where).  );
+      //TODO: add the right Dexie query
       const server = arrayToHash(this.serverRecords);
-      return hashToArray({ ...local, ...server });
+      return hashToArray({ ...localOffDynamicPath, ...server });
     }
   }
 

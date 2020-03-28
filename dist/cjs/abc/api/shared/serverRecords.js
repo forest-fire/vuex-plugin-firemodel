@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const firemodel_1 = require("firemodel");
-async function serverRecords(apiCommand, context, pks, allPks) {
+async function serverRecords(context, pks, allPks) {
     const records = (await firemodel_1.List.ids(context.model.constructor, ...pks)).data;
     const recordIds = records.map(i => firemodel_1.Record.compositeKeyRef(context.model.constructor, i));
     const missing = pks.filter(i => !recordIds.includes(i));
@@ -10,7 +10,6 @@ async function serverRecords(apiCommand, context, pks, allPks) {
         allPks,
         missing,
         records,
-        apiCommand,
         overallCachePerformance: context.cachePerformance,
         modelConfig: context.config
     };
