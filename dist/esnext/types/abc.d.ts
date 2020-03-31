@@ -349,3 +349,13 @@ export interface IAbcQueryApi<T> {
     load: (props: IAbcQueryDefinition<T>, options: IQueryOptions<T>) => Promise<AbcResult<T>>;
 }
 export declare const SINCE_LAST_COOKIE = "slc";
+/**
+ * Strategies for "get" requests for Query's.
+ *
+ * A "strategy" is a modifier in the default path/strategy
+ * of getting data from the various sources (e.g., Vuex, IndexedDb, Firebase)
+ */
+export declare enum AbcGetStrategy {
+    /** Queries will request data from */
+    localOnly = "localOnly"
+}
