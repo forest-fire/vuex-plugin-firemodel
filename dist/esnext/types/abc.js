@@ -77,3 +77,14 @@ export var QueryType;
     QueryType["since"] = "since";
 })(QueryType || (QueryType = {}));
 export const SINCE_LAST_COOKIE = "slc";
+/**
+ * Strategies for "get" requests for Query's.
+ *
+ * A "strategy" is a modifier in the default path/strategy
+ * of getting data from the various sources (e.g., Vuex, IndexedDb, Firebase)
+ */
+export var AbcGetStrategy;
+(function (AbcGetStrategy) {
+    /** Queries will request data from */
+    AbcGetStrategy["localOnly"] = "localOnly";
+})(AbcGetStrategy || (AbcGetStrategy = {}));
