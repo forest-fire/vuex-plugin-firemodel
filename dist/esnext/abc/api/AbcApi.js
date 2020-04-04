@@ -5,8 +5,7 @@ import { capitalize } from "../../shared";
 import { AbcError } from "../../errors/index";
 import { AbcResult } from "./AbcResult";
 import { pathJoin } from "common-types";
-import { getFromVuex, getFromIndexedDb, getFromFirebase, mergeLocalRecords } from "./api-parts/getDiscrete/index";
-import { saveToIndexedDB } from "./api-parts/getDiscrete/saveToIndexedDb";
+import { getFromVuex, getFromIndexedDb, getFromFirebase, mergeLocalRecords, saveToIndexedDb } from "./api-parts/getDiscrete/index";
 import { getStore } from "../..";
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
@@ -240,7 +239,7 @@ export class AbcApi {
             // cache results to IndexedDB
             if (this.config.useIndexedDb) {
                 // save to indexedDB
-                saveToIndexedDB(server, this.dexieTable);
+                saveToIndexedDb(server, this.dexieTable);
             }
             store.commit(`${this.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`, serverResults);
         }
@@ -266,7 +265,7 @@ export class AbcApi {
         // cache results to IndexedDB
         if (this.config.useIndexedDb) {
             // save to indexedDB
-            await saveToIndexedDB(server, this.dexieTable);
+            await saveToIndexedDb(server, this.dexieTable);
         }
         if (options.strategy === AbcStrategy.loadVuex) {
             const store = getStore();

@@ -1,4 +1,4 @@
-export function saveToIndexedDB(server, dexieTable) {
+export function saveToIndexedDb(server, dexieTable) {
     const waitFor = [];
     const now = new Date().getTime();
     server.records.forEach(record => {

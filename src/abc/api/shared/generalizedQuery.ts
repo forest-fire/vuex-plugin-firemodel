@@ -5,7 +5,9 @@ import {
   IQueryServerResults,
   IAbcQueryDefinition,
   IAbcOptions,
-  AbcStrategy
+  AbcStrategy,
+  QueryType,
+  DbSyncOperation
 } from "../../../types";
 import { AbcApi } from "../AbcApi";
 import { getStore, AbcResult } from "../../..";
@@ -13,6 +15,9 @@ import get from "lodash.get";
 import { Record, Model } from "firemodel";
 import { deepEqual } from "fast-equals";
 import { findPk } from "../shared/findPk";
+import { queryIndexedDb } from "./generalizedQuery/queryIndexedDb";
+import { queryFirebase } from "./generalizedQuery/queryFirebase";
+import { saveToIndexedDb } from "../api-parts/getDiscrete";
 
 export interface IGeneralizedQuery<T extends Model> {
   (): Promise<T[]>;
@@ -41,26 +46,18 @@ export async function generalizedQuery<T extends Model>(
     Record.compositeKeyRef(ctx.model.constructor, v)
   );
 
-  let idxRecords: T[] = [];
-  let local: IQueryLocalResults<T, any>;
+  let local: IQueryLocalResults<T, any> = {
+    records: vuexRecords,
+    vuexPks,
+    indexedDbPks: [],
+    localPks: vuexPks
+  };
 
   const t1 = performance.now();
   const perfLocal = t1 - t0;
   if (command === "get" && ctx.config.useIndexedDb) {
     // Populate Vuex with what IndexedDB knows
-    idxRecords = await dexieQuery().catch(e => {
-      throw e;
-    });
-
-    const indexedDbPks = idxRecords.map(i =>
-      Record.compositeKeyRef(ctx.model.constructor, i)
-    );
-    local = {
-      records: idxRecords,
-      vuexPks,
-      indexedDbPks,
-      localPks: Array.from(new Set(vuexPks.concat(...indexedDbPks)))
-    };
+    local = await queryIndexedDb(this, dexieQuery, vuexPks)
     const localResults = new AbcResult(ctx, {
       type: "query",
       queryDefn,
@@ -68,7 +65,7 @@ export async function generalizedQuery<T extends Model>(
       options
     }, { perfLocal });
 
-    if (idxRecords.length > 0) {
+    if (local.records.length > 0) {
       store.commit(
         `${ctx.vuex.moduleName}/${AbcMutation.ABC_LOCAL_QUERY_TO_VUEX}`,
         localResults
@@ -79,73 +76,40 @@ export async function generalizedQuery<T extends Model>(
         localResults
       );
     }
-  } else {
-    local = {
-      records: vuexRecords,
-      vuexPks,
-      indexedDbPks: [],
-      localPks: vuexPks
-    } as IQueryLocalResults<T>;
   }
 
-  const cacheHits: string[] = [];
-  const stalePks: string[] = [];
-  const waitFor: any[] = [];
-  const now = new Date().getTime();
   let server: IQueryServerResults<T> | undefined;
   if (command === "get" && options.strategy === AbcStrategy.getFirebase) {
     // get data from firebase
-    const serverRecords = await firemodelQuery();
-    const serverPks = serverRecords.map(i =>
-      Record.compositeKeyRef(ctx.model.constructor, i)
-    );
-    const newPks = serverPks.filter(i => !local.localPks.includes(i));
-    try {
-      serverRecords.forEach(rec => {
-        const newRec = {
-          ...rec,
-          lastUpdated: now,
-          createdAt: rec.createdAt || now
-        };
-        waitFor.push(ctx.dexieTable.put(newRec));
-        const pk = Record.compositeKeyRef(ctx.model.constructor, rec);
-        if (!newPks.includes(pk)) {
-          const localRec = findPk(pk, local.records);
-          if (deepEqual(rec, localRec)) {
-            cacheHits.push(pk);
-          } else {
-            stalePks.push(pk);
-          }
-        }
-      });
+    queryFirebase(ctx, firemodelQuery, local).then(server => {
       // cache results to IndexedDB
       if (ctx.config.useIndexedDb) {
-        await Promise.all(waitFor);
-        store.commit(
-          `${ctx.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`,
-          serverRecords
-        );
-      }
-    } catch (e) {
-      // cache results to IndexedDB
-      if (ctx.config.useIndexedDb) {
-        store.commit(
-          `${ctx.vuex.moduleName}/${AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED}`,
-          { ...serverRecords, errorMessage: e.message, errorStack: e.stack }
-        );
-      }
-    }
+        saveToIndexedDb(server, ctx.dexieTable);
 
-    ctx.cachePerformance.hits = ctx.cachePerformance.hits + cacheHits.length;
-    ctx.cachePerformance.misses =
-      ctx.cachePerformance.misses + stalePks.length + newPks.length;
+        if (queryDefn.queryType === QueryType.all) {
+          // check if with dynamic path
+          /* store.commit(
+            `${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB}`,
+            server.records
+          ); */
+          // else do a set
+          store.commit(
+            `${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`,
+            server.records
+          );
+        }
+      }
+
+      // SET
+      // SET_DYNAMIC_PATH
+      // MERGE (Firebase wins)
+    });
   
     // PRUNE
-    const removeFromIdx = local.indexedDbPks.filter(i => !serverPks.includes(i));
+    /* const removeFromIdx = local.indexedDbPks.filter(i => !serverPks.includes(i));
     // Vuex at this point will have both it's old state and whatever IndexedDB
     // contributed
     const removeFromVuex = local.localPks.filter(i => !serverPks.includes(i));
-    console.log({ removeFromIdx, removeFromVuex });
   
     if (removeFromVuex.length > 0) {
       store.commit(
@@ -153,6 +117,7 @@ export async function generalizedQuery<T extends Model>(
         { pks: removeFromVuex, vuex: ctx.vuex }
       );
     }
+
     if (removeFromIdx.length > 0) {
       await ctx.dexieTable.bulkDelete(removeFromIdx);
       store.commit(
@@ -162,15 +127,10 @@ export async function generalizedQuery<T extends Model>(
     }
   
     server = {
-      records: serverRecords,
-      serverPks,
-      newPks,
-      cacheHits,
-      stalePks,
+      ...server,
       removeFromIdx,
-      removeFromVuex,
-      overallCachePerformance: ctx.cachePerformance
-    };
+      removeFromVuex
+    }; */
   }
 
 

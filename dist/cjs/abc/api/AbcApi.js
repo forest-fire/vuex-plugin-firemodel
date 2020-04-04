@@ -8,7 +8,6 @@ const index_1 = require("../../errors/index");
 const AbcResult_1 = require("./AbcResult");
 const common_types_1 = require("common-types");
 const index_2 = require("./api-parts/getDiscrete/index");
-const saveToIndexedDb_1 = require("./api-parts/getDiscrete/saveToIndexedDb");
 const __1 = require("../..");
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
@@ -242,7 +241,7 @@ class AbcApi {
             // cache results to IndexedDB
             if (this.config.useIndexedDb) {
                 // save to indexedDB
-                saveToIndexedDb_1.saveToIndexedDB(server, this.dexieTable);
+                index_2.saveToIndexedDb(server, this.dexieTable);
             }
             store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`, serverResults);
         }
@@ -268,7 +267,7 @@ class AbcApi {
         // cache results to IndexedDB
         if (this.config.useIndexedDb) {
             // save to indexedDB
-            await saveToIndexedDb_1.saveToIndexedDB(server, this.dexieTable);
+            await index_2.saveToIndexedDb(server, this.dexieTable);
         }
         if (options.strategy === abc_1.AbcStrategy.loadVuex) {
             const store = __1.getStore();

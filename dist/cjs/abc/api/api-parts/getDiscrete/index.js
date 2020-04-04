@@ -8,4 +8,6 @@ var getFromFirebase_1 = require("./getFromFirebase");
 exports.getFromFirebase = getFromFirebase_1.getFromFirebase;
 var mergeLocalRecords_1 = require("./mergeLocalRecords");
 exports.mergeLocalRecords = mergeLocalRecords_1.mergeLocalRecords;
+var saveToIndexedDb_1 = require("./saveToIndexedDb");
+exports.saveToIndexedDb = saveToIndexedDb_1.saveToIndexedDb;
 //# sourceMappingURL=index.js.map

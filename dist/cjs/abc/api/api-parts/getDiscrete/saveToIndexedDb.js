@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function saveToIndexedDB(server, dexieTable) {
+function saveToIndexedDb(server, dexieTable) {
     const waitFor = [];
     const now = new Date().getTime();
     server.records.forEach(record => {
@@ -10,5 +10,5 @@ function saveToIndexedDB(server, dexieTable) {
     const results = Promise.all(waitFor);
     return results;
 }
-exports.saveToIndexedDB = saveToIndexedDB;
+exports.saveToIndexedDb = saveToIndexedDb;
 //# sourceMappingURL=saveToIndexedDb.js.map

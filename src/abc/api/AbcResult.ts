@@ -12,7 +12,7 @@ import { IDictionary } from "firemock";
  * watch certain elements of the returned resultset.
  */
 export class AbcResult<T extends Model> {
-  constructor(private _context: AbcApi<T>, private _results: IAbcResult<T>, private _performance: IDictionary) {}
+  constructor(private _context: AbcApi<T>, private _results: IAbcResult<T>, private _performance?: IDictionary) {}
 
   /**
    * All of the updated records in Vuex that originated from either IndexedDB or Firebase
