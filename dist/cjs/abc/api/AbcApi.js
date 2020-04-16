@@ -228,7 +228,7 @@ class AbcApi {
             idxRecords = await index_2.getFromIndexedDb(this.dexieRecord, requestIds);
         }
         const local = index_2.mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
-        const localResult = new AbcResult_1.AbcResult(this, {
+        const localResult = await AbcResult_1.AbcResult.create(this, {
             type: 'discrete',
             local,
             options
@@ -249,12 +249,13 @@ class AbcApi {
             store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`, localResult);
         }
         // const perfOverall = t2 - t0;
-        return new AbcResult_1.AbcResult(this, {
+        const results = await AbcResult_1.AbcResult.create(this, {
             type: "discrete",
             options,
             local,
             server
         }, { /* perfOverall, perfLocal, perfServer */});
+        return results;
     }
     /**
      * Handles LOAD requests for Discrete ID requests
@@ -275,12 +276,13 @@ class AbcApi {
             store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`, serverResults);
         }
         // const perfOverall = t2 - t0;
-        return new AbcResult_1.AbcResult(this, {
+        const results = await AbcResult_1.AbcResult.create(this, {
             type: "discrete",
             options,
             local,
             server
         }, { /* perfOverall, perfLocal, perfServer */});
+        return results;
     }
     /**
      * Provides access to the Firebase database

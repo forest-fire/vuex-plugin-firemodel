@@ -173,6 +173,17 @@ export interface IAbcResultsMeta<T> {
      */
     modelConfig: IAbcApiConfig<T>;
 }
+/**
+ * Operation between two data sources (Firebase, IndexedDB, Vuex) to appropriatly syncronize them.
+ */
+export declare enum DbSyncOperation {
+    ABC_FIREBASE_SET_INDEXED_DB = "ABC_FIREBASE_SET_INDEXED_DB",
+    ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB = "ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB",
+    ABC_FIREBASE_MERGE_INDEXED_DB = "ABC_FIREBASE_MERGE_INDEXED_DB",
+    ABC_INDEXED_DB_SET_VUEX = "ABC_INDEXED_DB_SET_VUEX",
+    ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX = "ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX",
+    ABC_INDEXED_DB_MERGE_VUEX = "ABC_INDEXED_DB_MERGE_VUEX"
+}
 export declare enum AbcMutation {
     /**
      * An update to a Vuex module's primary state that originated

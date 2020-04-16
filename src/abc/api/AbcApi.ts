@@ -305,7 +305,7 @@ export class AbcApi<T extends Model> {
     }
 
     const local = mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
-    const localResult = new AbcResult(this, {
+    const localResult = await AbcResult.create(this, {
       type: 'discrete',
       local,
       options
@@ -336,12 +336,14 @@ export class AbcApi<T extends Model> {
 
 
     // const perfOverall = t2 - t0;
-    return new AbcResult(this, {
+    const results = await AbcResult.create(this, {
       type: "discrete",
       options,
       local,
       server
     }, {/* perfOverall, perfLocal, perfServer */});
+
+    return results;
   }
 
   /**
@@ -375,12 +377,13 @@ export class AbcApi<T extends Model> {
     }
 
     // const perfOverall = t2 - t0;
-    return new AbcResult(this, {
+    const results = await AbcResult.create(this, {
       type: "discrete",
       options,
       local,
       server
     }, {/* perfOverall, perfLocal, perfServer */});
+    return results;
   }
 
   /**

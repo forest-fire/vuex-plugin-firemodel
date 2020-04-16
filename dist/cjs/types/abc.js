@@ -4,6 +4,18 @@ function isDiscreteRequest(request) {
     return typeof request !== "function";
 }
 exports.isDiscreteRequest = isDiscreteRequest;
+/**
+ * Operation between two data sources (Firebase, IndexedDB, Vuex) to appropriatly syncronize them.
+ */
+var DbSyncOperation;
+(function (DbSyncOperation) {
+    DbSyncOperation["ABC_FIREBASE_SET_INDEXED_DB"] = "ABC_FIREBASE_SET_INDEXED_DB";
+    DbSyncOperation["ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB"] = "ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB";
+    DbSyncOperation["ABC_FIREBASE_MERGE_INDEXED_DB"] = "ABC_FIREBASE_MERGE_INDEXED_DB";
+    DbSyncOperation["ABC_INDEXED_DB_SET_VUEX"] = "ABC_INDEXED_DB_SET_VUEX";
+    DbSyncOperation["ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX"] = "ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX";
+    DbSyncOperation["ABC_INDEXED_DB_MERGE_VUEX"] = "ABC_INDEXED_DB_MERGE_VUEX";
+})(DbSyncOperation = exports.DbSyncOperation || (exports.DbSyncOperation = {}));
 var AbcMutation;
 (function (AbcMutation) {
     /**

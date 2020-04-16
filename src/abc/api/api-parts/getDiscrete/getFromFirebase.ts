@@ -10,7 +10,7 @@ export async function getFromFirebase<T>(
 ) {
   const server = await serverRecords(ctx, requestIds, requestIds);
 
-  const serverResults = new AbcResult(ctx, {
+  const serverResults = await AbcResult.create(ctx, {
     type: "discrete",
     local,
     server,

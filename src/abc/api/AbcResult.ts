@@ -14,31 +14,43 @@ import { IDictionary } from "firemock";
 export class AbcResult<T extends Model> {
   constructor(private _context: AbcApi<T>, private _results: IAbcResult<T>, private _performance?: IDictionary) {}
 
+  static async create<T extends Model>(_context: AbcApi<T>, _results: IAbcResult<T>, _performance?: IDictionary) {
+    const obj = new AbcResult(_context, _results, _performance);
+    if (obj.serverRecords === undefined) {
+      obj.records = obj.localRecords;
+      return obj;
+    }
+    
+    // Models with dynamic paths
+    const hasDynamicProperties = Record.dynamicPathProperties(obj._context.model.constructor).length > 0;
+    if (hasDynamicProperties) {
+      let localPathProps = Record.compositeKey(obj._context.model.constructor, obj.serverRecords[0]);
+      delete localPathProps.id;
+      // const where = Object.keys(localPathProps).reduce((agg, curr: keyof ICompositeKey<T> & string) => {
+      //   const value = typeof localPathProps[curr] === 'string' ? `"${localPathProps[curr]}"` : localPathProps[curr]
+      //   agg[curr].push(value);
+      //   return agg;
+      // }, {} as IDictionary);
+      console.log(obj._context.dexieModels, Object.keys(localPathProps), Object.values(localPathProps));
+      const queryResults = await obj._context.dexieTable.where(Object.keys(localPathProps))
+        .notEqual(Object.values(localPathProps)).toArray()
+      const localOffDynamicPath = arrayToHash(queryResults)
+
+      const server = arrayToHash(obj.serverRecords || []);
+      obj.records = hashToArray({ ...localOffDynamicPath, ...server });
+    } else {
+      obj.records = obj.serverRecords !== undefined
+        ? obj.serverRecords
+        : obj.localRecords;
+    }
+
+    return obj;
+  }
+
   /**
    * All of the updated records in Vuex that originated from either IndexedDB or Firebase
    */
-  get records(): T[] {
-    if (!this.options.mergeRecords) {
-      // Models without dynamic paths
-      return this.serverRecords.length > 0
-        ? this.serverRecords
-        : this.localRecords;
-    } else {
-      // Models with dynamic paths
-      let localPathProps = Record.compositeKey(this._context.model.constructor, this.serverRecords[0])  
-      delete localPathProps.id
-      const where = Object.keys(localPathProps).reduce((agg, curr: keyof ICompositeKey<T> & string) => {
-        const value = typeof localPathProps[curr] === 'string' ? `"${localPathProps[curr]}"` : localPathProps[curr]
-        agg.push(`${curr} != ${value}`)
-        return agg;
-      }, [] as string[]).join(' AND ')
-      // select *  WHERE x!= v1 AND y !=v2
-      const localOffDynamicPath =  {}; // arrayToHash( this._context.dexieTable.where(where).  );
-      //TODO: add the right Dexie query
-      const server = arrayToHash(this.serverRecords);
-      return hashToArray({ ...localOffDynamicPath, ...server });
-    }
-  }
+  records: T[] = []
 
   /**
    * All of the updated records in Vuex that originated from IndexedDB
@@ -50,8 +62,8 @@ export class AbcResult<T extends Model> {
   /**
    * All of the updated records in Vuex that originated from Firebase
    */
-  get serverRecords(): T[] {
-    return this._results.server ? this._results.server.records : [];
+  get serverRecords(): T[] | undefined {
+    return this._results.server ? this._results.server.records : undefined;
   }
 
   get cachePerformance() {

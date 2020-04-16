@@ -12,32 +12,40 @@ export class AbcResult {
         this._context = _context;
         this._results = _results;
         this._performance = _performance;
+        /**
+         * All of the updated records in Vuex that originated from either IndexedDB or Firebase
+         */
+        this.records = [];
     }
-    /**
-     * All of the updated records in Vuex that originated from either IndexedDB or Firebase
-     */
-    get records() {
-        if (!this.options.mergeRecords) {
-            // Models without dynamic paths
-            return this.serverRecords.length > 0
-                ? this.serverRecords
-                : this.localRecords;
+    static async create(_context, _results, _performance) {
+        const obj = new AbcResult(_context, _results, _performance);
+        if (obj.serverRecords === undefined) {
+            obj.records = obj.localRecords;
+            return obj;
+        }
+        // Models with dynamic paths
+        const hasDynamicProperties = Record.dynamicPathProperties(obj._context.model.constructor).length > 0;
+        if (hasDynamicProperties) {
+            let localPathProps = Record.compositeKey(obj._context.model.constructor, obj.serverRecords[0]);
+            delete localPathProps.id;
+            // const where = Object.keys(localPathProps).reduce((agg, curr: keyof ICompositeKey<T> & string) => {
+            //   const value = typeof localPathProps[curr] === 'string' ? `"${localPathProps[curr]}"` : localPathProps[curr]
+            //   agg[curr].push(value);
+            //   return agg;
+            // }, {} as IDictionary);
+            console.log(obj._context.dexieModels, Object.keys(localPathProps), Object.values(localPathProps));
+            const queryResults = await obj._context.dexieTable.where(Object.keys(localPathProps))
+                .notEqual(Object.values(localPathProps)).toArray();
+            const localOffDynamicPath = arrayToHash(queryResults);
+            const server = arrayToHash(obj.serverRecords || []);
+            obj.records = hashToArray(Object.assign(Object.assign({}, localOffDynamicPath), server));
         }
         else {
-            // Models with dynamic paths
-            let localPathProps = Record.compositeKey(this._context.model.constructor, this.serverRecords[0]);
-            delete localPathProps.id;
-            const where = Object.keys(localPathProps).reduce((agg, curr) => {
-                const value = typeof localPathProps[curr] === 'string' ? `"${localPathProps[curr]}"` : localPathProps[curr];
-                agg.push(`${curr} != ${value}`);
-                return agg;
-            }, []).join(' AND ');
-            // select *  WHERE x!= v1 AND y !=v2
-            const localOffDynamicPath = {}; // arrayToHash( this._context.dexieTable.where(where).  );
-            //TODO: add the right Dexie query
-            const server = arrayToHash(this.serverRecords);
-            return hashToArray(Object.assign(Object.assign({}, localOffDynamicPath), server));
+            obj.records = obj.serverRecords !== undefined
+                ? obj.serverRecords
+                : obj.localRecords;
         }
+        return obj;
     }
     /**
      * All of the updated records in Vuex that originated from IndexedDB
@@ -50,7 +58,7 @@ export class AbcResult {
      * All of the updated records in Vuex that originated from Firebase
      */
     get serverRecords() {
-        return this._results.server ? this._results.server.records : [];
+        return this._results.server ? this._results.server.records : undefined;
     }
     get cachePerformance() {
         return this._context.cachePerformance;

@@ -4,7 +4,7 @@ const __1 = require("../..");
 const shared_1 = require("../../shared");
 async function getFromFirebase(ctx, local, options = {}, requestIds) {
     const server = await shared_1.serverRecords(ctx, requestIds, requestIds);
-    const serverResults = new __1.AbcResult(ctx, {
+    const serverResults = await __1.AbcResult.create(ctx, {
         type: "discrete",
         local,
         server,

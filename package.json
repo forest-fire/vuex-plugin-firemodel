@@ -35,7 +35,6 @@
   },
   "homepage": "https://vuex.firemodel.info",
   "dependencies": {
-    "@firebase/auth-types": "^0.9.5",
     "abstracted-client": "^0.37.0",
     "common-types": "^1.13.0",
     "fast-copy": "^2.0.4",
