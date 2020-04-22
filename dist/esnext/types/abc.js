@@ -1,6 +1,18 @@
 export function isDiscreteRequest(request) {
     return typeof request !== "function";
 }
+/**
+ * Operation between two data sources (Firebase, IndexedDB, Vuex) to appropriatly syncronize them.
+ */
+export var DbSyncOperation;
+(function (DbSyncOperation) {
+    DbSyncOperation["ABC_FIREBASE_SET_INDEXED_DB"] = "ABC_FIREBASE_SET_INDEXED_DB";
+    DbSyncOperation["ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB"] = "ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB";
+    DbSyncOperation["ABC_FIREBASE_MERGE_INDEXED_DB"] = "ABC_FIREBASE_MERGE_INDEXED_DB";
+    DbSyncOperation["ABC_INDEXED_DB_SET_VUEX"] = "ABC_INDEXED_DB_SET_VUEX";
+    DbSyncOperation["ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX"] = "ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX";
+    DbSyncOperation["ABC_INDEXED_DB_MERGE_VUEX"] = "ABC_INDEXED_DB_MERGE_VUEX";
+})(DbSyncOperation || (DbSyncOperation = {}));
 export var AbcMutation;
 (function (AbcMutation) {
     /**
@@ -76,15 +88,13 @@ export var QueryType;
     QueryType["where"] = "where";
     QueryType["since"] = "since";
 })(QueryType || (QueryType = {}));
+export var AbcStrategy;
+(function (AbcStrategy) {
+    AbcStrategy["loadVuex"] = "loadVuex";
+    /**
+     * Forces **get** based queries to always go to firebase (however promise is returned after
+     * local query); this does not affect _discrete_ gets or any load queries.
+     */
+    AbcStrategy["getFirebase"] = "getFirebase";
+})(AbcStrategy || (AbcStrategy = {}));
 export const SINCE_LAST_COOKIE = "slc";
-/**
- * Strategies for "get" requests for Query's.
- *
- * A "strategy" is a modifier in the default path/strategy
- * of getting data from the various sources (e.g., Vuex, IndexedDb, Firebase)
- */
-export var AbcGetStrategy;
-(function (AbcGetStrategy) {
-    /** Queries will request data from */
-    AbcGetStrategy["localOnly"] = "localOnly";
-})(AbcGetStrategy || (AbcGetStrategy = {}));

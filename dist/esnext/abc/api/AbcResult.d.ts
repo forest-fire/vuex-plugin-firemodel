@@ -1,6 +1,7 @@
 import { Model } from "firemodel";
 import { IAbcPostWatcher, IAbcResult } from "../../types";
 import { AbcApi } from "./AbcApi";
+import { IDictionary } from "firemock";
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
  * respond with this class. The classes goal is to pass back not only
@@ -10,11 +11,13 @@ import { AbcApi } from "./AbcApi";
 export declare class AbcResult<T extends Model> {
     private _context;
     private _results;
-    constructor(_context: AbcApi<T>, _results: IAbcResult<T>);
+    private _performance?;
+    constructor(_context: AbcApi<T>, _results: IAbcResult<T>, _performance?: IDictionary<any> | undefined);
+    static create<T extends Model>(_context: AbcApi<T>, _results: IAbcResult<T>, _performance?: IDictionary): Promise<AbcResult<T>>;
     /**
      * All of the updated records in Vuex that originated from either IndexedDB or Firebase
      */
-    get records(): T[];
+    records: T[];
     /**
      * All of the updated records in Vuex that originated from IndexedDB
      */
@@ -22,12 +25,13 @@ export declare class AbcResult<T extends Model> {
     /**
      * All of the updated records in Vuex that originated from Firebase
      */
-    get serverRecords(): T[];
+    get serverRecords(): T[] | undefined;
     get cachePerformance(): {
         hits: number;
         misses: number;
         ignores: number;
     };
+    get requestPerformance(): IDictionary<any> | undefined;
     get vuex(): {
         isList: boolean | undefined;
         modulePath: string;

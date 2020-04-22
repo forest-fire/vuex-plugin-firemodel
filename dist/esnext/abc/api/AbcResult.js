@@ -1,3 +1,4 @@
+import { Record } from "firemodel";
 import { arrayToHash, hashToArray } from "typed-conversions";
 import { AbcError } from "../../errors";
 /**
@@ -7,39 +8,63 @@ import { AbcError } from "../../errors";
  * watch certain elements of the returned resultset.
  */
 export class AbcResult {
-    constructor(_context, _results) {
+    constructor(_context, _results, _performance) {
         this._context = _context;
         this._results = _results;
+        this._performance = _performance;
+        /**
+         * All of the updated records in Vuex that originated from either IndexedDB or Firebase
+         */
+        this.records = [];
     }
-    /**
-     * All of the updated records in Vuex that originated from either IndexedDB or Firebase
-     */
-    get records() {
-        if (!this.options.mergeRecords) {
-            return this.serverRecords.length > 0
-                ? this.serverRecords
-                : this.localRecords;
+    static async create(_context, _results, _performance) {
+        const obj = new AbcResult(_context, _results, _performance);
+        if (obj.serverRecords === undefined) {
+            obj.records = obj.localRecords;
+            return obj;
+        }
+        // Models with dynamic paths
+        const hasDynamicProperties = Record.dynamicPathProperties(obj._context.model.constructor).length > 0;
+        if (hasDynamicProperties) {
+            let localPathProps = Record.compositeKey(obj._context.model.constructor, obj.serverRecords[0]);
+            delete localPathProps.id;
+            // const where = Object.keys(localPathProps).reduce((agg, curr: keyof ICompositeKey<T> & string) => {
+            //   const value = typeof localPathProps[curr] === 'string' ? `"${localPathProps[curr]}"` : localPathProps[curr]
+            //   agg[curr].push(value);
+            //   return agg;
+            // }, {} as IDictionary);
+            console.log(obj._context.dexieModels, Object.keys(localPathProps), Object.values(localPathProps));
+            const queryResults = await obj._context.dexieTable.where(Object.keys(localPathProps))
+                .notEqual(Object.values(localPathProps)).toArray();
+            const localOffDynamicPath = arrayToHash(queryResults);
+            const server = arrayToHash(obj.serverRecords || []);
+            obj.records = hashToArray(Object.assign(Object.assign({}, localOffDynamicPath), server));
         }
         else {
-            const local = arrayToHash(this.localRecords);
-            const server = arrayToHash(this.serverRecords);
-            return hashToArray(Object.assign(Object.assign({}, local), server));
+            obj.records = obj.serverRecords !== undefined
+                ? obj.serverRecords
+                : obj.localRecords;
         }
+        return obj;
     }
     /**
      * All of the updated records in Vuex that originated from IndexedDB
      */
     get localRecords() {
-        return this._results.local.records || [];
+        var _a;
+        return ((_a = this._results.local) === null || _a === void 0 ? void 0 : _a.records) || [];
     }
     /**
      * All of the updated records in Vuex that originated from Firebase
      */
     get serverRecords() {
-        return this._results.server ? this._results.server.records : [];
+        return this._results.server ? this._results.server.records : undefined;
     }
     get cachePerformance() {
         return this._context.cachePerformance;
+    }
+    get requestPerformance() {
+        return this._performance;
     }
     get vuex() {
         return this._context.vuex;

@@ -4,20 +4,16 @@ import {
   QueryType
 } from "../../../types";
 import { AbcApi } from "../AbcApi";
-import { AbcResult, IQueryOptions } from "../../..";
+import { AbcResult, IQueryOptions, IAbcQueryHelper } from "../../..";
 import { List } from "firemodel";
 import { generalizedQuery } from "../shared";
 
-let all = function all<T>(
+export const all: IAbcQueryHelper = function all<T>(
   defn:
     | Omit<IAbcAllQueryDefinition<T>, "queryType">
-    | IAbcAllQueryDefinition<T> = {},
-  options: IQueryOptions<T> = {}
+    | IAbcAllQueryDefinition<T> = {}
 ) {
-  return async (
-    command: AbcRequestCommand,
-    ctx: AbcApi<T>
-  ): Promise<AbcResult<T>> => {
+  return async (command, ctx: AbcApi<T>, options: IQueryOptions<T> = {}): Promise<AbcResult<T>> => {
     defn = { ...defn, queryType: QueryType.all };
     // The query to use for IndexedDB
     const dexieQuery = async () => {
@@ -27,7 +23,7 @@ let all = function all<T>(
 
     // The query to use for Firebase
     const firemodelQuery = async () => {
-      const list = await List.all(ctx.model.constructor);
+      const list = await List.all(ctx.model.constructor, options || {});
       return list.data;
     };
 
@@ -43,5 +39,3 @@ let all = function all<T>(
 };
 
 all.prototype.isQueryHelper = true;
-
-export { all };
