@@ -7,6 +7,6 @@ export async function getFromFirebase(ctx, local, options = {}, requestIds) {
         local,
         server,
         options
-    }, {});
+    });
     return { server, serverResults };
 }

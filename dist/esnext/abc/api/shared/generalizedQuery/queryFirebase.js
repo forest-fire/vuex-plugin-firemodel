@@ -22,14 +22,20 @@ export async function queryFirebase(ctx, firemodelQuery, local) {
     });
     ctx.cachePerformance.hits = ctx.cachePerformance.hits + cacheHits.length;
     ctx.cachePerformance.misses = ctx.cachePerformance.misses + stalePks.length + newPks.length;
+    const removeFromIdx = local.indexedDbPks.filter(i => !serverPks.includes(i));
+    /**
+     * Vuex at this point will have both it's old state and whatever IndexedDB
+     * contributed
+     */
+    const removeFromVuex = local.localPks.filter(i => !serverPks.includes(i));
     const server = {
         records: serverRecords,
         serverPks,
         newPks,
         cacheHits,
         stalePks,
-        removeFromIdx: [],
-        removeFromVuex: [],
+        removeFromIdx,
+        removeFromVuex,
         overallCachePerformance: ctx.cachePerformance
     };
     return server;

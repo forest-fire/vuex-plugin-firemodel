@@ -15,7 +15,7 @@ export async function getFromFirebase<T>(
     local,
     server,
     options
-  }, {});
+  });
 
   return { server, serverResults }
 }

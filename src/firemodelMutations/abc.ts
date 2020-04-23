@@ -8,12 +8,15 @@ import {
   IDiscreteLocalResults,
   IDiscreteServerResults,
   IAbcResult,
-  IDiscreteResult
+  IDiscreteResult,
+  DbSyncOperation
 } from "../types";
 import { IDictionary } from "common-types";
 import { AbcResult } from "../abc/api/AbcResult";
 import { AbcApi } from "../abc/api/AbcApi";
 import get from "lodash.get";
+import { AbcError } from "../errors";
+import { localConfig } from "../store/mutations/localConfig";
 
 export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
   return {
@@ -58,9 +61,88 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
       }
     },
 
-    [AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB]<T>(
+    [DbSyncOperation.ABC_FIREBASE_SET_VUEX]<T extends IDictionary>(
       state: T,
-      payload: IDiscreteServerResults<any>
+      payload: AbcResult<T>
+    ) {
+      if (payload.vuex.isList) {
+        const vuexRecords = state[payload.vuex.modulePostfix];
+        const updated = hashToArray({
+          ...arrayToHash(vuexRecords || []),
+          ...arrayToHash(payload.records || [])
+        });
+
+        Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
+      } else {
+        if (!validResultSize(payload, "server")) {
+          return;
+        }
+        changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
+      }
+    },
+
+    [DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_VUEX]<T extends IDictionary>(
+      state: T,
+      payload: AbcResult<T>
+    ) {
+      // TODO: add code for dynamic path strategy here
+    },
+
+    [DbSyncOperation.ABC_FIREBASE_MERGE_VUEX]<T extends IDictionary>(
+      state: T,
+      payload: AbcResult<T>
+    ) {
+      // TODO: add code for merge strategy here
+    },
+
+    [DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB]<T>(
+      state: T,
+      payload: AbcResult<any>
+    ) {
+      // nothing to do; mutation is purely for informational/debugging purposes
+    },
+
+    [DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB]<T>(
+      state: T,
+      payload: AbcResult<any>
+    ) {
+      // nothing to do; mutation is purely for informational/debugging purposes
+    },
+
+    [DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB]<T>(
+      state: T,
+      payload: AbcResult<any>
+    ) {
+      // nothing to do; mutation is purely for informational/debugging purposes
+    },
+
+    [DbSyncOperation.ABC_INDEXED_DB_SET_VUEX]<T extends IDictionary>(
+      state: T,
+      payload: AbcResult<any>
+    ) {
+      if (payload.vuex.isList) {
+        if (!payload.resultFromQuery) {
+          throw new AbcError(`Attempt to use mutation ${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX} with a discrete request.`, 'not-allowed');
+        }
+        Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), payload.records);
+      } else {
+        if (process.env.NODE_ENV !== 'production') {
+          console.info(`You are using a query on a singular model ${payload.vuex.moduleName}; this typically should be avoided.`);
+        }
+        changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
+      }
+    },
+
+    [DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX]<T>(
+      state: T,
+      payload: AbcResult<any>
+    ) {
+      // nothing to do; mutation is purely for informational/debugging purposes
+    },
+
+    [DbSyncOperation.ABC_INDEXED_DB_MERGE_VUEX]<T>(
+      state: T,
+      payload: AbcResult<any>
     ) {
       // nothing to do; mutation is purely for informational/debugging purposes
     },
@@ -89,7 +171,7 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
       // nothing to do; mutation is purely for informational/debugging purposes
     },
 
-    [AbcMutation.ABC_LOCAL_QUERY_TO_VUEX]<T extends IDictionary>(
+    [DbSyncOperation.ABC_INDEXED_DB_SET_VUEX]<T extends IDictionary>(
       state: T,
       payload: AbcResult<T>
     ) {

@@ -15,7 +15,8 @@ import {
   IAbcParam,
   AbcRequestCommand,
   IDiscreteOptions,
-  AbcStrategy
+  AbcStrategy,
+  DbSyncOperation
 } from "../../types/abc";
 import { getDefaultApiConfig } from "../configuration/configApi";
 import { capitalize } from "../../shared";
@@ -298,10 +299,11 @@ export class AbcApi<T extends Model> {
     
     // get from Vuex
     const vuexRecords = await getFromVuex(this);
-
+    
     if (this.config.useIndexedDb) {
       // get from indexedDB
       idxRecords = await getFromIndexedDb(this.dexieRecord, requestIds);
+      console.log(`${this.model.constructor.name}:idxRecords`, idxRecords)
     }
 
     const local = mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
@@ -309,28 +311,26 @@ export class AbcApi<T extends Model> {
       type: 'discrete',
       local,
       options
-    }, {})
+    });
     
-    // no records found
-    let server = undefined;
-    if (!local?.records) {
-      // get from firebase
-      const { server, serverResults } = await getFromFirebase(this, local, options, requestIds);
-
-      // cache results to IndexedDB
-      if (this.config.useIndexedDb) {
-        // save to indexedDB
-        saveToIndexedDb(server, this.dexieTable);
-      }
-
-      store.commit(
-        `${this.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`,
-        serverResults
-      );
-    } else {
+    if (!local?.allFoundLocally) {
+      // send data back to vuex
       store.commit(
         `${this.vuex.moduleName}/${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`,
         localResult
+      );
+    }
+
+    // get from firebase
+    const { server, serverResults } = await getFromFirebase(this, local, options, requestIds);
+
+    // cache results to IndexedDB
+    if (this.config.useIndexedDb) {
+      // save to indexedDB
+      saveToIndexedDb(server, this.dexieTable);
+      store.commit(
+        `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`,
+        serverResults
       );
     }
 
@@ -341,7 +341,12 @@ export class AbcApi<T extends Model> {
       options,
       local,
       server
-    }, {/* perfOverall, perfLocal, perfServer */});
+    });
+
+    store.commit(
+      `${this.vuex.moduleName}/${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`,
+      results
+    );
 
     return results;
   }
@@ -382,7 +387,7 @@ export class AbcApi<T extends Model> {
       options,
       local,
       server
-    }, {/* perfOverall, perfLocal, perfServer */});
+    });
     return results;
   }
 

@@ -23,6 +23,7 @@ class AbcResult {
         const obj = new AbcResult(_context, _results, _performance);
         if (obj.serverRecords === undefined) {
             obj.records = obj.localRecords;
+            console.log('no serverRecords', obj.localRecords);
             return obj;
         }
         // Models with dynamic paths
@@ -30,14 +31,12 @@ class AbcResult {
         if (hasDynamicProperties) {
             let localPathProps = firemodel_1.Record.compositeKey(obj._context.model.constructor, obj.serverRecords[0]);
             delete localPathProps.id;
-            // const where = Object.keys(localPathProps).reduce((agg, curr: keyof ICompositeKey<T> & string) => {
-            //   const value = typeof localPathProps[curr] === 'string' ? `"${localPathProps[curr]}"` : localPathProps[curr]
-            //   agg[curr].push(value);
-            //   return agg;
-            // }, {} as IDictionary);
-            console.log(obj._context.dexieModels, Object.keys(localPathProps), Object.values(localPathProps));
-            const queryResults = await obj._context.dexieTable.where(Object.keys(localPathProps))
-                .notEqual(Object.values(localPathProps)).toArray();
+            const propKeys = Object.keys(localPathProps);
+            const propValues = Object.values(localPathProps);
+            const whereClause = propKeys.length > 1 ? propKeys : propKeys.toString();
+            const notEqualVal = propValues.length > 1 ? propValues : propValues.toString();
+            const queryResults = await obj._context.dexieTable.where(whereClause)
+                .notEqual(notEqualVal).toArray();
             const localOffDynamicPath = typed_conversions_1.arrayToHash(queryResults);
             const server = typed_conversions_1.arrayToHash(obj.serverRecords || []);
             obj.records = typed_conversions_1.hashToArray(Object.assign(Object.assign({}, localOffDynamicPath), server));
@@ -48,6 +47,13 @@ class AbcResult {
                 : obj.localRecords;
         }
         return obj;
+    }
+    /**
+     * Boolean flag to indicate that the result came from a query (instead of a discrete request)
+     */
+    get resultFromQuery() {
+        // TODO: we will add the correct option to the AbcResult constructor later
+        return true;
     }
     /**
      * All of the updated records in Vuex that originated from IndexedDB

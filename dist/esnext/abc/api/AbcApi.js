@@ -1,5 +1,5 @@
 import { Record, FireModel, DexieDb } from "firemodel";
-import { isDiscreteRequest, AbcMutation, AbcStrategy } from "../../types/abc";
+import { isDiscreteRequest, AbcMutation, AbcStrategy, DbSyncOperation } from "../../types/abc";
 import { getDefaultApiConfig } from "../configuration/configApi";
 import { capitalize } from "../../shared";
 import { AbcError } from "../../errors/index";
@@ -224,27 +224,25 @@ export class AbcApi {
         if (this.config.useIndexedDb) {
             // get from indexedDB
             idxRecords = await getFromIndexedDb(this.dexieRecord, requestIds);
+            console.log(`${this.model.constructor.name}:idxRecords`, idxRecords);
         }
         const local = mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
         const localResult = await AbcResult.create(this, {
             type: 'discrete',
             local,
             options
-        }, {});
-        // no records found
-        let server = undefined;
-        if (!(local === null || local === void 0 ? void 0 : local.records)) {
-            // get from firebase
-            const { server, serverResults } = await getFromFirebase(this, local, options, requestIds);
-            // cache results to IndexedDB
-            if (this.config.useIndexedDb) {
-                // save to indexedDB
-                saveToIndexedDb(server, this.dexieTable);
-            }
-            store.commit(`${this.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`, serverResults);
-        }
-        else {
+        });
+        if (!(local === null || local === void 0 ? void 0 : local.allFoundLocally)) {
+            // send data back to vuex
             store.commit(`${this.vuex.moduleName}/${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`, localResult);
+        }
+        // get from firebase
+        const { server, serverResults } = await getFromFirebase(this, local, options, requestIds);
+        // cache results to IndexedDB
+        if (this.config.useIndexedDb) {
+            // save to indexedDB
+            saveToIndexedDb(server, this.dexieTable);
+            store.commit(`${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, serverResults);
         }
         // const perfOverall = t2 - t0;
         const results = await AbcResult.create(this, {
@@ -252,7 +250,8 @@ export class AbcApi {
             options,
             local,
             server
-        }, { /* perfOverall, perfLocal, perfServer */});
+        });
+        store.commit(`${this.vuex.moduleName}/${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`, results);
         return results;
     }
     /**
@@ -279,7 +278,7 @@ export class AbcApi {
             options,
             local,
             server
-        }, { /* perfOverall, perfLocal, perfServer */});
+        });
         return results;
     }
     /**
