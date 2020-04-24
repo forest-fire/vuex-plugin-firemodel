@@ -3,7 +3,7 @@ import { IAbcPostWatcher, IAbcResult } from "../../types";
 import { AbcApi } from "./AbcApi";
 import { arrayToHash, hashToArray } from "typed-conversions";
 import { AbcError } from "../../errors";
-import { IDictionary } from "firemock";
+import { IDictionary } from "common-types";
 
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will

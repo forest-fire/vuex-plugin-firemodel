@@ -1,7 +1,7 @@
 import { IFmWatchEvent, Record, FmEvents } from "firemodel";
 import { IFmLocalChange } from "../index";
 import { IFmEventActions } from "../types";
-import { IDictionary } from "firemock";
+import { IDictionary } from "common-types";
 
 /**
  * converts a "local change" event into the right data structure

@@ -3,7 +3,7 @@ import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
 import { changeRoot } from "../shared/changeRoot";
 import { updateList } from "../shared/updateList";
 import { IFmWatchEvent } from "firemodel";
-import { IDictionary } from "firemock";
+import { IDictionary } from "common-types";
 import { isRecord } from "../shared/isRecord";
 
 export function addedLocally<T>(

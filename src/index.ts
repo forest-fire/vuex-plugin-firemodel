@@ -14,7 +14,7 @@ import { addNamespace } from "./shared/addNamespace";
 import { coreServices } from "./coreServices";
 import { FirebaseAuth } from "@firebase/auth-types";
 import { FireModel } from "firemodel";
-import { IDictionary } from "firemock";
+import { IDictionary } from "common-types";
 import copy from "fast-copy";
 
 export * from "./types";

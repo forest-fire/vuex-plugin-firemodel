@@ -1,6 +1,5 @@
-import { Model } from "firemodel";
 import { AbcError } from "../../../errors";
-import { IDictionary } from "firemock";
+import { IDictionary } from "common-types";
 
 /**
  * Given a Primary Key _reference_ string; this function will find the record
