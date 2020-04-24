@@ -1,9 +1,8 @@
 import { Model, IPrimaryKey } from "firemodel";
-import { IDictionary } from "firemock";
 import { AbcApi } from "../abc/api/AbcApi";
 import { DB } from "abstracted-client";
 import { AbcResult } from "../abc";
-import { epochWithMilliseconds } from "common-types";
+import { epochWithMilliseconds, IDictionary } from "common-types";
 export interface IAbcApiConfig<T extends Model> {
     /**
      * indicates whether the Vuex store is storing a _list_

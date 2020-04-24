@@ -1,7 +1,7 @@
 import { Model } from "firemodel";
 import { IAbcPostWatcher, IAbcResult } from "../../types";
 import { AbcApi } from "./AbcApi";
-import { IDictionary } from "firemock";
+import { IDictionary } from "common-types";
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
  * respond with this class. The classes goal is to pass back not only
