@@ -1,10 +1,9 @@
-import { IFmModelConstructor } from "./config";
-import { Model, IPrimaryKey, fk, ICompositeKey } from "firemodel";
-import { IDictionary } from "firemock";
+
+import { Model, IPrimaryKey } from "firemodel";
 import { AbcApi } from "../abc/api/AbcApi";
 import { DB } from "abstracted-client";
 import { AbcResult } from "../abc";
-import { epochWithMilliseconds } from "common-types";
+import { epochWithMilliseconds , IDictionary} from "common-types";
 
 export interface IAbcApiConfig<T extends Model> {
   /**

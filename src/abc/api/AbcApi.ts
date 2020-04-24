@@ -20,11 +20,10 @@ import {
 } from "../../types/abc";
 import { getDefaultApiConfig } from "../configuration/configApi";
 import { capitalize } from "../../shared";
-import { IDictionary } from "firemock";
 import { IFmModelConstructor } from "../../types/index";
 import { AbcError } from "../../errors/index";
 import { AbcResult } from "./AbcResult";
-import { pathJoin } from "common-types";
+import { pathJoin, IDictionary } from "common-types";
 import { getFromVuex, getFromIndexedDb, getFromFirebase, mergeLocalRecords, saveToIndexedDb } from "./api-parts/getDiscrete/index";
 import { getStore } from "../..";
 

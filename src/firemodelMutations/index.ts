@@ -6,7 +6,7 @@ import { serverRollbacks } from "./serverRollbacks";
 import { serverConfirms } from "./serverConfirms";
 import { reset } from "./reset";
 import { abc } from "./abc";
-import { IDictionary } from "firemock";
+import { IDictionary } from "common-types";
 import { watchEvents } from "./watchEvents";
 
 export type ListPropertyCandidates<T> = Pick<
