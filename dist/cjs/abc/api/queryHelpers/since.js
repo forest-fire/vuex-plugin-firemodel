@@ -12,8 +12,8 @@ const js_cookie_1 = __importDefault(require("js-cookie"));
  *
  * Gets all records _since_ a certain timestamp (`epoch` with milliseconds)
  */
-let since = function since(defn, options = {}) {
-    return async (command, ctx) => {
+exports.since = function since(defn) {
+    return async (command, ctx, options = {}) => {
         defn = Object.assign(Object.assign({}, defn), { queryType: types_1.QueryType.since });
         if (!defn.timestamp) {
             const last = (js_cookie_1.default.getJSON(types_1.SINCE_LAST_COOKIE) || {})[ctx.model.pascal];
@@ -29,12 +29,10 @@ let since = function since(defn, options = {}) {
         };
         // The query to use for Firebase
         const firemodelQuery = async () => {
-            const list = await firemodel_1.List.since(ctx.model.constructor, defn.timestamp);
+            const list = await firemodel_1.List.since(ctx.model.constructor, defn.timestamp, options || {});
             return list.data;
         };
         return shared_1.generalizedQuery(defn, command, dexieQuery, firemodelQuery, ctx, options);
     };
 };
-exports.since = since;
-since.prototype.isQueryHelper = true;
 //# sourceMappingURL=since.js.map

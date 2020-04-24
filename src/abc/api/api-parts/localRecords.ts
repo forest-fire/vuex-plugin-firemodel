@@ -26,18 +26,22 @@ export async function localRecords<T extends Model>(
 ): Promise<Omit<IDiscreteLocalResults<T>, "overallCachePerformance">> {
   const idxRecords: T[] = [];
   const store = getStore();
+  const moduleIsList = context.about.config.isList as boolean;
 
-  const vuexRecords: T[] = get(
+  const data = get(
     store.state,
     context.vuex.fullPath.replace(/\//g, "."),
     []
-  );
+  )
 
-  if (!AbcApi.indexedDbConnected) {
-    await AbcApi.connectIndexedDb();
-  }
+  const vuexRecords: T[] = moduleIsList ? data : [data];
 
+  
   if (context.config.useIndexedDb) {
+    if (!AbcApi.indexedDbConnected) {
+      await AbcApi.connectIndexedDb();
+    }
+
     const waitFor: any[] = [];
     requestPks.forEach(id =>
       waitFor.push(
@@ -49,6 +53,7 @@ export async function localRecords<T extends Model>(
     await Promise.all(waitFor);
   }
   const model = context.model.constructor;
+  console.log(Array.isArray(vuexRecords), typeof vuexRecords, Object.getPrototypeOf(vuexRecords), Object.keys(vuexRecords))
   const vuexPks = vuexRecords.map(v => Record.compositeKeyRef(model, v));
   const idxPks = idxRecords.map(i => Record.compositeKeyRef(model, i));
 
@@ -63,7 +68,6 @@ export async function localRecords<T extends Model>(
     .filter(pk => !localIds.includes(pk));
 
   const modulePostfix = context.about.modelMeta.localPostfix as string;
-  const moduleIsList = context.about.config.isList as boolean;
   const vuexModuleName = (context.config.moduleName || moduleIsList
     ? context.about.model.plural
     : context.about.modelMeta.localModelName) as string;
@@ -75,7 +79,7 @@ export async function localRecords<T extends Model>(
     foundInVuex: vuexPks,
     foundExclusivelyInIndexedDb: idxPks.filter(i => !vuexPks.includes(i)),
     allFoundLocally: missingIds.length === 0 ? true : false,
-    records: [...idxRecords, ...vuexRecords],
+    records: {...vuexRecords, ...idxRecords},
     missing: missingIds,
     apiCommand: command,
     modelConfig: context.config

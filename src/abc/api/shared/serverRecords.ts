@@ -1,10 +1,8 @@
 import { AbcApi } from "../AbcApi";
-import { Model, List, FireModel, Record, pk } from "firemodel";
-import { getStore } from "../../../index";
-import { AbcRequestCommand, IDiscreteServerResults } from "../../../types";
+import { Model, List, Record, pk } from "firemodel";
+import { IDiscreteServerResults } from "../../../types";
 
 export async function serverRecords<T extends Model>(
-  apiCommand: AbcRequestCommand,
   context: AbcApi<T>,
   pks: pk[],
   allPks: pk[]
@@ -21,7 +19,6 @@ export async function serverRecords<T extends Model>(
     missing,
     records,
 
-    apiCommand,
     overallCachePerformance: context.cachePerformance,
 
     modelConfig: context.config

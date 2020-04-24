@@ -1,7 +1,5 @@
-import { Model, Watch, Record } from "firemodel";
-import { Store, Dispatch, Commit } from "vuex";
-import { IFiremodelState } from "./firemodel";
-import { IDictionary } from "firemock";
+import { Model} from "firemodel";
+
 
 export enum AuthPersistenceStrategy {
   /**

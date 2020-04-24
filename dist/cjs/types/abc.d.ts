@@ -1,9 +1,8 @@
 import { Model, IPrimaryKey } from "firemodel";
-import { IDictionary } from "firemock";
 import { AbcApi } from "../abc/api/AbcApi";
 import { DB } from "abstracted-client";
 import { AbcResult } from "../abc";
-import { epochWithMilliseconds } from "common-types";
+import { epochWithMilliseconds, IDictionary } from "common-types";
 export interface IAbcApiConfig<T extends Model> {
     /**
      * indicates whether the Vuex store is storing a _list_
@@ -43,9 +42,8 @@ export interface IAbcApiConfig<T extends Model> {
  * Any of the provided Query Helpers which include
  * `all`, `since`, and `where`
  */
-export interface IAbcQueryHelper<T> {
-    (defn: IAbcAllQueryDefinition<T>): IAbcQueryRequest<T>;
-    isQueryHelper: true;
+export interface IAbcQueryHelper {
+    <T extends Model>(defn?: IAbcQueryDefinition<T>): IAbcQueryRequest<T>;
 }
 /**
  * Recieves a _list_ of type T and returns either the same
@@ -61,7 +59,7 @@ export interface IAbcDiscreteRequest<T extends Model> extends IAbcRequest<T> {
 export declare type IAbcParam<T> = IPrimaryKey<T>[] | IAbcQueryRequest<T>;
 /** An **ABC** request for records using a Query Helper */
 export interface IAbcQueryRequest<T extends Model> {
-    (command: AbcRequestCommand, ctx: AbcApi<T>): Promise<AbcResult<T>>;
+    (command: AbcRequestCommand, ctx: AbcApi<T>, options: IQueryOptions<T>): Promise<AbcResult<T>>;
 }
 /**
  * Any valid ABC request including both Discrete and Query based requests
@@ -167,12 +165,23 @@ export interface IAbcResultsMeta<T> {
     /**
      * The **ABC** API command used when originating this request
      */
-    apiCommand: AbcRequestCommand;
+    apiCommand?: AbcRequestCommand;
     /**
      * The combination of the `Model`'s ABC configuration merged
      * with the options included in the API call
      */
     modelConfig: IAbcApiConfig<T>;
+}
+/**
+ * Operation between two data sources (Firebase, IndexedDB, Vuex) to appropriatly syncronize them.
+ */
+export declare enum DbSyncOperation {
+    ABC_FIREBASE_SET_INDEXED_DB = "ABC_FIREBASE_SET_INDEXED_DB",
+    ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB = "ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB",
+    ABC_FIREBASE_MERGE_INDEXED_DB = "ABC_FIREBASE_MERGE_INDEXED_DB",
+    ABC_INDEXED_DB_SET_VUEX = "ABC_INDEXED_DB_SET_VUEX",
+    ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX = "ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX",
+    ABC_INDEXED_DB_MERGE_VUEX = "ABC_INDEXED_DB_MERGE_VUEX"
 }
 export declare enum AbcMutation {
     /**
@@ -236,6 +245,7 @@ export declare enum AbcMutation {
      */
     ABC_PRUNE_STALE_VUEX_RECORDS = "ABC_PRUNE_STALE_VUEX_RECORDS"
 }
+export declare type IAbcMutation = keyof typeof AbcMutation;
 export declare enum AbcDataSource {
     vuex = "vuex",
     indexedDb = "indexedDb",
@@ -292,8 +302,8 @@ export interface IAbcQueryBaseDefinition {
  */
 export interface IDiscreteResult<T, K = any> {
     type: "discrete";
-    local: IDiscreteLocalResults<T, K>;
-    server?: IDiscreteServerResults<T, K>;
+    local?: IDiscreteLocalResults<T, K>;
+    server?: IDiscreteServerResults<T, K> | undefined;
     options: IDiscreteOptions<T>;
 }
 /**
@@ -303,7 +313,7 @@ export interface IDiscreteResult<T, K = any> {
 export interface IQueryResult<T, K = any> {
     type: "query";
     queryDefn: IAbcQueryDefinition<T>;
-    local: IQueryLocalResults<T, K>;
+    local?: IQueryLocalResults<T, K>;
     server?: IQueryServerResults<T, K>;
     options: IQueryOptions<T>;
 }
@@ -312,8 +322,9 @@ export interface IQueryResult<T, K = any> {
  */
 export declare type IAbcResult<T, K = any> = IDiscreteResult<T, K> | IQueryResult<T, K>;
 export interface IQueryOptions<T> extends IUniversalOptions<T> {
+    watchNew?: boolean;
     /**
-     * If the `Model` being queries has a dynamic path then you will need to
+     * If the `Model` being queried has a dynamic path then you will need to
      * state the dynamic path segments so the the database path for Firebase
      * can be determined (and so IndexedDB can use a more involved query)
      */
@@ -328,8 +339,20 @@ export interface IDiscreteOptions<T> extends IUniversalOptions<T> {
      * involved in identifying the various Pks.
      */
     offsets?: Partial<T>;
+    strategy?: IAbcStrategy;
 }
+export declare enum AbcStrategy {
+    loadVuex = "loadVuex",
+    /**
+     * Forces **get** based queries to always go to firebase (however promise is returned after
+     * local query); this does not affect _discrete_ gets or any load queries.
+     */
+    getFirebase = "getFirebase"
+}
+export declare type IAbcStrategy = keyof typeof AbcStrategy;
 export interface IUniversalOptions<T> {
+    watch?: boolean | IWatchCallback<T>;
+    strategy?: string;
     /**
      * When set, this flag tells any local & server based response to merge
      * the combined knowledge into the `AbcResult.records` array. By default
@@ -338,6 +361,9 @@ export interface IUniversalOptions<T> {
     mergeRecords?: boolean;
 }
 export declare type IAbcOptions<T> = IDiscreteOptions<T> | IQueryOptions<T>;
+export interface IWatchCallback<T> {
+    (r: T): boolean;
+}
 /** the shape of the get/load endpoints for Discrete requests */
 export interface IAbcDiscreteApi<T> {
     get: (props: IPrimaryKey<T>[], options: IDiscreteOptions<T>) => Promise<AbcResult<T>>;
@@ -349,13 +375,3 @@ export interface IAbcQueryApi<T> {
     load: (props: IAbcQueryDefinition<T>, options: IQueryOptions<T>) => Promise<AbcResult<T>>;
 }
 export declare const SINCE_LAST_COOKIE = "slc";
-/**
- * Strategies for "get" requests for Query's.
- *
- * A "strategy" is a modifier in the default path/strategy
- * of getting data from the various sources (e.g., Vuex, IndexedDb, Firebase)
- */
-export declare enum AbcGetStrategy {
-    /** Queries will request data from */
-    localOnly = "localOnly"
-}

@@ -7,8 +7,8 @@ import cookies from "js-cookie";
  *
  * Gets all records _since_ a certain timestamp (`epoch` with milliseconds)
  */
-let since = function since(defn, options = {}) {
-    return async (command, ctx) => {
+export const since = function since(defn) {
+    return async (command, ctx, options = {}) => {
         defn = Object.assign(Object.assign({}, defn), { queryType: QueryType.since });
         if (!defn.timestamp) {
             const last = (cookies.getJSON(SINCE_LAST_COOKIE) || {})[ctx.model.pascal];
@@ -24,11 +24,9 @@ let since = function since(defn, options = {}) {
         };
         // The query to use for Firebase
         const firemodelQuery = async () => {
-            const list = await List.since(ctx.model.constructor, defn.timestamp);
+            const list = await List.since(ctx.model.constructor, defn.timestamp, options || {});
             return list.data;
         };
         return generalizedQuery(defn, command, dexieQuery, firemodelQuery, ctx, options);
     };
 };
-since.prototype.isQueryHelper = true;
-export { since };
