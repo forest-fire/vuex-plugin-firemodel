@@ -175,7 +175,7 @@ export async function generalizedQuery<T extends Model>(
   }, { perfLocal, perfServer });
 
   store.commit(
-    `${ctx.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`,
+    `${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`,
     response
   );
 

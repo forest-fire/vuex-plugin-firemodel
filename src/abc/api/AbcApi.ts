@@ -16,16 +16,16 @@ import {
   AbcRequestCommand,
   IDiscreteOptions,
   AbcStrategy,
-  DbSyncOperation
-} from "../../types/abc";
+  DbSyncOperation,
+  AbcResult,
+  AbcError,
+  capitalize,
+  IFmModelConstructor,
+  getStore
+} from "../../private";
 import { getDefaultApiConfig } from "../configuration/configApi";
-import { capitalize } from "../../shared";
-import { IFmModelConstructor } from "../../types/index";
-import { AbcError } from "../../errors/index";
-import { AbcResult } from "./AbcResult";
 import { pathJoin, IDictionary } from "common-types";
 import { getFromVuex, getFromIndexedDb, getFromFirebase, mergeLocalRecords, saveToIndexedDb } from "./api-parts/getDiscrete/index";
-import { getStore } from "../..";
 
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
@@ -375,7 +375,7 @@ export class AbcApi<T extends Model> {
       const store = getStore();
       // load data into vuex
       store.commit(
-        `${this.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`,
+        `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`,
         serverResults
       );
     }

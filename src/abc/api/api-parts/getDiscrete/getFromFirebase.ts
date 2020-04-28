@@ -1,5 +1,4 @@
-import { AbcRequestCommand, IDiscreteLocalResults, IDiscreteOptions } from "../../../..";
-import { AbcApi, AbcResult } from "../..";
+import { IDiscreteLocalResults, IDiscreteOptions, AbcApi, AbcResult } from "../../../../private";
 import { serverRecords } from "../../shared";
 
 export async function getFromFirebase<T>(

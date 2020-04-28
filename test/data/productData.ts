@@ -4,6 +4,7 @@ export const productData = {
       id: "abcd",
       name: "The Magic Carpet",
       price: 3000,
+      store: '1234',
       lastUpdated: 111,
       createdAt: 111
     },
@@ -11,6 +12,7 @@ export const productData = {
       id: "defg",
       name: "The Green Lantern",
       price: 1300,
+      store: '1234',
       lastUpdated: 112,
       createdAt: 112
     },
@@ -18,6 +20,7 @@ export const productData = {
       id: "aaaa",
       name: "Adams Apple",
       price: 452,
+      store: '1234',
       lastUpdated: 113,
       createdAt: 113
     },
@@ -25,6 +28,7 @@ export const productData = {
       id: "bbbb",
       name: "Purple People Eater",
       price: 452,
+      store: '1234',
       lastUpdated: 114,
       createdAt: 114
     }

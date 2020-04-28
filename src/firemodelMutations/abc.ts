@@ -41,26 +41,6 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
       // nothing to do; mutation is purely for informational/debugging purposes
     },
 
-    [AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE]<T extends IDictionary>(
-      state: T,
-      payload: AbcResult<T>
-    ) {
-      if (payload.vuex.isList) {
-        const vuexRecords = state[payload.vuex.modulePostfix];
-        const updated = hashToArray({
-          ...arrayToHash(vuexRecords || []),
-          ...arrayToHash(payload.records || [])
-        });
-
-        Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
-      } else {
-        if (!validResultSize(payload, "server")) {
-          return;
-        }
-        changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
-      }
-    },
-
     [DbSyncOperation.ABC_FIREBASE_SET_VUEX]<T extends IDictionary>(
       state: T,
       payload: AbcResult<T>

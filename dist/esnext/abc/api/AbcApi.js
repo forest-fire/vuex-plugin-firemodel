@@ -270,7 +270,7 @@ export class AbcApi {
         if (options.strategy === AbcStrategy.loadVuex) {
             const store = getStore();
             // load data into vuex
-            store.commit(`${this.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`, serverResults);
+            store.commit(`${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`, serverResults);
         }
         // const perfOverall = t2 - t0;
         const results = await AbcResult.create(this, {

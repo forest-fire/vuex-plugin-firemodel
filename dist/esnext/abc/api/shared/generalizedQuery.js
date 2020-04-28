@@ -115,6 +115,6 @@ export async function generalizedQuery(queryDefn, command, dexieQuery, firemodel
         server,
         options
     }, { perfLocal, perfServer });
-    store.commit(`${ctx.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`, response);
+    store.commit(`${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`, response);
     return response;
 }

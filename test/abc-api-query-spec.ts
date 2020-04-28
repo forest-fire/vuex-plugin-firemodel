@@ -5,9 +5,7 @@ import {
   getStore,
   IAbcQueryRequest,
   AbcResult,
-  AbcMutation,
   where,
-  AbcGetStrategy
 } from "../src/index";
 import { expect } from "chai";
 import { Product } from "./models/Product";
@@ -267,6 +265,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
         id: "zzzz2",
         price: 452,
         name: "An old product",
+        store: "1234",
         lastUpdated: 1,
         createdAt: 1
       })
@@ -358,7 +357,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
   //     strategy: AbcGetStrategy.localOnly
   //   });
   //   const results = await getProducts(q);
-  });
+  // });
 
   it.skip("get.since(timestamp) when local state is empty", async () => {
     throw new Error("test not written");
