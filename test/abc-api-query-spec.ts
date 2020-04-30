@@ -6,14 +6,14 @@ import {
   IAbcQueryRequest,
   AbcResult,
   where,
-} from "../src/index";
+} from "../src/private";
 import { expect } from "chai";
 import { Product } from "./models/Product";
 import { Store, MutationPayload } from "vuex";
 import { IRootState } from "./store";
 import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
 import { productData } from "./data/productData";
-import { IDictionary } from "firemock";
+import { IDictionary } from "common-types";
 import { hashToArray } from "typed-conversions";
 
 describe("ABC API Query - with a model with IndexedDB support => ", () => {

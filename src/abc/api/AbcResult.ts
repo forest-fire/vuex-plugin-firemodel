@@ -88,6 +88,10 @@ export class AbcResult<T extends Model> {
     return this._context.vuex;
   }
 
+  get dynamicPathComponents() {
+    return this._context.about.dynamicPathComponents;
+  }
+
   /**
    * The options passed in for the specific request which led to this result
    */

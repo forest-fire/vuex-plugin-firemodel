@@ -9,12 +9,9 @@ import {
   QueryType,
   DbSyncOperation
 } from "../../../types";
-import { AbcApi } from "../AbcApi";
-import { getStore, AbcResult } from "../../..";
+import { AbcApi, getStore, AbcResult } from "../../../private";
 import get from "lodash.get";
 import { Record, Model } from "firemodel";
-import { deepEqual } from "fast-equals";
-import { findPk } from "../shared/findPk";
 import { queryIndexedDb } from "./generalizedQuery/queryIndexedDb";
 import { queryFirebase } from "./generalizedQuery/queryFirebase";
 import { saveToIndexedDb } from "../api-parts/getDiscrete";
@@ -35,7 +32,6 @@ export async function generalizedQuery<T extends Model>(
   ctx: AbcApi<T>,
   options: IAbcOptions<T>
 ) {
-  const t0 = performance.now();
   const store = getStore();
   const hasDynamicProperties = Record.dynamicPathProperties(ctx.model.constructor).length > 0;
   const vuexRecords = get<T[]>(
@@ -54,17 +50,15 @@ export async function generalizedQuery<T extends Model>(
     localPks: vuexPks
   };
 
-  const t1 = performance.now();
-  const perfLocal = t1 - t0;
   if (command === "get" && ctx.config.useIndexedDb) {
     // Populate Vuex with what IndexedDB knows
-    local = await queryIndexedDb(ctx, dexieQuery, vuexPks)
+    local = await queryIndexedDb(ctx.model.constructor, dexieQuery, vuexPks)
     const localResults = await AbcResult.create(ctx, {
       type: "query",
       queryDefn,
       local,
       options
-    }, { perfLocal });
+    });
 
     if (local.records.length > 0) {
       if (hasDynamicProperties) {
@@ -163,16 +157,13 @@ export async function generalizedQuery<T extends Model>(
     }; */
   }
 
-
-  const t2 = performance.now();
-  const perfServer = t2 - t1;
   const response = await AbcResult.create(ctx, {
     type: "query",
     queryDefn,
     local,
     server,
     options
-  }, { perfLocal, perfServer });
+  });
 
   store.commit(
     `${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`,

@@ -117,7 +117,21 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
       state: T,
       payload: AbcResult<any>
     ) {
-      // nothing to do; mutation is purely for informational/debugging purposes
+      console.log(payload.options.offsets)
+      // getProduct(all(), { offsets: { store: '1234' } })
+      if (payload.vuex.isList) {
+        /* if (!payload.resultFromQuery) {
+          throw new AbcError(`Attempt to use mutation ${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX} with a discrete request.`, 'not-allowed');
+        } */
+        // Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), payload.records);
+
+        // get dynamic path from payload
+      } else {
+        if (process.env.NODE_ENV !== 'production') {
+          console.info(`You are using a query on a singular model ${payload.vuex.moduleName}; this typically should be avoided.`);
+        }
+        changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
+      }
     },
 
     [DbSyncOperation.ABC_INDEXED_DB_MERGE_VUEX]<T>(

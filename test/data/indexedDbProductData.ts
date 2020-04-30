@@ -5,7 +5,7 @@
 export default [
     {
         id: "abcd",
-        name: "The Magic Carpet",
+        name: "The Big Wreck",
         price: 3000,
         store: '1234',
         lastUpdated: 111,
@@ -13,7 +13,7 @@ export default [
     },
     {
         id: "defg",
-        name: "The Green Lantern",
+        name: "The Green Waters",
         price: 1300,
         store: '1234',
         lastUpdated: 112,
@@ -21,7 +21,7 @@ export default [
     },
     {
         id: "aaaa",
-        name: "Adams Apple",
+        name: "George Apple",
         price: 452,
         store: '1234',
         lastUpdated: 113,

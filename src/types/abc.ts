@@ -65,9 +65,15 @@ export interface IAbcDiscreteRequest<T extends Model> extends IAbcRequest<T> {
 
 export type IAbcParam<T> = IPrimaryKey<T>[] | IAbcQueryRequest<T>;
 
+export interface IAbcQueryResults<T extends Model> {
+  queryDefn: IAbcQueryDefinition<T>;
+  dexieQuery: () => Promise<T[]>;
+  firemodelQuery: () => Promise<T[]>;
+}
+
 /** An **ABC** request for records using a Query Helper */
 export interface IAbcQueryRequest<T extends Model> {
-  (command: AbcRequestCommand, ctx: AbcApi<T>, options: IQueryOptions<T>): Promise<AbcResult<T>>;
+  (ctx: AbcApi<T>, options: IQueryOptions<T>): IAbcQueryResults<T>;
 }
 
 /**
@@ -86,8 +92,8 @@ export type AbcRequestCommand = "get" | "load";
 
 export interface IQueryLocalResults<T, K = IDictionary> {
   records: T[];
-  localPks: string[];
-  vuexPks: string[];
+  localPks?: string[];
+  vuexPks?: string[];
   indexedDbPks: string[];
 }
 
