@@ -29,8 +29,7 @@ export const where: IAbcQueryHelper = function where<T extends Model, K extends 
         : defn.greaterThan !== undefined
         ? [">", defn.greaterThan]
         : ["<", defn.lessThan];
-    
-        // The query to use for IndexedDB
+    // The query to use for IndexedDB
     const dexieQuery = async () => {
       const recs = await ctx.dexieList.where(defn.property, valueOp);
       return recs;

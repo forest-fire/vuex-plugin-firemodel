@@ -92,7 +92,7 @@ export type AbcRequestCommand = "get" | "load";
 
 export interface IQueryLocalResults<T, K = IDictionary> {
   records: T[];
-  localPks?: string[];
+  localPks: string[];
   vuexPks?: string[];
   indexedDbPks: string[];
 }

@@ -1,8 +1,7 @@
+import { AbcApi, IQueryLocalResults, IQueryServerResults } from "../../../../private";
 import { IGeneralizedQuery, findPk } from "..";
-import { AbcApi } from "../..";
 import { Record, Model } from "firemodel";
 import { deepEqual } from "fast-equals";
-import { IQueryLocalResults, IQueryServerResults } from "../../../..";
 
 export async function queryFirebase<T extends Model>(
   ctx: AbcApi<T>,
@@ -16,7 +15,7 @@ export async function queryFirebase<T extends Model>(
   const serverPks = serverRecords.map(i =>
     Record.compositeKeyRef(ctx.model.constructor, i)
   );
-  const newPks = serverPks.filter(i => !local.localPks.includes(i));
+  const newPks = serverPks.filter(i => local.localPks.includes(i));
   serverRecords.forEach(rec => {
     const pk = Record.compositeKeyRef(ctx.model.constructor, rec);
     if (!newPks.includes(pk)) {

@@ -18,7 +18,6 @@ export class AbcResult<T extends Model> {
     const obj = new AbcResult(_context, _results, _performance);
     if (obj.serverRecords === undefined) {
       obj.records = obj.localRecords;
-      console.log('no serverRecords', obj.localRecords)
       return obj;
     }
     
@@ -73,7 +72,7 @@ export class AbcResult<T extends Model> {
    * All of the updated records in Vuex that originated from Firebase
    */
   get serverRecords(): T[] | undefined {
-    return this._results.server ? this._results.server.records : undefined;
+    return this._results.server?.records || undefined;
   }
 
   get cachePerformance() {

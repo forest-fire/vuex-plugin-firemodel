@@ -1,4 +1,4 @@
-import { AbcApi, IAbcApiConfig, IFmModelConstructor } from "../../private";
+import { AbcApi, IAbcApiConfig, IFmModelConstructor } from "../../index";
 import { Model } from "firemodel";
 
 /**

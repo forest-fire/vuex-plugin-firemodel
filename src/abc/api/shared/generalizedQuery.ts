@@ -52,7 +52,7 @@ export async function generalizedQuery<T extends Model>(
 
   if (command === "get" && ctx.config.useIndexedDb) {
     // Populate Vuex with what IndexedDB knows
-    local = await queryIndexedDb(ctx.model.constructor, dexieQuery, vuexPks)
+    local = await queryIndexedDb(ctx.model.constructor, dexieQuery)
     const localResults = await AbcResult.create(ctx, {
       type: "query",
       queryDefn,

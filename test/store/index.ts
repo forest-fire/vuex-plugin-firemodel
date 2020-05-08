@@ -40,7 +40,7 @@ export const setupStore = (data?: IDictionary | AsyncMockData) => {
 };
 
 export const getAbc = () => {
-  const [getProducts, loadProducts] = abc(Product);
+  const [getProducts, loadProducts] = abc(Product, { useIndexedDb: true });
   const [getCompanies, loadCompanies] = abc(Company, {
     useIndexedDb: false
   });

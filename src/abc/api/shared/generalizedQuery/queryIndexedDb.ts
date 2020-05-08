@@ -17,7 +17,8 @@ export async function queryIndexedDb<T>(
 
   const local: IQueryLocalResults<T, any> = {
     records: idxRecords,
-    indexedDbPks
+    indexedDbPks,
+    localPks: []
   }
   return local;
 }
