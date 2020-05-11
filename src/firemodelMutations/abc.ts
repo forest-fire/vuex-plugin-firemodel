@@ -72,7 +72,20 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
       state: T,
       payload: AbcResult<T>
     ) {
-      // TODO: add code for merge strategy here
+      if (payload.vuex.isList) {
+        const vuexRecords = state[payload.vuex.modulePostfix];
+        const updated = hashToArray({
+          ...arrayToHash(vuexRecords || []),
+          ...arrayToHash(payload.records || [])
+        });
+
+        Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
+      } else {
+        if (!validResultSize(payload, "server")) {
+          return;
+        }
+        changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
+      }
     },
 
     [DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB]<T>(
@@ -138,7 +151,23 @@ export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
       state: T,
       payload: AbcResult<any>
     ) {
-      // nothing to do; mutation is purely for informational/debugging purposes
+      console.log(payload.options.offsets);
+      if (payload.vuex.isList) {
+        console.log(`Is a list`);
+        // const vuexRecords = state[payload.vuex.modulePostfix];
+        // const updated = hashToArray({
+        //   ...arrayToHash(vuexRecords || []),
+        //   ...arrayToHash(payload.records || [])
+        // });
+
+        // Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
+      } else {
+        console.log(`Is not a list`);
+        // if (!validResultSize(payload, "server")) {
+        //   return;
+        // }
+        // changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
+      }
     },
 
     [AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED]<T extends IDictionary>(

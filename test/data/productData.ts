@@ -28,7 +28,7 @@ export const productData = {
       id: "bbbb",
       name: "Purple People Eater",
       price: 452,
-      store: '1234',
+      store: '4567',
       lastUpdated: 114,
       createdAt: 114
     }

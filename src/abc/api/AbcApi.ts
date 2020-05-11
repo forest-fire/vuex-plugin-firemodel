@@ -29,7 +29,7 @@ import {
 import { getDefaultApiConfig } from "../configuration/configApi";
 import { pathJoin, IDictionary } from "common-types";
 import { getFromVuex, getFromIndexedDb, getFromFirebase, mergeLocalRecords, saveToIndexedDb } from "./api-parts/getDiscrete/index";
-import { IQueryOptions, IAbcQueryRequest } from "../../types";
+import { IQueryOptions, IAbcQueryRequest, IDiscreteServerResults } from "../../types";
 import { queryIndexedDb } from "./shared/generalizedQuery/queryIndexedDb";
 import { queryFirebase } from "./shared/generalizedQuery/queryFirebase";
 
@@ -308,7 +308,7 @@ export class AbcApi<T extends Model> {
     const store = getStore();
     // query types all() | where() | since()
     const { dexieQuery, firemodelQuery, queryDefn } = request(this, options);
-    
+
     let local: IQueryLocalResults<T, any> = {
       records: [],
       indexedDbPks: [],
@@ -357,7 +357,7 @@ export class AbcApi<T extends Model> {
           server,
           options
         });
-  
+
         // cache results to IndexedDB
         if (this.config.useIndexedDb) {
           saveToIndexedDb(server, this.dexieTable);
@@ -385,7 +385,7 @@ export class AbcApi<T extends Model> {
             );
           }
         }
-  
+
         store.commit(
           `${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`,
           serverResponse
@@ -400,7 +400,7 @@ export class AbcApi<T extends Model> {
       server,
       options
     });
-  
+
     return response;
   }
 
@@ -411,7 +411,7 @@ export class AbcApi<T extends Model> {
     const store = getStore();
     // query types all() | where() | since()
     const { firemodelQuery, queryDefn } = request(this, options);
-    
+
     let local: IQueryLocalResults<T, any> = {
       records: [],
       indexedDbPks: [],
@@ -457,13 +457,12 @@ export class AbcApi<T extends Model> {
             serverResponse
           );
         }
-        
+
         store.commit(
           `${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`,
           serverResponse
         );
       }
-
     }
 
 
@@ -474,14 +473,14 @@ export class AbcApi<T extends Model> {
       server,
       options
     });
-  
+
     if (options.strategy === AbcStrategy.loadVuex) {
       store.commit(
         `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`,
         response
       );
     }
-  
+
     return response;
   }
 
@@ -493,12 +492,11 @@ export class AbcApi<T extends Model> {
     options: IDiscreteOptions<T> = {}
   ): Promise<AbcResult<T>> {
     const store = getStore();
-    // const t0 = performance.now();
     let idxRecords: T[] = [];
     const requestIds = request.map(i =>
       Record.compositeKeyRef(this._modelConstructor, i)
     );
-    
+
     // get from Vuex
     const vuexRecords = await getFromVuex(this);
     
@@ -509,48 +507,50 @@ export class AbcApi<T extends Model> {
     }
 
     const local = mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
-    const localResult = await AbcResult.create(this, {
-      type: 'discrete',
+
+    // query firebase if getFirebase strategy in place
+    let server: IDiscreteServerResults<T> | undefined;
+    if (options.strategy === AbcStrategy.getFirebase) {
+      // get from firebase
+      getFromFirebase(this, requestIds).then(async server => {
+        const serverResponse = await AbcResult.create(this, {
+          type: "discrete",
+          local,
+          server,
+          options
+        });
+
+        // cache results to IndexedDB
+        if (this.config.useIndexedDb) {
+          // save to indexedDB
+          saveToIndexedDb(server, this.dexieTable);
+          store.commit(
+            `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`,
+            serverResponse
+          );
+        }
+        
+        store.commit(
+          `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`,
+          serverResponse
+        );
+      });
+    }
+
+
+    const response = await AbcResult.create(this, {
+      type: "discrete",
       local,
+      server,
       options
     });
-    
-    if (!local?.allFoundLocally) {
-      // send data back to vuex
-      store.commit(
-        `${this.vuex.moduleName}/${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`,
-        localResult
-      );
-    }
 
-    // get from firebase
-    const { server, serverResults } = await getFromFirebase(this, local, options, requestIds);
-
-    // cache results to IndexedDB
-    if (this.config.useIndexedDb) {
-      // save to indexedDB
-      saveToIndexedDb(server, this.dexieTable);
-      store.commit(
-        `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`,
-        serverResults
-      );
-    }
-
-
-    // const perfOverall = t2 - t0;
-    const results = await AbcResult.create(this, {
-      type: "discrete",
-      options,
-      local,
-      server
-    });
-
-    store.commit(
+    /* store.commit(
       `${this.vuex.moduleName}/${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`,
-      results
-    );
+      response
+    ); */
 
-    return results;
+    return response;
   }
 
   /**
@@ -560,26 +560,38 @@ export class AbcApi<T extends Model> {
     request: IPrimaryKey<T>[],
     options: IDiscreteOptions<T> = {}
   ): Promise<AbcResult<T>> {
+    const store = getStore();
     // const t0 = performance.now();
     const requestIds = request.map(i =>
       Record.compositeKeyRef(this._modelConstructor, i)
     );
 
     const local = undefined;
-    const { server, serverResults } = await getFromFirebase(this, local, options, requestIds);
-
+    const server = await getFromFirebase(this, requestIds);
+    const serverResponse = await AbcResult.create(this, {
+      type: "discrete",
+      local,
+      server,
+      options
+    });
     // cache results to IndexedDB
     if (this.config.useIndexedDb) {
       // save to indexedDB
       await saveToIndexedDb(server, this.dexieTable);
+
+      if (options.strategy === AbcStrategy.loadVuex) {
+        store.commit(
+          `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`,
+          serverResponse
+        );
+      }
     }
 
     if (options.strategy === AbcStrategy.loadVuex) {
-      const store = getStore();
       // load data into vuex
       store.commit(
         `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`,
-        serverResults
+        serverResponse
       );
     }
 
