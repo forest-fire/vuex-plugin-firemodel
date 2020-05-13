@@ -293,7 +293,10 @@ export class AbcApi<T extends Model> {
    *
    * @request either a Query Helper (since, where, etc.) or an array of primary keys
    */
-  async load(request: IAbcParam<T>, options: IAbcOptions<T> = {}) {
+  async load(
+    request: IAbcParam<T>, 
+    options: IAbcOptions<T> = {}
+  ): Promise<AbcResult<T>> {
     if (isDiscreteRequest(request)) {
       return this.loadDiscrete(request, options as IDiscreteOptions<T>);
     } else {
@@ -308,7 +311,7 @@ export class AbcApi<T extends Model> {
     const store = getStore();
     // query types all() | where() | since()
     const { dexieQuery, firemodelQuery, queryDefn } = request(this, options);
-
+    
     let local: IQueryLocalResults<T, any> = {
       records: [],
       indexedDbPks: [],
@@ -503,7 +506,6 @@ export class AbcApi<T extends Model> {
     if (this.config.useIndexedDb) {
       // get from indexedDB
       idxRecords = await getFromIndexedDb(this.dexieRecord, requestIds);
-      console.log(`${this.model.constructor.name}:idxRecords`, idxRecords)
     }
 
     const local = mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
@@ -545,10 +547,10 @@ export class AbcApi<T extends Model> {
       options
     });
 
-    /* store.commit(
-      `${this.vuex.moduleName}/${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`,
+    store.commit(
+      `${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`,
       response
-    ); */
+    );
 
     return response;
   }

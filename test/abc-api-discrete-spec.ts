@@ -2,14 +2,8 @@ import {
   AbcApi,
   IAbcRequest,
   getStore,
-  IAbcQueryRequest,
   AbcResult,
   AbcStrategy,
-  Record,
-  List,
-  IQueryServerResults,
-  Model,
-  IPrimaryKey,
   DbSyncOperation,
 } from "../src/private";
 import { expect } from "chai";
@@ -258,6 +252,56 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
     expect(eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`]).to.equal(2);
     expect(eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`]).to.be.undefined;
     expect(eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB}`]).to.be.undefined;
+  });
+
+  it("get.discrete(product) returns results from indexedDB into vuex", async () => {
+    const store = getStore();
+    store.subscribe(subscription);
+    const tbl = AbcApi.getModelApi(Product).dexieTable;
+
+    const abcdProduct = Object.values(productData.products).find((p: Product) => p.id === "abcd") || { id: "1234" }
+    expect(store.state.products.all).to.have.lengthOf(0, "Vuex starts empty");
+    expect(await tbl.toArray()).to.have.lengthOf(0, "IndexedDB starts empty");
+
+    await addProductsToIndexedDB();
+    const results = await getProducts([abcdProduct.id]);
+
+    expect(results).to.instanceOf(
+      AbcResult,
+      "result is an instance of AbcResult"
+    );
+
+    expect(results.records).to.have.lengthOf(
+      1,
+      "overall results should return one product from indexedDB"
+    );
+
+    expect(eventCounts[`products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`]).to.equal(1);
+  });
+
+  it("get.discrete(product) with getFirebase strategy returns results from firebase into indexedDB", async () => {
+    const store = getStore();
+    store.subscribe(subscription);
+    const tbl = AbcApi.getModelApi(Product).dexieTable;
+
+    const abcdProduct = Object.values(productData.products).find((p: Product) => p.id === "abcd") || { id: "1234" }
+    expect(store.state.products.all).to.have.lengthOf(0, "Vuex starts empty");
+    expect(await tbl.toArray()).to.have.lengthOf(0, "IndexedDB starts empty");
+
+    await addProductsToIndexedDB();
+    const results = await getProducts([abcdProduct.id]);
+
+    expect(results).to.instanceOf(
+      AbcResult,
+      "result is an instance of AbcResult"
+    );
+
+    expect(results.records).to.have.lengthOf(
+      1,
+      "overall results should return one product from indexedDB"
+    );
+
+    expect(eventCounts[`products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`]).to.equal(1);
   });
 });
 
