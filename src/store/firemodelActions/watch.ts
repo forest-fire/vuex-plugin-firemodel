@@ -1,9 +1,7 @@
-import { ActionTree } from "vuex";
-import { IFiremodelState } from "../../index";
 import { FmEvents, IFmWatchEvent, IFmWatcherStopped } from "firemodel";
-import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
-import { FmCrudMutation } from "../../types";
-import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
+import { ActionTree } from "vuex";
+import { IFiremodelState, FmConfigMutation, FmCrudMutation, determineLocalStateNode } from "../../private";
+
 
 export const watch = <T>() =>
   ({

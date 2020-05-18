@@ -1,6 +1,6 @@
 import { ActionTree } from "vuex";
 import { Record } from "firemodel";
-import { FireModelProxyError } from "firemodel/dist/cjs/errors";
+import { FireModelProxyError } from "firemodel";
 import { ActionCodeSettings,
   UserCredential,
   AuthCredential, User } from "@forest-fire/types";

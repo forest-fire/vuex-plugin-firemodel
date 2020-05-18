@@ -1,6 +1,6 @@
-import { IFmEventActions, IFiremodelState } from "../types";
-import { Module } from "vuex";
 import { ICompositeKey, Model } from "firemodel";
+import { Module } from "vuex";
+import { IFmEventActions, IFiremodelState } from "../private";
 export declare function generateLocalId<T = Model>(compositeKey: ICompositeKey<T>, action: IFmEventActions): IFmEventActions;
 export { database } from "../shared/database";
 declare const mutationTypes: string[];

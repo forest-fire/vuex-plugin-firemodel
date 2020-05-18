@@ -1,4 +1,4 @@
-import { getStore } from "../../../..";
+import { getStore } from "../../../../index";
 import get from "lodash.get";
 export async function getFromVuex(ctx) {
     const store = getStore();

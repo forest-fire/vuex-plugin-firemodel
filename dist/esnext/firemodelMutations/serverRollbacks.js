@@ -1,6 +1,4 @@
-import { changeRoot } from "../shared/changeRoot";
-import { updateList } from "../shared/updateList";
-import { isRecord } from "../shared/isRecord";
+import { changeRoot, updateList, isRecord } from "../private";
 /**
  * **serverConfirms**
  *

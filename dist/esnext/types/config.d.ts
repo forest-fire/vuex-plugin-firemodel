@@ -1,7 +1,7 @@
 import { IDictionary, epoch } from "common-types";
 import { DB } from "universal-fire";
 import { IClientConfig, IClientAuth } from "@forest-fire/types";
-import { Watch, Record, List, Model, IModelOptions } from "firemodel";
+import { Watch, Record, List, Model, IModelOptions, IMockConfig } from "firemodel";
 import { Commit, Dispatch } from "vuex";
 import { IAuthPersistenceStrategy, IFiremodelState } from "../private";
 export declare type AsyncMockData = () => Promise<IDictionary>;
@@ -110,7 +110,7 @@ export interface IFiremodelConfig<T> extends IFiremodelLifecycleHooks<T>, IFirem
      * create an instance of `universal-fire`) or you can just pass
      * in an instance of abstracted client here as well.
      */
-    db: IClientConfig;
+    db: IClientConfig | IMockConfig;
 }
 export interface IFiremodelPluginCoreServices {
     /**

@@ -11,7 +11,7 @@ export async function coreServices<T>(
 ) {
   const starting: Promise<any>[] = [];
   if (config?.connect) {
-    await database(config.db);
+    await database(config?.db);
     console.log("db connected");
 
     starting.push(

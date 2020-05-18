@@ -1,7 +1,7 @@
 import { Store } from "vuex";
 import { IClientConfig, IClientAuth } from "@forest-fire/types";
 import { IDictionary } from "common-types";
-import { IFiremodelConfig as IFiremodelPluginConfig, IFiremodelState } from "./types";
+import { IFiremodelConfig as IFiremodelPluginConfig, IFiremodelState } from "./private";
 export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";

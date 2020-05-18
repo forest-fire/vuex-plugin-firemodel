@@ -10,15 +10,12 @@ let _config: IClientConfig | IMockConfig;
  * it just hands back the existing connection.
  */
 export async function database(config?: IClientConfig | IMockConfig) {
-  if (config) {
-    if (JSON.stringify(config) !== JSON.stringify(_config) || !_db) {
-      _config = config;
-      _db = await DB.connect(RealTimeClient, config);
-    }
+  if (!_db) {
+    _db = await DB.connect(RealTimeClient, config);
     FireModel.defaultDb = _db;
   }
 
-  if (!_db && !_config) {
+  if (!_db) {
     throw new FireModelPluginError(
       "Trying to get the database connection but it has not been established yet!",
       "not-ready"

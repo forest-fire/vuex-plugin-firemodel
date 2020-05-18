@@ -1,10 +1,7 @@
 import { FiremodelModule, database } from "./store";
 import { FireModel } from "firemodel";
 import copy from "fast-copy";
-import { FmConfigAction } from "./types/actions/FmConfigActions";
-import { FireModelPluginError } from "./errors/FiremodelPluginError";
-import { addNamespace } from "./shared/addNamespace";
-import { coreServices } from "./coreServices";
+import { FmConfigAction, FireModelPluginError, addNamespace, coreServices } from "./private";
 export * from "./types";
 export * from "./firemodelMutations/index";
 export * from "firemodel";

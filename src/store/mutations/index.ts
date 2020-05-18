@@ -6,8 +6,8 @@ import { watcher } from "./watcher";
 import { localCrud } from "./localCrud";
 import { errorMutations } from "./errors";
 import { MutationTree } from "vuex";
-import { IFiremodelState } from "../../types";
 import { relationships } from "./relationships";
+import { IFiremodelState } from "../../private";
 
 /**
  * The **mutations** to the `@firemodel` state node; this state node will be off the

@@ -11,13 +11,13 @@ import {
   IFiremodelConfig as IFiremodelPluginConfig,
   IFiremodelState,
   IFmQueuedAction,
-  FmCallback
-} from "./types";
-import { FmConfigMutation } from "./types/mutations/FmConfigMutation";
-import { FmConfigAction } from "./types/actions/FmConfigActions";
-import { FireModelPluginError } from "./errors/FiremodelPluginError";
-import { addNamespace } from "./shared/addNamespace";
-import { coreServices } from "./coreServices";
+  FmCallback,
+  FmConfigMutation,
+  FmConfigAction,
+  FireModelPluginError,
+  addNamespace,
+  coreServices
+} from "./private";
 
 export * from "./types";
 export * from "./firemodelMutations/index";

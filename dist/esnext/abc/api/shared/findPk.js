@@ -1,4 +1,4 @@
-import { AbcError } from "../../../errors";
+import { AbcError } from "../../../private";
 /**
  * Given a Primary Key _reference_ string; this function will find the record
  * which matches the primary key.

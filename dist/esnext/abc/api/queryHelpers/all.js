@@ -1,5 +1,5 @@
-import { QueryType } from "../../../types";
 import { List } from "firemodel";
+import { QueryType } from "../../../private";
 export const all = function all(defn = {}) {
     return (ctx, options = {}) => {
         defn = Object.assign(Object.assign({}, defn), { queryType: QueryType.all });

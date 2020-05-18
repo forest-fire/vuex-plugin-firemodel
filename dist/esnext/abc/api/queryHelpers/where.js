@@ -1,5 +1,5 @@
-import { QueryType } from "../../../types";
 import { List } from "firemodel";
+import { QueryType, } from "../../../private";
 /**
  * Offers a configuration to consumers of the standard _where_ clause that Firebase
  * provides and then provides an implementation that is aligned with the ABC `get`
