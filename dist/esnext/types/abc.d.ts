@@ -1,8 +1,7 @@
 import { Model, IPrimaryKey } from "firemodel";
-import { AbcApi } from "../abc/api/AbcApi";
 import { DB } from "universal-fire";
-import { AbcResult } from "../abc";
 import { epochWithMilliseconds, IDictionary } from "common-types";
+import { AbcApi, AbcResult } from "../private";
 export interface IAbcApiConfig<T extends Model> {
     /**
      * indicates whether the Vuex store is storing a _list_
@@ -57,9 +56,14 @@ export interface IAbcDiscreteRequest<T extends Model> extends IAbcRequest<T> {
     (pks: IPrimaryKey<T>[], options?: IAbcOptions<T>): Promise<AbcResult<T>>;
 }
 export declare type IAbcParam<T> = IPrimaryKey<T>[] | IAbcQueryRequest<T>;
+export interface IAbcQueryResults<T extends Model> {
+    queryDefn: IAbcQueryDefinition<T>;
+    dexieQuery: () => Promise<T[]>;
+    firemodelQuery: () => Promise<T[]>;
+}
 /** An **ABC** request for records using a Query Helper */
 export interface IAbcQueryRequest<T extends Model> {
-    (command: AbcRequestCommand, ctx: AbcApi<T>, options: IQueryOptions<T>): Promise<AbcResult<T>>;
+    (ctx: AbcApi<T>, options: IQueryOptions<T>): IAbcQueryResults<T>;
 }
 /**
  * Any valid ABC request including both Discrete and Query based requests
@@ -73,7 +77,7 @@ export declare type AbcRequestCommand = "get" | "load";
 export interface IQueryLocalResults<T, K = IDictionary> {
     records: T[];
     localPks: string[];
-    vuexPks: string[];
+    vuexPks?: string[];
     indexedDbPks: string[];
 }
 /**

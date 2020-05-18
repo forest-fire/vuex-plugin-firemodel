@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.localizeName = void 0;
 /**
  * converts a namespaced mutation or action to a localized one
  */

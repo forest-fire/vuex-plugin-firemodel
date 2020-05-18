@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.localChange = void 0;
 const firemodel_1 = require("firemodel");
 /**
  * converts a "local change" event into the right data structure

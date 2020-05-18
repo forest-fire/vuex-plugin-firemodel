@@ -1,6 +1,2 @@
-import { IDiscreteLocalResults, IDiscreteOptions } from "../../../..";
-import { AbcApi, AbcResult } from "../..";
-export declare function getFromFirebase<T>(ctx: AbcApi<T>, local: IDiscreteLocalResults<T> | undefined, options: IDiscreteOptions<T> | undefined, requestIds: string[]): Promise<{
-    server: import("../../../..").IDiscreteServerResults<T, import("common-types").IDictionary<any>>;
-    serverResults: AbcResult<T>;
-}>;
+import { AbcApi } from "../../../../private";
+export declare function getFromFirebase<T>(ctx: AbcApi<T>, requestIds: string[]): Promise<import("../../../../private").IDiscreteServerResults<T, import("common-types").IDictionary<any>>>;

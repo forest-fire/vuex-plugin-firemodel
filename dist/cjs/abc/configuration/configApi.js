@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getDefaultApiConfig = exports.configApi = void 0;
 let defaultConfig = {
     useIndexedDb: true,
     isList: true,

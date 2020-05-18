@@ -1,8 +1,7 @@
-
 import { Model, IPrimaryKey } from "firemodel";
 import { DB, RealTimeClient } from "universal-fire";
-import { AbcApi, AbcResult } from "../private";
 import { epochWithMilliseconds , IDictionary} from "common-types";
+import { AbcApi, AbcResult } from "../private";
 
 export interface IAbcApiConfig<T extends Model> {
   /**

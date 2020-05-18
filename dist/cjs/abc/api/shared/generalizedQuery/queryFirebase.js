@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.queryFirebase = void 0;
 const __1 = require("..");
 const firemodel_1 = require("firemodel");
 const fast_equals_1 = require("fast-equals");
@@ -9,7 +10,7 @@ async function queryFirebase(ctx, firemodelQuery, local) {
     const stalePks = [];
     const serverRecords = await firemodelQuery();
     const serverPks = serverRecords.map(i => firemodel_1.Record.compositeKeyRef(ctx.model.constructor, i));
-    const newPks = serverPks.filter(i => !local.localPks.includes(i));
+    const newPks = serverPks.filter(i => local.localPks.includes(i));
     serverRecords.forEach(rec => {
         const pk = firemodel_1.Record.compositeKeyRef(ctx.model.constructor, rec);
         if (!newPks.includes(pk)) {

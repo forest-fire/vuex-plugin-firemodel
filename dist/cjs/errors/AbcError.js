@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AbcError = void 0;
 /**
  * An error within the Firemodel's Vuex plugin's **ABC** API. Takes _message_ and _type/subtype_ as
  * parameters. The code will be the `subtype`; the name is both.

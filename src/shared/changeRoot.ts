@@ -1,8 +1,8 @@
-import { IDictionary } from "common-types";
 import Vue from "vue";
 import { Model } from "firemodel";
+
 import { initialState } from "..";
-import { FireModelPluginError } from "../errors/FiremodelPluginError";
+import { FireModelPluginError } from "../private";
 
 /**
  * **changeRoot**

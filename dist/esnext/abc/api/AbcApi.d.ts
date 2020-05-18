@@ -1,7 +1,5 @@
 import { Model, IFmModelMeta, DexieDb, IPrimaryKey } from "firemodel";
-import { IAbcApiConfig, IAbcOptions, IAbcParam } from "../../types/abc";
-import { IFmModelConstructor } from "../../types/index";
-import { AbcResult } from "./AbcResult";
+import { IAbcApiConfig, IAbcOptions, IAbcParam, AbcResult, IFmModelConstructor } from "../../private";
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
  * including meta-data properties too.
@@ -141,6 +139,14 @@ export declare class AbcApi<T extends Model> {
      */
     get(request: IAbcParam<T>, options?: IAbcOptions<T>): Promise<AbcResult<T>>;
     /**
+     * Load records using the **ABC** API
+     *
+     * @request either a Query Helper (since, where, etc.) or an array of primary keys
+     */
+    load(request: IAbcParam<T>, options?: IAbcOptions<T>): Promise<AbcResult<T>>;
+    private getQuery;
+    private loadQuery;
+    /**
      * Handles GET requests for Discrete ID requests
      */
     private getDiscrete;
@@ -148,10 +154,11 @@ export declare class AbcApi<T extends Model> {
      * Handles LOAD requests for Discrete ID requests
      */
     private loadDiscrete;
+    get hasDynamicProperties(): boolean;
     /**
      * Provides access to the Firebase database
      */
-    get db(): import("@forest-fire/abstracted-database").AbstractedDatabase | import("universal-fire/dist/cjs").DB;
+    get db(): import("@forest-fire/abstracted-database").AbstractedDatabase | import("universal-fire").DB;
     /**
      * The **ABC** configuration for this instance's `Model`
      */
@@ -177,12 +184,6 @@ export declare class AbcApi<T extends Model> {
      * Connects Dexie to IndexedDB for _all_ Firemodel Models
      */
     connectDexie(): Promise<void>;
-    /**
-     * Load records using the **ABC** API
-     *
-     * @request either a Query Helper (since, where, etc.) or an array of primary keys
-     */
-    load(request: IAbcParam<T>, options?: IAbcOptions<T>): Promise<AbcResult<T>>;
     /**
      * Watch records using the **ABC** API
      */

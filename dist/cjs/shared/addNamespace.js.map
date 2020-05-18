@@ -1,1 +1,1 @@
-{"version":3,"file":"addNamespace.js","sourceRoot":"","sources":["../../../src/shared/addNamespace.ts"],"names":[],"mappings":";;AAAA,mEAAmE;AACnE,SAAgB,YAAY,CAAC,KAAa;IACxC,OAAO,cAAc,KAAK,EAAE,CAAC;AAC/B,CAAC;AAFD,oCAEC"}
+{"version":3,"file":"addNamespace.js","sourceRoot":"","sources":["../../../src/shared/addNamespace.ts"],"names":[],"mappings":";;;AAAA,mEAAmE;AACnE,SAAgB,YAAY,CAAC,KAAa;IACxC,OAAO,cAAc,KAAK,EAAE,CAAC;AAC/B,CAAC;AAFD,oCAEC"}

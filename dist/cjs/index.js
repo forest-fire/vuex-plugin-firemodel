@@ -1,25 +1,33 @@
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
 }
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.initialState = exports.setAuth = exports.getAuth = exports.getStore = exports.setStore = exports.firemodelVuex = exports.dbConfig = exports.configuration = void 0;
 const store_1 = require("./store");
+const firemodel_1 = require("firemodel");
+const fast_copy_1 = __importDefault(require("fast-copy"));
 const FmConfigActions_1 = require("./types/actions/FmConfigActions");
 const FiremodelPluginError_1 = require("./errors/FiremodelPluginError");
 const addNamespace_1 = require("./shared/addNamespace");
 const coreServices_1 = require("./coreServices");
-const firemodel_1 = require("firemodel");
-const fast_copy_1 = __importDefault(require("fast-copy"));
-__export(require("./types"));
-__export(require("./firemodelMutations/index"));
-__export(require("firemodel"));
+__exportStar(require("./types"), exports);
+__exportStar(require("./firemodelMutations/index"), exports);
+__exportStar(require("firemodel"), exports);
 var store_2 = require("./store");
-exports.database = store_2.database;
-__export(require("./auth/api"));
-__export(require("./abc/index"));
+Object.defineProperty(exports, "database", { enumerable: true, get: function () { return store_2.database; } });
+__exportStar(require("./auth/api"), exports);
+__exportStar(require("./abc/index"), exports);
 let _store;
 exports.setStore = (store) => {
     _store = store;

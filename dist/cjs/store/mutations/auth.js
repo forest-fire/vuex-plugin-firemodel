@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.authMutations = void 0;
 const vue_1 = __importDefault(require("vue"));
 /**
  * The **mutations** associated to the Firebase Auth API.

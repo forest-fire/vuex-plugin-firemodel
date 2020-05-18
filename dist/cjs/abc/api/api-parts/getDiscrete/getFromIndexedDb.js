@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getFromIndexedDb = void 0;
 const __1 = require("../..");
 async function getFromIndexedDb(dexieRecord, requestPks) {
     if (!__1.AbcApi.indexedDbConnected) {

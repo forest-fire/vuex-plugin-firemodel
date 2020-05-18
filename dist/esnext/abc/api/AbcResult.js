@@ -21,7 +21,6 @@ export class AbcResult {
         const obj = new AbcResult(_context, _results, _performance);
         if (obj.serverRecords === undefined) {
             obj.records = obj.localRecords;
-            console.log('no serverRecords', obj.localRecords);
             return obj;
         }
         // Models with dynamic paths
@@ -64,7 +63,8 @@ export class AbcResult {
      * All of the updated records in Vuex that originated from Firebase
      */
     get serverRecords() {
-        return this._results.server ? this._results.server.records : undefined;
+        var _a;
+        return ((_a = this._results.server) === null || _a === void 0 ? void 0 : _a.records) || undefined;
     }
     get cachePerformance() {
         return this._context.cachePerformance;
@@ -74,6 +74,9 @@ export class AbcResult {
     }
     get vuex() {
         return this._context.vuex;
+    }
+    get dynamicPathComponents() {
+        return this._context.about.dynamicPathComponents;
     }
     /**
      * The options passed in for the specific request which led to this result

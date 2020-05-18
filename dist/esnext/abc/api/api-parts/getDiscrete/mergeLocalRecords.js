@@ -1,4 +1,5 @@
 import { Record } from "firemodel";
+import { arrayToHash, hashToArray } from "typed-conversions";
 export function mergeLocalRecords(context, idxRecords, vuexRecords, requestPks) {
     const model = context.model.constructor;
     const vuexPks = vuexRecords.map(v => Record.compositeKeyRef(model, v));
@@ -14,7 +15,7 @@ export function mergeLocalRecords(context, idxRecords, vuexRecords, requestPks) 
         foundInVuex: vuexPks,
         foundExclusivelyInIndexedDb: idxPks.filter(i => !vuexPks.includes(i)),
         allFoundLocally: missingIds.length === 0 ? true : false,
-        records: Object.assign(Object.assign({}, vuexRecords), idxRecords),
+        records: hashToArray(Object.assign(Object.assign({}, arrayToHash(vuexRecords)), arrayToHash(idxRecords))),
         missing: missingIds,
         modelConfig: context.config
     };

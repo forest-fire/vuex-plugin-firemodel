@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FireModelPluginError = void 0;
 /**
  * Base **Error** for **FireModel Plugin**. Takes _message_ and _type/subtype_ as
  * parameters. The code will be the `subtype`; the name is both.

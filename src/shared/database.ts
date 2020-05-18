@@ -1,9 +1,9 @@
 import { DB, RealTimeClient } from "universal-fire";
-import { IClientConfig, IMockConfig } from "@forest-fire/types";
-import { FireModelPluginError } from "../errors/FiremodelPluginError";
 import { FireModel } from "firemodel";
+import { IClientConfig, IMockConfig } from "@forest-fire/types";
+import { FireModelPluginError } from "../private";
 
-let _db: DB;
+let _db: RealTimeClient;
 let _config: IClientConfig | IMockConfig;
 /**
  * connects to a Firebase DB unless already connected in which case it

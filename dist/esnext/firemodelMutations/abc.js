@@ -20,19 +20,6 @@ export function abc(propOffset) {
         [AbcMutation.ABC_INDEXED_SKIPPED](state, payload) {
             // nothing to do; mutation is purely for informational/debugging purposes
         },
-        [AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE](state, payload) {
-            if (payload.vuex.isList) {
-                const vuexRecords = state[payload.vuex.modulePostfix];
-                const updated = hashToArray(Object.assign(Object.assign({}, arrayToHash(vuexRecords || [])), arrayToHash(payload.records || [])));
-                Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
-            }
-            else {
-                if (!validResultSize(payload, "server")) {
-                    return;
-                }
-                changeRoot(state, payload.records[0], payload.vuex.moduleName);
-            }
-        },
         [DbSyncOperation.ABC_FIREBASE_SET_VUEX](state, payload) {
             if (payload.vuex.isList) {
                 const vuexRecords = state[payload.vuex.modulePostfix];
@@ -50,7 +37,17 @@ export function abc(propOffset) {
             // TODO: add code for dynamic path strategy here
         },
         [DbSyncOperation.ABC_FIREBASE_MERGE_VUEX](state, payload) {
-            // TODO: add code for merge strategy here
+            if (payload.vuex.isList) {
+                const vuexRecords = state[payload.vuex.modulePostfix];
+                const updated = hashToArray(Object.assign(Object.assign({}, arrayToHash(vuexRecords || [])), arrayToHash(payload.records || [])));
+                Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
+            }
+            else {
+                if (!validResultSize(payload, "server")) {
+                    return;
+                }
+                changeRoot(state, payload.records[0], payload.vuex.moduleName);
+            }
         },
         [DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB](state, payload) {
             // nothing to do; mutation is purely for informational/debugging purposes
@@ -76,10 +73,40 @@ export function abc(propOffset) {
             }
         },
         [DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX](state, payload) {
-            // nothing to do; mutation is purely for informational/debugging purposes
+            console.log(payload.options.offsets);
+            // getProduct(all(), { offsets: { store: '1234' } })
+            if (payload.vuex.isList) {
+                /* if (!payload.resultFromQuery) {
+                  throw new AbcError(`Attempt to use mutation ${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX} with a discrete request.`, 'not-allowed');
+                } */
+                // Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), payload.records);
+                // get dynamic path from payload
+            }
+            else {
+                if (process.env.NODE_ENV !== 'production') {
+                    console.info(`You are using a query on a singular model ${payload.vuex.moduleName}; this typically should be avoided.`);
+                }
+                changeRoot(state, payload.records[0], payload.vuex.moduleName);
+            }
         },
         [DbSyncOperation.ABC_INDEXED_DB_MERGE_VUEX](state, payload) {
-            // nothing to do; mutation is purely for informational/debugging purposes
+            console.log(payload.options.offsets);
+            if (payload.vuex.isList) {
+                console.log(`Is a list`);
+                // const vuexRecords = state[payload.vuex.modulePostfix];
+                // const updated = hashToArray({
+                //   ...arrayToHash(vuexRecords || []),
+                //   ...arrayToHash(payload.records || [])
+                // });
+                // Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
+            }
+            else {
+                console.log(`Is not a list`);
+                // if (!validResultSize(payload, "server")) {
+                //   return;
+                // }
+                // changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
+            }
         },
         [AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED](state, payload) {
             console.group("Indexed DB Problem");

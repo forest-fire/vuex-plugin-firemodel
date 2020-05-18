@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.relationship = void 0;
 const firemodel_1 = require("firemodel");
 exports.relationship = () => ({
     async [firemodel_1.FmEvents.RELATIONSHIP_ADDED_LOCALLY]({ commit, rootState }, payload) {

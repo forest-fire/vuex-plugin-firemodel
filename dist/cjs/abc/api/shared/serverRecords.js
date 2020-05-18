@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.serverRecords = void 0;
 const firemodel_1 = require("firemodel");
 async function serverRecords(context, pks, allPks) {
     const records = (await firemodel_1.List.ids(context.model.constructor, ...pks)).data;

@@ -1,5 +1,8 @@
-import {
-  AbcRequestCommand,
+import {getStore} from "../../../index"
+import get from "lodash.get";
+import { Record, Model } from "firemodel";
+
+import { AbcRequestCommand,
   AbcMutation,
   IQueryLocalResults,
   IQueryServerResults,
@@ -7,14 +10,7 @@ import {
   IAbcOptions,
   AbcStrategy,
   QueryType,
-  DbSyncOperation
-} from "../../../types";
-import { AbcApi, getStore, AbcResult } from "../../../private";
-import get from "lodash.get";
-import { Record, Model } from "firemodel";
-import { queryIndexedDb } from "./generalizedQuery/queryIndexedDb";
-import { queryFirebase } from "./generalizedQuery/queryFirebase";
-import { saveToIndexedDb } from "../api-parts/getDiscrete";
+  DbSyncOperation, AbcApi, AbcResult, saveToIndexedDb, queryFirebase, queryIndexedDb } from "../../../private";
 
 export interface IGeneralizedQuery<T extends Model> {
   (): Promise<T[]>;

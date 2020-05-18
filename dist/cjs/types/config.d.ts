@@ -1,10 +1,10 @@
 import { IDictionary, epoch } from "common-types";
-import { IFirebaseClientConfig, DB } from "abstracted-client";
+import { DB } from "universal-fire";
+import { IClientConfig, IClientAuth } from "@forest-fire/types";
 import { Watch, Record, List, Model, IModelOptions } from "firemodel";
 import { Commit, Dispatch } from "vuex";
-import { IAuthPersistenceStrategy } from "./auth";
-import { FirebaseAuth } from "@firebase/auth-types";
-import { IFiremodelState } from "./firemodel";
+import { IAuthPersistenceStrategy, IFiremodelState } from "../private";
+export declare type AsyncMockData = () => Promise<IDictionary>;
 export declare type IFmLifecycleContext<T> = IFmAuthenticatatedContext<T> | IFmConnectedContext<T> | IFmLoginEventContext<T> | IFmLogoutEventContext<T> | IFmUserChangeEventContext<T> | IFmRouteEventContext<T>;
 /** the base properties which all events have */
 export interface IFmEventBase<T> {
@@ -26,7 +26,7 @@ export interface IFmEventBase<T> {
  */
 export interface IFmAuthenticatatedContext<T> extends IFmEventBase<T>, IFmConnectedContext<T> {
     /** the full Firebase AUTH api */
-    auth: FirebaseAuth;
+    auth: IClientAuth;
     /** the logged in user's UID (if logged in) */
     uid?: string;
     /** a flag indicating whether the user is anonymous or not */
@@ -37,7 +37,7 @@ export interface IFmAuthenticatatedContext<T> extends IFmEventBase<T>, IFmConnec
 export interface IFmConnectedContext<T> extends IFmEventBase<T> {
     /** the database configuration that was used */
     config: IFiremodelConfig<T>;
-    /** the connection to the DB via `abstracted-client` */
+    /** the connection to the DB via `universal-fire` */
     db: DB;
 }
 /** Context provided to a _logged in_ user */
@@ -105,12 +105,12 @@ export declare type IFmRouteChanged<T> = (ctx: IFmRouteEventContext<T>) => Promi
 export interface IFiremodelConfig<T> extends IFiremodelLifecycleHooks<T>, IFiremodelPluginCoreServices {
     /**
      * Firemodel must be able to connect to the database -- using
-     * `abstracted-client` to do so -- and therefore the configuration
+     * `universal-fire` to do so -- and therefore the configuration
      * must include either a Firebase Config (and this plugin will
-     * create an instance of `abstracted-client`) or you can just pass
+     * create an instance of `universal-fire`) or you can just pass
      * in an instance of abstracted client here as well.
      */
-    db: IFirebaseClientConfig;
+    db: IClientConfig;
 }
 export interface IFiremodelPluginCoreServices {
     /**

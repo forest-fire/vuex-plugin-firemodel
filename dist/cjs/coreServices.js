@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const addNamespace_1 = require("./shared/addNamespace");
-const actions_1 = require("./types/actions");
-const store_1 = require("./store");
+exports.coreServices = void 0;
+const private_1 = require("./private");
 /**
  * Based on the configuration passed in by the consuming app, core
  * services will be started by firing off the appropriate Vuex _action_.
@@ -10,18 +9,18 @@ const store_1 = require("./store");
 async function coreServices(store, config) {
     const starting = [];
     if (config.connect) {
-        await store_1.database(config.db);
+        await private_1.database(config.db);
         console.log("db connected");
-        starting.push(store.dispatch(addNamespace_1.addNamespace(actions_1.FmConfigAction.connect), config.db));
+        starting.push(store.dispatch(private_1.addNamespace(private_1.FmConfigAction.connect), config.db));
     }
     if (config.auth) {
-        starting.push(store.dispatch(addNamespace_1.addNamespace(actions_1.FmConfigAction.firebaseAuth), config));
+        starting.push(store.dispatch(private_1.addNamespace(private_1.FmConfigAction.firebaseAuth), config));
     }
     if (config.routeChanges) {
-        starting.push(store.dispatch(addNamespace_1.addNamespace(actions_1.FmConfigAction.watchRouteChanges)));
+        starting.push(store.dispatch(private_1.addNamespace(private_1.FmConfigAction.watchRouteChanges)));
     }
     await Promise.all(starting);
-    store.commit(addNamespace_1.addNamespace("CORE_SERVICES_STARTED" /* coreServicesStarted */), {
+    store.commit(private_1.addNamespace("CORE_SERVICES_STARTED" /* coreServicesStarted */), {
         message: `all core firemodel plugin services started`,
         config: config.db
     });

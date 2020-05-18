@@ -1,16 +1,12 @@
-import { AbcMutation, AbcStrategy, QueryType, DbSyncOperation } from "../../../types";
-import { getStore, AbcResult } from "../../..";
+import { getStore } from "../../../index";
 import get from "lodash.get";
 import { Record } from "firemodel";
-import { queryIndexedDb } from "./generalizedQuery/queryIndexedDb";
-import { queryFirebase } from "./generalizedQuery/queryFirebase";
-import { saveToIndexedDb } from "../api-parts/getDiscrete";
+import { AbcMutation, AbcStrategy, QueryType, DbSyncOperation, AbcResult, saveToIndexedDb, queryFirebase, queryIndexedDb } from "../../../private";
 /**
  * A generalized flow for queries; specific query helpers
  * should use this flow to standarize their approach.
  */
 export async function generalizedQuery(queryDefn, command, dexieQuery, firemodelQuery, ctx, options) {
-    const t0 = performance.now();
     const store = getStore();
     const hasDynamicProperties = Record.dynamicPathProperties(ctx.model.constructor).length > 0;
     const vuexRecords = get(store.state, ctx.vuex.fullPath.replace(/\//g, "."), []);
@@ -21,17 +17,15 @@ export async function generalizedQuery(queryDefn, command, dexieQuery, firemodel
         indexedDbPks: [],
         localPks: vuexPks
     };
-    const t1 = performance.now();
-    const perfLocal = t1 - t0;
     if (command === "get" && ctx.config.useIndexedDb) {
         // Populate Vuex with what IndexedDB knows
-        local = await queryIndexedDb(ctx, dexieQuery, vuexPks);
+        local = await queryIndexedDb(ctx.model.constructor, dexieQuery);
         const localResults = await AbcResult.create(ctx, {
             type: "query",
             queryDefn,
             local,
             options
-        }, { perfLocal });
+        });
         if (local.records.length > 0) {
             if (hasDynamicProperties) {
                 store.commit(`${ctx.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX}`, localResults);
@@ -106,15 +100,13 @@ export async function generalizedQuery(queryDefn, command, dexieQuery, firemodel
           removeFromVuex
         }; */
     }
-    const t2 = performance.now();
-    const perfServer = t2 - t1;
     const response = await AbcResult.create(ctx, {
         type: "query",
         queryDefn,
         local,
         server,
         options
-    }, { perfLocal, perfServer });
+    });
     store.commit(`${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`, response);
     return response;
 }

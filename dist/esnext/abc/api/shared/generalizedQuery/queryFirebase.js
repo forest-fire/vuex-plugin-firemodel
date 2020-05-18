@@ -7,7 +7,7 @@ export async function queryFirebase(ctx, firemodelQuery, local) {
     const stalePks = [];
     const serverRecords = await firemodelQuery();
     const serverPks = serverRecords.map(i => Record.compositeKeyRef(ctx.model.constructor, i));
-    const newPks = serverPks.filter(i => !local.localPks.includes(i));
+    const newPks = serverPks.filter(i => local.localPks.includes(i));
     serverRecords.forEach(rec => {
         const pk = Record.compositeKeyRef(ctx.model.constructor, rec);
         if (!newPks.includes(pk)) {

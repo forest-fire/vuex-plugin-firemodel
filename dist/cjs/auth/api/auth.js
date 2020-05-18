@@ -5,6 +5,7 @@
  * used means to achieve **Firebase** _auth_ functions
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.linkWithCredential = exports.reauthenticateWithCredential = exports.sendEmailVerification = exports.updateProfile = exports.updatePassword = exports.updateEmail = exports.verifyPasswordResetCode = exports.confirmPasswordReset = exports.sendPasswordResetEmail = exports.getIdToken = exports.signOut = exports.createUserWithEmailAndPassword = exports.signInWithEmailAndPassword = void 0;
 const index_1 = require("../../index");
 const FiremodelPluginError_1 = require("../../errors/FiremodelPluginError");
 /**

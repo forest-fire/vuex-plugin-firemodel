@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const abstracted_client_1 = require("abstracted-client");
-const FiremodelPluginError_1 = require("../errors/FiremodelPluginError");
+exports.database = void 0;
+const universal_fire_1 = require("universal-fire");
 const firemodel_1 = require("firemodel");
+const private_1 = require("../private");
 let _db;
 let _config;
 /**
@@ -13,12 +14,12 @@ async function database(config) {
     if (config) {
         if (JSON.stringify(config) !== JSON.stringify(_config) || !_db) {
             _config = config;
-            _db = await abstracted_client_1.DB.connect(config);
+            _db = await universal_fire_1.DB.connect(universal_fire_1.RealTimeClient, config);
         }
         firemodel_1.FireModel.defaultDb = _db;
     }
     if (!_db && !_config) {
-        throw new FiremodelPluginError_1.FireModelPluginError("Trying to get the database connection but it has not been established yet!", "not-ready");
+        throw new private_1.FireModelPluginError("Trying to get the database connection but it has not been established yet!", "not-ready");
     }
     return _db;
 }

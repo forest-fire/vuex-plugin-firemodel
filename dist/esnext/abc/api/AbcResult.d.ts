@@ -43,6 +43,7 @@ export declare class AbcResult<T extends Model> {
         modulePostfix: string;
         fullPath: string;
     };
+    get dynamicPathComponents(): false | (keyof T & string)[];
     /**
      * The options passed in for the specific request which led to this result
      */

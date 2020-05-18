@@ -1,6 +1,6 @@
-import { DB } from "universal-fire";
-import { FireModelPluginError } from "../errors/FiremodelPluginError";
+import { DB, RealTimeClient } from "universal-fire";
 import { FireModel } from "firemodel";
+import { FireModelPluginError } from "../private";
 let _db;
 let _config;
 /**
@@ -11,7 +11,7 @@ export async function database(config) {
     if (config) {
         if (JSON.stringify(config) !== JSON.stringify(_config) || !_db) {
             _config = config;
-            _db = await DB.connect(config);
+            _db = await DB.connect(RealTimeClient, config);
         }
         FireModel.defaultDb = _db;
     }

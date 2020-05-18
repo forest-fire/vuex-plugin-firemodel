@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const database_1 = require("../../shared/database");
-const FiremodelPluginError_1 = require("../../errors/FiremodelPluginError");
+exports.authActions = void 0;
 const firemodel_1 = require("firemodel");
 const errors_1 = require("firemodel/dist/cjs/errors");
+const private_1 = require("../../private");
 /**
  * **authActions**
  *
@@ -16,7 +16,7 @@ exports.authActions = () => ({
      */
     async signInWithEmailAndPassword({ commit }, { email, password }) {
         try {
-            const db = await database_1.database();
+            const db = await private_1.database();
             const auth = await db.auth();
             const userCredential = await auth.signInWithEmailAndPassword(email, password);
             commit("signInWithEmailAndPassword", userCredential);
@@ -37,7 +37,7 @@ exports.authActions = () => ({
      */
     async createUserWithEmailAndPassword({ commit }, { email, password }) {
         try {
-            const db = await database_1.database();
+            const db = await private_1.database();
             const auth = await db.auth();
             const userCredential = await auth.createUserWithEmailAndPassword(email, password);
             commit("createUserWithEmailAndPassword", userCredential);
@@ -59,7 +59,7 @@ exports.authActions = () => ({
      */
     async sendPasswordResetEmail({ commit }, { email, actionCodeSettings }) {
         try {
-            const db = await database_1.database();
+            const db = await private_1.database();
             const auth = await db.auth();
             await auth.sendPasswordResetEmail(email, actionCodeSettings);
             commit("sendPasswordResetEmail", { email, actionCodeSettings });
@@ -78,7 +78,7 @@ exports.authActions = () => ({
      */
     async confirmPasswordReset({ commit }, { code, newPassword }) {
         try {
-            const db = await database_1.database();
+            const db = await private_1.database();
             const auth = await db.auth();
             await auth.confirmPasswordReset(code, newPassword);
             commit("confirmPasswordReset");
@@ -97,7 +97,7 @@ exports.authActions = () => ({
      */
     async verifyPasswordResetCode({ commit }, code) {
         try {
-            const db = await database_1.database();
+            const db = await private_1.database();
             const auth = await db.auth();
             const email = await auth.verifyPasswordResetCode(code);
             commit("verifyPasswordResetCode", email);
@@ -118,10 +118,10 @@ exports.authActions = () => ({
     async updateEmail({ commit, state }, newEmail) {
         if (!state.currentUser) {
             commit("error", `The updateEmail dispatch was dispatched but the current user profile is empty!`);
-            throw new FiremodelPluginError_1.FireModelPluginError(`The updateEmail dispatch was dispatched but the current user profile is empty!`, "not-ready");
+            throw new private_1.FireModelPluginError(`The updateEmail dispatch was dispatched but the current user profile is empty!`, "not-ready");
         }
         try {
-            const db = await database_1.database();
+            const db = await private_1.database();
             const user = (await db.auth()).currentUser;
             await user.updateEmail(newEmail);
             commit("updatedEmail", { uid: user.uid, email: newEmail });
@@ -143,10 +143,10 @@ exports.authActions = () => ({
     async updatePassword({ commit, state }, { password }) {
         if (!state.currentUser) {
             commit("error", `The updatePassword dispatch was dispatched but the current user profile is empty!`);
-            throw new FiremodelPluginError_1.FireModelPluginError(`The updateEmail dispatch was dispatched but the current user profile is empty!`, "not-ready");
+            throw new private_1.FireModelPluginError(`The updateEmail dispatch was dispatched but the current user profile is empty!`, "not-ready");
         }
         try {
-            const db = await database_1.database();
+            const db = await private_1.database();
             const user = (await db.auth()).currentUser;
             await user.updatePassword(password);
             commit("updatedPassword", { uid: user.uid, password: "*****" });
@@ -165,11 +165,11 @@ exports.authActions = () => ({
      */
     async updateProfile({ commit, state }, profile) {
         try {
-            const db = await database_1.database();
+            const db = await private_1.database();
             const auth = await db.auth();
             const user = auth.currentUser;
             if (!user) {
-                throw new FiremodelPluginError_1.FireModelPluginError(`Attempt to updateProfile() before currentUser is set in Firebase identity system!`, "not-ready");
+                throw new private_1.FireModelPluginError(`Attempt to updateProfile() before currentUser is set in Firebase identity system!`, "not-ready");
             }
             await user.updateProfile(profile);
             commit("updatedProfile", profile);
@@ -189,7 +189,7 @@ exports.authActions = () => ({
      */
     async signOut({ commit }, { uid, email, model }) {
         try {
-            const db = await database_1.database();
+            const db = await private_1.database();
             firemodel_1.Record.defaultDb = db;
             const auth = await db.auth();
             if (model) {
@@ -212,10 +212,10 @@ exports.authActions = () => ({
      */
     async sendEmailVerification({ commit }) {
         try {
-            const db = await database_1.database();
+            const db = await private_1.database();
             const auth = await db.auth();
             if (!auth.currentUser) {
-                throw new FiremodelPluginError_1.FireModelPluginError(`Attempt to call sendEmailVerification() failed because there is no "currentUser" set in the identity system yet!`, "firemodel/not-ready");
+                throw new private_1.FireModelPluginError(`Attempt to call sendEmailVerification() failed because there is no "currentUser" set in the identity system yet!`, "firemodel/not-ready");
             }
             return auth.currentUser.sendEmailVerification();
         }
@@ -229,11 +229,11 @@ exports.authActions = () => ({
     },
     async reauthenticateWithCredential({ commit }, { credential }) {
         try {
-            const db = await database_1.database();
+            const db = await private_1.database();
             firemodel_1.Record.defaultDb = db;
             const auth = await db.auth();
             if (!auth.currentUser) {
-                throw new FiremodelPluginError_1.FireModelPluginError(`Attempt to call reauthenticateWithCredential() requires that the "auth.currentUser" be set and it is not!`, "auth/not-allowed");
+                throw new private_1.FireModelPluginError(`Attempt to call reauthenticateWithCredential() requires that the "auth.currentUser" be set and it is not!`, "auth/not-allowed");
             }
             await auth.currentUser.reauthenticateWithCredential(credential);
         }
@@ -244,7 +244,7 @@ exports.authActions = () => ({
     async linkWithCredential({ commit }, { credential }) {
         var _a;
         try {
-            const db = await database_1.database();
+            const db = await private_1.database();
             firemodel_1.Record.defaultDb = db;
             const auth = await db.auth();
             await ((_a = auth.currentUser) === null || _a === void 0 ? void 0 : _a.linkWithCredential(credential));

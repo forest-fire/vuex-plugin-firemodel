@@ -1,6 +1,4 @@
-import { addNamespace } from "./shared/addNamespace";
-import { FmConfigAction } from "./types/actions";
-import { database } from "./store";
+import { addNamespace, FmConfigAction, database } from "./private";
 /**
  * Based on the configuration passed in by the consuming app, core
  * services will be started by firing off the appropriate Vuex _action_.

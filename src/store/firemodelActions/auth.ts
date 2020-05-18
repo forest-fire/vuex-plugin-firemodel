@@ -1,16 +1,11 @@
 import { ActionTree } from "vuex";
-
-import { IFiremodelState, ISignOutPayload, IAuthProfile } from "../../index";
-import { database } from "../../shared/database";
-import { FireModelPluginError } from "../../errors/FiremodelPluginError";
-import {
-  ActionCodeSettings,
-  UserCredential,
-  AuthCredential
-} from "@firebase/auth-types";
 import { Record } from "firemodel";
 import { FireModelProxyError } from "firemodel/dist/cjs/errors";
-import { User } from "firemock";
+import { ActionCodeSettings,
+  UserCredential,
+  AuthCredential, User } from "@forest-fire/types";
+  
+import { IFiremodelState, ISignOutPayload, IAuthProfile, FireModelPluginError, database } from "../../private";
 
 /**
  * **authActions**

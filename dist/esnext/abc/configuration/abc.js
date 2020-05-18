@@ -1,4 +1,4 @@
-import { AbcApi } from "../api/AbcApi";
+import { AbcApi } from "../../index";
 /**
  * Returns an array of **AbcApi** API's: `get`, `load`, and `watch`
  */

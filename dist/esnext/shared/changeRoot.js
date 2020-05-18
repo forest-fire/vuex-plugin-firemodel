@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { initialState } from "..";
-import { FireModelPluginError } from "../errors/FiremodelPluginError";
+import { FireModelPluginError } from "../private";
 /**
  * **changeRoot**
  *

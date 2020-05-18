@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SINCE_LAST_COOKIE = exports.AbcStrategy = exports.QueryType = exports.AbcDataSource = exports.AbcMutation = exports.DbSyncOperation = exports.isDiscreteRequest = void 0;
 function isDiscreteRequest(request) {
     return typeof request !== "function";
 }

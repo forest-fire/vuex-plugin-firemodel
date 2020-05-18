@@ -1,7 +1,6 @@
-import { database } from "../../shared/database";
-import { FireModelPluginError } from "../../errors/FiremodelPluginError";
 import { Record } from "firemodel";
 import { FireModelProxyError } from "firemodel/dist/cjs/errors";
+import { FireModelPluginError, database } from "../../private";
 /**
  * **authActions**
  *

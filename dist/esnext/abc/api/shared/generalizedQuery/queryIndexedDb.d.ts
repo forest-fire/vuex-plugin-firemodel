@@ -1,4 +1,3 @@
 import { IGeneralizedQuery } from "..";
-import { AbcApi } from "../..";
-import { IQueryLocalResults } from "../../../..";
-export declare function queryIndexedDb<T>(ctx: AbcApi<T>, dexieQuery: IGeneralizedQuery<T>, vuexPks: string[]): Promise<IQueryLocalResults<T, any>>;
+import { IFmModelConstructor, IQueryLocalResults } from "../../../../private";
+export declare function queryIndexedDb<T>(modelConstructor: IFmModelConstructor<T>, dexieQuery: IGeneralizedQuery<T>): Promise<IQueryLocalResults<T, any>>;
