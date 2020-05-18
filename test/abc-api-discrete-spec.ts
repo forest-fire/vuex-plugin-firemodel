@@ -1,11 +1,11 @@
 import {
   AbcApi,
   IAbcRequest,
-  getStore,
   AbcResult,
   AbcStrategy,
   DbSyncOperation,
 } from "../src/private";
+import { getStore} from "../src/index"
 import { expect } from "chai";
 import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
 import { productData } from "./data/productData";

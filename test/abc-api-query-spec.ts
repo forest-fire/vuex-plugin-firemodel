@@ -1,8 +1,19 @@
+import { getStore } from "../src/index"
+import { expect } from "chai";
+import { Product } from "./models/Product";
+import { Store, MutationPayload } from "vuex";
+import { IRootState } from "./store";
+import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
+import { productData } from "./data/productData";
+import { productDataExtra } from "./data/productDataExtra";
+import { IDictionary } from "common-types";
+import { hashToArray } from "typed-conversions";
+import Dexie from "dexie";
+import { Mock } from "firemock"
 import {
   all,
   AbcApi,
   IAbcRequest,
-  getStore,
   IAbcQueryRequest,
   AbcResult,
   where,
@@ -14,19 +25,8 @@ import {
   DbSyncOperation,
   FireModel,
   since,
+  saveToIndexedDb,
 } from "../src/private";
-import { expect } from "chai";
-import { Product } from "./models/Product";
-import { Store, MutationPayload } from "vuex";
-import { IRootState } from "./store";
-import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
-import { productData } from "./data/productData";
-import { productDataExtra } from "./data/productDataExtra";
-import { IDictionary } from "common-types";
-import { hashToArray } from "typed-conversions";
-import { saveToIndexedDb } from "../src/abc/api/api-parts/getDiscrete";
-import Dexie from "dexie";
-import { Mock } from "firemock";
 
 let events: Array<[string, any]> = [];
 let eventCounts: IDictionary<number> = {};

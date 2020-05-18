@@ -1,5 +1,6 @@
 import Vuex, { Store } from "vuex";
-import FiremodelPlugin, { IFiremodelState, abc, AsyncMockData } from "../../src/private";
+import {  IFiremodelState, abc, AsyncMockData } from "../../src/private";
+import FiremodelPlugin from "../../src/index"
 import products, { IProductsState } from "./modules/products";
 import userProfile, { IUserProfileState } from "./modules/userProfile";
 import companies, { ICompaniesState } from "./modules/companies";

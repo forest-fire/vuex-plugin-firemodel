@@ -7,10 +7,10 @@ import { addNamespace, FmConfigAction, FmConfigMutation, IFiremodelConfig, datab
  */
 export async function coreServices<T>(
   store: Store<T>,
-  config: IFiremodelConfig<T>
+  config?: IFiremodelConfig<T>
 ) {
   const starting: Promise<any>[] = [];
-  if (config.connect) {
+  if (config?.connect) {
     await database(config.db);
     console.log("db connected");
 
@@ -19,13 +19,13 @@ export async function coreServices<T>(
     );
   }
 
-  if (config.auth) {
+  if (config?.auth) {
     starting.push(
       store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config)
     );
   }
 
-  if (config.routeChanges) {
+  if (config?.routeChanges) {
     starting.push(
       store.dispatch(addNamespace(FmConfigAction.watchRouteChanges))
     );
@@ -34,6 +34,6 @@ export async function coreServices<T>(
 
   store.commit(addNamespace(FmConfigMutation.coreServicesStarted), {
     message: `all core firemodel plugin services started`,
-    config: config.db
+    config: config?.db
   });
 }
