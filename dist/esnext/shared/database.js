@@ -1,4 +1,4 @@
-import { DB } from "abstracted-client";
+import { DB } from "universal-fire";
 import { FireModelPluginError } from "../errors/FiremodelPluginError";
 import { FireModel } from "firemodel";
 let _db;

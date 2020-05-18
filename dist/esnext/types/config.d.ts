@@ -1,5 +1,5 @@
 import { IDictionary, epoch } from "common-types";
-import { IFirebaseClientConfig, DB } from "abstracted-client";
+import { IFirebaseClientConfig, DB } from "universal-fire";
 import { Watch, Record, List, Model, IModelOptions } from "firemodel";
 import { Commit, Dispatch } from "vuex";
 import { IAuthPersistenceStrategy } from "./auth";
@@ -37,7 +37,7 @@ export interface IFmAuthenticatatedContext<T> extends IFmEventBase<T>, IFmConnec
 export interface IFmConnectedContext<T> extends IFmEventBase<T> {
     /** the database configuration that was used */
     config: IFiremodelConfig<T>;
-    /** the connection to the DB via `abstracted-client` */
+    /** the connection to the DB via `universal-fire` */
     db: DB;
 }
 /** Context provided to a _logged in_ user */
@@ -105,9 +105,9 @@ export declare type IFmRouteChanged<T> = (ctx: IFmRouteEventContext<T>) => Promi
 export interface IFiremodelConfig<T> extends IFiremodelLifecycleHooks<T>, IFiremodelPluginCoreServices {
     /**
      * Firemodel must be able to connect to the database -- using
-     * `abstracted-client` to do so -- and therefore the configuration
+     * `universal-fire` to do so -- and therefore the configuration
      * must include either a Firebase Config (and this plugin will
-     * create an instance of `abstracted-client`) or you can just pass
+     * create an instance of `universal-fire`) or you can just pass
      * in an instance of abstracted client here as well.
      */
     db: IFirebaseClientConfig;

@@ -1,6 +1,6 @@
 import { IFiremodelConfig as IFiremodelPluginConfig, IFiremodelState } from "./types";
 import { Store } from "vuex";
-import { IFirebaseClientConfig } from "abstracted-client";
+import { IFirebaseClientConfig } from "universal-fire";
 import { FirebaseAuth } from "@firebase/auth-types";
 import { IDictionary } from "common-types";
 export * from "./types";
