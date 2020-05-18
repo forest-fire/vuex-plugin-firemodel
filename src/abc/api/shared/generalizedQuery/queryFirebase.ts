@@ -1,8 +1,7 @@
+import { AbcApi, IQueryLocalResults, IQueryServerResults } from "../../../../private";
 import { IGeneralizedQuery, findPk } from "..";
-import { AbcApi } from "../..";
 import { Record, Model } from "firemodel";
 import { deepEqual } from "fast-equals";
-import { IQueryLocalResults, IQueryServerResults } from "../../../..";
 
 export async function queryFirebase<T extends Model>(
   ctx: AbcApi<T>,
@@ -16,7 +15,7 @@ export async function queryFirebase<T extends Model>(
   const serverPks = serverRecords.map(i =>
     Record.compositeKeyRef(ctx.model.constructor, i)
   );
-  const newPks = serverPks.filter(i => !local.localPks.includes(i));
+  const newPks = serverPks.filter(i => local.localPks.includes(i));
   serverRecords.forEach(rec => {
     const pk = Record.compositeKeyRef(ctx.model.constructor, rec);
     if (!newPks.includes(pk)) {
@@ -31,6 +30,13 @@ export async function queryFirebase<T extends Model>(
 
   ctx.cachePerformance.hits = ctx.cachePerformance.hits + cacheHits.length;
   ctx.cachePerformance.misses = ctx.cachePerformance.misses + stalePks.length + newPks.length;
+  
+  const removeFromIdx = local.indexedDbPks.filter(i => !serverPks.includes(i));
+  /** 
+   * Vuex at this point will have both it's old state and whatever IndexedDB
+   * contributed
+   */
+  const removeFromVuex = local.localPks.filter(i => !serverPks.includes(i));
 
   const server: IQueryServerResults<T> = {
     records: serverRecords,
@@ -38,8 +44,8 @@ export async function queryFirebase<T extends Model>(
     newPks,
     cacheHits,
     stalePks,
-    removeFromIdx: [],
-    removeFromVuex: [],
+    removeFromIdx,
+    removeFromVuex,
     overallCachePerformance: ctx.cachePerformance
   };
 

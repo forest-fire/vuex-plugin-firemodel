@@ -6,6 +6,8 @@ import { IAuthPersistenceStrategy } from "./auth";
 import { FirebaseAuth, User } from "@firebase/auth-types";
 import { IFiremodelState } from "./firemodel";
 
+export type AsyncMockData = () => Promise<IDictionary>;
+
 export type IFmLifecycleContext<T> =
   | IFmAuthenticatatedContext<T>
   | IFmConnectedContext<T>

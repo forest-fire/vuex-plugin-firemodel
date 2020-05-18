@@ -19,6 +19,10 @@ export declare class AbcResult<T extends Model> {
      */
     records: T[];
     /**
+     * Boolean flag to indicate that the result came from a query (instead of a discrete request)
+     */
+    get resultFromQuery(): boolean;
+    /**
      * All of the updated records in Vuex that originated from IndexedDB
      */
     get localRecords(): T[];

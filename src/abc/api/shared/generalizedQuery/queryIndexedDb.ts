@@ -1,12 +1,10 @@
 import { IGeneralizedQuery } from "..";
 import { Record } from "firemodel";
-import { AbcApi } from "../..";
-import { IQueryLocalResults } from "../../../..";
+import { IFmModelConstructor, IQueryLocalResults } from "../../../../private";
 
 export async function queryIndexedDb<T>(
-  ctx: AbcApi<T>,
-  dexieQuery: IGeneralizedQuery<T>,
-  vuexPks: string[]
+  modelConstructor: IFmModelConstructor<T>,
+  dexieQuery: IGeneralizedQuery<T>
 ) {
   // Populate Vuex with what IndexedDB knows
   const idxRecords: T[] = await dexieQuery().catch(e => {
@@ -14,14 +12,13 @@ export async function queryIndexedDb<T>(
   });
 
   const indexedDbPks = idxRecords.map(i =>
-    Record.compositeKeyRef(ctx.model.constructor, i)
+    Record.compositeKeyRef(modelConstructor, i)
   );
 
   const local: IQueryLocalResults<T, any> = {
     records: idxRecords,
-    vuexPks,
     indexedDbPks,
-    localPks: Array.from(new Set(vuexPks.concat(...indexedDbPks)))
+    localPks: []
   }
   return local;
 }

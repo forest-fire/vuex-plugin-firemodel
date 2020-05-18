@@ -226,27 +226,25 @@ class AbcApi {
         if (this.config.useIndexedDb) {
             // get from indexedDB
             idxRecords = await index_2.getFromIndexedDb(this.dexieRecord, requestIds);
+            console.log(`${this.model.constructor.name}:idxRecords`, idxRecords);
         }
         const local = index_2.mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
         const localResult = await AbcResult_1.AbcResult.create(this, {
             type: 'discrete',
             local,
             options
-        }, {});
-        // no records found
-        let server = undefined;
-        if (!(local === null || local === void 0 ? void 0 : local.records)) {
-            // get from firebase
-            const { server, serverResults } = await index_2.getFromFirebase(this, local, options, requestIds);
-            // cache results to IndexedDB
-            if (this.config.useIndexedDb) {
-                // save to indexedDB
-                index_2.saveToIndexedDb(server, this.dexieTable);
-            }
-            store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB}`, serverResults);
-        }
-        else {
+        });
+        if (!(local === null || local === void 0 ? void 0 : local.allFoundLocally)) {
+            // send data back to vuex
             store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`, localResult);
+        }
+        // get from firebase
+        const { server, serverResults } = await index_2.getFromFirebase(this, local, options, requestIds);
+        // cache results to IndexedDB
+        if (this.config.useIndexedDb) {
+            // save to indexedDB
+            index_2.saveToIndexedDb(server, this.dexieTable);
+            store.commit(`${this.vuex.moduleName}/${abc_1.DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, serverResults);
         }
         // const perfOverall = t2 - t0;
         const results = await AbcResult_1.AbcResult.create(this, {
@@ -254,7 +252,8 @@ class AbcApi {
             options,
             local,
             server
-        }, { /* perfOverall, perfLocal, perfServer */});
+        });
+        store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_VUEX_UPDATE_FROM_IDX}`, results);
         return results;
     }
     /**
@@ -273,7 +272,7 @@ class AbcApi {
         if (options.strategy === abc_1.AbcStrategy.loadVuex) {
             const store = __1.getStore();
             // load data into vuex
-            store.commit(`${this.vuex.moduleName}/${abc_1.AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`, serverResults);
+            store.commit(`${this.vuex.moduleName}/${abc_1.DbSyncOperation.ABC_FIREBASE_SET_VUEX}`, serverResults);
         }
         // const perfOverall = t2 - t0;
         const results = await AbcResult_1.AbcResult.create(this, {
@@ -281,7 +280,7 @@ class AbcApi {
             options,
             local,
             server
-        }, { /* perfOverall, perfLocal, perfServer */});
+        });
         return results;
     }
     /**

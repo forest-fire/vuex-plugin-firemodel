@@ -26,14 +26,15 @@ export class AbcResult<T extends Model> {
     if (hasDynamicProperties) {
       let localPathProps = Record.compositeKey(obj._context.model.constructor, obj.serverRecords[0]);
       delete localPathProps.id;
-      // const where = Object.keys(localPathProps).reduce((agg, curr: keyof ICompositeKey<T> & string) => {
-      //   const value = typeof localPathProps[curr] === 'string' ? `"${localPathProps[curr]}"` : localPathProps[curr]
-      //   agg[curr].push(value);
-      //   return agg;
-      // }, {} as IDictionary);
-      console.log(obj._context.dexieModels, Object.keys(localPathProps), Object.values(localPathProps));
-      const queryResults = await obj._context.dexieTable.where(Object.keys(localPathProps))
-        .notEqual(Object.values(localPathProps)).toArray()
+
+      const propKeys = Object.keys(localPathProps);
+      const propValues: string[] = Object.values(localPathProps);
+      const whereClause = propKeys.length > 1 ? propKeys : propKeys.toString();
+      const notEqualVal = propValues.length > 1 ? propValues : propValues.toString();
+
+      const queryResults = await obj._context.dexieTable.where(whereClause)
+        .notEqual(notEqualVal).toArray()
+      
       const localOffDynamicPath = arrayToHash(queryResults)
 
       const server = arrayToHash(obj.serverRecords || []);
@@ -53,6 +54,14 @@ export class AbcResult<T extends Model> {
   records: T[] = []
 
   /**
+   * Boolean flag to indicate that the result came from a query (instead of a discrete request)
+   */
+  get resultFromQuery(): boolean {
+    // TODO: we will add the correct option to the AbcResult constructor later
+    return true
+  }
+
+  /**
    * All of the updated records in Vuex that originated from IndexedDB
    */
   get localRecords(): T[] {
@@ -63,7 +72,7 @@ export class AbcResult<T extends Model> {
    * All of the updated records in Vuex that originated from Firebase
    */
   get serverRecords(): T[] | undefined {
-    return this._results.server ? this._results.server.records : undefined;
+    return this._results.server?.records || undefined;
   }
 
   get cachePerformance() {
@@ -76,6 +85,10 @@ export class AbcResult<T extends Model> {
 
   get vuex() {
     return this._context.vuex;
+  }
+
+  get dynamicPathComponents() {
+    return this._context.about.dynamicPathComponents;
   }
 
   /**

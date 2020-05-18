@@ -1,5 +1,5 @@
 import Vuex, { Store } from "vuex";
-import FiremodelPlugin, { IFiremodelState, abc, AbcApi } from "../../src/index";
+import FiremodelPlugin, { IFiremodelState, abc, AsyncMockData } from "../../src/private";
 import products, { IProductsState } from "./modules/products";
 import userProfile, { IUserProfileState } from "./modules/userProfile";
 import companies, { ICompaniesState } from "./modules/companies";
@@ -9,8 +9,6 @@ import { Company } from "../models/Company";
 import { Person } from "../models/Person";
 import Vue from "vue";
 import { IDictionary } from "common-types";
-
-export type AsyncMockData = () => Promise<IDictionary>;
 
 Vue.use(Vuex);
 
@@ -42,7 +40,7 @@ export const setupStore = (data?: IDictionary | AsyncMockData) => {
 };
 
 export const getAbc = () => {
-  const [getProducts, loadProducts] = abc(Product);
+  const [getProducts, loadProducts] = abc(Product, { useIndexedDb: true });
   const [getCompanies, loadCompanies] = abc(Company, {
     useIndexedDb: false
   });

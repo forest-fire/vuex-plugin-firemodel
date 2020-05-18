@@ -1,6 +1,7 @@
 import { Record, IPrimaryKey } from "firemodel";
 import { AbcApi } from "../..";
 import { IDiscreteLocalResults } from "../../../..";
+import { arrayToHash, hashToArray } from "typed-conversions";
 
 export function mergeLocalRecords<T>(
   context: AbcApi<T>,
@@ -29,7 +30,10 @@ export function mergeLocalRecords<T>(
     foundInVuex: vuexPks,
     foundExclusivelyInIndexedDb: idxPks.filter(i => !vuexPks.includes(i)),
     allFoundLocally: missingIds.length === 0 ? true : false,
-    records: {...vuexRecords, ...idxRecords},
+    records: hashToArray({ 
+      ...arrayToHash(vuexRecords), 
+      ...arrayToHash(idxRecords) 
+    }),
     missing: missingIds,
     modelConfig: context.config
   };

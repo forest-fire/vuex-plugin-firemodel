@@ -8,6 +8,7 @@ const typed_conversions_1 = require("typed-conversions");
 const vue_1 = __importDefault(require("vue"));
 const types_1 = require("../types");
 const lodash_get_1 = __importDefault(require("lodash.get"));
+const errors_1 = require("../errors");
 function abc(propOffset) {
     return {
         [types_1.AbcMutation.ABC_VUEX_UPDATE_FROM_IDX](state, payload) {
@@ -37,7 +38,52 @@ function abc(propOffset) {
                 changeRoot_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
             }
         },
-        [types_1.AbcMutation.ABC_FIREBASE_REFRESH_INDEXED_DB](state, payload) {
+        [types_1.DbSyncOperation.ABC_FIREBASE_SET_VUEX](state, payload) {
+            if (payload.vuex.isList) {
+                const vuexRecords = state[payload.vuex.modulePostfix];
+                const updated = typed_conversions_1.hashToArray(Object.assign(Object.assign({}, typed_conversions_1.arrayToHash(vuexRecords || [])), typed_conversions_1.arrayToHash(payload.records || [])));
+                vue_1.default.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
+            }
+            else {
+                if (!validResultSize(payload, "server")) {
+                    return;
+                }
+                changeRoot_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
+            }
+        },
+        [types_1.DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_VUEX](state, payload) {
+            // TODO: add code for dynamic path strategy here
+        },
+        [types_1.DbSyncOperation.ABC_FIREBASE_MERGE_VUEX](state, payload) {
+            // TODO: add code for merge strategy here
+        },
+        [types_1.DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB](state, payload) {
+            // nothing to do; mutation is purely for informational/debugging purposes
+        },
+        [types_1.DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB](state, payload) {
+            // nothing to do; mutation is purely for informational/debugging purposes
+        },
+        [types_1.DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB](state, payload) {
+            // nothing to do; mutation is purely for informational/debugging purposes
+        },
+        [types_1.DbSyncOperation.ABC_INDEXED_DB_SET_VUEX](state, payload) {
+            if (payload.vuex.isList) {
+                if (!payload.resultFromQuery) {
+                    throw new errors_1.AbcError(`Attempt to use mutation ${types_1.DbSyncOperation.ABC_INDEXED_DB_SET_VUEX} with a discrete request.`, 'not-allowed');
+                }
+                vue_1.default.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), payload.records);
+            }
+            else {
+                if (process.env.NODE_ENV !== 'production') {
+                    console.info(`You are using a query on a singular model ${payload.vuex.moduleName}; this typically should be avoided.`);
+                }
+                changeRoot_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
+            }
+        },
+        [types_1.DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX](state, payload) {
+            // nothing to do; mutation is purely for informational/debugging purposes
+        },
+        [types_1.DbSyncOperation.ABC_INDEXED_DB_MERGE_VUEX](state, payload) {
             // nothing to do; mutation is purely for informational/debugging purposes
         },
         [types_1.AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED](state, payload) {
@@ -53,7 +99,7 @@ function abc(propOffset) {
         [types_1.AbcMutation.ABC_LOCAL_QUERY_EMPTY](state, payload) {
             // nothing to do; mutation is purely for informational/debugging purposes
         },
-        [types_1.AbcMutation.ABC_LOCAL_QUERY_TO_VUEX](state, payload) {
+        [types_1.DbSyncOperation.ABC_INDEXED_DB_SET_VUEX](state, payload) {
             if (payload.vuex.isList) {
                 vue_1.default.set(state, payload.vuex.modulePostfix, payload.records);
             }

@@ -4,29 +4,33 @@ export const productData = {
       id: "abcd",
       name: "The Magic Carpet",
       price: 3000,
-      lastUpdated: 111,
-      createdAt: 111
+      store: '1234',
+      lastUpdated: 1547251200000,
+      createdAt: 1547251200000
     },
     defg: {
       id: "defg",
       name: "The Green Lantern",
       price: 1300,
-      lastUpdated: 112,
-      createdAt: 112
+      store: '1234',
+      lastUpdated: 1550016000000,
+      createdAt: 1550016000000
     },
     aaaa: {
       id: "aaaa",
       name: "Adams Apple",
       price: 452,
-      lastUpdated: 113,
-      createdAt: 113
+      store: '1234',
+      lastUpdated: 1576022400000,
+      createdAt: 1576022400000
     },
     bbbb: {
       id: "bbbb",
       name: "Purple People Eater",
       price: 452,
-      lastUpdated: 114,
-      createdAt: 114
+      store: '4567',
+      lastUpdated: 1584921600000,
+      createdAt: 1584921600000
     }
   }
 };
