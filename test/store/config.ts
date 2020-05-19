@@ -5,8 +5,8 @@ import { IDictionary } from "common-types";
 
 const defaultData = async () => ({});
 
-export const config = (data?: IDictionary | AsyncMockData) =>
-  ({
+export const config = (data?: IDictionary | AsyncMockData) => {
+  const cfg: IFiremodelConfig<IRootState> = {
     db: {
       mocking: true,
       mockAuth: {
@@ -20,4 +20,9 @@ export const config = (data?: IDictionary | AsyncMockData) =>
     auth: true,
 
     ...lifecycle
-  } as IFiremodelConfig<IRootState>);
+  };
+
+  return cfg;
+
+}
+ 

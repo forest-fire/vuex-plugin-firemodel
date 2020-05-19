@@ -4768,10 +4768,10 @@ firemock@^0.44.10, firemock@^0.44.9:
     lodash.set "^4.3.2"
     typed-conversions "^0.10.2"
 
-firemodel@^0.44.4:
-  version "0.44.4"
-  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.44.4.tgz#a4d30b857a00dc68c8224910e611a9ba090f40da"
-  integrity sha512-DkwtLvCETshQmBrAb3fdbcYrrgz/G+inIZjkGdsDbedh4fQM0lF5L0uujODToR1n7SDAPgULeUx1MDsRCzm3jQ==
+firemodel@^0.44.5:
+  version "0.44.5"
+  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.44.5.tgz#563e59b700f1d30e521d9c32766cf1e582a07a9d"
+  integrity sha512-z+AXNg0Z7zN7ymWUxQ2v5x32Ww385+awMOnGg8nnZ7uSgV7vnN7cOMi3DTyMy9wQarAW8YS4n87ssdbjguVbYQ==
   dependencies:
     "@forest-fire/abstracted-database" "^0.44.10"
     "@forest-fire/base-serializer" "^0.44.10"
