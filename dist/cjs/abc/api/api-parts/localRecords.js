@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.localRecords = void 0;
 const firemodel_1 = require("firemodel");
 const AbcApi_1 = require("../AbcApi");
 const index_1 = require("../../../index");

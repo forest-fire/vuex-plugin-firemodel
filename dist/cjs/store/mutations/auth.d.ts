@@ -1,5 +1,5 @@
 import { MutationTree } from "vuex";
-import { IFiremodelState } from "../..";
+import { IFiremodelState } from "../../private";
 /**
  * The **mutations** associated to the Firebase Auth API.
  */

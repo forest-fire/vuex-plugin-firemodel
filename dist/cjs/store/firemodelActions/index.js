@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.firemodelActions = void 0;
 const recordServerChanges_1 = require("./recordServerChanges");
 const watch_1 = require("./watch");
 const relationship_1 = require("./relationship");

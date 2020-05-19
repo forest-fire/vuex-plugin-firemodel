@@ -1,18 +1,17 @@
-import { IFiremodelConfig } from "../../src";
+import { IFiremodelConfig, AsyncMockData } from "../../src/private";
 import * as lifecycle from "./lifecycle";
-import { IRootState } from ".";
-import { IDictionary } from "firemock";
-import { AsyncMockData } from "firemock/dist/esnext/@types/config-types";
+import { IRootState } from "./index";
+import { IDictionary } from "common-types";
 
 const defaultData = async () => ({});
 
-export const config = (data?: IDictionary | AsyncMockData) =>
-  ({
+export const config = (data?: IDictionary | AsyncMockData) => {
+  const cfg: IFiremodelConfig<IRootState> = {
     db: {
       mocking: true,
       mockAuth: {
-        allowEmailLogins: true,
-        validEmailUsers: [{ email: "test@test.com", password: "foobar" }]
+        providers: ['emailPassword'],
+        users: [{ email: "test@test.com", password: "foobar" }]
       },
       mockData: data || defaultData || {}
     },
@@ -21,4 +20,9 @@ export const config = (data?: IDictionary | AsyncMockData) =>
     auth: true,
 
     ...lifecycle
-  } as IFiremodelConfig<IRootState>);
+  };
+
+  return cfg;
+
+}
+ 

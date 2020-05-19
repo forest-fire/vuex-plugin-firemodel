@@ -1,9 +1,6 @@
 import { Store } from "vuex";
-import { addNamespace } from "./shared/addNamespace";
-import { FmConfigAction } from "./types/actions";
-import { FmConfigMutation } from "./types/mutations/FmConfigMutation";
-import { IFiremodelConfig } from "./types/index";
-import { database } from "./store";
+import { addNamespace, FmConfigAction, FmConfigMutation, IFiremodelConfig, database } from "./private";
+import type { IClientConfig, IMockConfig } from "@forest-fire/types"
 
 /**
  * Based on the configuration passed in by the consuming app, core
@@ -11,11 +8,13 @@ import { database } from "./store";
  */
 export async function coreServices<T>(
   store: Store<T>,
-  config: IFiremodelConfig<T>
+  config?: IFiremodelConfig<T>
 ) {
   const starting: Promise<any>[] = [];
-  if (config.connect) {
-    await database(config.db);
+  if (config?.connect) {
+    if(config.db) {
+      await database(config.db as IClientConfig | IMockConfig);
+    } else 
     console.log("db connected");
 
     starting.push(
@@ -23,13 +22,13 @@ export async function coreServices<T>(
     );
   }
 
-  if (config.auth) {
+  if (config?.auth) {
     starting.push(
       store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config)
     );
   }
 
-  if (config.routeChanges) {
+  if (config?.routeChanges) {
     starting.push(
       store.dispatch(addNamespace(FmConfigAction.watchRouteChanges))
     );
@@ -38,6 +37,6 @@ export async function coreServices<T>(
 
   store.commit(addNamespace(FmConfigMutation.coreServicesStarted), {
     message: `all core firemodel plugin services started`,
-    config: config.db
+    config: config?.db
   });
 }

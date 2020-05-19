@@ -1,6 +1,5 @@
-import { AbcApi } from "../AbcApi";
 import { Model, List, Record, pk } from "firemodel";
-import { IDiscreteServerResults } from "../../../types";
+import { IDiscreteServerResults, AbcApi } from "../../../private";
 
 export async function serverRecords<T extends Model>(
   context: AbcApi<T>,

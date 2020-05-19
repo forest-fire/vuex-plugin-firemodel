@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.errorMutations = void 0;
 /**
  * The **mutations** associated to errors encountered during the
  * plugin's execution.

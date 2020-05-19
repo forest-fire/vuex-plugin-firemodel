@@ -1,16 +1,10 @@
 import { ActionTree } from "vuex";
-
-import { IFiremodelState, ISignOutPayload, IAuthProfile } from "../../index";
-import { database } from "../../shared/database";
-import { FireModelPluginError } from "../../errors/FiremodelPluginError";
-import {
-  ActionCodeSettings,
-  UserCredential,
-  AuthCredential
-} from "@firebase/auth-types";
 import { Record } from "firemodel";
-import { FireModelProxyError } from "firemodel/dist/cjs/errors";
-import { User } from "firemock";
+import { ActionCodeSettings,
+  UserCredential,
+  AuthCredential, User } from "@forest-fire/types";
+  
+import { IFiremodelState, ISignOutPayload, IAuthProfile, FireModelPluginError, database } from "../../private";
 
 /**
  * **authActions**
@@ -295,8 +289,8 @@ export const authActions = <T>() =>
 
         await auth.currentUser.reauthenticateWithCredential(credential);
       } catch (e) {
-        throw new FireModelProxyError(
-          e,
+        throw new FireModelPluginError(
+          e.message,
           "firemodelActions/auth.ts[reauthenticateWithCredential]"
         );
       }
@@ -310,7 +304,7 @@ export const authActions = <T>() =>
 
         await auth.currentUser?.linkWithCredential(credential);
       } catch (e) {
-        throw new FireModelProxyError(e, "linkWithCredential");
+        throw new FireModelPluginError(e.message, "linkWithCredential");
       }
     }
   } as ActionTree<IFiremodelState<T>, T>);

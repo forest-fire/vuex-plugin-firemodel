@@ -1,25 +1,20 @@
 import { FireModel, Record, List, Watch } from "firemodel";
 import { ActionTree } from "vuex";
 import {
-  IFmQueuedAction,
-  IFmLifecycleEvents,
-  IFmEventBase,
-  IFmLoginEventContext,
   IFiremodelConfig,
   IFiremodelState,
-  IFmUserChangeEventContext,
   IFmAuthenticatatedContext,
   IFmConnectedContext,
-  IFmRouteEventContext
-} from "../../types/index";
+  IFmRouteEventContext,
+  FmConfigMutation,
+  FmConfigAction,
+  FireModelPluginError,
+  database,
+  authChanged,
+  runQueue
+} from "../../private";
 
-import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
 import { configuration } from "../../index";
-import { FmConfigAction } from "../../types/actions/FmConfigActions";
-import { FireModelPluginError } from "../../errors/FiremodelPluginError";
-import { database } from "../../shared/database";
-import { authChanged } from "../../shared/authChanges";
-import { runQueue } from "../../shared/runQueue";
 
 /**
  * **pluginActions**

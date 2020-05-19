@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const __1 = require("../..");
+exports.getFromIndexedDb = void 0;
+const private_1 = require("../../../../private");
 async function getFromIndexedDb(dexieRecord, requestPks) {
-    if (!__1.AbcApi.indexedDbConnected) {
-        await __1.AbcApi.connectIndexedDb();
+    if (!private_1.AbcApi.indexedDbConnected) {
+        await private_1.AbcApi.connectIndexedDb();
     }
     const idxRecords = [];
     const waitFor = [];

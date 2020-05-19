@@ -1,4 +1,4 @@
-import { AbcApi } from "../api/AbcApi";
+import { AbcApi } from "../../private";
 /**
  * Constructs a `AbcApi` object instance for the given `Model`
  */

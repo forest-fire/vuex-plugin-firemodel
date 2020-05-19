@@ -1,21 +1,23 @@
+
+import { Store } from "vuex";
+import { FiremodelModule, database } from "./store";
+import { IClientConfig, IClientAuth } from "@forest-fire/types";
+import { DB, RealTimeClient } from "universal-fire"
+import { FireModel } from "firemodel";
+import { IDictionary } from "common-types";
+import copy from "fast-copy";
+
 import {
   IFiremodelConfig as IFiremodelPluginConfig,
   IFiremodelState,
   IFmQueuedAction,
-  FmCallback
-} from "./types";
-import { Store } from "vuex";
-import { FiremodelModule, database } from "./store";
-import { DB, IFirebaseClientConfig } from "abstracted-client";
-import { FmConfigMutation } from "./types/mutations/FmConfigMutation";
-import { FmConfigAction } from "./types/actions/FmConfigActions";
-import { FireModelPluginError } from "./errors/FiremodelPluginError";
-import { addNamespace } from "./shared/addNamespace";
-import { coreServices } from "./coreServices";
-import { FirebaseAuth } from "@firebase/auth-types";
-import { FireModel } from "firemodel";
-import { IDictionary } from "common-types";
-import copy from "fast-copy";
+  FmCallback,
+  FmConfigMutation,
+  FmConfigAction,
+  FireModelPluginError,
+  addNamespace,
+  coreServices
+} from "./private";
 
 export * from "./types";
 export * from "./firemodelMutations/index";
@@ -25,7 +27,7 @@ export * from "./auth/api";
 export * from "./abc/index";
 
 export let configuration: IFiremodelPluginConfig<any>;
-export let dbConfig: IFirebaseClientConfig;
+export let dbConfig: IClientConfig;
 export let firemodelVuex: Store<any>;
 let _store: Store<any>;
 export const setStore = <T>(store: Store<T>) => {
@@ -38,8 +40,8 @@ export function getStore<T = any>() {
   return _store as Store<T>;
 }
 
-let _db: DB;
-let _auth: FirebaseAuth;
+let _db: RealTimeClient;
+let _auth: IClientAuth;
 
 export async function getAuth() {
   if (!_auth) {
@@ -50,7 +52,7 @@ export async function getAuth() {
   return _auth;
 }
 
-export function setAuth(auth: FirebaseAuth) {
+export function setAuth(auth: IClientAuth) {
   _auth = auth;
 }
 

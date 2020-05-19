@@ -1,8 +1,7 @@
 import { Model, IPrimaryKey } from "firemodel";
-import { AbcApi } from "../abc/api/AbcApi";
-import { DB } from "abstracted-client";
-import { AbcResult } from "../abc";
+import { RealTimeClient } from "universal-fire";
 import { epochWithMilliseconds, IDictionary } from "common-types";
+import { AbcApi, AbcResult } from "../private";
 export interface IAbcApiConfig<T extends Model> {
     /**
      * indicates whether the Vuex store is storing a _list_
@@ -28,7 +27,7 @@ export interface IAbcApiConfig<T extends Model> {
      * option then it will rely on **Firemodel**'s _defaultDb_ being
      * set.
      */
-    db?: DB;
+    db?: RealTimeClient;
     /**
      * Firemodel typically determines the local path for you but
      * if you need to you can override this path a whatever you like.
@@ -57,9 +56,14 @@ export interface IAbcDiscreteRequest<T extends Model> extends IAbcRequest<T> {
     (pks: IPrimaryKey<T>[], options?: IAbcOptions<T>): Promise<AbcResult<T>>;
 }
 export declare type IAbcParam<T> = IPrimaryKey<T>[] | IAbcQueryRequest<T>;
+export interface IAbcQueryResults<T extends Model> {
+    queryDefn: IAbcQueryDefinition<T>;
+    dexieQuery: () => Promise<T[]>;
+    firemodelQuery: () => Promise<T[]>;
+}
 /** An **ABC** request for records using a Query Helper */
 export interface IAbcQueryRequest<T extends Model> {
-    (command: AbcRequestCommand, ctx: AbcApi<T>, options: IQueryOptions<T>): Promise<AbcResult<T>>;
+    (ctx: AbcApi<T>, options: IQueryOptions<T>): IAbcQueryResults<T>;
 }
 /**
  * Any valid ABC request including both Discrete and Query based requests
@@ -73,7 +77,7 @@ export declare type AbcRequestCommand = "get" | "load";
 export interface IQueryLocalResults<T, K = IDictionary> {
     records: T[];
     localPks: string[];
-    vuexPks: string[];
+    vuexPks?: string[];
     indexedDbPks: string[];
 }
 /**
@@ -176,12 +180,56 @@ export interface IAbcResultsMeta<T> {
  * Operation between two data sources (Firebase, IndexedDB, Vuex) to appropriatly syncronize them.
  */
 export declare enum DbSyncOperation {
+    /**
+     * IndexedDB was set from Firebase (this is a non dynamic
+     * path model and firebase fully replaced what was in indexedDB)
+     */
     ABC_FIREBASE_SET_INDEXED_DB = "ABC_FIREBASE_SET_INDEXED_DB",
+    /**
+     * IndexedDB was set from Firebase (this is a dynamic path model
+     * and firebase should only replace whats in indexedDB for the particular
+     * dynamic path segment, indexedDB maintains all data outside of the
+     * dynamic path segment)
+     *
+     * e.g. if you query firebase for all products of a particular store:
+     *
+     * ```typescript
+     * getProducts(all(), { offsets: { storeId: '1234' }});
+     * ```
+     * Whatever firebase says about store with id 1234 is correct and indexedDB
+     * replaces all records with storeId 1234 to the same as firebase. However,
+     * indexedDB retains all knowledge of products outside of storeId 1234.
+     */
     ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB = "ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB",
+    /**
+     * Firebase was merged with IndexedDB. This happens when querying firebase
+     * for a subset of a particular model (e.g., discrete request or _where_ clause;
+     * but not an _all_ clause). This results in the datasets from firebase and
+     * indexedDB being merged with firebase always winning any conflicts.
+     */
     ABC_FIREBASE_MERGE_INDEXED_DB = "ABC_FIREBASE_MERGE_INDEXED_DB",
+    /**
+     * Results from a query based GET where the underlying model does not have a
+     * dynamic path.
+     */
     ABC_INDEXED_DB_SET_VUEX = "ABC_INDEXED_DB_SET_VUEX",
+    /**
+     * Vuex was set from IndexedDB (this is a dynamic path model
+     * and IndexedDB should only replace whats in Vuex for the particular
+     * dynamic path segment, Vuex maintains all data outside of the
+     * dynamic path segment)
+     *
+     * e.g. if you query firebase for all products of a particular store:
+     *
+     * ```typescript
+     * getProducts(all(), { offsets: { storeId: '1234' }});
+     * ```
+     */
     ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX = "ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX",
-    ABC_INDEXED_DB_MERGE_VUEX = "ABC_INDEXED_DB_MERGE_VUEX"
+    ABC_INDEXED_DB_MERGE_VUEX = "ABC_INDEXED_DB_MERGE_VUEX",
+    ABC_FIREBASE_SET_VUEX = "ABC_FIREBASE_SET_VUEX",
+    ABC_FIREBASE_SET_DYNAMIC_PATH_VUEX = "ABC_FIREBASE_SET_DYNAMIC_PATH_VUEX",
+    ABC_FIREBASE_MERGE_VUEX = "ABC_FIREBASE_MERGE_VUEX"
 }
 export declare enum AbcMutation {
     /**
@@ -217,10 +265,6 @@ export declare enum AbcMutation {
      */
     ABC_FIREBASE_TO_VUEX_SET = "ABC_FIREBASE_TO_VUEX_UPDATE",
     /**
-     * The IndexedDB was updated from Firebase
-     */
-    ABC_FIREBASE_REFRESH_INDEXED_DB = "ABC_FIREBASE_REFRESH_INDEXED_DB",
-    /**
      * A Query was run against IndexedDB and it's results will be added/updated
      * into the current Vuex state (until/if the server provides an updated set of
      * records)
@@ -245,7 +289,7 @@ export declare enum AbcMutation {
      */
     ABC_PRUNE_STALE_VUEX_RECORDS = "ABC_PRUNE_STALE_VUEX_RECORDS"
 }
-export declare type IAbcMutation = keyof typeof AbcMutation;
+export declare type IAbcMutation = keyof typeof AbcMutation | keyof typeof DbSyncOperation;
 export declare enum AbcDataSource {
     vuex = "vuex",
     indexedDb = "indexedDb",

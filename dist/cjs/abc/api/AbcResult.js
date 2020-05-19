@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AbcResult = void 0;
 const firemodel_1 = require("firemodel");
 const typed_conversions_1 = require("typed-conversions");
-const errors_1 = require("../../errors");
+const private_1 = require("../../private");
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
  * respond with this class. The classes goal is to pass back not only
@@ -30,14 +31,12 @@ class AbcResult {
         if (hasDynamicProperties) {
             let localPathProps = firemodel_1.Record.compositeKey(obj._context.model.constructor, obj.serverRecords[0]);
             delete localPathProps.id;
-            // const where = Object.keys(localPathProps).reduce((agg, curr: keyof ICompositeKey<T> & string) => {
-            //   const value = typeof localPathProps[curr] === 'string' ? `"${localPathProps[curr]}"` : localPathProps[curr]
-            //   agg[curr].push(value);
-            //   return agg;
-            // }, {} as IDictionary);
-            console.log(obj._context.dexieModels, Object.keys(localPathProps), Object.values(localPathProps));
-            const queryResults = await obj._context.dexieTable.where(Object.keys(localPathProps))
-                .notEqual(Object.values(localPathProps)).toArray();
+            const propKeys = Object.keys(localPathProps);
+            const propValues = Object.values(localPathProps);
+            const whereClause = propKeys.length > 1 ? propKeys : propKeys.toString();
+            const notEqualVal = propValues.length > 1 ? propValues : propValues.toString();
+            const queryResults = await obj._context.dexieTable.where(whereClause)
+                .notEqual(notEqualVal).toArray();
             const localOffDynamicPath = typed_conversions_1.arrayToHash(queryResults);
             const server = typed_conversions_1.arrayToHash(obj.serverRecords || []);
             obj.records = typed_conversions_1.hashToArray(Object.assign(Object.assign({}, localOffDynamicPath), server));
@@ -50,6 +49,13 @@ class AbcResult {
         return obj;
     }
     /**
+     * Boolean flag to indicate that the result came from a query (instead of a discrete request)
+     */
+    get resultFromQuery() {
+        // TODO: we will add the correct option to the AbcResult constructor later
+        return true;
+    }
+    /**
      * All of the updated records in Vuex that originated from IndexedDB
      */
     get localRecords() {
@@ -60,7 +66,8 @@ class AbcResult {
      * All of the updated records in Vuex that originated from Firebase
      */
     get serverRecords() {
-        return this._results.server ? this._results.server.records : undefined;
+        var _a;
+        return ((_a = this._results.server) === null || _a === void 0 ? void 0 : _a.records) || undefined;
     }
     get cachePerformance() {
         return this._context.cachePerformance;
@@ -71,6 +78,9 @@ class AbcResult {
     get vuex() {
         return this._context.vuex;
     }
+    get dynamicPathComponents() {
+        return this._context.about.dynamicPathComponents;
+    }
     /**
      * The options passed in for the specific request which led to this result
      */
@@ -80,7 +90,7 @@ class AbcResult {
     /** the query definition used to arrive at these results */
     get queryDefn() {
         if (this._results.type !== "query") {
-            throw new errors_1.AbcError(`The attempt to reference the result's "queryDefn" is invalid in non-query based results!`, "not-allowed");
+            throw new private_1.AbcError(`The attempt to reference the result's "queryDefn" is invalid in non-query based results!`, "not-allowed");
         }
         return this._results.queryDefn;
     }

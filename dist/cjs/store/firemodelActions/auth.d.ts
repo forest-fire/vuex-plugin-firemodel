@@ -1,5 +1,5 @@
 import { ActionTree } from "vuex";
-import { IFiremodelState } from "../../index";
+import { IFiremodelState } from "../../private";
 /**
  * **authActions**
  *

@@ -1,4 +1,4 @@
-import { AbcApi } from "../..";
+import { AbcApi } from "../../../../private";
 export async function getFromIndexedDb(dexieRecord, requestPks) {
     if (!AbcApi.indexedDbConnected) {
         await AbcApi.connectIndexedDb();

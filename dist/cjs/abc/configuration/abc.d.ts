@@ -1,7 +1,5 @@
-import { AbcApi } from "../api/AbcApi";
-import { IAbcApiConfig } from "../../types/abc";
-import { IFmModelConstructor } from "../../types";
 import { Model } from "firemodel";
+import { AbcApi, IAbcApiConfig, IFmModelConstructor } from "../../private";
 /**
  * Returns an array of **AbcApi** API's: `get`, `load`, and `watch`
  */

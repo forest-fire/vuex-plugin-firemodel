@@ -1,5 +1,4 @@
-import { IPrimaryKey, DexieRecord, Model } from "../../../..";
-import { AbcApi } from "../..";
+import { IPrimaryKey, DexieRecord, Model, AbcApi } from "../../../../private";
 
 export async function getFromIndexedDb<T extends Model>(
   dexieRecord: DexieRecord<T>,

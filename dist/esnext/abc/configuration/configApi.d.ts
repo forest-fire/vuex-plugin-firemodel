@@ -1,4 +1,4 @@
-import { IAbcApiConfig } from '../../types/abc';
+import { IAbcApiConfig } from '../../private';
 /**
  * Allows consumers of this plugin to state the _default_ state of
  * their model's configuration. The normal defaults are:

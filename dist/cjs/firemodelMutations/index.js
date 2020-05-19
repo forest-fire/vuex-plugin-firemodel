@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.firemodelMutations = void 0;
 const addedLocally_1 = require("./addedLocally");
 const serverEvents_1 = require("./serverEvents");
 const serverRollbacks_1 = require("./serverRollbacks");

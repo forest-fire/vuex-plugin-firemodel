@@ -1,7 +1,7 @@
-import { ActionTree } from "vuex";
-import { IFiremodelState } from "../../index";
 import { FmEvents, IFmLocalRelationshipEvent } from "firemodel";
-import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
+import { ActionTree } from "vuex";
+
+import { IFiremodelState, FmCrudMutation } from "../../private";
 
 export const relationship = <T>() =>
   ({

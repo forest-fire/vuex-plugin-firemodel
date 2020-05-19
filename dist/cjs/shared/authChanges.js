@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.authChanged = void 0;
 const runQueue_1 = require("./runQueue");
 const __1 = require("..");
 let _uid;

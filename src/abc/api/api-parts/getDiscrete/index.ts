@@ -1,5 +1,5 @@
-export { getFromVuex } from './getFromVuex';
-export { getFromIndexedDb } from './getFromIndexedDb';
-export { getFromFirebase } from './getFromFirebase';
-export { mergeLocalRecords } from './mergeLocalRecords';
-export { saveToIndexedDb } from './saveToIndexedDb';
+export * from './getFromVuex';
+export * from './getFromIndexedDb';
+export * from './getFromFirebase';
+export * from './mergeLocalRecords';
+export * from './saveToIndexedDb';

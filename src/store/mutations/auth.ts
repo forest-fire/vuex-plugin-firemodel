@@ -1,9 +1,8 @@
 import { MutationTree } from "vuex";
-import { IFiremodelState } from "../..";
 import { UserCredential } from "@firebase/auth-types";
-import {  ICurrentUser } from "../../types";
 import Vue from "vue";
 import { IDictionary } from "common-types";
+import { IFiremodelState, ICurrentUser } from "../../private";
 
 /**
  * The **mutations** associated to the Firebase Auth API.

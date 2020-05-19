@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.mergeLocalRecords = void 0;
 const firemodel_1 = require("firemodel");
+const typed_conversions_1 = require("typed-conversions");
 function mergeLocalRecords(context, idxRecords, vuexRecords, requestPks) {
     const model = context.model.constructor;
     const vuexPks = vuexRecords.map(v => firemodel_1.Record.compositeKeyRef(model, v));
@@ -16,7 +18,7 @@ function mergeLocalRecords(context, idxRecords, vuexRecords, requestPks) {
         foundInVuex: vuexPks,
         foundExclusivelyInIndexedDb: idxPks.filter(i => !vuexPks.includes(i)),
         allFoundLocally: missingIds.length === 0 ? true : false,
-        records: Object.assign(Object.assign({}, vuexRecords), idxRecords),
+        records: typed_conversions_1.hashToArray(Object.assign(Object.assign({}, typed_conversions_1.arrayToHash(vuexRecords)), typed_conversions_1.arrayToHash(idxRecords))),
         missing: missingIds,
         modelConfig: context.config
     };

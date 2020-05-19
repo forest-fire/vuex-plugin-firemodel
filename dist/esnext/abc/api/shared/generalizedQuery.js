@@ -1,17 +1,14 @@
-import { AbcMutation, AbcStrategy, QueryType, DbSyncOperation } from "../../../types";
-import { getStore, AbcResult } from "../../..";
+import { getStore } from "../../../index";
 import get from "lodash.get";
 import { Record } from "firemodel";
-import { queryIndexedDb } from "./generalizedQuery/queryIndexedDb";
-import { queryFirebase } from "./generalizedQuery/queryFirebase";
-import { saveToIndexedDb } from "../api-parts/getDiscrete";
+import { AbcMutation, AbcStrategy, QueryType, DbSyncOperation, AbcResult, saveToIndexedDb, queryFirebase, queryIndexedDb } from "../../../private";
 /**
  * A generalized flow for queries; specific query helpers
  * should use this flow to standarize their approach.
  */
 export async function generalizedQuery(queryDefn, command, dexieQuery, firemodelQuery, ctx, options) {
-    const t0 = performance.now();
     const store = getStore();
+    const hasDynamicProperties = Record.dynamicPathProperties(ctx.model.constructor).length > 0;
     const vuexRecords = get(store.state, ctx.vuex.fullPath.replace(/\//g, "."), []);
     const vuexPks = vuexRecords.map(v => Record.compositeKeyRef(ctx.model.constructor, v));
     let local = {
@@ -20,19 +17,22 @@ export async function generalizedQuery(queryDefn, command, dexieQuery, firemodel
         indexedDbPks: [],
         localPks: vuexPks
     };
-    const t1 = performance.now();
-    const perfLocal = t1 - t0;
     if (command === "get" && ctx.config.useIndexedDb) {
         // Populate Vuex with what IndexedDB knows
-        local = await queryIndexedDb(ctx, dexieQuery, vuexPks);
+        local = await queryIndexedDb(ctx.model.constructor, dexieQuery);
         const localResults = await AbcResult.create(ctx, {
             type: "query",
             queryDefn,
             local,
             options
-        }, { perfLocal });
+        });
         if (local.records.length > 0) {
-            store.commit(`${ctx.vuex.moduleName}/${AbcMutation.ABC_LOCAL_QUERY_TO_VUEX}`, localResults);
+            if (hasDynamicProperties) {
+                store.commit(`${ctx.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX}`, localResults);
+            }
+            else {
+                store.commit(`${ctx.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`, localResults);
+            }
         }
         else {
             store.commit(`${ctx.vuex.moduleName}/${AbcMutation.ABC_LOCAL_QUERY_EMPTY}`, localResults);
@@ -40,29 +40,38 @@ export async function generalizedQuery(queryDefn, command, dexieQuery, firemodel
     }
     let server;
     if (command === "get" && options.strategy === AbcStrategy.getFirebase) {
+        console.log(`${ctx.model.constructor.name}:start`);
         // get data from firebase
-        queryFirebase(ctx, firemodelQuery, local).then(server => {
+        queryFirebase(ctx, firemodelQuery, local).then(async (server) => {
+            const serverResponse = await AbcResult.create(ctx, {
+                type: "query",
+                queryDefn,
+                local,
+                server,
+                options
+            });
             // cache results to IndexedDB
             if (ctx.config.useIndexedDb) {
-                saveToIndexedDb(server, ctx.dexieTable);
-                if (queryDefn.queryType === QueryType.all) {
-                    const hasDynamicProperties = Record.dynamicPathProperties(ctx.model.constructor).length > 0;
-                    // check if with dynamic path
-                    if (hasDynamicProperties) {
-                        /* store.commit(
-                          `${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB}`,
-                          server.records
-                        ); */
-                    }
-                    else {
-                        // else do a set
-                        store.commit(`${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, server.records);
+                if (hasDynamicProperties) {
+                    // check queryType to determine what to do
+                    switch (queryDefn.queryType) {
+                        case QueryType.since:
+                        case QueryType.where:
+                            saveToIndexedDb(server, ctx.dexieTable);
+                            store.commit(`${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`, serverResponse);
+                            break;
+                        case QueryType.all:
+                            saveToIndexedDb(server, ctx.dexieTable);
+                            store.commit(`${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB}`, serverResponse);
+                            break;
                     }
                 }
+                else {
+                    saveToIndexedDb(server, ctx.dexieTable);
+                    store.commit(`${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, serverResponse);
+                }
             }
-            // SET
-            // SET_DYNAMIC_PATH
-            // MERGE (Firebase wins)
+            store.commit(`${ctx.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`, serverResponse);
         });
         // PRUNE
         /* const removeFromIdx = local.indexedDbPks.filter(i => !serverPks.includes(i));
@@ -91,15 +100,13 @@ export async function generalizedQuery(queryDefn, command, dexieQuery, firemodel
           removeFromVuex
         }; */
     }
-    const t2 = performance.now();
-    const perfServer = t2 - t1;
-    const response = new AbcResult(ctx, {
+    const response = await AbcResult.create(ctx, {
         type: "query",
         queryDefn,
         local,
         server,
         options
-    }, { perfLocal, perfServer });
-    store.commit(`${ctx.vuex.moduleName}/${AbcMutation.ABC_FIREBASE_TO_VUEX_UPDATE}`, response);
+    });
+    store.commit(`${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`, response);
     return response;
 }

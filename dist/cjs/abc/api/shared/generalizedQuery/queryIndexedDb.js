@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.queryIndexedDb = void 0;
 const firemodel_1 = require("firemodel");
-async function queryIndexedDb(ctx, dexieQuery, vuexPks) {
+async function queryIndexedDb(modelConstructor, dexieQuery) {
     // Populate Vuex with what IndexedDB knows
     const idxRecords = await dexieQuery().catch(e => {
         throw e;
     });
-    const indexedDbPks = idxRecords.map(i => firemodel_1.Record.compositeKeyRef(ctx.model.constructor, i));
+    const indexedDbPks = idxRecords.map(i => firemodel_1.Record.compositeKeyRef(modelConstructor, i));
     const local = {
         records: idxRecords,
-        vuexPks,
         indexedDbPks,
-        localPks: Array.from(new Set(vuexPks.concat(...indexedDbPks)))
+        localPks: []
     };
     return local;
 }

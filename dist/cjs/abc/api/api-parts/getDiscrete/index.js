@@ -1,13 +1,18 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var getFromVuex_1 = require("./getFromVuex");
-exports.getFromVuex = getFromVuex_1.getFromVuex;
-var getFromIndexedDb_1 = require("./getFromIndexedDb");
-exports.getFromIndexedDb = getFromIndexedDb_1.getFromIndexedDb;
-var getFromFirebase_1 = require("./getFromFirebase");
-exports.getFromFirebase = getFromFirebase_1.getFromFirebase;
-var mergeLocalRecords_1 = require("./mergeLocalRecords");
-exports.mergeLocalRecords = mergeLocalRecords_1.mergeLocalRecords;
-var saveToIndexedDb_1 = require("./saveToIndexedDb");
-exports.saveToIndexedDb = saveToIndexedDb_1.saveToIndexedDb;
+__exportStar(require("./getFromVuex"), exports);
+__exportStar(require("./getFromIndexedDb"), exports);
+__exportStar(require("./getFromFirebase"), exports);
+__exportStar(require("./mergeLocalRecords"), exports);
+__exportStar(require("./saveToIndexedDb"), exports);
 //# sourceMappingURL=index.js.map

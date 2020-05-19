@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.recordConfirms = void 0;
 const firemodel_1 = require("firemodel");
 const determineLocalStateNode_1 = require("../../shared/determineLocalStateNode");
 exports.recordConfirms = () => ({

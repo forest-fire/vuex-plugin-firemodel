@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.addedLocally = void 0;
 const changeRoot_1 = require("../shared/changeRoot");
 const updateList_1 = require("../shared/updateList");
 const isRecord_1 = require("../shared/isRecord");

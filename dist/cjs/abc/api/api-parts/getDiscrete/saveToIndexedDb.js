@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.saveToIndexedDb = void 0;
 function saveToIndexedDb(server, dexieTable) {
     const waitFor = [];
     const now = new Date().getTime();
