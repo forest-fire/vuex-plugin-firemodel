@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.watch = void 0;
 const firemodel_1 = require("firemodel");
-const determineLocalStateNode_1 = require("../../shared/determineLocalStateNode");
+const private_1 = require("../../private");
 exports.watch = () => ({
     [firemodel_1.FmEvents.WATCHER_STARTING]({ commit }, payload) {
         commit("WATCHER_STARTING" /* watcherStarting */, payload);
@@ -26,7 +26,7 @@ exports.watch = () => ({
      */
     async [firemodel_1.FmEvents.WATCHER_SYNC]({ commit }, payload) {
         commit("WATCHER_MUTED" /* watcherMuted */, payload.watcherId);
-        commit(determineLocalStateNode_1.determineLocalStateNode(payload, "SERVER_STATE_SYNC" /* serverStateSync */), payload, { root: true });
+        commit(private_1.determineLocalStateNode(payload, "SERVER_STATE_SYNC" /* serverStateSync */), payload, { root: true });
         setTimeout(() => {
             commit("WATCHER_UNMUTED" /* watcherUnmuted */, payload.watcherId);
         }, 3000);

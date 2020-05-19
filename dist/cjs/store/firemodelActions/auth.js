@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authActions = void 0;
 const firemodel_1 = require("firemodel");
-const errors_1 = require("firemodel/dist/cjs/errors");
 const private_1 = require("../../private");
 /**
  * **authActions**
@@ -238,7 +237,7 @@ exports.authActions = () => ({
             await auth.currentUser.reauthenticateWithCredential(credential);
         }
         catch (e) {
-            throw new errors_1.FireModelProxyError(e, "firemodelActions/auth.ts[reauthenticateWithCredential]");
+            throw new private_1.FireModelPluginError(e.message, "firemodelActions/auth.ts[reauthenticateWithCredential]");
         }
     },
     async linkWithCredential({ commit }, { credential }) {
@@ -250,7 +249,7 @@ exports.authActions = () => ({
             await ((_a = auth.currentUser) === null || _a === void 0 ? void 0 : _a.linkWithCredential(credential));
         }
         catch (e) {
-            throw new errors_1.FireModelProxyError(e, "linkWithCredential");
+            throw new private_1.FireModelPluginError(e.message, "linkWithCredential");
         }
     }
 });

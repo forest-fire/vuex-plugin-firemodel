@@ -1,9 +1,7 @@
-import { Model, Record, ICompositeKey } from "firemodel";
-import { IAbcPostWatcher, IAbcResult } from "../../types";
-import { AbcApi } from "./AbcApi";
+import { Model, Record } from "firemodel";
 import { arrayToHash, hashToArray } from "typed-conversions";
-import { AbcError } from "../../errors";
 import { IDictionary } from "common-types";
+import { AbcApi, IAbcPostWatcher, IAbcResult, AbcError } from "../../private";
 
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will

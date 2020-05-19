@@ -1,6 +1,5 @@
 import { ActionTree } from "vuex";
 import { Record } from "firemodel";
-import { FireModelProxyError } from "firemodel";
 import { ActionCodeSettings,
   UserCredential,
   AuthCredential, User } from "@forest-fire/types";
@@ -290,8 +289,8 @@ export const authActions = <T>() =>
 
         await auth.currentUser.reauthenticateWithCredential(credential);
       } catch (e) {
-        throw new FireModelProxyError(
-          e,
+        throw new FireModelPluginError(
+          e.message,
           "firemodelActions/auth.ts[reauthenticateWithCredential]"
         );
       }
@@ -305,7 +304,7 @@ export const authActions = <T>() =>
 
         await auth.currentUser?.linkWithCredential(credential);
       } catch (e) {
-        throw new FireModelProxyError(e, "linkWithCredential");
+        throw new FireModelPluginError(e.message, "linkWithCredential");
       }
     }
   } as ActionTree<IFiremodelState<T>, T>);

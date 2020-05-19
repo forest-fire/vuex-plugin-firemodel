@@ -1,5 +1,6 @@
 import { Store } from "vuex";
 import { addNamespace, FmConfigAction, FmConfigMutation, IFiremodelConfig, database } from "./private";
+import type { IClientConfig, IMockConfig } from "@forest-fire/types"
 
 /**
  * Based on the configuration passed in by the consuming app, core
@@ -11,7 +12,9 @@ export async function coreServices<T>(
 ) {
   const starting: Promise<any>[] = [];
   if (config?.connect) {
-    await database(config?.db);
+    if(config.db) {
+      await database(config.db as IClientConfig | IMockConfig);
+    } else 
     console.log("db connected");
 
     starting.push(

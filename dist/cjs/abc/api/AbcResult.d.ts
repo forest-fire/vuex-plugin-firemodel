@@ -1,7 +1,6 @@
 import { Model } from "firemodel";
-import { IAbcPostWatcher, IAbcResult } from "../../types";
-import { AbcApi } from "./AbcApi";
 import { IDictionary } from "common-types";
+import { AbcApi, IAbcPostWatcher, IAbcResult } from "../../private";
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
  * respond with this class. The classes goal is to pass back not only
@@ -47,9 +46,9 @@ export declare class AbcResult<T extends Model> {
     /**
      * The options passed in for the specific request which led to this result
      */
-    get options(): import("../../types").IDiscreteOptions<T> | import("../../types").IQueryOptions<T>;
+    get options(): import("../../private").IDiscreteOptions<T> | import("../../private").IQueryOptions<T>;
     /** the query definition used to arrive at these results */
-    get queryDefn(): import("../../types").IAbcQueryDefinition<T>;
+    get queryDefn(): import("../../private").IAbcQueryDefinition<T>;
     /**
      * Runs a callback which filters down the set of results
      * which should be watched. This list is then filtered down

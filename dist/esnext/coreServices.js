@@ -6,8 +6,11 @@ import { addNamespace, FmConfigAction, database } from "./private";
 export async function coreServices(store, config) {
     const starting = [];
     if (config === null || config === void 0 ? void 0 : config.connect) {
-        await database(config === null || config === void 0 ? void 0 : config.db);
-        console.log("db connected");
+        if (config.db) {
+            await database(config.db);
+        }
+        else
+            console.log("db connected");
         starting.push(store.dispatch(addNamespace(FmConfigAction.connect), config.db));
     }
     if (config === null || config === void 0 ? void 0 : config.auth) {

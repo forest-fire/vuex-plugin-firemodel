@@ -2,7 +2,6 @@ import { DB, RealTimeClient } from "universal-fire";
 import { FireModel } from "firemodel";
 import { FireModelPluginError } from "../private";
 let _db;
-let _config;
 /**
  * connects to a Firebase DB unless already connected in which case it
  * it just hands back the existing connection.

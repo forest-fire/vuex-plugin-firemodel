@@ -17,10 +17,7 @@ exports.initialState = exports.setAuth = exports.getAuth = exports.getStore = ex
 const store_1 = require("./store");
 const firemodel_1 = require("firemodel");
 const fast_copy_1 = __importDefault(require("fast-copy"));
-const FmConfigActions_1 = require("./types/actions/FmConfigActions");
-const FiremodelPluginError_1 = require("./errors/FiremodelPluginError");
-const addNamespace_1 = require("./shared/addNamespace");
-const coreServices_1 = require("./coreServices");
+const private_1 = require("./private");
 __exportStar(require("./types"), exports);
 __exportStar(require("./firemodelMutations/index"), exports);
 __exportStar(require("firemodel"), exports);
@@ -61,17 +58,17 @@ const FiremodelPlugin = (config) => {
         firemodel_1.FireModel.dispatch = store.dispatch;
         store.subscribe((mutation, state) => {
             if (mutation.type === "route/ROUTE_CHANGED") {
-                store.dispatch(addNamespace_1.addNamespace(FmConfigActions_1.FmConfigAction.watchRouteChanges), Object.assign({}, mutation.payload));
+                store.dispatch(private_1.addNamespace(private_1.FmConfigAction.watchRouteChanges), Object.assign({}, mutation.payload));
             }
         });
         store.registerModule("@firemodel", store_1.FiremodelModule());
-        queueLifecycleEvents(store, config).then(() => coreServices_1.coreServices(store, Object.assign({ connect: true }, config)));
+        queueLifecycleEvents(store, config).then(() => private_1.coreServices(store, Object.assign({ connect: true }, config)));
     };
 };
 exports.default = FiremodelPlugin;
 async function queueLifecycleEvents(store, config) {
     if (!config) {
-        throw new FiremodelPluginError_1.FireModelPluginError(`There was no configuration sent into the FiremodelPlugin!`, "not-allowed");
+        throw new private_1.FireModelPluginError(`There was no configuration sent into the FiremodelPlugin!`, "not-allowed");
         return;
     }
     const iterable = [
@@ -87,7 +84,7 @@ async function queueLifecycleEvents(store, config) {
         const [name, event] = i;
         if (config[name]) {
             const cb = config[name];
-            store.commit(addNamespace_1.addNamespace("QUEUE_EVENT_HOOK" /* queueHook */), {
+            store.commit(private_1.addNamespace("QUEUE_EVENT_HOOK" /* queueHook */), {
                 on: event,
                 name: `lifecycle-event-${event}`,
                 cb

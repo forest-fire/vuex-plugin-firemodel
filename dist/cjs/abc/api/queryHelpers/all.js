@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.all = void 0;
-const types_1 = require("../../../types");
 const firemodel_1 = require("firemodel");
+const private_1 = require("../../../private");
 exports.all = function all(defn = {}) {
     return (ctx, options = {}) => {
-        defn = Object.assign(Object.assign({}, defn), { queryType: types_1.QueryType.all });
+        defn = Object.assign(Object.assign({}, defn), { queryType: private_1.QueryType.all });
         // The query to use for IndexedDB
         const dexieQuery = async () => {
             const recs = await ctx.dexieList.all();

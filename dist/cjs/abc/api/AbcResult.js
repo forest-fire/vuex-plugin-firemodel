@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbcResult = void 0;
 const firemodel_1 = require("firemodel");
 const typed_conversions_1 = require("typed-conversions");
-const errors_1 = require("../../errors");
+const private_1 = require("../../private");
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
  * respond with this class. The classes goal is to pass back not only
@@ -90,7 +90,7 @@ class AbcResult {
     /** the query definition used to arrive at these results */
     get queryDefn() {
         if (this._results.type !== "query") {
-            throw new errors_1.AbcError(`The attempt to reference the result's "queryDefn" is invalid in non-query based results!`, "not-allowed");
+            throw new private_1.AbcError(`The attempt to reference the result's "queryDefn" is invalid in non-query based results!`, "not-allowed");
         }
         return this._results.queryDefn;
     }

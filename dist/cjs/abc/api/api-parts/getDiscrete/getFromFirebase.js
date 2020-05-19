@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFromFirebase = void 0;
-const shared_1 = require("../../shared");
+const private_1 = require("../../../../private");
 async function getFromFirebase(ctx, requestIds) {
-    const server = await shared_1.serverRecords(ctx, requestIds, requestIds);
+    const server = await private_1.serverRecords(ctx, requestIds, requestIds);
     return server;
 }
 exports.getFromFirebase = getFromFirebase;

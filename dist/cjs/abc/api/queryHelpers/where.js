@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.where = void 0;
-const types_1 = require("../../../types");
 const firemodel_1 = require("firemodel");
+const private_1 = require("../../../private");
 /**
  * Offers a configuration to consumers of the standard _where_ clause that Firebase
  * provides and then provides an implementation that is aligned with the ABC `get`
  * and `load` endpoints.
  */
 exports.where = function where(defn) {
-    defn = Object.assign(Object.assign({}, defn), { queryType: types_1.QueryType.where });
+    defn = Object.assign(Object.assign({}, defn), { queryType: private_1.QueryType.where });
     return (ctx, options = {}) => {
         // The value and operation to be used
         const valueOp = defn.equals !== undefined

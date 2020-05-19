@@ -12,6 +12,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("firemodel"), exports);
 __exportStar(require("./types/index"), exports);
+__exportStar(require("./coreServices"), exports);
 __exportStar(require("./firemodelMutations/index"), exports);
 __exportStar(require("./store/index"), exports);
 __exportStar(require("./auth/api/index"), exports);

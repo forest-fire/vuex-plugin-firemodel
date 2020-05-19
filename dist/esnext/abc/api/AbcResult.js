@@ -1,6 +1,6 @@
 import { Record } from "firemodel";
 import { arrayToHash, hashToArray } from "typed-conversions";
-import { AbcError } from "../../errors";
+import { AbcError } from "../../private";
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
  * respond with this class. The classes goal is to pass back not only

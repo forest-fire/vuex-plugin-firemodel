@@ -4,7 +4,6 @@ import { IClientConfig, IMockConfig } from "@forest-fire/types";
 import { FireModelPluginError } from "../private";
 
 let _db: RealTimeClient;
-let _config: IClientConfig | IMockConfig;
 /**
  * connects to a Firebase DB unless already connected in which case it
  * it just hands back the existing connection.

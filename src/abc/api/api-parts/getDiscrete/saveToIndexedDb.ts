@@ -1,6 +1,6 @@
-import { IDiscreteServerResults, IQueryServerResults } from "../../../..";
 import { Model, IPrimaryKey } from "firemodel";
 import Dexie from "dexie";
+import { IDiscreteServerResults, IQueryServerResults } from "../../../../private";
 
 export function saveToIndexedDb<T extends Model>(
   server: IQueryServerResults<T> | IDiscreteServerResults<T>,

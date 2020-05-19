@@ -1,5 +1,5 @@
 import { Model, IPrimaryKey } from "firemodel";
-import {  RealTimeClient } from "universal-fire";
+import { RealTimeClient } from "universal-fire";
 import { epochWithMilliseconds , IDictionary} from "common-types";
 import { AbcApi, AbcResult } from "../private";
 

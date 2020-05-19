@@ -1,7 +1,6 @@
-import { AbcApi, IQueryLocalResults, IQueryServerResults } from "../../../../private";
-import { IGeneralizedQuery, findPk } from "..";
 import { Record, Model } from "firemodel";
 import { deepEqual } from "fast-equals";
+import { IGeneralizedQuery, findPk, AbcApi, IQueryLocalResults, IQueryServerResults } from "../../../../private";
 
 export async function queryFirebase<T extends Model>(
   ctx: AbcApi<T>,

@@ -1,9 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.serverRollbacks = void 0;
-const changeRoot_1 = require("../shared/changeRoot");
-const updateList_1 = require("../shared/updateList");
-const isRecord_1 = require("../shared/isRecord");
+const private_1 = require("../private");
 /**
  * **serverConfirms**
  *
@@ -22,27 +20,27 @@ function serverRollbacks(propOffset) {
         : propOffset;
     return {
         ["ROLLBACK_ADD" /* serverAddRollback */](state, payload) {
-            if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, payload.value, payload.localPath);
+            if (private_1.isRecord(state, payload)) {
+                private_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
-                updateList_1.updateList(state, offset, payload.value);
+                private_1.updateList(state, offset, payload.value);
             }
         },
         ["ROLLBACK_CHANGE" /* serverChangeRollback */](state, payload) {
-            if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, payload.value, payload.localPath);
+            if (private_1.isRecord(state, payload)) {
+                private_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
-                updateList_1.updateList(state, offset, payload.value);
+                private_1.updateList(state, offset, payload.value);
             }
         },
         ["ROLLBACK_REMOVE" /* serverRemoveRollback */](state, payload) {
-            if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, payload.value, payload.localPath);
+            if (private_1.isRecord(state, payload)) {
+                private_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
-                updateList_1.updateList(state, offset, payload.value);
+                private_1.updateList(state, offset, payload.value);
             }
         }
     };

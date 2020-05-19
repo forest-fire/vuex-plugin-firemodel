@@ -1,5 +1,6 @@
 export * from "firemodel";
 export * from "./types/index";
+export * from "./coreServices";
 export * from "./firemodelMutations/index";
 export * from "./store/index";
 export * from "./auth/api/index";

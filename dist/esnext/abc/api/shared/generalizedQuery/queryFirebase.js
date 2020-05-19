@@ -1,6 +1,6 @@
-import { findPk } from "..";
 import { Record } from "firemodel";
 import { deepEqual } from "fast-equals";
+import { findPk } from "../../../../private";
 export async function queryFirebase(ctx, firemodelQuery, local) {
     // get data from firebase
     const cacheHits = [];

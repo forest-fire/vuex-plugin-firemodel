@@ -1,6 +1,5 @@
-import { IGeneralizedQuery } from "..";
 import { Record } from "firemodel";
-import { IFmModelConstructor, IQueryLocalResults } from "../../../../private";
+import { IGeneralizedQuery, IFmModelConstructor, IQueryLocalResults } from "../../../../private";
 
 export async function queryIndexedDb<T>(
   modelConstructor: IFmModelConstructor<T>,
