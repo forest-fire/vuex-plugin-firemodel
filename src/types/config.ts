@@ -1,6 +1,6 @@
 import { IDictionary, epoch } from "common-types";
 import type { RealTimeClient, FirestoreClient } from "universal-fire";
-import { IClientConfig, IClientAuth, IMockConfig } from "@forest-fire/types"
+import type { IClientConfig, IClientAuth, IMockConfig } from "@forest-fire/types"
 import { Watch, Record, List, Model, IModelOptions } from "firemodel";
 import { Commit, Dispatch } from "vuex";
 import { IAuthPersistenceStrategy, IFiremodelState } from "../private";
