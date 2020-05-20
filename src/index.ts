@@ -2,7 +2,7 @@
 import { Store } from "vuex";
 import { FiremodelModule, database } from "./store";
 import { IClientConfig, IClientAuth } from "@forest-fire/types";
-import { DB, RealTimeClient } from "universal-fire"
+import type { RealTimeClient } from "universal-fire"
 import { FireModel } from "firemodel";
 import { IDictionary } from "common-types";
 import copy from "fast-copy";
