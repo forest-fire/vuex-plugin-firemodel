@@ -1,7 +1,7 @@
 import { IDictionary, epoch } from "common-types";
 import { DB } from "universal-fire";
-import { IClientConfig, IClientAuth } from "@forest-fire/types";
-import { Watch, Record, List, Model, IModelOptions, IMockConfig } from "firemodel";
+import { IClientConfig, IClientAuth, IMockConfig } from "@forest-fire/types";
+import { Watch, Record, List, Model, IModelOptions } from "firemodel";
 import { Commit, Dispatch } from "vuex";
 import { IAuthPersistenceStrategy, IFiremodelState } from "../private";
 export declare type AsyncMockData = () => Promise<IDictionary>;
