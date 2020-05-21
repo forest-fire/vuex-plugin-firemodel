@@ -1,5 +1,6 @@
-import { DB, RealTimeClient } from "universal-fire";
+// import { DB, RealTimeClient } from "universal-fire";
 import { FireModel } from "firemodel";
+import { RealTimeClient } from 'universal-fire';
 import { FireModelPluginError } from "../private";
 let _db;
 /**
@@ -8,7 +9,7 @@ let _db;
  */
 export async function database(config) {
     if (!_db) {
-        _db = await DB.connect(RealTimeClient, config);
+        _db = await RealTimeClient(config);
         FireModel.defaultDb = _db;
     }
     if (!_db) {
