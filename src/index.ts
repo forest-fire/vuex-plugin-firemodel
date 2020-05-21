@@ -1,8 +1,7 @@
 
 import { Store } from "vuex";
 import { FiremodelModule, database } from "./store";
-import { IClientConfig, IClientAuth } from "@forest-fire/types";
-import type { RealTimeClient } from "universal-fire"
+import type { IRealTimeClient, IClientConfig, IClientAuth } from "universal-fire"
 import { FireModel } from "firemodel";
 import { IDictionary } from "common-types";
 import copy from "fast-copy";
@@ -40,7 +39,7 @@ export function getStore<T = any>() {
   return _store as Store<T>;
 }
 
-let _db: RealTimeClient;
+let _db: IRealTimeClient;
 let _auth: IClientAuth;
 
 export async function getAuth() {

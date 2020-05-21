@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.database = void 0;
-const universal_fire_1 = require("universal-fire");
+// import { DB, RealTimeClient } from "universal-fire";
 const firemodel_1 = require("firemodel");
+const universal_fire_1 = require("universal-fire");
 const private_1 = require("../private");
 let _db;
 /**
@@ -11,7 +12,7 @@ let _db;
  */
 async function database(config) {
     if (!_db) {
-        _db = await universal_fire_1.DB.connect(universal_fire_1.RealTimeClient, config);
+        _db = await universal_fire_1.RealTimeClient(config);
         firemodel_1.FireModel.defaultDb = _db;
     }
     if (!_db) {

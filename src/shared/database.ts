@@ -1,16 +1,17 @@
-import { DB, RealTimeClient } from "universal-fire";
+// import { DB, RealTimeClient } from "universal-fire";
 import { FireModel } from "firemodel";
+import { IRealTimeClient, RealTimeClient } from 'universal-fire'
 import { IClientConfig, IMockConfig } from "@forest-fire/types";
 import { FireModelPluginError } from "../private";
 
-let _db: RealTimeClient;
+let _db: IRealTimeClient;
 /**
  * connects to a Firebase DB unless already connected in which case it
  * it just hands back the existing connection.
  */
 export async function database(config?: IClientConfig | IMockConfig) {
   if (!_db) {
-    _db = await DB.connect(RealTimeClient, config);
+    _db = await RealTimeClient(config);
     FireModel.defaultDb = _db;
   }
 
