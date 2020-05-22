@@ -165,7 +165,7 @@ export declare class AbcApi<T extends Model> {
     get config(): IAbcApiConfig<T>;
     get dexieModels(): {
         name: string;
-        schema: import("dexie").Dexie.TableSchema;
+        schema: import("dexie").TableSchema;
     }[];
     /**
      * Provides access to this Dexie **Table API**

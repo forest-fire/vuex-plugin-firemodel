@@ -984,7 +984,7 @@
     lodash.last "^3.0.0"
     typed-conversions "^0.10.2"
 
-"@forest-fire/real-time-db@^0.48.10", "@forest-fire/real-time-db@^0.48.11":
+"@forest-fire/real-time-db@^0.48.11":
   version "0.48.11"
   resolved "https://registry.yarnpkg.com/@forest-fire/real-time-db/-/real-time-db-0.48.11.tgz#15938ad02172389d2329eaaa41e15a34b80f48db"
   integrity sha512-dOsVRuRihdX2CuJEZdPHlJXdofxk2VQCp8rW5K5qZMcAQjWm5y67RW7d+QdfXzTnaLqE02iGrlgRWWkmkfW1kw==
@@ -997,7 +997,7 @@
     firemock "^0.48.11"
     typed-conversions "^0.10.2"
 
-"@forest-fire/serialized-query@^0.48.10", "@forest-fire/serialized-query@^0.48.11":
+"@forest-fire/serialized-query@^0.48.11":
   version "0.48.11"
   resolved "https://registry.yarnpkg.com/@forest-fire/serialized-query/-/serialized-query-0.48.11.tgz#e6175d9550a7265ff4458073d18ab6ee77aed070"
   integrity sha512-yNWPrpJBZJoNIqYAx9UEoTw2WSm8ujA4PuWFTM8ISMCfjR19JW2OkBTkPy+cGaY4FN31bHLQ3tPlBY9qPhcfPw==
@@ -3861,10 +3861,10 @@ detective-typescript@^5.1.1, detective-typescript@^5.8.0:
     node-source-walk "^4.2.0"
     typescript "^3.8.3"
 
-dexie@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/dexie/-/dexie-2.0.4.tgz#6027a5e05879424e8f9979d8c14e7420f27e3a11"
-  integrity sha512-aQ/s1U2wHxwBKRrt2Z/mwFNHMQWhESerFsMYzE+5P5OsIe5o1kgpFMWkzKTtkvkyyEni6mWr/T4HUJuY9xIHLA==
+dexie@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/dexie/-/dexie-3.0.1.tgz#faafeb94be0d5e18b25d700546a2c05725511cfc"
+  integrity sha512-/s4KzlaerQnCad/uY1ZNdFckTrbdMVhLlziYQzz62Ff9Ick1lHGomvTXNfwh4ApEZATyXRyVk5F6/y8UU84B0w==
 
 diacritics@^1.3.0:
   version "1.3.0"
@@ -4769,16 +4769,16 @@ firemock@^0.48.11, firemock@^0.48.5:
     lodash.set "^4.3.2"
     typed-conversions "^0.10.2"
 
-firemodel@^0.48.0:
-  version "0.48.0"
-  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.48.0.tgz#226ce13da2e58da7290e7873c7dd295c9864983d"
-  integrity sha512-caVQ1o0sSa4fatOo6ksAWSdpHrqzLlxhGGRSLStDKk+VtHu9qyuVvnhvx9Mj1mg7S6WPB2V2kbbXtoLKVK7HxQ==
+firemodel@^0.48.3:
+  version "0.48.3"
+  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.48.3.tgz#8d0a63a32b45d36bd13dca08df712af00e6b7e07"
+  integrity sha512-iE0cFwuL1CdvWy3NgEstRC74bbU7Tbxx4GWADOqXtDoiAYuscDUsLiUg4Vax0aolnnkrfc0rtuS0+RCZZ7UIwQ==
   dependencies:
-    "@forest-fire/real-time-db" "^0.48.10"
-    "@forest-fire/serialized-query" "^0.48.10"
+    "@forest-fire/real-time-db" "^0.48.11"
+    "@forest-fire/serialized-query" "^0.48.11"
     common-types "^1.14.3"
     date-fns "^2.14.0"
-    dexie "^2.0.4"
+    dexie "^3.0.1"
     fast-copy "2.0.5"
     fast-deep-equal "^3.1.1"
     firebase-key "^2.0.2"
@@ -4789,7 +4789,7 @@ firemodel@^0.48.0:
     reflect-metadata "^0.1.13"
     set-value "^3.0.0"
     typed-conversions "^0.10.2"
-    universal-fire "^0.48.10"
+    universal-fire "^0.48.11"
     wait-in-parallel "^1.2.6"
 
 flat@^4.1.0:
@@ -10017,7 +10017,7 @@ unique-string@^2.0.0:
   dependencies:
     crypto-random-string "^2.0.0"
 
-universal-fire@^0.48.10, universal-fire@^0.48.11:
+universal-fire@^0.48.11:
   version "0.48.11"
   resolved "https://registry.yarnpkg.com/universal-fire/-/universal-fire-0.48.11.tgz#83cc000d1b63345a5b7f00a4f3e6487b570fa8f5"
   integrity sha512-68yN5d/x3GfgpFMJXOaI+mZv9QMDq2gohiA5HuruPKWxoDxJQPmI2gvOQOMqg3o9ttPHeNTMtzi6dPcp45Dlqw==
