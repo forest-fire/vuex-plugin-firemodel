@@ -1,6 +1,6 @@
 import { Store } from "vuex";
 import { addNamespace, FmConfigAction, FmConfigMutation, IFiremodelConfig, database } from "./private";
-import type { IClientConfig, IMockConfig } from "@forest-fire/types"
+import type { IClientConfig, IMockConfig } from "universal-fire"
 
 /**
  * Based on the configuration passed in by the consuming app, core

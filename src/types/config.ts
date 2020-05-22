@@ -1,8 +1,5 @@
 import { IDictionary, epoch } from "common-types";
-// import type { RealTimeClient, FirestoreClient } from "universal-fire";
-import type { RealTimeClient } from '@forest-fire/real-time-client'
-import type { FirestoreClient } from '@forest-fire/firestore-client'
-import type { IClientConfig, IClientAuth, IMockConfig } from "@forest-fire/types"
+import type { IRealTimeClient, IFirestoreClient, IClientConfig, IClientAuth, IMockConfig } from 'universal-fire'
 import { Watch, Record, List, Model, IModelOptions } from "firemodel";
 import { Commit, Dispatch } from "vuex";
 import { IAuthPersistenceStrategy, IFiremodelState } from "../private";
@@ -51,7 +48,7 @@ export interface IFmConnectedContext<T> extends IFmEventBase<T> {
   /** the database configuration that was used */
   config: IFiremodelConfig<T>;
   /** the connection to the DB via `universal-fire` */
-  db: RealTimeClient | FirestoreClient;
+  db: IRealTimeClient | IFirestoreClient;
 }
 
 /** Context provided to a _logged in_ user */
