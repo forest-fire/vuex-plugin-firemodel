@@ -1,7 +1,6 @@
 // import { DB, RealTimeClient } from "universal-fire";
 import { FireModel } from "firemodel";
-import { IRealTimeClient, RealTimeClient } from 'universal-fire'
-import { IClientConfig, IMockConfig } from "@forest-fire/types";
+import { IRealTimeClient, RealTimeClient, IClientConfig, IMockConfig } from 'universal-fire'
 import { FireModelPluginError } from "../private";
 
 let _db: IRealTimeClient;
