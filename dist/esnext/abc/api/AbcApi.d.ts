@@ -158,7 +158,7 @@ export declare class AbcApi<T extends Model> {
     /**
      * Provides access to the Firebase database
      */
-    get db(): import("@forest-fire/real-time-client").RealTimeClient | import("@forest-fire/abstracted-database").AbstractedDatabase;
+    get db(): import("@forest-fire/abstracted-database").AbstractedDatabase | import("@forest-fire/real-time-client").RealTimeClient;
     /**
      * The **ABC** configuration for this instance's `Model`
      */
