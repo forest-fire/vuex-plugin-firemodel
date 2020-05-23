@@ -1,4 +1,4 @@
-import { IClientConfig, IMockConfig } from 'universal-fire';
+import { IClientConfig, IMockConfig } from '@forest-fire/types';
 /**
  * connects to a Firebase DB unless already connected in which case it
  * it just hands back the existing connection.

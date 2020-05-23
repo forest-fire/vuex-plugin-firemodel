@@ -1,6 +1,6 @@
+import { RealTimeClient } from 'universal-fire/dist/es/RealTimeClient';
 // import { DB, RealTimeClient } from "universal-fire";
 import { FireModel } from "firemodel";
-import { RealTimeClient } from 'universal-fire';
 import { FireModelPluginError } from "../private";
 let _db;
 /**
