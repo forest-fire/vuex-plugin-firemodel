@@ -1,4 +1,4 @@
-import { AsyncMockData, IFiremodelState, abc } from "../../src/private";
+import { AsyncMockData, IVuexState, abc } from "../../src/private";
 import Vuex, { Store } from "vuex";
 import companies, { ICompaniesState } from "./modules/companies";
 import products, { IProductsState } from "./modules/products";
@@ -19,7 +19,7 @@ export interface IRootState {
   products: IProductsState;
   userProfiles: IUserProfileState;
   companies: ICompaniesState;
-  ["@firemodel"]: IFiremodelState<IRootState>;
+  ["@firemodel"]: IVuexState<IRootState>;
 }
 
 export let store: Store<IRootState>;

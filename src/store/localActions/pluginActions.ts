@@ -4,10 +4,10 @@ import {
   FmConfigAction,
   FmConfigMutation,
   IFiremodelConfig,
-  IFiremodelState,
   IFmAuthenticatatedContext,
   IFmConnectedContext,
   IFmRouteEventContext,
+  IVuexState,
   authChanged,
   database,
   getPluginConfig,
@@ -49,7 +49,7 @@ export const pluginActions = <T>() =>
           db,
           config,
 
-          state: rootState as T & { "@firemodel": IFiremodelState<T> }
+          state: rootState as T & { "@firemodel": IVuexState<T> }
         };
 
         await runQueue(ctx, "connected");
@@ -107,7 +107,7 @@ export const pluginActions = <T>() =>
 
           dispatch,
           commit,
-          state: rootState as T & { "@firemodel": IFiremodelState<T> }
+          state: rootState as T & { "@firemodel": IVuexState<T> }
         };
 
         auth.onAuthStateChanged(authChanged(ctx));
@@ -139,7 +139,7 @@ export const pluginActions = <T>() =>
 
           dispatch,
           commit,
-          state: rootState as T & { "@firemodel": IFiremodelState<T> },
+          state: rootState as T & { "@firemodel": IVuexState<T> },
 
           leaving: payload.from.path,
           entering: payload.to.path,
@@ -148,4 +148,4 @@ export const pluginActions = <T>() =>
         await runQueue(ctx, "route-changed");
       }
     }
-  } as ActionTree<IFiremodelState<T>, T>);
+  } as ActionTree<IVuexState<T>, T>);

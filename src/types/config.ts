@@ -2,7 +2,7 @@ import { IDictionary, epoch } from "common-types";
 import type {IClientConfig, IClientAuth, IMockConfig, IAbstractedDatabase } from 'universal-fire'
 import { Watch, Record, List, Model, IModelOptions } from "firemodel";
 import { Commit, Dispatch } from "vuex";
-import { IAuthPersistenceStrategy, IFiremodelState } from "../private";
+import { IAuthPersistenceStrategy, IVuexState } from "../private";
 
 export type AsyncMockData = () => Promise<IDictionary>;
 
@@ -24,7 +24,7 @@ export interface IFmEventBase<T> {
   /** commit to Vuex for direct state change */
   commit: Commit;
   /** the root state of Vuex */
-  state: T & { "@firemodel": IFiremodelState<T> };
+  state: T & { "@firemodel": IVuexState<T> };
 }
 
 /**

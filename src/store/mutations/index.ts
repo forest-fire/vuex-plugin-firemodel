@@ -1,13 +1,13 @@
+import { IVuexState } from "../../private";
+import { MutationTree } from "vuex";
+import { authMutations } from "./auth";
+import { errorMutations } from "./errors";
 import { localConfig } from "./localConfig";
+import { localCrud } from "./localCrud";
+import { relationships } from "./relationships";
 import { serverConfirm } from "./serverConfirm";
 import { serverRollback } from "./serverRollback";
-import { authMutations } from "./auth";
 import { watcher } from "./watcher";
-import { localCrud } from "./localCrud";
-import { errorMutations } from "./errors";
-import { MutationTree } from "vuex";
-import { relationships } from "./relationships";
-import { IFiremodelState } from "../../private";
 
 /**
  * The **mutations** to the `@firemodel` state node; this state node will be off the
@@ -24,6 +24,6 @@ export const mutations = <T>() =>
     ...localCrud<T>(),
     ...relationships<T>(),
     ...watcher<T>()
-  } as MutationTree<IFiremodelState<T>>);
+  } as MutationTree<IVuexState<T>>);
 
 export type IFiremodelMutation = keyof typeof mutations;

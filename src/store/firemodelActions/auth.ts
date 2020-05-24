@@ -4,7 +4,7 @@ import {
   User,
   UserCredential
 } from "@forest-fire/types";
-import { FireModelPluginError, IAuthProfile, IFiremodelState, ISignOutPayload, database } from "../../private";
+import { FireModelPluginError, IAuthProfile, ISignOutPayload, IVuexState, database } from "../../private";
 
 import { ActionTree } from "vuex";
 import { Record } from "firemodel";
@@ -311,4 +311,4 @@ export const authActions = <T>() =>
         throw new FireModelPluginError(e.message, "linkWithCredential");
       }
     }
-  } as ActionTree<IFiremodelState<T>, T>);
+  } as ActionTree<IVuexState<T>, T>);

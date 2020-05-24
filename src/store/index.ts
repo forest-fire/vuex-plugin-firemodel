@@ -1,5 +1,5 @@
 import { ICompositeKey, Model } from "firemodel";
-import { IFiremodelState, IFmEventActions } from "../private";
+import { IFmEventActions, IVuexState } from "../private";
 
 import { Module } from "vuex";
 import { actions } from "./actions";
@@ -20,7 +20,7 @@ const mutationTypes = Object.keys(mutations).filter(
 );
 export type IFmConfigMutationTypes = keyof typeof mutationTypes;
 
-type FunctionToModule = <T>() => Module<IFiremodelState<T>, T>;
+type FunctionToModule = <T>() => Module<IVuexState<T>, T>;
 
 /**
  * The **Vuex** module that this plugin exports
