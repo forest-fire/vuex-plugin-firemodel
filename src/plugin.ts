@@ -5,7 +5,7 @@ import { IAbstractedDatabase } from "universal-fire";
 import type { Store } from "vuex";
 import copy from "fast-copy";
 
-export type IFiremodel<T> = { "@firemodel": IFiremodelState<T> };
+export type IFiremodelVuexModule<T> = { "@firemodel": IFiremodelState<T> };
 
 /**
  * **FiremodelPlugin**
@@ -22,7 +22,7 @@ export const FiremodelPlugin = <T>(
   /**
    * Specify the configuration of the "core services" this plugin provides 
    */
-  config: IFiremodelConfig<T & IFiremodel<T>>,
+  config: IFiremodelConfig<T & IFiremodelVuexModule<T>>,
 ) => {
   storeDatabase(db);
   storePluginConfig(config);
