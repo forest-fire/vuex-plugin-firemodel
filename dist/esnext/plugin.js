@@ -1,6 +1,7 @@
 import { FiremodelModule, FmConfigAction, addNamespace, coreServices, queueLifecycleEvents, setInitialState, storeDatabase, storePluginConfig } from "./private";
 import { FireModel } from "firemodel";
 import copy from "fast-copy";
+import { preserveStore } from "./state-mgmt";
 /**
  * **FiremodelPlugin**
  *
@@ -21,6 +22,7 @@ config) => {
     storePluginConfig(config);
     return (store) => {
         setInitialState(copy(store.state));
+        preserveStore(store);
         FireModel.dispatch = store.dispatch;
         store.subscribe((mutation, state) => {
             if (mutation.type === "route/ROUTE_CHANGED") {

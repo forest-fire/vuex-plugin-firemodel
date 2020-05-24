@@ -4,6 +4,7 @@ import { FireModel } from "firemodel";
 import { IAbstractedDatabase } from "universal-fire";
 import type { Store } from "vuex";
 import copy from "fast-copy";
+import { preserveStore } from "./state-mgmt";
 
 export type IFiremodelVuexModule<T> = { "@firemodel": IVuexState<T> };
 
@@ -29,6 +30,7 @@ export const FiremodelPlugin = <T>(
   type IRootState = T & { "@firemodel": IVuexState<T> };
   return (store: Store<IRootState>) => {
     setInitialState(copy( store.state ));
+    preserveStore(store)
     FireModel.dispatch = store.dispatch;
 
     store.subscribe((mutation, state) => {

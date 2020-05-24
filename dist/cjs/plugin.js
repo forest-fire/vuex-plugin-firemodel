@@ -7,6 +7,7 @@ exports.FiremodelPlugin = void 0;
 const private_1 = require("./private");
 const firemodel_1 = require("firemodel");
 const fast_copy_1 = __importDefault(require("fast-copy"));
+const state_mgmt_1 = require("./state-mgmt");
 /**
  * **FiremodelPlugin**
  *
@@ -27,6 +28,7 @@ config) => {
     private_1.storePluginConfig(config);
     return (store) => {
         private_1.setInitialState(fast_copy_1.default(store.state));
+        state_mgmt_1.preserveStore(store);
         firemodel_1.FireModel.dispatch = store.dispatch;
         store.subscribe((mutation, state) => {
             if (mutation.type === "route/ROUTE_CHANGED") {
