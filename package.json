@@ -1,6 +1,6 @@
 {
   "name": "vuex-plugin-firemodel",
-  "version": "1.0.0-beta.107",
+  "version": "1.0.0-beta.108",
   "description": "A Vuex plugin which reponds to all FireModel actions as well as providing mutations which can be imported by your state tree.",
   "files": [
     "dist"
@@ -37,7 +37,7 @@
   },
   "homepage": "https://vuex.firemodel.info",
   "dependencies": {
-    "@forest-fire/types": "^0.48.17",
+    "@forest-fire/types": "^0.49.0",
     "common-types": "^1.14.3",
     "fast-copy": "^2.0.4",
     "fast-equals": "^2.0.0",
@@ -47,7 +47,7 @@
     "lodash.set": "^4.3.2",
     "stacktrace-js": "^2.0.2",
     "typed-conversions": "^0.10.2",
-    "universal-fire": "^0.48.18",
+    "universal-fire": "^0.49.4",
     "vuex": "^3.4.0"
   },
   "devDependencies": {
