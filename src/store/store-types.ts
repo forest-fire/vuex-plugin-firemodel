@@ -10,12 +10,10 @@ export function generateLocalId<T = Model>(
   return action;
 }
 
-export { database } from "../state-mgmt/database";
-
-const mutationTypes = Object.keys(mutations()).filter(
-  i => typeof i !== "function"
-);
-export type IFmConfigMutationTypes = keyof typeof mutationTypes;
+// const mutationTypes = Object.keys(mutations).filter(
+//   i => typeof i !== "function"
+// );
+// export type IFmConfigMutationTypes = keyof typeof mutationTypes;
 
 type FunctionToModule = <T>() => Module<IVuexState<T>, T>;
 
