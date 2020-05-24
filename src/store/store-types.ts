@@ -12,7 +12,7 @@ export function generateLocalId<T = Model>(
 
 export { database } from "../state-mgmt/database";
 
-const mutationTypes = Object.keys(mutations).filter(
+const mutationTypes = Object.keys(mutations()).filter(
   i => typeof i !== "function"
 );
 export type IFmConfigMutationTypes = keyof typeof mutationTypes;

@@ -8,7 +8,7 @@ function generateLocalId(compositeKey, action) {
 exports.generateLocalId = generateLocalId;
 var database_1 = require("../state-mgmt/database");
 Object.defineProperty(exports, "database", { enumerable: true, get: function () { return database_1.database; } });
-const mutationTypes = Object.keys(private_1.mutations).filter(i => typeof i !== "function");
+const mutationTypes = Object.keys(private_1.mutations()).filter(i => typeof i !== "function");
 /**
  * The **Vuex** module that this plugin exports
  */
