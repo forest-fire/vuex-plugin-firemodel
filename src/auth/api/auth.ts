@@ -4,16 +4,17 @@
  * used means to achieve **Firebase** _auth_ functions
  */
 
-import { getStore, getAuth } from "../../index";
 import {
   ActionCodeSettings,
-  UserCredential,
+  AuthCredential,
   IdTokenResult,
-  AuthCredential
+  UserCredential
 } from "@firebase/auth-types";
 import { IAuthProfile, IFiremodelState } from "../../types";
-import { IModelConstructor } from "firemodel";
+import { getAuth, getStore } from "../../private";
+
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
+import { IModelConstructor } from "firemodel";
 
 /**
  * Log into the Firebase AUTH sytem using email/password. If successful it returns

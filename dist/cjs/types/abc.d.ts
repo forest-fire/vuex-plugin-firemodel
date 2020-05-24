@@ -1,5 +1,5 @@
 import { Model, IPrimaryKey } from "firemodel";
-import type { IRealTimeClient } from "universal-fire";
+import type { IAbstractedDatabase } from "universal-fire";
 import { epochWithMilliseconds, IDictionary } from "common-types";
 import { AbcApi, AbcResult } from "../private";
 export interface IAbcApiConfig<T extends Model> {
@@ -27,7 +27,7 @@ export interface IAbcApiConfig<T extends Model> {
      * option then it will rely on **Firemodel**'s _defaultDb_ being
      * set.
      */
-    db?: IRealTimeClient;
+    db?: IAbstractedDatabase;
     /**
      * Firemodel typically determines the local path for you but
      * if you need to you can override this path a whatever you like.

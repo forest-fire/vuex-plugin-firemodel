@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authChanged = void 0;
+const private_1 = require("../private");
 const runQueue_1 = require("./runQueue");
-const __1 = require("..");
 let _uid;
 let _isAnonymous;
 exports.authChanged = (context) => async (user) => {
@@ -33,9 +33,8 @@ exports.authChanged = (context) => async (user) => {
         context.commit("USER_LOGGED_OUT" /* userLoggedOut */, extractUserInfo(user));
         await runQueue_1.runQueue(Object.assign(Object.assign({}, context), { isLoggedIn: false, isAnonymous: false, emailVerified: false }), "logged-out");
         console.log("finished onLogout queue");
-        if (__1.configuration.auth &&
-            typeof __1.configuration.auth === "object" &&
-            __1.configuration.auth.anonymous) {
+        const config = private_1.getPluginConfig();
+        if ((config === null || config === void 0 ? void 0 : config.auth) && typeof (config === null || config === void 0 ? void 0 : config.auth) === 'object' && (config === null || config === void 0 ? void 0 : config.auth.anonymous)) {
             console.info("logging in as a anonymous user (momentarily)");
             // async but we don't need to wait for it
             context.auth.signInAnonymously();

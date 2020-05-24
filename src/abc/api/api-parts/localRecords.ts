@@ -1,14 +1,15 @@
-import { Model, Record, IPrimaryKey } from "firemodel";
 import {
-  IAbcOptions,
-  IAbcDiscreteRequest,
   AbcRequestCommand,
+  IAbcDiscreteRequest,
+  IAbcOptions,
   IDiscreteLocalResults,
   IDiscreteOptions
 } from "../../../types";
+import { IPrimaryKey, Model, Record } from "firemodel";
+
 import { AbcApi } from "../AbcApi";
-import { getStore } from "../../../index";
 import get from "lodash.get";
+import { getStore } from "../../../private";
 
 /**
  * For a discrete set of primary keys, get's all knowledge of these locally. This means

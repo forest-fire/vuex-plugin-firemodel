@@ -1,20 +1,21 @@
-import { FireModel, Record, List, Watch } from "firemodel";
-import { ActionTree } from "vuex";
+import { FireModel, List, Record, Watch } from "firemodel";
 import {
+  FireModelPluginError,
+  FmConfigAction,
+  FmConfigMutation,
   IFiremodelConfig,
   IFiremodelState,
   IFmAuthenticatatedContext,
   IFmConnectedContext,
   IFmRouteEventContext,
-  FmConfigMutation,
-  FmConfigAction,
-  FireModelPluginError,
-  database,
   authChanged,
+  database,
+  getPluginConfig,
   runQueue
 } from "../../private";
 
-import { configuration } from "../../index";
+import { ActionTree } from "vuex";
+import { FirebaseAuth } from "@forest-fire/types";
 
 /**
  * **pluginActions**
@@ -37,7 +38,7 @@ export const pluginActions = <T>() =>
         );
       }
       try {
-        const db = await database(config);
+        const db = await database();
         FireModel.defaultDb = db;
         const ctx: IFmConnectedContext<T> = {
           Watch,
@@ -70,8 +71,8 @@ export const pluginActions = <T>() =>
      */
     async [FmConfigAction.anonymousLogin](store) {
       const { commit, rootState } = store;
-      const db = await database();
-      const auth = await db.auth();
+      const db = database();
+      const auth = await db.auth() as FirebaseAuth;
 
       if (auth.currentUser && !auth.currentUser.isAnonymous) {
         const anon = await auth.signInAnonymously();
@@ -92,8 +93,8 @@ export const pluginActions = <T>() =>
       const { commit, rootState, dispatch } = store;
 
       try {
-        const db = await database();
-        const auth = await db.auth();
+        const db = database();
+        const auth = await db.auth() as FirebaseAuth;
         FireModel.defaultDb = db;
 
         const ctx: IFmAuthenticatatedContext<T> = {
@@ -130,7 +131,7 @@ export const pluginActions = <T>() =>
       { dispatch, commit, rootState },
       payload
     ) {
-      if (configuration.onRouteChange) {
+      if (getPluginConfig().onRouteChange) {
         const ctx: IFmRouteEventContext<T> = {
           Watch,
           Record,

@@ -1,9 +1,10 @@
 import { ICompositeKey, Model } from "firemodel";
+import { IFiremodelState, IFmEventActions } from "../private";
+
 import { Module } from "vuex";
-import { IFmEventActions, IFiremodelState } from "../private";
-import { state } from "./state";
-import { mutations } from "./mutations/index";
 import { actions } from "./actions";
+import { mutations } from "./mutations/index";
+import { state } from "./state";
 
 export function generateLocalId<T = Model>(
   compositeKey: ICompositeKey<T>,
@@ -12,7 +13,7 @@ export function generateLocalId<T = Model>(
   return action;
 }
 
-export { database } from "../shared/database";
+export { database } from "../state-mgmt/database";
 
 const mutationTypes = Object.keys(mutations).filter(
   i => typeof i !== "function"

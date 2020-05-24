@@ -1,5 +1,5 @@
 import { IDictionary, epoch } from "common-types";
-import type { IRealTimeClient, IFirestoreClient, IClientConfig, IClientAuth, IMockConfig } from 'universal-fire';
+import type { IClientConfig, IClientAuth, IMockConfig, IAbstractedDatabase } from 'universal-fire';
 import { Watch, Record, List, Model, IModelOptions } from "firemodel";
 import { Commit, Dispatch } from "vuex";
 import { IAuthPersistenceStrategy, IFiremodelState } from "../private";
@@ -37,7 +37,7 @@ export interface IFmConnectedContext<T> extends IFmEventBase<T> {
     /** the database configuration that was used */
     config: IFiremodelConfig<T>;
     /** the connection to the DB via `universal-fire` */
-    db: IRealTimeClient | IFirestoreClient;
+    db: IAbstractedDatabase;
 }
 /** Context provided to a _logged in_ user */
 export interface IFmLoginEventContext<T> extends IFmEventBase<T>, IFmConnectedContext<T>, IFmAuthenticatatedContext<T> {

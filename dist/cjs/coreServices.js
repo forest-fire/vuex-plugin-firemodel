@@ -7,25 +7,29 @@ const private_1 = require("./private");
  * services will be started by firing off the appropriate Vuex _action_.
  */
 async function coreServices(store, config) {
+    const db = private_1.database();
     const starting = [];
+    // CONNECT
     if (config === null || config === void 0 ? void 0 : config.connect) {
-        if (config.db) {
-            await private_1.database(config.db);
+        if (!db.isConnected) {
+            await db.connect();
         }
-        else
-            console.log("db connected");
+        // run connect action
         starting.push(store.dispatch(private_1.addNamespace(private_1.FmConfigAction.connect), config.db));
     }
+    // AUTH
     if (config === null || config === void 0 ? void 0 : config.auth) {
+        // run auth action
         starting.push(store.dispatch(private_1.addNamespace(private_1.FmConfigAction.firebaseAuth), config));
     }
     if (config === null || config === void 0 ? void 0 : config.routeChanges) {
+        // run routeChanges action
         starting.push(store.dispatch(private_1.addNamespace(private_1.FmConfigAction.watchRouteChanges)));
     }
     await Promise.all(starting);
     store.commit(private_1.addNamespace("CORE_SERVICES_STARTED" /* coreServicesStarted */), {
         message: `all core firemodel plugin services started`,
-        config: config === null || config === void 0 ? void 0 : config.db
+        config: db.config
     });
 }
 exports.coreServices = coreServices;

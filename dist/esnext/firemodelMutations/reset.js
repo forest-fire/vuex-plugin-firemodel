@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { initialState } from "..";
+import { getInitialState } from "../private";
 export function reset(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {
@@ -9,7 +9,7 @@ export function reset(propOffset) {
             }
             else {
                 // TODO: make this reset to "default state" not empty state
-                return Object.keys(state).forEach(p => Vue.set(state, p, initialState[mod][p]));
+                return Object.keys(state).forEach(p => Vue.set(state, p, getInitialState()[mod][p]));
             }
         }
     };

@@ -1,12 +1,11 @@
-import { List, Model, PropType, IComparisonOperator } from "firemodel";
-
 import {
   AbcApi,
-  QueryType, IAbcQueryHelper,
-  IQueryOptions,
+  IAbcQueryHelper,
   IAbcWhereQueryDefinition,
+  IQueryOptions,
+  QueryType,
 } from "../../../private";
-import { getStore } from '../../../index'
+import { IComparisonOperator, List, Model, PropType } from "firemodel";
 
 /**
  * Offers a configuration to consumers of the standard _where_ clause that Firebase

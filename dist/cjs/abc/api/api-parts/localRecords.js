@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.localRecords = void 0;
 const firemodel_1 = require("firemodel");
 const AbcApi_1 = require("../AbcApi");
-const index_1 = require("../../../index");
 const lodash_get_1 = __importDefault(require("lodash.get"));
+const private_1 = require("../../../private");
 /**
  * For a discrete set of primary keys, get's all knowledge of these locally. This means
  * at least Vuex but also IndexedDB if the model is configured for it.
@@ -18,7 +18,7 @@ const lodash_get_1 = __importDefault(require("lodash.get"));
  */
 async function localRecords(command, requestPks, options, context) {
     const idxRecords = [];
-    const store = index_1.getStore();
+    const store = private_1.getStore();
     const moduleIsList = context.about.config.isList;
     const data = lodash_get_1.default(store.state, context.vuex.fullPath.replace(/\//g, "."), []);
     const vuexRecords = moduleIsList ? data : [data];

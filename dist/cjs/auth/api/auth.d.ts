@@ -3,7 +3,7 @@
  * which Firemodel provides but are type-safe and often are a more easily
  * used means to achieve **Firebase** _auth_ functions
  */
-import { ActionCodeSettings, UserCredential, IdTokenResult, AuthCredential } from "@firebase/auth-types";
+import { ActionCodeSettings, AuthCredential, IdTokenResult, UserCredential } from "@firebase/auth-types";
 import { IAuthProfile } from "../../types";
 import { IModelConstructor } from "firemodel";
 /**

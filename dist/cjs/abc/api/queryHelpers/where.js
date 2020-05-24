@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.where = void 0;
-const firemodel_1 = require("firemodel");
 const private_1 = require("../../../private");
+const firemodel_1 = require("firemodel");
 /**
  * Offers a configuration to consumers of the standard _where_ clause that Firebase
  * provides and then provides an implementation that is aligned with the ABC `get`

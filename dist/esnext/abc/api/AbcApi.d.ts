@@ -1,5 +1,5 @@
-import { Model, IFmModelMeta, DexieDb, IPrimaryKey } from "firemodel";
-import { IAbcApiConfig, IAbcOptions, IAbcParam, AbcResult, IFmModelConstructor } from "../../private";
+import { AbcResult, IAbcApiConfig, IAbcOptions, IAbcParam, IFmModelConstructor } from "../../private";
+import { DexieDb, IFmModelMeta, IPrimaryKey, Model } from "firemodel";
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
  * including meta-data properties too.
@@ -158,7 +158,7 @@ export declare class AbcApi<T extends Model> {
     /**
      * Provides access to the Firebase database
      */
-    get db(): import("@forest-fire/abstracted-database").AbstractedDatabase | import("@forest-fire/real-time-client").RealTimeClient;
+    get db(): import("@forest-fire/abstracted-database").AbstractedDatabase;
     /**
      * The **ABC** configuration for this instance's `Model`
      */

@@ -1,13 +1,14 @@
 import {
   FmConfigMutation,
-  IFmAuthenticatatedContext,
   ICurrentUser,
+  IFmAuthenticatatedContext,
   IFmLoginEventContext,
-  IFmLogoutEventContext
-} from "../types/index";
+  IFmLogoutEventContext,
+  getPluginConfig
+} from "../private";
+
 import { User } from "@firebase/auth-types";
 import { runQueue } from "./runQueue";
-import { configuration } from "..";
 
 let _uid: string;
 let _isAnonymous: boolean;
@@ -68,11 +69,9 @@ export const authChanged = <T>(context: IFmAuthenticatatedContext<T>) => async (
     );
     console.log("finished onLogout queue");
 
-    if (
-      configuration.auth &&
-      typeof configuration.auth === "object" &&
-      configuration.auth.anonymous
-    ) {
+    const config = getPluginConfig();
+
+    if(config?.auth && typeof config?.auth === 'object' && config?.auth.anonymous) {
       console.info("logging in as a anonymous user (momentarily)");
       // async but we don't need to wait for it
       context.auth.signInAnonymously();

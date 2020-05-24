@@ -15,7 +15,9 @@
     "docs": "vuepress dev docs",
     "build": "yarn tsc -P tsconfig.esnext.json && yarn tsc -P tsconfig.cjs.json",
     "watch": "yarn tsc --watch -P tsconfig.json",
-    "build:docs": "vuepress build docs"
+    "autoindex": "yarn do autoindex",
+    "build:docs": "vuepress build docs",
+    "circular": "yarn madge src --circular"
   },
   "repository": {
     "type": "git",
@@ -35,6 +37,7 @@
   },
   "homepage": "https://vuex.firemodel.info",
   "dependencies": {
+    "@forest-fire/types": "^0.48.17",
     "common-types": "^1.14.3",
     "fast-copy": "^2.0.4",
     "fast-equals": "^2.0.0",
@@ -44,11 +47,10 @@
     "lodash.set": "^4.3.2",
     "stacktrace-js": "^2.0.2",
     "typed-conversions": "^0.10.2",
-    "universal-fire": "^0.48.14",
+    "universal-fire": "^0.48.18",
     "vuex": "^3.4.0"
   },
   "devDependencies": {
-    "@forest-fire/types": "^0.48.7",
     "@types/chai": "^4.2.11",
     "@types/js-cookie": "^2.2.6",
     "@types/lodash.get": "^4.4.6",
@@ -60,11 +62,11 @@
     "@vuepress/plugin-pwa": "^1.5.0",
     "async-shelljs": "^0.1.4",
     "chai": "^4.2.0",
-    "do-devops": "^0.3.6",
+    "do-devops": "^0.3.7",
     "eslint-plugin-vue": "^6.2.2",
     "fake-indexeddb": "^3.0.0",
     "madge": "^3.9.0",
-    "mocha": "^6.2.2",
+    "mocha": "^7.2.0",
     "rimraf": "^3.0.0",
     "ts-node": "^8.10.1",
     "tslint": "^6.1.2",

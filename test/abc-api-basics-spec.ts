@@ -1,8 +1,9 @@
-import { expect } from "chai";
-import { AbcApi, abc, since } from "../src/private";
-import { Person } from "./models/Person";
-import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
+import { AbcApi, abc } from "../src/private";
+
 import { Company } from "./models/Company";
+import { Person } from "./models/Person";
+import { expect } from "chai";
+import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
 
 describe("ABC API Basics => ", () => {
   beforeEach(async () => {

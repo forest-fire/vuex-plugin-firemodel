@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FiremodelModule = exports.generateLocalId = void 0;
-const state_1 = require("./state");
-const index_1 = require("./mutations/index");
 const actions_1 = require("./actions");
+const index_1 = require("./mutations/index");
+const state_1 = require("./state");
 function generateLocalId(compositeKey, action) {
     return action;
 }
 exports.generateLocalId = generateLocalId;
-var database_1 = require("../shared/database");
+var database_1 = require("../state-mgmt/database");
 Object.defineProperty(exports, "database", { enumerable: true, get: function () { return database_1.database; } });
 const mutationTypes = Object.keys(index_1.mutations).filter(i => typeof i !== "function");
 /**

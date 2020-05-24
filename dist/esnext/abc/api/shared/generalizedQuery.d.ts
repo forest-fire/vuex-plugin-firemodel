@@ -1,5 +1,5 @@
+import { AbcApi, AbcRequestCommand, AbcResult, IAbcOptions, IAbcQueryDefinition } from "../../../private";
 import { Model } from "firemodel";
-import { AbcRequestCommand, IAbcQueryDefinition, IAbcOptions, AbcApi, AbcResult } from "../../../private";
 export interface IGeneralizedQuery<T extends Model> {
     (): Promise<T[]>;
 }
