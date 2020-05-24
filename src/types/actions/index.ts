@@ -1,7 +1,12 @@
-import { FmConfigAction } from "./FmConfigActions";
-import { FmEvents } from "firemodel";
-export * from "./FmConfigActions";
+// #autoindex:named
 
-export type IFmConfigActions = keyof typeof FmConfigAction;
-export type IFmCrudActions = keyof typeof FmEvents;
-export type IFmActions = IFmConfigActions & IFmCrudActions;
+//#region autoindexed files
+// indexed at: 5th May, 2020, 06:40 PM ( GMT-7 )
+export * from "./FmConfigActions";
+export * from "./action-types";
+//#endregion
+
+
+
+
+

@@ -1,4 +1,4 @@
-import { IVuexState } from "../../types/firemodel";
+import { IVuexState } from "../../private";
 import { MutationTree } from "vuex";
 
 /**

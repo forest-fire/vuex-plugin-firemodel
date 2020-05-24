@@ -1,7 +1,7 @@
 // #autoindex:named
 
 //#region autoindexed files
-// indexed at: 5th May, 2020, 05:02 PM ( GMT-7 )
+// indexed at: 5th May, 2020, 06:40 PM ( GMT-7 )
 export * from "./addNamespace";
 export * from "./authChanges";
 export * from "./capitalize";
@@ -14,6 +14,19 @@ export * from "./removeProperty";
 export * from "./runQueue";
 export * from "./updateList";
 //#endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

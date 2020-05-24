@@ -1,23 +1,24 @@
 "use strict";
+// #autoindex:named
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FiremodelModule = exports.generateLocalId = void 0;
-const actions_1 = require("./actions");
-const index_1 = require("./mutations/index");
-const state_1 = require("./state");
-function generateLocalId(compositeKey, action) {
-    return action;
-}
-exports.generateLocalId = generateLocalId;
-var database_1 = require("../state-mgmt/database");
-Object.defineProperty(exports, "database", { enumerable: true, get: function () { return database_1.database; } });
-const mutationTypes = Object.keys(index_1.mutations).filter(i => typeof i !== "function");
-/**
- * The **Vuex** module that this plugin exports
- */
-exports.FiremodelModule = () => ({
-    state: state_1.state(),
-    mutations: index_1.mutations(),
-    actions: actions_1.actions(),
-    namespaced: true
-});
+//#region autoindexed files
+// indexed at: 5th May, 2020, 06:40 PM ( GMT-7 )
+__exportStar(require("./actions"), exports);
+__exportStar(require("./mutations"), exports);
+__exportStar(require("./state"), exports);
+__exportStar(require("./store-types"), exports);
+__exportStar(require("./firemodelActions/index"), exports);
+__exportStar(require("./localActions/index"), exports);
+__exportStar(require("./mutations/index"), exports);
+//#endregion
 //# sourceMappingURL=index.js.map

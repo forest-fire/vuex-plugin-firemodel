@@ -1,12 +1,12 @@
 import {
+  FmConfigMutation,
   ICurrentUser,
   IFmLifecycleEvents,
   IFmQueuedAction,
   IVuexState
-} from "../../types";
+} from "../../private";
 import { User, UserCredential } from "@firebase/auth-types";
 
-import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
 import { MutationTree } from "vuex";
 import Vue from "vue";
 

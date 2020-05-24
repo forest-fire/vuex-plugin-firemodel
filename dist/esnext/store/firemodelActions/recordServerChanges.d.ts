@@ -1,2 +1,3 @@
 import { ActionTree } from "vuex";
-export declare const recordServerChanges: <T>() => ActionTree<any, T>;
+import { IVuexState } from "../../index";
+export declare const recordServerChanges: <T>() => ActionTree<IVuexState<T>, T>;

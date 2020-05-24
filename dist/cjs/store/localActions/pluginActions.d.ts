@@ -1,8 +1,8 @@
-import { IFiremodelState } from "../../private";
+import { IVuexState } from "../../private";
 import { ActionTree } from "vuex";
 /**
  * **pluginActions**
  *
  * The core services that this plugin provides are exposed as Vuex actions
  */
-export declare const pluginActions: <T>() => ActionTree<IFiremodelState<T>, T>;
+export declare const pluginActions: <T>() => ActionTree<IVuexState<T>, T>;

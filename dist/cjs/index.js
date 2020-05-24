@@ -11,8 +11,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("firemodel"), exports);
-__exportStar(require("./types"), exports);
-__exportStar(require("./firemodelMutations/index"), exports);
-__exportStar(require("./auth/api"), exports);
-__exportStar(require("./abc/index"), exports);
+var private_1 = require("./private");
+Object.defineProperty(exports, "default", { enumerable: true, get: function () { return private_1.FiremodelPlugin; } });
+Object.defineProperty(exports, "firemodelMutations", { enumerable: true, get: function () { return private_1.firemodelMutations; } });
+Object.defineProperty(exports, "abc", { enumerable: true, get: function () { return private_1.abc; } });
+Object.defineProperty(exports, "AbcApi", { enumerable: true, get: function () { return private_1.AbcApi; } });
 //# sourceMappingURL=index.js.map

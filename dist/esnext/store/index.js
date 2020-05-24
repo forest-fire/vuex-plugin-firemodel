@@ -1,17 +1,11 @@
-import { actions } from "./actions";
-import { mutations } from "./mutations/index";
-import { state } from "./state";
-export function generateLocalId(compositeKey, action) {
-    return action;
-}
-export { database } from "../state-mgmt/database";
-const mutationTypes = Object.keys(mutations).filter(i => typeof i !== "function");
-/**
- * The **Vuex** module that this plugin exports
- */
-export const FiremodelModule = () => ({
-    state: state(),
-    mutations: mutations(),
-    actions: actions(),
-    namespaced: true
-});
+// #autoindex:named
+//#region autoindexed files
+// indexed at: 5th May, 2020, 06:40 PM ( GMT-7 )
+export * from "./actions";
+export * from "./mutations";
+export * from "./state";
+export * from "./store-types";
+export * from "./firemodelActions/index";
+export * from "./localActions/index";
+export * from "./mutations/index";
+//#endregion

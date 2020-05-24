@@ -1,2 +1,3 @@
 import { ActionTree } from "vuex";
-export declare const other: <T>() => ActionTree<any, T>;
+import { IVuexState } from "../../index";
+export declare const other: <T>() => ActionTree<IVuexState<T>, T>;

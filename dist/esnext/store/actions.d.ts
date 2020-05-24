@@ -1,2 +1,3 @@
 import { ActionTree } from "vuex";
-export declare const actions: <T>() => ActionTree<any, T>;
+import { IVuexState } from "../types";
+export declare const actions: <T>() => ActionTree<IVuexState<T>, T>;

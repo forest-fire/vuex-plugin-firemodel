@@ -1,7 +1,7 @@
-import { MutationTree } from "vuex";
-import { IFiremodelState } from "../..";
-import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
+import { FmCrudMutation, IVuexState } from "../../private";
+
 import { IFmLocalRecordEvent } from "firemodel";
+import { MutationTree } from "vuex";
 import Vue from "vue";
 
 export const localCrud = <T>() =>
@@ -26,4 +26,4 @@ export const localCrud = <T>() =>
 
       Vue.set(state, "localOnly", localOnly);
     }
-  } as MutationTree<IFiremodelState<T>>);
+  } as MutationTree<IVuexState<T>>);

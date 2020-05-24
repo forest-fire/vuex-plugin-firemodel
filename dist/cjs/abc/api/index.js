@@ -10,9 +10,13 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./api-parts/index"), exports);
+// #autoindex:named
+//#region autoindexed files
+// indexed at: 5th May, 2020, 06:40 PM ( GMT-7 )
 __exportStar(require("./AbcApi"), exports);
 __exportStar(require("./AbcResult"), exports);
-__exportStar(require("./queryHelpers"), exports);
+__exportStar(require("./api-parts/index"), exports);
+__exportStar(require("./queryHelpers/index"), exports);
 __exportStar(require("./shared/index"), exports);
+//#endregion
 //# sourceMappingURL=index.js.map

@@ -1,8 +1,8 @@
-import { IFiremodelConfig, IFiremodelState } from "./private";
+import { IFiremodelConfig, IVuexState } from "./private";
 import { IAbstractedDatabase } from "universal-fire";
 import type { Store } from "vuex";
 export declare type IFiremodelVuexModule<T> = {
-    "@firemodel": IFiremodelState<T>;
+    "@firemodel": IVuexState<T>;
 };
 /**
  * **FiremodelPlugin**
@@ -11,5 +11,5 @@ export declare type IFiremodelVuexModule<T> = {
  * @param config the configuration of the core services this plugin provides
  */
 export declare const FiremodelPlugin: <T>(db: IAbstractedDatabase, config: IFiremodelConfig<T & IFiremodelVuexModule<T>>) => (store: Store<T & {
-    "@firemodel": IFiremodelState<T>;
+    "@firemodel": IVuexState<T>;
 }>) => void;

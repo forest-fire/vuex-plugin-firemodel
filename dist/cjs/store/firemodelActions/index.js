@@ -1,21 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.firemodelActions = void 0;
-const recordServerChanges_1 = require("./recordServerChanges");
-const watch_1 = require("./watch");
-const relationship_1 = require("./relationship");
-const recordLocal_1 = require("./recordLocal");
-const recordConfirms_1 = require("./recordConfirms");
-const recordRollbacks_1 = require("./recordRollbacks");
-const auth_1 = require("./auth");
-const errors_1 = require("./errors");
-const other_1 = require("./other");
-exports.firemodelActions = () => stripNamespaceFromKeys(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, errors_1.errors()), auth_1.authActions()), recordServerChanges_1.recordServerChanges()), recordLocal_1.recordLocal()), recordConfirms_1.recordConfirms()), recordRollbacks_1.recordRollbacks()), watch_1.watch()), relationship_1.relationship()), other_1.other()));
-function stripNamespaceFromKeys(global) {
-    const local = {};
-    Object.keys(global).forEach(key => {
-        local[key.replace("@firemodel/", "")] = global[key];
-    });
-    return local;
-}
+// #autoindex:named
+//#region autoindexed files
+// indexed at: 5th May, 2020, 06:40 PM ( GMT-7 )
+__exportStar(require("./auth"), exports);
+__exportStar(require("./errors"), exports);
+__exportStar(require("./firemodelActions"), exports);
+__exportStar(require("./other"), exports);
+__exportStar(require("./recordConfirms"), exports);
+__exportStar(require("./recordLocal"), exports);
+__exportStar(require("./recordRollbacks"), exports);
+__exportStar(require("./recordServerChanges"), exports);
+__exportStar(require("./relationship"), exports);
+__exportStar(require("./watch"), exports);
+//#endregion
 //# sourceMappingURL=index.js.map
