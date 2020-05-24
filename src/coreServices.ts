@@ -20,7 +20,7 @@ export async function coreServices<T>(
 
     // run connect action
     starting.push(
-      store.dispatch(addNamespace(FmConfigAction.connect), config.db)
+      store.dispatch(addNamespace(FmConfigAction.connect), database())
     );
   }
 

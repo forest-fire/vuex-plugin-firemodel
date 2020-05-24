@@ -10,6 +10,6 @@ import { IAbcApiConfig } from '../../private';
 }
 ```
  */
-export declare function configApi(config: Omit<IAbcApiConfig<any>, 'model'>): Pick<IAbcApiConfig<any>, "encrypt" | "db" | "isList" | "useIndexedDb" | "moduleName">;
+export declare function configApi(config: Omit<IAbcApiConfig<any>, 'model'>): Pick<IAbcApiConfig<any>, "encrypt" | "isList" | "useIndexedDb" | "db" | "moduleName">;
 /** the _default_ configuration for **ABC** API surfaces */
-export declare function getDefaultApiConfig(): Pick<IAbcApiConfig<any>, "encrypt" | "db" | "isList" | "useIndexedDb" | "moduleName">;
+export declare function getDefaultApiConfig(): Pick<IAbcApiConfig<any>, "encrypt" | "isList" | "useIndexedDb" | "db" | "moduleName">;

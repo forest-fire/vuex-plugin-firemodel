@@ -15,7 +15,7 @@ async function coreServices(store, config) {
             await db.connect();
         }
         // run connect action
-        starting.push(store.dispatch(private_1.addNamespace(private_1.FmConfigAction.connect), config.db));
+        starting.push(store.dispatch(private_1.addNamespace(private_1.FmConfigAction.connect), private_1.database()));
     }
     // AUTH
     if (config === null || config === void 0 ? void 0 : config.auth) {

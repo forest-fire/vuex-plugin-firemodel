@@ -1,5 +1,5 @@
 import { IDictionary, epoch } from "common-types";
-import type { IClientConfig, IClientAuth, IMockConfig, IAbstractedDatabase } from 'universal-fire';
+import type { IClientAuth, IAbstractedDatabase } from 'universal-fire';
 import { Watch, Record, List, Model, IModelOptions } from "firemodel";
 import { Commit, Dispatch } from "vuex";
 import { IAuthPersistenceStrategy, IVuexState } from "../private";
@@ -102,14 +102,6 @@ export declare type IFmRouteChanged<T> = (ctx: IFmRouteEventContext<T>) => Promi
  * 2. Hook into _lifecycle_ events (typically to watch/unwatch certain db paths)
  */
 export interface IFiremodelConfig<T> extends IFiremodelLifecycleHooks<T>, IFiremodelPluginCoreServices {
-    /**
-     * Firemodel must be able to connect to the database -- using
-     * `universal-fire` to do so -- and therefore the configuration
-     * must include either a Firebase Config (and this plugin will
-     * create an instance of `universal-fire`) or you can just pass
-     * in an instance of abstracted client here as well.
-     */
-    db: IClientConfig | IMockConfig;
 }
 export interface IFiremodelPluginCoreServices {
     /**

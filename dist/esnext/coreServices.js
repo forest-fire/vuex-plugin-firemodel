@@ -12,7 +12,7 @@ export async function coreServices(store, config) {
             await db.connect();
         }
         // run connect action
-        starting.push(store.dispatch(addNamespace(FmConfigAction.connect), config.db));
+        starting.push(store.dispatch(addNamespace(FmConfigAction.connect), database()));
     }
     // AUTH
     if (config === null || config === void 0 ? void 0 : config.auth) {
