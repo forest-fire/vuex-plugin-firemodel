@@ -13,8 +13,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // #autoindex:named
 //#region autoindexed files
 // indexed at: 5th May, 2020, 09:48 PM ( GMT-7 )
-__exportStar(require("./auth"), exports);
-__exportStar(require("./other"), exports);
-__exportStar(require("./providers/index"), exports);
+__exportStar(require("./EmailAuthProvider"), exports);
 //#endregion
 //# sourceMappingURL=index.js.map

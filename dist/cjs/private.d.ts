@@ -2,6 +2,7 @@ export * from "./coreServices";
 export * from "./plugin";
 export * from "./queueLifecycleEvents";
 export * from "./abc/index";
+export * from "./auth/index";
 export * from "./errors/index";
 export * from "./firemodelMutations/index";
 export * from "./shared/index";

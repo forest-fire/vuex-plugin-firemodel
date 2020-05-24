@@ -1,3 +1,3 @@
 export * from "firemodel";
 
-export { FiremodelPlugin as default, firemodelMutations, abc, AbcApi, IVuexState, IRouteState, IFmUserUpgrade, IFmRouteChanged, IFmOnAuth, IFmOnLogin , IFmOnDisconnect, IFmOnConnect} from './private'
+export { FiremodelPlugin as default, firemodelMutations, abc, getIdToken, signInWithEmailAndPassword,sendEmailVerification, sendPasswordResetEmail, signOut, updatePassword, reauthenticateWithCredential, ISignOutPayload, AbcApi, IVuexState, IRouteState, IFmUserUpgrade, IFmRouteChanged, IFmOnAuth, IFmOnLogin , IFmOnLogout,  IFmOnDisconnect, IFmOnConnect, IFmUserChangeEventContext, resetModule} from './private'

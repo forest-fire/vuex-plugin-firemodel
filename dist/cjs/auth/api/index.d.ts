@@ -1,3 +1,3 @@
 export * from "./auth";
 export * from "./other";
-export * from "./providers/EmailAuthProvider";
+export * from "./providers/index";

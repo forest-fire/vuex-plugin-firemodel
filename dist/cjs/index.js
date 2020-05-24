@@ -15,5 +15,13 @@ var private_1 = require("./private");
 Object.defineProperty(exports, "default", { enumerable: true, get: function () { return private_1.FiremodelPlugin; } });
 Object.defineProperty(exports, "firemodelMutations", { enumerable: true, get: function () { return private_1.firemodelMutations; } });
 Object.defineProperty(exports, "abc", { enumerable: true, get: function () { return private_1.abc; } });
+Object.defineProperty(exports, "getIdToken", { enumerable: true, get: function () { return private_1.getIdToken; } });
+Object.defineProperty(exports, "signInWithEmailAndPassword", { enumerable: true, get: function () { return private_1.signInWithEmailAndPassword; } });
+Object.defineProperty(exports, "sendEmailVerification", { enumerable: true, get: function () { return private_1.sendEmailVerification; } });
+Object.defineProperty(exports, "sendPasswordResetEmail", { enumerable: true, get: function () { return private_1.sendPasswordResetEmail; } });
+Object.defineProperty(exports, "signOut", { enumerable: true, get: function () { return private_1.signOut; } });
+Object.defineProperty(exports, "updatePassword", { enumerable: true, get: function () { return private_1.updatePassword; } });
+Object.defineProperty(exports, "reauthenticateWithCredential", { enumerable: true, get: function () { return private_1.reauthenticateWithCredential; } });
 Object.defineProperty(exports, "AbcApi", { enumerable: true, get: function () { return private_1.AbcApi; } });
+Object.defineProperty(exports, "resetModule", { enumerable: true, get: function () { return private_1.resetModule; } });
 //# sourceMappingURL=index.js.map

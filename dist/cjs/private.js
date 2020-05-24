@@ -12,11 +12,12 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 //#region autoindexed files
-// indexed at: 5th May, 2020, 09:24 PM ( GMT-7 )
+// indexed at: 5th May, 2020, 09:48 PM ( GMT-7 )
 __exportStar(require("./coreServices"), exports);
 __exportStar(require("./plugin"), exports);
 __exportStar(require("./queueLifecycleEvents"), exports);
 __exportStar(require("./abc/index"), exports);
+__exportStar(require("./auth/index"), exports);
 __exportStar(require("./errors/index"), exports);
 __exportStar(require("./firemodelMutations/index"), exports);
 __exportStar(require("./shared/index"), exports);
