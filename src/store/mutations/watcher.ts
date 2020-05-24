@@ -1,6 +1,6 @@
-import { IFiremodelState } from "../../index";
+import { FmConfigMutation, IFiremodelState } from "../../private";
 import { IFmWatcherStopped, IWatcherEventContext } from "firemodel";
-import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
+
 import { MutationTree } from "vuex";
 import Vue from "vue";
 

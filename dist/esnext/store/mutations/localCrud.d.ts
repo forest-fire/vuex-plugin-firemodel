@@ -1,3 +1,2 @@
 import { MutationTree } from "vuex";
-import { IFiremodelState } from "../..";
-export declare const localCrud: <T>() => MutationTree<IFiremodelState<T>>;
+export declare const localCrud: <T>() => MutationTree<any>;

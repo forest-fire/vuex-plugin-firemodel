@@ -17,7 +17,7 @@
     "watch": "yarn tsc --watch -P tsconfig.json",
     "autoindex": "yarn do autoindex",
     "build:docs": "vuepress build docs",
-    "circular": "yarn madge src --circular"
+    "circular": "yarn madge src --circular --extensions ts"
   },
   "repository": {
     "type": "git",
