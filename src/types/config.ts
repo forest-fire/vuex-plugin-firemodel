@@ -1,5 +1,5 @@
 import { IDictionary, epoch } from "common-types";
-import type {IClientConfig, IClientAuth, IMockConfig, IAbstractedDatabase } from 'universal-fire'
+import type {IClientAuth, IAbstractedDatabase } from 'universal-fire'
 import { Watch, Record, List, Model, IModelOptions } from "firemodel";
 import { Commit, Dispatch } from "vuex";
 import { IAuthPersistenceStrategy, IVuexState } from "../private";

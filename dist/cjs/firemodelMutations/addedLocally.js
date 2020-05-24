@@ -1,34 +1,32 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addedLocally = void 0;
-const changeRoot_1 = require("../shared/changeRoot");
-const updateList_1 = require("../shared/updateList");
-const isRecord_1 = require("../shared/isRecord");
+const private_1 = require("../private");
 function addedLocally(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {
         ["ADDED_LOCALLY" /* addedLocally */](state, payload) {
-            if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, payload.value, payload.localPath);
+            if (private_1.isRecord(state, payload)) {
+                private_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
-                updateList_1.updateList(state, offset, payload.value);
+                private_1.updateList(state, offset, payload.value);
             }
         },
         ["CHANGED_LOCALLY" /* changedLocally */](state, payload) {
-            if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, payload.value, payload.localPath);
+            if (private_1.isRecord(state, payload)) {
+                private_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
-                updateList_1.updateList(state, offset, payload.value);
+                private_1.updateList(state, offset, payload.value);
             }
         },
         ["REMOVED_LOCALLY" /* removedLocally */](state, payload) {
-            if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, null, payload.localPath);
+            if (private_1.isRecord(state, payload)) {
+                private_1.changeRoot(state, null, payload.localPath);
             }
             else {
-                updateList_1.updateList(state, offset, null);
+                private_1.updateList(state, offset, null);
             }
         }
     };

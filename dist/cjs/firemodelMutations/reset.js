@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.reset = void 0;
-const vue_1 = __importDefault(require("vue"));
 const private_1 = require("../private");
+const vue_1 = __importDefault(require("vue"));
 function reset(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {

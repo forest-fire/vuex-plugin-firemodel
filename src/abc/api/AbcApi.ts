@@ -1,7 +1,6 @@
-import {  } from "../../index"
-
 import {
   AbcError,
+  AbcFiremodelMutation,
   AbcMutation,
   AbcResult,
   AbcStrategy,

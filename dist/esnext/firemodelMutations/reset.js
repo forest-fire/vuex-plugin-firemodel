@@ -1,5 +1,5 @@
-import Vue from "vue";
 import { getInitialState } from "../private";
+import Vue from "vue";
 export function reset(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {

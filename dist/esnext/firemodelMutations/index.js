@@ -1,45 +1,12 @@
-import { addedLocally } from "./addedLocally";
-import { serverEvents } from "./serverEvents";
-import { serverRollbacks } from "./serverRollbacks";
-import { serverConfirms } from "./serverConfirms";
-import { reset } from "./reset";
-import { abc } from "./abc";
-import { watchEvents } from "./watchEvents";
-/**
- * **firebaseMutations**
- *
- * A prepacked set of mutations which will handle all the mutations
- * which the **Firemodel Vuex Plugin** will send relating to CRUD based
- * changes to the underlying Firebase database.
- *
- * These mutations can/should be brought into parts of the state tree which
- * are managed by a Firemodel `Model` (and are being "watched" by your frontend).
- * This export is able to manage the mutations for both `record` and `list` based
- * watchers.
- *
- * An example of how to incorporate into your state tree:
-```typescript
-const vuexModule: Module<IMyStateModule, IRootState> = {
-    state,
-    ...firemodelMutations(),
-    getters,
-    namespaced: true
-}
-```
- */
-export function firemodelMutations(
-/**
- * If you are using a **list** based watcher you will almost always want
- * the list of records to be "offset" from the root of the local state
- * module. If not stated, this property will be offset to `all` but you can
- * explicitly set it to whatever you like including an empty string which will
- * in effect put the list onto the root of the local state module.
- *
- * In the case of a **record** based watcher you should typically leave this property
- * `undefined` but if you have an edge case then you can set it to whatever you like
- * and it will honored.
- */
-propOffset) {
-    const a = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, addedLocally(propOffset)), abc(propOffset)), serverEvents(propOffset)), serverRollbacks(propOffset)), serverConfirms(propOffset)), watchEvents(propOffset)), reset(propOffset));
-    return a;
-}
+// #autoindex:named
+//#region autoindexed files
+// indexed at: 5th May, 2020, 09:24 PM ( GMT-7 )
+export * from "./abc";
+export * from "./addedLocally";
+export * from "./mutations";
+export * from "./reset";
+export * from "./serverConfirms";
+export * from "./serverEvents";
+export * from "./serverRollbacks";
+export * from "./watchEvents";
+//#endregion

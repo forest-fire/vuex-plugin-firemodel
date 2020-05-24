@@ -164,7 +164,9 @@ export declare class AbcApi<T extends Model> {
      */
     get config(): IAbcApiConfig<T>;
     get dexieModels(): {
-        name: string;
+        name: string; /**
+         * Returns constructors for the `Model`s which will be managed by the IndexedDB
+         */
         schema: import("dexie").TableSchema;
     }[];
     /**

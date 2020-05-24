@@ -1,10 +1,8 @@
-import { MutationTree } from "vuex";
-import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
-import { changeRoot } from "../shared/changeRoot";
-import { updateList } from "../shared/updateList";
-import { IFmWatchEvent } from "firemodel";
+import { FmCrudMutation, changeRoot, isRecord, updateList } from "../private";
+
 import { IDictionary } from "common-types";
-import { isRecord } from "../shared/isRecord";
+import { IFmWatchEvent } from "firemodel";
+import { MutationTree } from "vuex";
 
 export function addedLocally<T>(
   propOffset?: keyof T & string
