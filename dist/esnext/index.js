@@ -1,2 +1,4 @@
 export * from "firemodel";
-export { FiremodelPlugin as default, firemodelMutations, abc, getIdToken, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut, updatePassword, reauthenticateWithCredential, AbcApi, resetModule } from './private';
+export * from "./types";
+export * from "./auth/api";
+export { FiremodelPlugin as default, firemodelMutations, abc, AbcApi } from './private';
