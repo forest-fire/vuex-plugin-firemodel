@@ -1,9 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.serverEvents = void 0;
-const changeRoot_1 = require("../shared/changeRoot");
-const updateList_1 = require("../shared/updateList");
-const isRecord_1 = require("../shared/isRecord");
+const private_1 = require("../private");
 function serverEvents(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {
@@ -13,11 +11,11 @@ function serverEvents(propOffset) {
          * of records at the root of the state structure
          */
         state, payload) {
-            if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, payload.value, payload.localPath);
+            if (private_1.isRecord(state, payload)) {
+                private_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
-                updateList_1.updateList(state, offset, payload.value);
+                private_1.updateList(state, offset, payload.value);
             }
         },
         ["SERVER_CHANGE" /* serverChange */](
@@ -33,11 +31,11 @@ function serverEvents(propOffset) {
                 // change.
                 return;
             }
-            if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, payload.value, payload.localPath);
+            if (private_1.isRecord(state, payload)) {
+                private_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
-                updateList_1.updateList(state, offset, payload.value);
+                private_1.updateList(state, offset, payload.value);
             }
         },
         ["SERVER_REMOVE" /* serverRemove */](
@@ -46,11 +44,11 @@ function serverEvents(propOffset) {
          * of records at the root of the state structure
          */
         state, payload) {
-            if (isRecord_1.isRecord(state, payload)) {
-                changeRoot_1.changeRoot(state, null, payload.localPath);
+            if (private_1.isRecord(state, payload)) {
+                private_1.changeRoot(state, null, payload.localPath);
             }
             else {
-                updateList_1.updateList(state, offset, payload.value);
+                private_1.updateList(state, offset, payload.value);
             }
         }
     };

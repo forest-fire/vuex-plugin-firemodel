@@ -1,0 +1,1 @@
+{"version":3,"file":"auth.js","sourceRoot":"","sources":["../../../src/state-mgmt/auth.ts"],"names":[],"mappings":";;;AAEA,IAAI,KAA8B,CAAA;AAElC,SAAgB,OAAO;IACrB,OAAO,KAAK,CAAC;AACf,CAAC;AAFD,0BAEC;AAED,SAAgB,OAAO,CAAC,IAAiB;IACvC,KAAK,GAAG,IAAI,CAAA;AACd,CAAC;AAFD,0BAEC"}

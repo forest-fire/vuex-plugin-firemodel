@@ -6,14 +6,14 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.linkWithCredential = exports.reauthenticateWithCredential = exports.sendEmailVerification = exports.updateProfile = exports.updatePassword = exports.updateEmail = exports.verifyPasswordResetCode = exports.confirmPasswordReset = exports.sendPasswordResetEmail = exports.getIdToken = exports.signOut = exports.createUserWithEmailAndPassword = exports.signInWithEmailAndPassword = void 0;
-const index_1 = require("../../index");
+const private_1 = require("../../private");
 const FiremodelPluginError_1 = require("../../errors/FiremodelPluginError");
 /**
  * Log into the Firebase AUTH sytem using email/password. If successful it returns
  * a Firebase "user credential".
  */
 async function signInWithEmailAndPassword(email, password) {
-    return index_1.getStore().dispatch({
+    return private_1.getStore().dispatch({
         type: "@firemodel/signInWithEmailAndPassword",
         email,
         password
@@ -26,7 +26,7 @@ exports.signInWithEmailAndPassword = signInWithEmailAndPassword;
  * the email used will be sent a link to make the account verified.
  */
 async function createUserWithEmailAndPassword(email, password) {
-    return index_1.getStore().dispatch({
+    return private_1.getStore().dispatch({
         type: "@firemodel/createUserWithEmailAndPassword",
         email,
         password
@@ -39,7 +39,7 @@ exports.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
  * user profile of the user.
  */
 async function signOut(payload) {
-    return index_1.getStore().dispatch({
+    return private_1.getStore().dispatch({
         type: "@firemodel/signOut",
         payload
     });
@@ -47,11 +47,11 @@ async function signOut(payload) {
 exports.signOut = signOut;
 async function getIdToken(forceRefresh) {
     var _a;
-    const fmState = index_1.getStore().state["@firemodel"];
+    const fmState = private_1.getStore().state["@firemodel"];
     if (fmState.token && forceRefresh !== true) {
         return fmState.token;
     }
-    const auth = await index_1.getAuth();
+    const auth = await private_1.getAuth();
     const tokenPromise = (_a = auth.currentUser) === null || _a === void 0 ? void 0 : _a.getIdTokenResult(forceRefresh);
     if (tokenPromise) {
         const token = await tokenPromise;
@@ -69,7 +69,7 @@ exports.getIdToken = getIdToken;
  * specified by the user.
  */
 async function sendPasswordResetEmail(email, actionCodeSettings) {
-    return index_1.getStore().dispatch({
+    return private_1.getStore().dispatch({
         type: "@firemodel/sendPasswordResetEmail",
         email,
         actionCodeSettings
@@ -81,7 +81,7 @@ exports.sendPasswordResetEmail = sendPasswordResetEmail;
  * and new _password_.
  */
 async function confirmPasswordReset(code, newPassword) {
-    return index_1.getStore().dispatch({
+    return private_1.getStore().dispatch({
         type: "@firemodel/confirmPassordReset",
         code,
         newPassword
@@ -93,7 +93,7 @@ exports.confirmPasswordReset = confirmPasswordReset;
  * out-of-band mechanism. Returns the user's email address if valid.
  */
 async function verifyPasswordResetCode(code) {
-    return index_1.getStore().dispatch({
+    return private_1.getStore().dispatch({
         type: "@firemodel/verifyPasswordResetCode",
         code
     });
@@ -104,7 +104,7 @@ exports.verifyPasswordResetCode = verifyPasswordResetCode;
  * that allows owner of that email address to revoke the email address change.
  */
 async function updateEmail(newEmail) {
-    return index_1.getStore().dispatch({
+    return private_1.getStore().dispatch({
         type: "@firemodel/updateEmail",
         payload: newEmail
     });
@@ -117,7 +117,7 @@ exports.updateEmail = updateEmail;
  * call the `reauthenticateWithCredential` to resolve this.
  */
 async function updatePassword(password) {
-    return index_1.getStore().dispatch({
+    return private_1.getStore().dispatch({
         type: "@firemodel/updatePassword",
         password
     });
@@ -128,7 +128,7 @@ exports.updatePassword = updatePassword;
  * photo URL.
  */
 async function updateProfile(profile) {
-    return index_1.getStore().dispatch({
+    return private_1.getStore().dispatch({
         type: "@firemodel/updateProfile",
         profile
     });
@@ -138,20 +138,20 @@ exports.updateProfile = updateProfile;
  * Sends a verification email to the currently logged in user
  */
 async function sendEmailVerification() {
-    return index_1.getStore().dispatch({
+    return private_1.getStore().dispatch({
         type: "@firemodel/sendEmailVerification"
     });
 }
 exports.sendEmailVerification = sendEmailVerification;
 async function reauthenticateWithCredential(credential) {
-    return index_1.getStore().dispatch({
+    return private_1.getStore().dispatch({
         type: "@firemodel/reauthenticateWithCredential",
         credential
     });
 }
 exports.reauthenticateWithCredential = reauthenticateWithCredential;
 async function linkWithCredential(credential) {
-    return index_1.getStore().dispatch({
+    return private_1.getStore().dispatch({
         type: "@firemodel/linkWithCredential",
         credential
     });

@@ -10,7 +10,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// #autoindex:named
+//#region autoindexed files
+// indexed at: 5th May, 2020, 09:52 PM ( GMT-7 )
 __exportStar(require("./auth"), exports);
 __exportStar(require("./other"), exports);
-__exportStar(require("./providers/EmailAuthProvider"), exports);
+__exportStar(require("./providers/index"), exports);
+//#endregion
 //# sourceMappingURL=index.js.map

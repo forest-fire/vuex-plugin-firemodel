@@ -1,5 +1,5 @@
+import { QueryType, SINCE_LAST_COOKIE } from "../../../private";
 import { List } from "firemodel";
-import { QueryType, SINCE_LAST_COOKIE } from "../../../types";
 import cookies from "js-cookie";
 /**
  * **since**

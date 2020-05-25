@@ -4,16 +4,17 @@
  * used means to achieve **Firebase** _auth_ functions
  */
 
-import { getStore, getAuth } from "../../index";
 import {
   ActionCodeSettings,
-  UserCredential,
+  AuthCredential,
   IdTokenResult,
-  AuthCredential
+  UserCredential
 } from "@firebase/auth-types";
-import { IAuthProfile, IFiremodelState } from "../../types";
-import { IModelConstructor } from "firemodel";
+import { IAuthProfile, IVuexState } from "../../types";
+import { getAuth, getStore } from "../../private";
+
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
+import { IModelConstructor } from "firemodel";
 
 /**
  * Log into the Firebase AUTH sytem using email/password. If successful it returns
@@ -66,7 +67,7 @@ export async function signOut(payload: {
 export async function getIdToken(
   forceRefresh?: boolean
 ): Promise<IdTokenResult> {
-  const fmState = getStore().state["@firemodel"] as IFiremodelState<any>;
+  const fmState = getStore().state["@firemodel"] as IVuexState<any>;
   if (fmState.token && forceRefresh !== true) {
     return fmState.token;
   }

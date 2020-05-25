@@ -1,0 +1,1 @@
+{"version":3,"file":"plugin-config.js","sourceRoot":"","sources":["../../../src/state-mgmt/plugin-config.ts"],"names":[],"mappings":";;;AAEA,IAAI,aAAoC,CAAC;AAEzC,SAAgB,iBAAiB,CAAC,MAA6B;IAC7D,aAAa,GAAG,MAAM,CAAA;AACxB,CAAC;AAFD,8CAEC;AAED,SAAgB,eAAe;IAC7B,OAAO,aAAa,CAAA;AACtB,CAAC;AAFD,0CAEC"}

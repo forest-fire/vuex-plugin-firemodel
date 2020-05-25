@@ -1,6 +1,5 @@
-import { FireModel, Record, List, Watch } from "firemodel";
-import { FmConfigAction, FireModelPluginError, database, authChanged, runQueue } from "../../private";
-import { configuration } from "../../index";
+import { FireModel, List, Record, Watch } from "firemodel";
+import { FireModelPluginError, FmConfigAction, authChanged, database, getPluginConfig, runQueue } from "../../private";
 /**
  * **pluginActions**
  *
@@ -18,7 +17,7 @@ export const pluginActions = () => ({
             throw new FireModelPluginError(`Connecting to database but NO configuration was present!`, "not-allowed");
         }
         try {
-            const db = await database(config);
+            const db = await database();
             FireModel.defaultDb = db;
             const ctx = {
                 Watch,
@@ -45,7 +44,7 @@ export const pluginActions = () => ({
      */
     async [FmConfigAction.anonymousLogin](store) {
         const { commit, rootState } = store;
-        const db = await database();
+        const db = database();
         const auth = await db.auth();
         if (auth.currentUser && !auth.currentUser.isAnonymous) {
             const anon = await auth.signInAnonymously();
@@ -64,7 +63,7 @@ export const pluginActions = () => ({
     async [FmConfigAction.firebaseAuth](store, config) {
         const { commit, rootState, dispatch } = store;
         try {
-            const db = await database();
+            const db = database();
             const auth = await db.auth();
             FireModel.defaultDb = db;
             const ctx = {
@@ -94,7 +93,7 @@ export const pluginActions = () => ({
      * Enables lifecycle hooks for route changes
      */
     async [FmConfigAction.watchRouteChanges]({ dispatch, commit, rootState }, payload) {
-        if (configuration.onRouteChange) {
+        if (getPluginConfig().onRouteChange) {
             const ctx = {
                 Watch,
                 Record,

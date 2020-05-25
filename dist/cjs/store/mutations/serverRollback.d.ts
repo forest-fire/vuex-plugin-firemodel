@@ -1,3 +1,3 @@
+import { IVuexState } from "../../private";
 import { MutationTree } from "vuex";
-import { IFiremodelState } from "../../index";
-export declare const serverRollback: <T>() => MutationTree<IFiremodelState<T>>;
+export declare const serverRollback: <T>() => MutationTree<IVuexState<T>>;

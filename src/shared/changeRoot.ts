@@ -1,8 +1,9 @@
-import Vue from "vue";
-import { Model } from "firemodel";
+import {  } from "..";
 
-import { initialState } from "..";
-import { FireModelPluginError } from "../private";
+import { FireModelPluginError, getInitialState } from "../private";
+
+import { Model } from "firemodel";
+import Vue from "vue";
 
 /**
  * **changeRoot**
@@ -26,7 +27,7 @@ export const changeRoot = <T extends Model = Model>(
     )
   );
 
-  if (initialState[moduleName] === undefined) {
+  if (getInitialState()[moduleName] === undefined) {
     throw new FireModelPluginError(
       `Attempt to change the state of the Vuex module "${moduleName}" failed because there was no initial state defined for that module. Please check that the spelling is correct as this is typically a typo.`
     );
@@ -35,7 +36,7 @@ export const changeRoot = <T extends Model = Model>(
   properties.forEach(prop => {
     const newState = updatedProps ? updatedProps[prop as keyof T] : null;
     const oldState = state[prop as keyof T];
-    const defaultState = initialState[moduleName][prop];
+    const defaultState = getInitialState()[moduleName][prop];
 
     Vue.set(state, prop, newState === null ? defaultState : newState);
     // state[prop as keyof T] = newState === null ? defaultState : newState;

@@ -1,9 +1,9 @@
 import {
-  IFmLifecycleEvents,
-  IFmQueuedAction,
   FmConfigMutation,
   IFmLifecycleContext,
-  IFiremodelState
+  IFmLifecycleEvents,
+  IFmQueuedAction,
+  IVuexState
 } from "../types/index";
 
 import StackTrace from "stacktrace-js";

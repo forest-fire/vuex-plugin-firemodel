@@ -1,7 +1,7 @@
 import { Record } from "firemodel";
 import { AbcApi } from "../AbcApi";
-import { getStore } from "../../../index";
 import get from "lodash.get";
+import { getStore } from "../../../private";
 /**
  * For a discrete set of primary keys, get's all knowledge of these locally. This means
  * at least Vuex but also IndexedDB if the model is configured for it.

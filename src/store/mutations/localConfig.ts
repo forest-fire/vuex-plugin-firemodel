@@ -1,12 +1,13 @@
-import { MutationTree } from "vuex";
 import {
-  IFiremodelState,
+  FmConfigMutation,
+  ICurrentUser,
   IFmLifecycleEvents,
   IFmQueuedAction,
-  ICurrentUser
-} from "../../types";
-import { FmConfigMutation } from "../../types/mutations/FmConfigMutation";
+  IVuexState
+} from "../../private";
 import { User, UserCredential } from "@firebase/auth-types";
+
+import { MutationTree } from "vuex";
 import Vue from "vue";
 
 /**
@@ -81,7 +82,7 @@ export const localConfig = <T>() =>
     ) {
       //
     }
-  } as MutationTree<IFiremodelState<T>>);
+  } as MutationTree<IVuexState<T>>);
 
 function isUserCredential(user: User | UserCredential): user is UserCredential {
   return (user as UserCredential).credential ? true : false;

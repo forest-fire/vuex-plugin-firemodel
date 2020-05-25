@@ -1,7 +1,8 @@
-import { ActionTree } from "vuex";
-import { IFiremodelState } from "../../index";
 import { FmEvents, IFmWatchEvent } from "firemodel";
+
+import { ActionTree } from "vuex";
 import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
+import { IVuexState } from "../../index";
 import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
 
 export const recordServerChanges = <T>() =>
@@ -59,4 +60,4 @@ export const recordServerChanges = <T>() =>
         );
       }
     }
-  } as ActionTree<IFiremodelState<T>, T>);
+  } as ActionTree<IVuexState<T>, T>);

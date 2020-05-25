@@ -1,1 +1,1 @@
-{"version":3,"file":"other.js","sourceRoot":"","sources":["../../../../src/auth/api/other.ts"],"names":[],"mappings":";;;AAAA,uCAAuC;AAEvC,SAAgB,WAAW,CAAC,MAAc;IACxC,OAAO,gBAAQ,EAAE,CAAC,MAAM,CAAC,GAAG,MAAM,QAAQ,EAAE,MAAM,CAAC,CAAC;AACtD,CAAC;AAFD,kCAEC"}
+{"version":3,"file":"other.js","sourceRoot":"","sources":["../../../../src/auth/api/other.ts"],"names":[],"mappings":";;;AAAA,2CAAyC;AAEzC,SAAgB,WAAW,CAAC,MAAc;IACxC,OAAO,kBAAQ,EAAE,CAAC,MAAM,CAAC,GAAG,MAAM,QAAQ,EAAE,MAAM,CAAC,CAAC;AACtD,CAAC;AAFD,kCAEC"}

@@ -1,9 +1,10 @@
-import { ActionTree } from "vuex";
-import { IFiremodelState } from "../../index";
 import { FmEvents, IFmWatchEvent } from "firemodel";
-import get from "lodash.get";
+
+import { ActionTree } from "vuex";
 import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
+import { IVuexState } from "../../index";
 import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
+import get from "lodash.get";
 
 export const recordLocal = <T>() =>
   ({
@@ -53,4 +54,4 @@ export const recordLocal = <T>() =>
         }
       );
     }
-  } as ActionTree<IFiremodelState<T>, T>);
+  } as ActionTree<IVuexState<T>, T>);

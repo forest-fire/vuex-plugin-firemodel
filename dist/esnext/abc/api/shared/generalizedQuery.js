@@ -1,7 +1,6 @@
-import { getStore } from "../../../index";
-import get from "lodash.get";
+import { AbcMutation, AbcResult, AbcStrategy, DbSyncOperation, QueryType, getStore, queryFirebase, queryIndexedDb, saveToIndexedDb } from "../../../private";
 import { Record } from "firemodel";
-import { AbcMutation, AbcStrategy, QueryType, DbSyncOperation, AbcResult, saveToIndexedDb, queryFirebase, queryIndexedDb } from "../../../private";
+import get from "lodash.get";
 /**
  * A generalized flow for queries; specific query helpers
  * should use this flow to standarize their approach.

@@ -1,32 +1,30 @@
-import { ICompositeKey, Model } from "firemodel";
-import { Module } from "vuex";
-import { IFmEventActions, IFiremodelState } from "../private";
-import { state } from "./state";
-import { mutations } from "./mutations/index";
-import { actions } from "./actions";
+// #autoindex:named
 
-export function generateLocalId<T = Model>(
-  compositeKey: ICompositeKey<T>,
-  action: IFmEventActions
-) {
-  return action;
-}
+//#region autoindexed files
+// indexed at: 5th May, 2020, 09:52 PM ( GMT-7 )
+export * from "./actions";
+export * from "./mutations";
+export * from "./state";
+export * from "./store-types";
+export * from "./firemodelActions/index";
+export * from "./localActions/index";
+export * from "./mutations/index";
+//#endregion
 
-export { database } from "../shared/database";
 
-const mutationTypes = Object.keys(mutations).filter(
-  i => typeof i !== "function"
-);
-export type IFmConfigMutationTypes = keyof typeof mutationTypes;
 
-type FunctionToModule = <T>() => Module<IFiremodelState<T>, T>;
 
-/**
- * The **Vuex** module that this plugin exports
- */
-export const FiremodelModule: FunctionToModule = <T>() => ({
-  state: state<T>(),
-  mutations: mutations<T>(),
-  actions: actions<T>(),
-  namespaced: true
-});
+
+
+
+
+
+
+
+
+
+
+
+
+
+

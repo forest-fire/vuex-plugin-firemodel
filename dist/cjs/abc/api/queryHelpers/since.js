@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.since = void 0;
+const private_1 = require("../../../private");
 const firemodel_1 = require("firemodel");
-const types_1 = require("../../../types");
 const js_cookie_1 = __importDefault(require("js-cookie"));
 /**
  * **since**
@@ -14,11 +14,11 @@ const js_cookie_1 = __importDefault(require("js-cookie"));
  */
 exports.since = function since(defn) {
     return (ctx, options = {}) => {
-        defn = Object.assign(Object.assign({}, defn), { queryType: types_1.QueryType.since });
+        defn = Object.assign(Object.assign({}, defn), { queryType: private_1.QueryType.since });
         if (!defn.timestamp) {
-            const last = (js_cookie_1.default.getJSON(types_1.SINCE_LAST_COOKIE) || {})[ctx.model.pascal];
+            const last = (js_cookie_1.default.getJSON(private_1.SINCE_LAST_COOKIE) || {})[ctx.model.pascal];
             if (!last) {
-                js_cookie_1.default.set(types_1.SINCE_LAST_COOKIE, JSON.stringify(Object.assign(Object.assign({}, (js_cookie_1.default.getJSON(types_1.SINCE_LAST_COOKIE) || {})), { [ctx.model.pascal]: new Date().getTime() })));
+                js_cookie_1.default.set(private_1.SINCE_LAST_COOKIE, JSON.stringify(Object.assign(Object.assign({}, (js_cookie_1.default.getJSON(private_1.SINCE_LAST_COOKIE) || {})), { [ctx.model.pascal]: new Date().getTime() })));
             }
             defn.timestamp = last || new Date().getTime();
         }

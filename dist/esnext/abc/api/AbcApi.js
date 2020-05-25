@@ -1,7 +1,6 @@
-import { Record, FireModel, DexieDb } from "firemodel";
+import { AbcError, AbcMutation, AbcResult, AbcStrategy, DbSyncOperation, QueryType, capitalize, getDefaultApiConfig, getFromFirebase, getFromIndexedDb, getFromVuex, getStore, isDiscreteRequest, mergeLocalRecords, queryFirebase, queryIndexedDb, saveToIndexedDb } from "../../private";
+import { DexieDb, FireModel, Record } from "firemodel";
 import { pathJoin } from "common-types";
-import { isDiscreteRequest, AbcMutation, AbcStrategy, DbSyncOperation, AbcResult, AbcError, capitalize, QueryType, getDefaultApiConfig, getFromVuex, getFromIndexedDb, getFromFirebase, mergeLocalRecords, saveToIndexedDb, queryIndexedDb, queryFirebase } from "../../private";
-import { getStore } from "../../index";
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
  * including meta-data properties too.
