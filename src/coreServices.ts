@@ -1,5 +1,5 @@
 import { Store } from "vuex";
-import { addNamespace, FmConfigAction, FmConfigMutation, IFiremodelConfig, database } from "./private";
+import { addNamespace, FmConfigAction, FmConfigMutation, IFiremodelConfig, getDatabase } from "./private";
 import type { IClientConfig, IMockConfig } from "universal-fire"
 
 /**
@@ -10,7 +10,7 @@ export async function coreServices<T>(
   store: Store<T>,
   config?: IFiremodelConfig<T>
 ) {
-  const db =  database();
+  const db =  getDatabase();
   const starting: Promise<any>[] = [];
   // CONNECT
   if (config?.connect) {
@@ -20,7 +20,7 @@ export async function coreServices<T>(
 
     // run connect action
     starting.push(
-      store.dispatch(addNamespace(FmConfigAction.connect), database())
+      store.dispatch(addNamespace(FmConfigAction.connect), getDatabase())
     );
   }
 

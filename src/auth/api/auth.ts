@@ -15,6 +15,7 @@ import { getAuth, getStore } from "../../private";
 
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
 import { IModelConstructor } from "firemodel";
+import { setAuth } from "../../state-mgmt";
 
 /**
  * Log into the Firebase AUTH sytem using email/password. If successful it returns

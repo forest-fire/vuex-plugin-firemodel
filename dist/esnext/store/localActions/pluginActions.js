@@ -1,5 +1,5 @@
 import { FireModel, List, Record, Watch } from "firemodel";
-import { FireModelPluginError, FmConfigAction, authChanged, database, getPluginConfig, runQueue } from "../../private";
+import { FireModelPluginError, FmConfigAction, authChanged, getDatabase, getPluginConfig, runQueue } from "../../private";
 /**
  * **pluginActions**
  *
@@ -17,7 +17,7 @@ export const pluginActions = () => ({
             throw new FireModelPluginError(`Connecting to database but NO configuration was present!`, "not-allowed");
         }
         try {
-            const db = await database();
+            const db = await getDatabase();
             FireModel.defaultDb = db;
             const ctx = {
                 Watch,
@@ -44,7 +44,7 @@ export const pluginActions = () => ({
      */
     async [FmConfigAction.anonymousLogin](store) {
         const { commit, rootState } = store;
-        const db = database();
+        const db = getDatabase();
         const auth = await db.auth();
         if (auth.currentUser && !auth.currentUser.isAnonymous) {
             const anon = await auth.signInAnonymously();
@@ -63,7 +63,7 @@ export const pluginActions = () => ({
     async [FmConfigAction.firebaseAuth](store, config) {
         const { commit, rootState, dispatch } = store;
         try {
-            const db = database();
+            const db = getDatabase();
             const auth = await db.auth();
             FireModel.defaultDb = db;
             const ctx = {

@@ -9,7 +9,7 @@ import {
   IFmRouteEventContext,
   IVuexState,
   authChanged,
-  database,
+  getDatabase,
   getPluginConfig,
   runQueue
 } from "../../private";
@@ -38,7 +38,7 @@ export const pluginActions = <T>() =>
         );
       }
       try {
-        const db = await database();
+        const db = await getDatabase();
         FireModel.defaultDb = db;
         const ctx: IFmConnectedContext<T> = {
           Watch,
@@ -71,7 +71,7 @@ export const pluginActions = <T>() =>
      */
     async [FmConfigAction.anonymousLogin](store) {
       const { commit, rootState } = store;
-      const db = database();
+      const db = getDatabase();
       const auth = await db.auth() as FirebaseAuth;
 
       if (auth.currentUser && !auth.currentUser.isAnonymous) {
@@ -93,7 +93,7 @@ export const pluginActions = <T>() =>
       const { commit, rootState, dispatch } = store;
 
       try {
-        const db = database();
+        const db = getDatabase();
         const auth = await db.auth() as FirebaseAuth;
         FireModel.defaultDb = db;
 
