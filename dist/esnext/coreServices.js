@@ -1,10 +1,10 @@
-import { addNamespace, FmConfigAction, database } from "./private";
+import { addNamespace, FmConfigAction, getDatabase } from "./private";
 /**
  * Based on the configuration passed in by the consuming app, core
  * services will be started by firing off the appropriate Vuex _action_.
  */
 export async function coreServices(store, config) {
-    const db = database();
+    const db = getDatabase();
     const starting = [];
     // CONNECT
     if (config === null || config === void 0 ? void 0 : config.connect) {
@@ -12,7 +12,7 @@ export async function coreServices(store, config) {
             await db.connect();
         }
         // run connect action
-        starting.push(store.dispatch(addNamespace(FmConfigAction.connect), database()));
+        starting.push(store.dispatch(addNamespace(FmConfigAction.connect), getDatabase()));
     }
     // AUTH
     if (config === null || config === void 0 ? void 0 : config.auth) {

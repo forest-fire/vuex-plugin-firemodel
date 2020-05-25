@@ -7,7 +7,7 @@ const private_1 = require("./private");
  * services will be started by firing off the appropriate Vuex _action_.
  */
 async function coreServices(store, config) {
-    const db = private_1.database();
+    const db = private_1.getDatabase();
     const starting = [];
     // CONNECT
     if (config === null || config === void 0 ? void 0 : config.connect) {
@@ -15,7 +15,7 @@ async function coreServices(store, config) {
             await db.connect();
         }
         // run connect action
-        starting.push(store.dispatch(private_1.addNamespace(private_1.FmConfigAction.connect), private_1.database()));
+        starting.push(store.dispatch(private_1.addNamespace(private_1.FmConfigAction.connect), private_1.getDatabase()));
     }
     // AUTH
     if (config === null || config === void 0 ? void 0 : config.auth) {
