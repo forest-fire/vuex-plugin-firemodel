@@ -1,7 +1,8 @@
-import { IClientConfig, User, IdTokenResult, AuthCredential } from "@forest-fire/types";
+import { AuthCredential, IClientConfig, IdTokenResult, User } from "@forest-fire/types";
+import { ICurrentUser, IFmQueuedAction } from "../private";
 import { IFmLocalEvent, IWatcherEventContext } from "firemodel";
+
 import { IDictionary } from "common-types";
-import { IFmQueuedAction, ICurrentUser } from "../private";
 
 export interface IFiremodelAbbreviatedUser {
   uid: string;
@@ -11,7 +12,7 @@ export interface IFiremodelAbbreviatedUser {
   fullProfile: User;
 }
 
-export interface IFiremodelState<T> {
+export interface IVuexState<T> {
   /** the configuration used to connect to the Firebase DB */
   config?: IClientConfig;
   /** a list of custom claims that this user has */

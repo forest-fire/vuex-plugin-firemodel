@@ -1,7 +1,7 @@
-import { MutationTree } from "vuex";
-import { IFiremodelState } from "../../index";
-import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
+import { FmCrudMutation, IVuexState } from "../../private";
+
 import { IFmLocalRelationshipEvent } from "firemodel";
+import { MutationTree } from "vuex";
 import Vue from "vue";
 
 export const relationships = <T>() =>
@@ -92,4 +92,4 @@ export const relationships = <T>() =>
     ) {
       delete state.localOnly[payload.transactionId];
     }
-  } as MutationTree<IFiremodelState<T>>);
+  } as MutationTree<IVuexState<T>>);

@@ -1,24 +1,23 @@
-import { MutationTree } from "vuex";
-import { changeRoot } from "../shared/changeRoot";
+import {
+  AbcApi,
+  AbcError,
+  AbcMutation,
+  AbcResult,
+  DbSyncOperation,
+  IAbcResult,
+  IDiscreteLocalResults,
+  IDiscreteResult,
+  IDiscreteServerResults,
+  changeRoot
+} from "../private";
 import { arrayToHash, hashToArray } from "typed-conversions";
 
-import Vue from "vue";
-import {
-  AbcMutation,
-  IDiscreteLocalResults,
-  IDiscreteServerResults,
-  IAbcResult,
-  IDiscreteResult,
-  DbSyncOperation
-} from "../types";
 import { IDictionary } from "common-types";
-import { AbcResult } from "../abc/api/AbcResult";
-import { AbcApi } from "../abc/api/AbcApi";
+import { MutationTree } from "vuex";
+import Vue from "vue";
 import get from "lodash.get";
-import { AbcError } from "../errors";
-import { localConfig } from "../store/mutations/localConfig";
 
-export function abc<T>(propOffset?: keyof T & string): MutationTree<T> {
+export function AbcFiremodelMutation<T>(propOffset?: keyof T & string): MutationTree<T> {
   return {
     [AbcMutation.ABC_VUEX_UPDATE_FROM_IDX]<T extends IDictionary>(
       state: T,

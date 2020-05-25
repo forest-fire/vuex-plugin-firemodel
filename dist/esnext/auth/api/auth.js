@@ -3,7 +3,7 @@
  * which Firemodel provides but are type-safe and often are a more easily
  * used means to achieve **Firebase** _auth_ functions
  */
-import { getStore, getAuth } from "../../index";
+import { getAuth, getStore } from "../../private";
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";
 /**
  * Log into the Firebase AUTH sytem using email/password. If successful it returns

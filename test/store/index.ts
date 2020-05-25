@@ -1,15 +1,17 @@
+import { AsyncMockData, IVuexState, abc } from "../../src/private";
 import Vuex, { Store } from "vuex";
-import {  IFiremodelState, abc, AsyncMockData } from "../../src/private";
-import FiremodelPlugin from "../../src/index"
+import companies, { ICompaniesState } from "./modules/companies";
 import products, { IProductsState } from "./modules/products";
 import userProfile, { IUserProfileState } from "./modules/userProfile";
-import companies, { ICompaniesState } from "./modules/companies";
-import { config } from "./config";
-import { Product } from "../models/Product";
+
 import { Company } from "../models/Company";
-import { Person } from "../models/Person";
-import Vue from "vue";
+import {FiremodelPlugin} from "../../src/private"
 import { IDictionary } from "common-types";
+import { Person } from "../models/Person";
+import { Product } from "../models/Product";
+import { RealTimeClient } from "@forest-fire/real-time-client";
+import Vue from "vue";
+import { config } from "./config";
 
 Vue.use(Vuex);
 
@@ -17,7 +19,7 @@ export interface IRootState {
   products: IProductsState;
   userProfiles: IUserProfileState;
   companies: ICompaniesState;
-  ["@firemodel"]: IFiremodelState<IRootState>;
+  ["@firemodel"]: IVuexState<IRootState>;
 }
 
 export let store: Store<IRootState>;
@@ -29,13 +31,14 @@ export let store: Store<IRootState>;
  * as a parameter
  */
 export const setupStore = (data?: IDictionary | AsyncMockData) => {
+  const db = new RealTimeClient({mocking: true})
   store = new Vuex.Store<IRootState>({
     modules: {
       products,
       userProfile,
       companies
     },
-    plugins: [FiremodelPlugin(config(data))]
+    plugins: [FiremodelPlugin(db, config(data))]
   });
   return store;
 };

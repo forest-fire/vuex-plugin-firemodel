@@ -1,18 +1,25 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mutations = void 0;
-const localConfig_1 = require("./localConfig");
-const serverConfirm_1 = require("./serverConfirm");
-const serverRollback_1 = require("./serverRollback");
-const auth_1 = require("./auth");
-const watcher_1 = require("./watcher");
-const localCrud_1 = require("./localCrud");
-const errors_1 = require("./errors");
-const relationships_1 = require("./relationships");
-/**
- * The **mutations** to the `@firemodel` state node; this state node will be off the
- * root of a state tree which is defined by the application but remains
- * unknown/generic to this plugin
- */
-exports.mutations = () => (Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, errors_1.errorMutations()), localConfig_1.localConfig()), auth_1.authMutations()), serverConfirm_1.serverConfirm()), serverRollback_1.serverRollback()), localCrud_1.localCrud()), relationships_1.relationships()), watcher_1.watcher()));
+// #autoindex
+//#region autoindexed files
+// indexed at: 5th May, 2020, 09:52 PM ( GMT-7 )
+__exportStar(require("./auth"), exports);
+__exportStar(require("./errors"), exports);
+__exportStar(require("./localConfig"), exports);
+__exportStar(require("./localCrud"), exports);
+__exportStar(require("./relationships"), exports);
+__exportStar(require("./serverConfirm"), exports);
+__exportStar(require("./serverRollback"), exports);
+__exportStar(require("./watcher"), exports);
+//#endregion
 //# sourceMappingURL=index.js.map

@@ -1,6 +1,6 @@
-import { IFmWatchEvent, Record, FmEvents } from "firemodel";
-import { IFmLocalChange } from "../index";
-import { IFmEventActions } from "../types";
+import { FmEvents, IFmWatchEvent, Record } from "firemodel";
+import { IFmEventActions, IFmLocalChange } from "../private";
+
 import { IDictionary } from "common-types";
 
 /**

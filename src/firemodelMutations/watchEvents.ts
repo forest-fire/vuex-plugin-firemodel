@@ -1,9 +1,8 @@
-import { MutationTree } from "vuex";
-import { FmCrudMutation } from "../types";
-import { IFmWatchEvent } from "firemodel";
+import { FmCrudMutation, changeRoot, isRecord } from "../private";
+
 import { IDictionary } from "common-types";
-import { isRecord } from "../shared/isRecord";
-import { changeRoot } from "../shared/changeRoot";
+import { IFmWatchEvent } from "firemodel";
+import { MutationTree } from "vuex";
 import Vue from "vue";
 
 export function watchEvents<T>(propOffset?: keyof T & string): MutationTree<T> {

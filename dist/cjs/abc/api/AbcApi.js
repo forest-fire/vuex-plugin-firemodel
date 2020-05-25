@@ -1,10 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbcApi = void 0;
+const private_1 = require("../../private");
 const firemodel_1 = require("firemodel");
 const common_types_1 = require("common-types");
-const private_1 = require("../../private");
-const index_1 = require("../../index");
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
  * including meta-data properties too.
@@ -224,7 +223,7 @@ let AbcApi = /** @class */ (() => {
             }
         }
         async getQuery(request, options = {}) {
-            const store = index_1.getStore();
+            const store = private_1.getStore();
             // query types all() | where() | since()
             const { dexieQuery, firemodelQuery, queryDefn } = request(this, options);
             let local = {
@@ -298,7 +297,7 @@ let AbcApi = /** @class */ (() => {
             return response;
         }
         async loadQuery(request, options = {}) {
-            const store = index_1.getStore();
+            const store = private_1.getStore();
             // query types all() | where() | since()
             const { firemodelQuery, queryDefn } = request(this, options);
             let local = {
@@ -354,7 +353,7 @@ let AbcApi = /** @class */ (() => {
          * Handles GET requests for Discrete ID requests
          */
         async getDiscrete(request, options = {}) {
-            const store = index_1.getStore();
+            const store = private_1.getStore();
             let idxRecords = [];
             const requestIds = request.map(i => firemodel_1.Record.compositeKeyRef(this._modelConstructor, i));
             // get from Vuex
@@ -397,7 +396,7 @@ let AbcApi = /** @class */ (() => {
          * Handles LOAD requests for Discrete ID requests
          */
         async loadDiscrete(request, options = {}) {
-            const store = index_1.getStore();
+            const store = private_1.getStore();
             // const t0 = performance.now();
             const requestIds = request.map(i => firemodel_1.Record.compositeKeyRef(this._modelConstructor, i));
             const local = undefined;

@@ -1,10 +1,14 @@
+import {
+  ActionCodeSettings,
+  AuthCredential,
+  User,
+  UserCredential
+} from "@forest-fire/types";
+import { FireModelPluginError, IAuthProfile, ISignOutPayload, IVuexState, database } from "../../private";
+
 import { ActionTree } from "vuex";
 import { Record } from "firemodel";
-import { ActionCodeSettings,
-  UserCredential,
-  AuthCredential, User } from "@forest-fire/types";
-  
-import { IFiremodelState, ISignOutPayload, IAuthProfile, FireModelPluginError, database } from "../../private";
+import { getAuth } from "../../state-mgmt";
 
 /**
  * **authActions**
@@ -22,8 +26,8 @@ export const authActions = <T>() =>
       { email, password }: { email: string; password: string }
     ) {
       try {
-        const db = await database();
-        const auth = await db.auth();
+        const db = database();
+        const auth = getAuth();
         const userCredential = await auth.signInWithEmailAndPassword(
           email,
           password
@@ -50,8 +54,8 @@ export const authActions = <T>() =>
       { email, password }: { email: string; password: string }
     ): Promise<UserCredential> {
       try {
-        const db = await database();
-        const auth = await db.auth();
+        const db = database();
+        const auth = getAuth();
         const userCredential = await auth.createUserWithEmailAndPassword(
           email,
           password
@@ -83,7 +87,7 @@ export const authActions = <T>() =>
     ) {
       try {
         const db = await database();
-        const auth = await db.auth();
+        const auth = getAuth();
         await auth.sendPasswordResetEmail(email, actionCodeSettings);
         commit("sendPasswordResetEmail", { email, actionCodeSettings });
       } catch (e) {
@@ -105,7 +109,7 @@ export const authActions = <T>() =>
     ) {
       try {
         const db = await database();
-        const auth = await db.auth();
+        const auth = getAuth();
         await auth.confirmPasswordReset(code, newPassword);
         commit("confirmPasswordReset");
       } catch (e) {
@@ -124,7 +128,7 @@ export const authActions = <T>() =>
     async verifyPasswordResetCode({ commit }, code: string): Promise<string> {
       try {
         const db = await database();
-        const auth = await db.auth();
+        const auth = getAuth();
         const email = await auth.verifyPasswordResetCode(code);
         commit("verifyPasswordResetCode", email);
 
@@ -156,7 +160,7 @@ export const authActions = <T>() =>
 
       try {
         const db = await database();
-        const user = (await db.auth()).currentUser as User;
+        const user = (getAuth()).currentUser as User;
         await user.updateEmail(newEmail);
         commit("updatedEmail", { uid: user.uid, email: newEmail });
       } catch (e) {
@@ -188,7 +192,7 @@ export const authActions = <T>() =>
 
       try {
         const db = await database();
-        const user = (await db.auth()).currentUser as User;
+        const user = (getAuth()).currentUser as User;
         await user.updatePassword(password);
         commit("updatedPassword", { uid: user.uid, password: "*****" });
       } catch (e) {
@@ -207,7 +211,7 @@ export const authActions = <T>() =>
     async updateProfile({ commit, state }, profile: IAuthProfile) {
       try {
         const db = await database();
-        const auth = await db.auth();
+        const auth = getAuth();
         const user = auth.currentUser;
         if (!user) {
           throw new FireModelPluginError(
@@ -235,7 +239,7 @@ export const authActions = <T>() =>
       try {
         const db = await database();
         Record.defaultDb = db;
-        const auth = await db.auth();
+        const auth = getAuth();
         if (model) {
           const localPath =
             typeof model === "string" ? model : Record.create(model).localPath;
@@ -258,7 +262,7 @@ export const authActions = <T>() =>
     async sendEmailVerification({ commit }) {
       try {
         const db = await database();
-        const auth = await db.auth();
+        const auth = getAuth();
         if (!auth.currentUser) {
           throw new FireModelPluginError(
             `Attempt to call sendEmailVerification() failed because there is no "currentUser" set in the identity system yet!`,
@@ -279,7 +283,7 @@ export const authActions = <T>() =>
       try {
         const db = await database();
         Record.defaultDb = db;
-        const auth = await db.auth();
+        const auth = getAuth();
         if (!auth.currentUser) {
           throw new FireModelPluginError(
             `Attempt to call reauthenticateWithCredential() requires that the "auth.currentUser" be set and it is not!`,
@@ -300,11 +304,11 @@ export const authActions = <T>() =>
       try {
         const db = await database();
         Record.defaultDb = db;
-        const auth = await db.auth();
+        const auth = getAuth();
 
         await auth.currentUser?.linkWithCredential(credential);
       } catch (e) {
         throw new FireModelPluginError(e.message, "linkWithCredential");
       }
     }
-  } as ActionTree<IFiremodelState<T>, T>);
+  } as ActionTree<IVuexState<T>, T>);

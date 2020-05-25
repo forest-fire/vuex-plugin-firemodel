@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.watch = void 0;
-const firemodel_1 = require("firemodel");
 const private_1 = require("../../private");
+const firemodel_1 = require("firemodel");
 exports.watch = () => ({
     [firemodel_1.FmEvents.WATCHER_STARTING]({ commit }, payload) {
         commit("WATCHER_STARTING" /* watcherStarting */, payload);

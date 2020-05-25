@@ -1,5 +1,5 @@
-import { FmEvents } from "firemodel";
 import { determineLocalStateNode } from "../../private";
+import { FmEvents } from "firemodel";
 export const watch = () => ({
     [FmEvents.WATCHER_STARTING]({ commit }, payload) {
         commit("WATCHER_STARTING" /* watcherStarting */, payload);

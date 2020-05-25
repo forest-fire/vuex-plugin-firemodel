@@ -1,8 +1,8 @@
-import { MutationTree } from "vuex";
+import { FmCrudMutation, getInitialState } from "../private";
+
 import { Model } from "firemodel";
+import { MutationTree } from "vuex";
 import Vue from "vue";
-import { FmCrudMutation } from "../types";
-import { initialState } from "..";
 
 export function reset<T extends Model>(
   propOffset?: keyof T & string
@@ -15,7 +15,7 @@ export function reset<T extends Model>(
       } else {
         // TODO: make this reset to "default state" not empty state
         return Object.keys(state).forEach(p =>
-          Vue.set(state, p, initialState[mod][p])
+          Vue.set(state, p, getInitialState()[mod][p])
         );
       }
     }

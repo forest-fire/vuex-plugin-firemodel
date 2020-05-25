@@ -1,4 +1,4 @@
-import { Record, FmEvents } from "firemodel";
+import { FmEvents, Record } from "firemodel";
 /**
  * converts a "local change" event into the right data structure
  */

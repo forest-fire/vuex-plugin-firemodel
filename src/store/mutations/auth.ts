@@ -1,8 +1,9 @@
+import { ICurrentUser, IVuexState } from "../../private";
+
+import { IDictionary } from "common-types";
 import { MutationTree } from "vuex";
 import { UserCredential } from "@firebase/auth-types";
 import Vue from "vue";
-import { IDictionary } from "common-types";
-import { IFiremodelState, ICurrentUser } from "../../private";
 
 /**
  * The **mutations** associated to the Firebase Auth API.
@@ -65,4 +66,4 @@ export const authMutations = <T>() =>
     ANONYMOUS_LOGIN(state, payload) {
       // no-op
     }
-  } as MutationTree<IFiremodelState<T>>);
+  } as MutationTree<IVuexState<T>>);

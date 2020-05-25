@@ -1,7 +1,8 @@
+import { FmCrudMutation, IVuexState } from "../../private";
+
+import { IFmLocalRecordEvent } from "firemodel";
 import { MutationTree } from "vuex";
-import { IFiremodelState, IFmLocalRecordEvent } from "../../index";
 import Vue from "vue";
-import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
 
 export const serverRollback = <T>() =>
   ({
@@ -42,4 +43,4 @@ export const serverRollback = <T>() =>
         `Rolled back changes made locally [ transaction id: ${transactionId} ]`
       );
     }
-  } as MutationTree<IFiremodelState<T>>);
+  } as MutationTree<IVuexState<T>>);

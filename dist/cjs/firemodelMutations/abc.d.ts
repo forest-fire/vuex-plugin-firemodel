@@ -1,2 +1,2 @@
 import { MutationTree } from "vuex";
-export declare function abc<T>(propOffset?: keyof T & string): MutationTree<T>;
+export declare function AbcFiremodelMutation<T>(propOffset?: keyof T & string): MutationTree<T>;

@@ -1,9 +1,7 @@
+import { FmCrudMutation, changeRoot, isRecord, updateList } from "../private";
+import { IFmWatchEvent, Model } from "firemodel";
+
 import { MutationTree } from "vuex";
-import { FmCrudMutation } from "../types/mutations/FmCrudMutation";
-import { Model, IFmWatchEvent } from "firemodel";
-import { changeRoot } from "../shared/changeRoot";
-import { updateList } from "../shared/updateList";
-import { isRecord } from "../shared/isRecord";
 
 export function serverEvents<T>(
   propOffset?: keyof T & string

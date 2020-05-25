@@ -1,8 +1,8 @@
 import { IDictionary, epoch } from "common-types";
-import type { IRealTimeClient, IFirestoreClient, IClientConfig, IClientAuth, IMockConfig } from 'universal-fire'
+import type {IClientAuth, IAbstractedDatabase } from 'universal-fire'
 import { Watch, Record, List, Model, IModelOptions } from "firemodel";
 import { Commit, Dispatch } from "vuex";
-import { IAuthPersistenceStrategy, IFiremodelState } from "../private";
+import { IAuthPersistenceStrategy, IVuexState } from "../private";
 
 export type AsyncMockData = () => Promise<IDictionary>;
 
@@ -24,7 +24,7 @@ export interface IFmEventBase<T> {
   /** commit to Vuex for direct state change */
   commit: Commit;
   /** the root state of Vuex */
-  state: T & { "@firemodel": IFiremodelState<T> };
+  state: T & { "@firemodel": IVuexState<T> };
 }
 
 /**
@@ -48,7 +48,7 @@ export interface IFmConnectedContext<T> extends IFmEventBase<T> {
   /** the database configuration that was used */
   config: IFiremodelConfig<T>;
   /** the connection to the DB via `universal-fire` */
-  db: IRealTimeClient | IFirestoreClient;
+  db: IAbstractedDatabase;
 }
 
 /** Context provided to a _logged in_ user */
@@ -139,14 +139,6 @@ export type IFmRouteChanged<T> = (
 export interface IFiremodelConfig<T>
   extends IFiremodelLifecycleHooks<T>,
     IFiremodelPluginCoreServices {
-  /**
-   * Firemodel must be able to connect to the database -- using
-   * `universal-fire` to do so -- and therefore the configuration
-   * must include either a Firebase Config (and this plugin will
-   * create an instance of `universal-fire`) or you can just pass
-   * in an instance of abstracted client here as well.
-   */
-  db: IClientConfig | IMockConfig;
 }
 
 export interface IFiremodelPluginCoreServices {

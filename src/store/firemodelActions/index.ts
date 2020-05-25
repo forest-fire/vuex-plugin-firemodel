@@ -1,33 +1,35 @@
-import { recordServerChanges } from "./recordServerChanges";
-import { ActionTree } from "vuex";
-import { IFiremodelState } from "../..";
-import { watch } from "./watch";
-import { relationship } from "./relationship";
-import { recordLocal } from "./recordLocal";
-import { recordConfirms } from "./recordConfirms";
-import { recordRollbacks } from "./recordRollbacks";
-import { authActions } from "./auth";
-import { errors } from "./errors";
-import { other } from "./other";
+// #autoindex:named
+//#region autoindexed files
+// indexed at: 5th May, 2020, 09:52 PM ( GMT-7 )
+export * from "./auth";
+export * from "./errors";
+export * from "./firemodelActions";
+export * from "./other";
+export * from "./recordConfirms";
+export * from "./recordLocal";
+export * from "./recordRollbacks";
+export * from "./recordServerChanges";
+export * from "./relationship";
+export * from "./watch";
+//#endregion
 
-export const firemodelActions = <T>() =>
-  stripNamespaceFromKeys<T>({
-    ...errors<T>(),
-    ...authActions<T>(),
-    ...recordServerChanges<T>(),
-    ...recordLocal<T>(),
-    ...recordConfirms<T>(),
-    ...recordRollbacks<T>(),
-    ...watch<T>(),
-    ...relationship<T>(),
-    ...other<T>()
-  }) as ActionTree<IFiremodelState<T>, T>;
 
-function stripNamespaceFromKeys<T>(global: ActionTree<IFiremodelState<T>, T>) {
-  const local: ActionTree<IFiremodelState<T>, T> = {};
-  Object.keys(global).forEach(key => {
-    local[key.replace("@firemodel/", "")] = global[key];
-  });
 
-  return local;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

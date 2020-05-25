@@ -1,3 +1,3 @@
+import { IVuexState } from "../../private";
 import { ActionTree } from "vuex";
-import { IFiremodelState } from "../../private";
-export declare const watch: <T>() => ActionTree<IFiremodelState<T>, T>;
+export declare const watch: <T>() => ActionTree<IVuexState<T>, T>;

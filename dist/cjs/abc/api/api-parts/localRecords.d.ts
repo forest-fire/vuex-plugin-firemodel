@@ -1,5 +1,5 @@
-import { Model, IPrimaryKey } from "firemodel";
 import { AbcRequestCommand, IDiscreteLocalResults, IDiscreteOptions } from "../../../types";
+import { IPrimaryKey, Model } from "firemodel";
 import { AbcApi } from "../AbcApi";
 /**
  * For a discrete set of primary keys, get's all knowledge of these locally. This means
