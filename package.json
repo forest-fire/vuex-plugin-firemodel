@@ -41,7 +41,7 @@
     "common-types": "^1.14.3",
     "fast-copy": "^2.0.4",
     "fast-equals": "^2.0.0",
-    "firemodel": "^0.49.1",
+    "firemodel": "git+https://github.com/forest-fire/firemodel#feature/autoindex",
     "js-cookie": "^2.2.1",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
