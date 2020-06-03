@@ -1,7 +1,7 @@
 import { FiremodelModule, FmConfigAction, IFiremodelConfig, IVuexState, addNamespace, coreServices, queueLifecycleEvents, setInitialState, storeDatabase, storePluginConfig } from "./private";
 
 import { FireModel } from "firemodel";
-import { IAbstractedDatabase } from "universal-fire";
+import type { FirestoreClient, RealTimeClient } from "universal-fire";
 import type { Store } from "vuex";
 import copy from "fast-copy";
 import { preserveStore } from "./state-mgmt";
@@ -19,7 +19,7 @@ export const FiremodelPlugin = <T>(
    * Provide a connection to the database with one of the SDK's provided
    * by the `universal-fire` library.
    */
-  db: IAbstractedDatabase,
+  db: FirestoreClient | RealTimeClient,
   /**
    * Specify the configuration of the "core services" this plugin provides 
    */
