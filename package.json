@@ -41,13 +41,13 @@
     "common-types": "^1.15.1",
     "fast-copy": "^2.0.4",
     "fast-equals": "^2.0.0",
-    "firemodel": "^0.49.1",
+    "firemodel": "^0.50.3",
     "js-cookie": "^2.2.1",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "stacktrace-js": "^2.0.2",
     "typed-conversions": "^0.10.2",
-    "universal-fire": "^0.50.1",
+    "universal-fire": "^0.50.4",
     "vuex": "^3.4.0"
   },
   "devDependencies": {
