@@ -4679,7 +4679,7 @@ firemock@^0.49.6:
 
 "firemodel@git+https://github.com/forest-fire/firemodel#feature/autoindex":
   version "0.48.5"
-  resolved "git+https://github.com/forest-fire/firemodel#07b82154328258cb321e878a9e93c6936e55f56f"
+  resolved "git+https://github.com/forest-fire/firemodel#1e3846422f9bb0cc41b8827af33fa9846f09b575"
   dependencies:
     common-types "^1.14.3"
     date-fns "^2.14.0"

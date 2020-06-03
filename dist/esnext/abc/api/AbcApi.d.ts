@@ -1,5 +1,5 @@
 import { AbcResult, IAbcApiConfig, IAbcOptions, IAbcParam, IFmModelConstructor } from "../../private";
-import { DexieDb, IFmModelMeta, IPrimaryKey, Model } from "firemodel";
+import { DexieDb, IFmModelMeta, Model } from "firemodel";
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
  * including meta-data properties too.
@@ -164,23 +164,21 @@ export declare class AbcApi<T extends Model> {
      */
     get config(): IAbcApiConfig<T>;
     get dexieModels(): {
-        name: string; /**
-         * Returns constructors for the `Model`s which will be managed by the IndexedDB
-         */
+        name: string;
         schema: import("dexie").TableSchema;
     }[];
     /**
      * Provides access to this Dexie **Table API**
      */
-    get dexieTable(): import("dexie").Dexie.Table<T, IPrimaryKey<T>>;
+    get dexieTable(): import("dexie").Dexie.Table<any, any>;
     /**
      * Provides access to this Dexie **Record API**
      */
-    get dexieRecord(): import("firemodel").DexieRecord<T>;
+    get dexieRecord(): any;
     /**
      * Provides access to this Dexie **List API**
      */
-    get dexieList(): import("firemodel").DexieList<T>;
+    get dexieList(): any;
     protected get dexie(): DexieDb;
     /**
      * Connects Dexie to IndexedDB for _all_ Firemodel Models
