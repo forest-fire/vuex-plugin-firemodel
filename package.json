@@ -47,7 +47,7 @@
     "lodash.set": "^4.3.2",
     "stacktrace-js": "^2.0.2",
     "typed-conversions": "^0.10.2",
-    "universal-fire": "^0.50.0",
+    "universal-fire": "^0.50.1",
     "vuex": "^3.4.0"
   },
   "devDependencies": {
