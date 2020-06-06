@@ -4662,10 +4662,10 @@ firemock@^0.49.5:
     lodash.set "^4.3.2"
     typed-conversions "^0.10.4"
 
-firemodel@^0.49.0:
-  version "0.49.0"
-  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.49.0.tgz#c10be2d8d94fdf56b3adfe9a6dc67b14e7217e46"
-  integrity sha512-xzyx6x20Efha3yMNKXK4/PCGmLU2DMBwxUVkEo87ucLOv5kAIEL7dGeFaFtLHy7Wjy3wMrleZHEdVSjsGv5S0w==
+firemodel@^0.49.1:
+  version "0.49.1"
+  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.49.1.tgz#0842e69b6e382c0d721b378f69d5090a0c6cdc6e"
+  integrity sha512-8i/P9BoyWaqjScIgZ5mYQDvD5sB1tyMkZ5apVp02Avbxs6y6vOQXejhS4TTKGjyzrh7jRoyjYEfjj6c2vX2AXA==
   dependencies:
     "@forest-fire/real-time-db" "^0.49.5"
     "@forest-fire/serialized-query" "^0.49.5"
@@ -10433,9 +10433,9 @@ websocket-driver@>=0.5.1:
     websocket-extensions ">=0.1.1"
 
 websocket-extensions@>=0.1.1:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
-  integrity sha512-nqHUnMXmBzT0w570r2JpJxfiSD1IzoI+HGVdd3aZ0yNi3ngvQ4jv1dtHt5VGxfI2yj5yqImPhOK4vmIh2xMbGg==
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
+  integrity sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==
 
 whatwg-url@7.1.0:
   version "7.1.0"
