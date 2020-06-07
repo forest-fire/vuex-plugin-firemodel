@@ -1,5 +1,6 @@
+import type { FirestoreClient, IAbstractedDatabase, RealTimeClient } from 'universal-fire';
+
 import { FireModelPluginError } from "../private";
-import { IAbstractedDatabase } from 'universal-fire';
 
 let _db: IAbstractedDatabase;
 /**
