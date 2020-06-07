@@ -1,5 +1,5 @@
 import { IFiremodelConfig, IVuexState } from "./private";
-import { IAbstractedDatabase } from "universal-fire";
+import type { IAbstractedDatabase } from "universal-fire";
 import type { Store } from "vuex";
 export declare type IFiremodelVuexModule<T> = {
     "@firemodel": IVuexState<T>;

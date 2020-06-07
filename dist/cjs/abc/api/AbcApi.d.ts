@@ -158,15 +158,13 @@ export declare class AbcApi<T extends Model> {
     /**
      * Provides access to the Firebase database
      */
-    get db(): import("@forest-fire/abstracted-database").AbstractedDatabase;
+    get db(): import("universal-fire").IAbstractedDatabase;
     /**
      * The **ABC** configuration for this instance's `Model`
      */
     get config(): IAbcApiConfig<T>;
     get dexieModels(): {
-        name: string; /**
-         * Returns constructors for the `Model`s which will be managed by the IndexedDB
-         */
+        name: string;
         schema: import("dexie").TableSchema;
     }[];
     /**

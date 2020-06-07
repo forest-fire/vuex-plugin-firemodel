@@ -37,17 +37,17 @@
   },
   "homepage": "https://vuex.firemodel.info",
   "dependencies": {
-    "@forest-fire/types": "^0.49.0",
-    "common-types": "^1.14.3",
+    "@forest-fire/types": "^0.50.1",
+    "common-types": "^1.15.5",
     "fast-copy": "^2.0.4",
     "fast-equals": "^2.0.0",
-    "firemodel": "^0.49.1",
+    "firemodel": "^0.50.3",
     "js-cookie": "^2.2.1",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "stacktrace-js": "^2.0.2",
     "typed-conversions": "^0.10.2",
-    "universal-fire": "^0.49.5",
+    "universal-fire": "^0.50.7",
     "vuex": "^3.4.0"
   },
   "devDependencies": {
