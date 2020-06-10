@@ -1,9 +1,10 @@
-import { getStore } from "../src/index"
 import { expect } from "chai";
+import { Order } from "./models/Order";
 import { Product } from "./models/Product";
 import { Store, MutationPayload } from "vuex";
 import { IRootState } from "./store";
 import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
+import { orderData } from "./data/orderData";
 import { productData } from "./data/productData";
 import { productDataExtra } from "./data/productDataExtra";
 import { IDictionary } from "common-types";
@@ -16,17 +17,15 @@ import {
   IAbcRequest,
   IAbcQueryRequest,
   AbcResult,
+  getStore,
   where,
   AbcStrategy,
-  List,
   IQueryServerResults,
-  Model,
-  IPrimaryKey,
   DbSyncOperation,
-  FireModel,
   since,
   saveToIndexedDb,
 } from "../src/private";
+import { Model, IPrimaryKey, FireModel, List } from "firemodel";
 
 let events: Array<[string, any]> = [];
 let eventCounts: IDictionary<number> = {};
@@ -86,8 +85,8 @@ function addNewProductsToMockDB(mock: Mock): ProductData {
   mock.updateDB({ products }, true);
 
   return {
-    products: mock.db.products, 
-    totalProducts: Object.keys(mock.db.products).length 
+    products: mock.db.products,
+    totalProducts: Object.keys(mock.db.products).length
   };
 }
 
@@ -95,19 +94,27 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
   let store: Store<IRootState>;
   let getProducts: IAbcRequest<Product>;
   let loadProducts: IAbcRequest<Product>;
-  
+  let getOrders: IAbcRequest<Order>;
+  let loadOrders: IAbcRequest<Order>;
+
   beforeEach(async () => {
     await fakeIndexedDb();
     store = (await import("./store")).setupStore();
     const abc = (await import("./store")).getAbc();
     getProducts = abc.getProducts;
     loadProducts = abc.loadProducts;
+    getOrders = abc.getOrders;
+    loadOrders = abc.loadOrders;
     await AbcApi.connectIndexedDb();
     // TODO: find a better solution to get the mock database reset
-    FireModel.defaultDb.mock.updateDB(productData, true);
+    FireModel.defaultDb.mock.updateDB({ ...productData, ...orderData }, true);
     expect(
       AbcApi.getModelApi(Product).db.isConnected,
       "Product is connected in IndexedDB"
+    );
+    expect(
+      AbcApi.getModelApi(Order).db.isConnected,
+      "Order is connected in IndexedDB"
     );
     expect(AbcApi.indexedDbConnected).to.equal(true);
   });
@@ -241,7 +248,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
 
     getProducts(all(), { strategy: AbcStrategy.getFirebase }).then(async results => {
       expect(await tbl.toArray()).to.have.lengthOf(0, "IndexedDB starts empty");
-      
+
       expect(results).to.instanceOf(
         AbcResult,
         "result is an instance of AbcResult"
@@ -359,7 +366,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       equals: 452
     }), { strategy: AbcStrategy.getFirebase }).then(async results => {
       expect(await tbl.toArray()).to.have.lengthOf(0, "IndexedDB starts empty");
-      
+
       expect(results).to.instanceOf(
         AbcResult,
         "result is an instance of AbcResult"
@@ -371,7 +378,58 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
             numProductsFromQuery,
             "IndexedDB should have all DB records"
           );
-          
+
+          expect(state.products.all).to.have.lengthOf(
+            numProductsFromQuery,
+            "Vuex have all DB records"
+          );
+          done();
+        }
+      });
+    });
+  });
+  // it("Starting WatchList only has a single and appropriate entry in watcher pool", async () => {
+  //   const wl = Watch.list(Person).ids("1234", "4567", "8989");
+  //   FireModel.dispatch = () => undefined;
+  //   FireModel.defaultDb = await RealTimeAdmin({
+  //     mocking: true,
+  //   });
+  //   const wId = await wl.start();
+  //   const pool = getWatcherPool();
+  //   expect(Object.keys(pool)).to.be.lengthOf(1);
+  //   expect(Object.keys(pool)).includes(wId.watcherId);
+  //   expect(wId.query).is.an("array");
+  //   expect(wId.watcherPaths).is.an("array");
+  // });
+  it("get.where() with watch return results from firebase into indexedDB/Vuex", (done) => {
+    store.subscribe(subscription);
+    const tbl = AbcApi.getModelApi(Product).dexieTable;
+    const db = AbcApi.getModelApi(Product).db;
+
+    const numProducts = Object.keys(productData.products).length;
+    const numProductsFromQuery = Object.values(productData.products).filter((p: Product) => p.price === 452).length;
+    expect(Object.keys(db.mock.db.products)).to.have.lengthOf(numProducts, "DB should have all records");
+    expect(store.state.products.all).to.have.lengthOf(0, "Vuex starts empty");
+
+    const watch = (p: Product) => [452].includes(p.price)
+    getProducts(where({
+      property: "price",
+      equals: 452
+    }), { strategy: AbcStrategy.getFirebase, watch }).then(async results => {
+      expect(await tbl.toArray()).to.have.lengthOf(0, "IndexedDB starts empty");
+
+      expect(results).to.instanceOf(
+        AbcResult,
+        "result is an instance of AbcResult"
+      );
+
+      store.subscribe(async (mutation: MutationPayload, state: IDictionary) => {
+        if (mutation.type === `products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`) {
+          expect(await tbl.toArray()).to.have.lengthOf(
+            numProductsFromQuery,
+            "IndexedDB should have all DB records"
+          );
+
           expect(state.products.all).to.have.lengthOf(
             numProductsFromQuery,
             "Vuex have all DB records"
@@ -493,7 +551,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       numProducts,
       "overall results should have all DB records"
     );
-    
+
     expect(store.state.products.all).to.have.lengthOf(
       0,
       "no results should be in the vuex store"
@@ -522,7 +580,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       numProducts,
       "overall results should have all DB records"
     );
-    
+
     expect(store.state.products.all).to.have.lengthOf(
       numProducts,
       "all results from firebase should be in the vuex store"
@@ -558,10 +616,10 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     );
 
     expect(await tbl.toArray()).to.have.lengthOf(
-      numProducts, 
+      numProducts,
       "Cache should have all DB records"
     );
-    
+
     expect(store.state.products.all).to.have.lengthOf(
       numProducts,
       "overall results from DB should be in the vuex store"
@@ -577,13 +635,105 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       "new products should be in the vuex store"
     );
     expect(await tbl.toArray()).to.have.lengthOf(
-      totalProducts, 
+      totalProducts,
       "IndexedDB should have all new records from Firebase DB records"
     );
     expect(eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]).to.equal(2);
     expect(eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`]).to.equal(2);
     expect(eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`]).to.be.undefined;
     expect(eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB}`]).to.be.undefined;
+  });
+
+  it("load.all() returns results from firebase into indexedDB (dynamic model)", async () => {
+    const store = getStore();
+    store.subscribe(subscription);
+    const tbl = AbcApi.getModelApi(Order).dexieTable;
+
+    const numOrders = Object.keys(orderData.store[1234].orders).length;
+    expect(store.state.products.all).to.have.lengthOf(0, "Vuex starts empty");
+    expect(await tbl.toArray()).to.have.lengthOf(0, "IndexedDB starts empty");
+
+    // Get server data and populate indexedDB
+    const results = await loadOrders(all(), { offsets: { store: "1234" } });
+
+    expect(results).to.instanceOf(
+      AbcResult,
+      "result is an instance of AbcResult"
+    );
+
+    expect(results.records).to.have.lengthOf(
+      numOrders,
+      "overall results should have all DB records"
+    );
+
+    expect(store.state.products.all).to.have.lengthOf(
+      0,
+      "no results should be in the vuex store"
+    );
+    expect(eventCounts["products/ABC_INDEXED_DB_SET_VUEX"]).to.be.undefined;
+  });
+
+  it("load.all() with loadVuex strategy returns results from indexedDB/firebase into vuex (dynamic model)", async () => {
+    const store = getStore();
+    store.subscribe(subscription);
+    const tbl = AbcApi.getModelApi(Order).dexieTable;
+
+    const numOrders = Object.keys(orderData.store[1234].orders).length;
+    expect(store.state.products.all).to.have.lengthOf(0, "Vuex starts empty");
+    expect(await tbl.toArray()).to.have.lengthOf(0, "IndexedDB starts empty");
+
+    // Get server data and populate indexedDB
+    const results = await loadOrders(all(), { offsets: { store: "1234" }, strategy: AbcStrategy.loadVuex });
+
+    expect(results).to.instanceOf(
+      AbcResult,
+      "result is an instance of AbcResult"
+    );
+
+    expect(results.records).to.have.lengthOf(
+      numOrders,
+      "overall results should have all DB records"
+    );
+
+    expect(store.state.orders.all).to.have.lengthOf(
+      numOrders,
+      "vuex store should have all DB records"
+    );
+    expect(eventCounts["orders/ABC_INDEXED_DB_SET_VUEX"]).to.equal(1);
+  });
+
+  it.skip("load.all() with loadVuex strategy returns results from indexedDB/firebase into vuex (dynamic model) with existing data in vuex", async () => {
+    const store = getStore();
+    store.subscribe(subscription);
+    const tbl = AbcApi.getModelApi(Order).dexieTable;
+
+    const numOrders = Object.keys(orderData.store[1234].orders).length;
+    expect(store.state.products.all).to.have.lengthOf(0, "Vuex starts empty");
+    expect(await tbl.toArray()).to.have.lengthOf(0, "IndexedDB starts empty");
+
+    // Get server data and populate indexedDB and vuex
+    const results = await loadOrders(all(), { offsets: { store: "1234" }, strategy: AbcStrategy.loadVuex });
+
+    expect(results).to.instanceOf(
+      AbcResult,
+      "result is an instance of AbcResult"
+    );
+
+    expect(results.records).to.have.lengthOf(
+      numOrders,
+      "overall results should have all DB records"
+    );
+
+    expect(store.state.orders.all).to.have.lengthOf(
+      numOrders,
+      "vuex store should have all DB records"
+    );
+
+    // update mockDB
+    // Get server data and populate indexedDB
+    await loadOrders(all(), { offsets: { store: "1234" }, strategy: AbcStrategy.loadVuex });
+
+    expect(eventCounts["orders/ABC_INDEXED_DB_SET_VUEX"]).to.equal(1);
   });
 
   it("load.where() returns results from firebase into indexedDB", async () => {
@@ -608,17 +758,17 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       AbcResult,
       "result is an instance of AbcResult"
     );
-    
+
     expect(results.records).to.have.lengthOf(
       numProducts,
       "overall results should have all DB records"
     );
 
     expect(await tbl.toArray()).to.have.lengthOf(
-      numProducts, 
+      numProducts,
       "IndexedDB should have all Firebase DB records"
     );
-    
+
     expect(store.state.products.all).to.have.lengthOf(
       0,
       "vuex store should be empty"
@@ -656,15 +806,15 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     );
 
     expect(await tbl.toArray()).to.have.lengthOf(
-      numProducts, 
+      numProducts,
       "IndexedDB should have all Firebase DB records"
     );
-    
+
     expect(store.state.products.all).to.have.lengthOf(
       numProducts,
       "vuex store should be empty"
     );
-    
+
     expect(eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]).to.equal(1);
     expect(eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`]).to.equal(1);
     expect(eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`]).to.be.undefined;
@@ -700,10 +850,10 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     );
 
     expect(await tbl.toArray()).to.have.lengthOf(
-      numProducts, 
+      numProducts,
       "IndexedDB should have all Firebase DB records"
     );
-    
+
     expect(store.state.products.all).to.have.lengthOf(
       numProducts,
       "vuex store should be empty"
@@ -725,7 +875,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       "new products should be in the vuex store"
     );
     expect(await tbl.toArray()).to.have.lengthOf(
-      totalProducts, 
+      totalProducts,
       "IndexedDB should have all new records from Firebase DB records"
     );
     expect(eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]).to.equal(2);
@@ -760,12 +910,12 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     );
 
     expect(await tbl.toArray()).to.have.lengthOf(
-      numProducts, 
+      numProducts,
       "IndexedDB should have all Firebase DB records"
     );
   });
-  
-  it("load.since(timestamp) returns results from indexedDB into/firebase vuex", async () => {
+
+  it("load.since(timestamp) returns results from indexedDB/firebase into vuex", async () => {
     const store = getStore();
     store.subscribe(subscription);
     const tbl = AbcApi.getModelApi(Product).dexieTable;
@@ -792,10 +942,10 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     );
 
     expect(await tbl.toArray()).to.have.lengthOf(
-      numProducts, 
+      numProducts,
       "IndexedDB should have all Firebase DB records"
     );
-    
+
     expect(store.state.products.all).to.have.lengthOf(
       numProducts,
       "vuex store should be empty"
@@ -815,7 +965,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     expect(store.state.products.all).to.have.lengthOf(0, "Vuex starts empty");
     expect(await tbl.toArray()).to.have.lengthOf(0, "IndexedDB starts empty");
 
-    // Get server data and populate indexedDB
+    // Get server data and populate indexedDB and vuex
     const results = await loadProducts(since({ timestamp }), { strategy: AbcStrategy.loadVuex });
 
     expect(results).to.instanceOf(
@@ -829,13 +979,13 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     );
 
     expect(await tbl.toArray()).to.have.lengthOf(
-      numProducts, 
+      numProducts,
       "IndexedDB should have all Firebase DB records"
     );
-    
+
     expect(store.state.products.all).to.have.lengthOf(
       numProducts,
-      "vuex store should be empty"
+      "vuex store should have all Firebase DB records"
     );
 
     // Update Firebase mock database
@@ -851,7 +1001,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       "new products should be in the vuex store"
     );
     expect(await tbl.toArray()).to.have.lengthOf(
-      totalProducts, 
+      totalProducts,
       "IndexedDB should have all new records from Firebase DB records"
     );
     expect(eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]).to.equal(2);

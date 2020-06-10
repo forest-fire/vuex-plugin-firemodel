@@ -1,6 +1,14 @@
 import {
+  Model,
+  Record,
+  IFmModelMeta,
+  FireModel,
+  DexieDb,
+  IPrimaryKey,
+  Watch
+} from "firemodel";
+import {
   AbcError,
-  AbcFiremodelMutation,
   AbcMutation,
   AbcResult,
   AbcStrategy,
@@ -15,6 +23,7 @@ import {
   IQueryLocalResults,
   IQueryOptions,
   IQueryServerResults,
+  IWatchCallback,
   QueryType,
   capitalize,
   getDefaultApiConfig,
@@ -28,15 +37,7 @@ import {
   queryIndexedDb,
   saveToIndexedDb
 } from "../../private";
-import {
-  DexieDb,
-  FireModel,
-  IFmModelMeta,
-  IPrimaryKey,
-  Model,
-  Record
-} from "firemodel";
-import { IDictionary, pathJoin } from "common-types";
+import { pathJoin, IDictionary } from "common-types";
 
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
@@ -394,6 +395,9 @@ export class AbcApi<T extends Model> {
           }
         }
 
+        // watch records
+        this.watch(serverResponse, options)
+
         store.commit(
           `${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`,
           serverResponse
@@ -689,8 +693,25 @@ export class AbcApi<T extends Model> {
   /**
    * Watch records using the **ABC** API
    */
-  async watch() {
-    return [];
+  async watch(serverResponse: AbcResult<T>, options: IAbcOptions<T>) {
+    const { watch } = options;
+    if (watch) {
+      const isFunction = (x: any): x is IWatchCallback<T> => typeof x === 'function';
+      const watcher = Watch.list(this._modelConstructor);
+      if (isFunction(watch)) {
+        const watchIds = serverResponse.records
+          .filter(p => watch(p))
+          .map(p => p.id!);
+        await watcher.ids(...watchIds).start();
+      } else {
+        if (serverResponse.resultFromQuery) {
+          // TODO: Need to get serialized query to this function
+          // watcher.fromQuery()
+        } else {
+          await watcher.ids(...serverResponse.records.map(p => p.id!)).start();
+        }
+      }
+    }
   }
 
   toJSON() {

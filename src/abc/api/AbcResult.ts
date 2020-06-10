@@ -10,7 +10,7 @@ import { AbcApi, IAbcPostWatcher, IAbcResult, AbcError } from "../../private";
  * watch certain elements of the returned resultset.
  */
 export class AbcResult<T extends Model> {
-  constructor(private _context: AbcApi<T>, private _results: IAbcResult<T>, private _performance?: IDictionary) {}
+  constructor(private _context: AbcApi<T>, private _results: IAbcResult<T>, private _performance?: IDictionary) { }
 
   static async create<T extends Model>(_context: AbcApi<T>, _results: IAbcResult<T>, _performance?: IDictionary) {
     const obj = new AbcResult(_context, _results, _performance);
@@ -18,7 +18,7 @@ export class AbcResult<T extends Model> {
       obj.records = obj.localRecords;
       return obj;
     }
-    
+
     // Models with dynamic paths
     const hasDynamicProperties = Record.dynamicPathProperties(obj._context.model.constructor).length > 0;
     if (hasDynamicProperties) {
@@ -32,7 +32,7 @@ export class AbcResult<T extends Model> {
 
       const queryResults = await obj._context.dexieTable.where(whereClause)
         .notEqual(notEqualVal).toArray()
-      
+
       const localOffDynamicPath = arrayToHash(queryResults)
 
       const server = arrayToHash(obj.serverRecords || []);

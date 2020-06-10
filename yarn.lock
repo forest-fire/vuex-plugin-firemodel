@@ -4769,10 +4769,10 @@ firemock@^0.50.3, firemock@^0.50.7:
     lodash.set "^4.3.2"
     typed-conversions "^0.10.4"
 
-firemodel@^0.50.3:
-  version "0.50.3"
-  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.50.3.tgz#08440a5f4d54c7d1a10d6095d02061846a4821b8"
-  integrity sha512-YGrP2ocwSpwUnSOpbeV/Cy6bX81SlQ6PxeqN+ELRkwU+cBl7g85IY1ZBSQAEp6mkwMiT6rXbBHEW8HR+WYnECQ==
+firemodel@^0.50.4:
+  version "0.50.4"
+  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.50.4.tgz#b2c0ff85fc02024fe4af2cfc511006a5dfa65cdf"
+  integrity sha512-nn6GYPkm0iWqLFzfkWnH+TS6pvCav3Yn/ClVRAkMg+zxgnopcxw3g5igk1KR1FCZdCvWoJDtm72SNFA5Z7hlrw==
   dependencies:
     common-types "^1.15.1"
     date-fns "^2.14.0"
