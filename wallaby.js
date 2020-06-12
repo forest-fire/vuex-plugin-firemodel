@@ -48,7 +48,7 @@ module.exports = function(w) {
       // }
     },
 
-    testFramework: "mocha",
+    testFramework: "jest",
     debug: true
   };
 };
