@@ -1,11 +1,11 @@
 module.exports = {
   testMatch: ["**/test/?(*-)+(spec|test).[jt]s?(x)"],
   transform: {
-    '/node_modules/(firemodel|universal-fire|@forest-fire).+\\.js$': 'babel-jest',
+    '(firemodel|universal-fire|@forest-fire).+\\.js$': 'babel-jest',
     '^.+\\.tsx?$': 'ts-jest',
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!(firemodel|universal-fire|@forest-fire)).+\\.js$',
+    '<rootDir>/node_modules/(?!(firemodel|universal-fire|@forest-fire)).+\\.js$',
   ],
   moduleNameMapper: {
     '^firemodel$': '<rootDir>/node_modules/firemodel/dist/es/index.js',
