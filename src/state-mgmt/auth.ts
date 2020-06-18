@@ -1,10 +1,11 @@
-import type { IClientAuth, IMockAuth } from "@forest-fire/types";
+import type { IClientAuth } from "universal-fire";
+import type { IMockAuth } from 'firemock';
 import { getDatabase } from "./database";
 
 let _auth: IClientAuth | IMockAuth
 
 export async function getAuth() {
-  if(!_auth) {
+  if (!_auth) {
     _auth = await getDatabase().auth() as IClientAuth | IMockAuth
   }
 

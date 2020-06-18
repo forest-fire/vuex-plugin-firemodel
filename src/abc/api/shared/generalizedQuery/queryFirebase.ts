@@ -1,16 +1,16 @@
 import { Record, Model } from "firemodel";
 import { deepEqual } from "fast-equals";
-import { IGeneralizedQuery, findPk, AbcApi, IQueryLocalResults, IQueryServerResults } from "../../../../private";
+import { findPk, AbcApi, IQueryLocalResults, IQueryServerResults, IGeneralizedFiremodelQuery } from "../../../../private";
 
 export async function queryFirebase<T extends Model>(
   ctx: AbcApi<T>,
-  firemodelQuery: IGeneralizedQuery<T>,
+  firemodelQuery: IGeneralizedFiremodelQuery<T>,
   local: IQueryLocalResults<T, any>
 ) {
   // get data from firebase
   const cacheHits: string[] = [];
   const stalePks: string[] = [];
-  const serverRecords = await firemodelQuery();
+  const { data: serverRecords, query } = await firemodelQuery();
   const serverPks = serverRecords.map(i =>
     Record.compositeKeyRef(ctx.model.constructor, i)
   );
@@ -29,7 +29,7 @@ export async function queryFirebase<T extends Model>(
 
   ctx.cachePerformance.hits = ctx.cachePerformance.hits + cacheHits.length;
   ctx.cachePerformance.misses = ctx.cachePerformance.misses + stalePks.length + newPks.length;
-  
+
   const removeFromIdx = local.indexedDbPks.filter(i => !serverPks.includes(i));
   /** 
    * Vuex at this point will have both it's old state and whatever IndexedDB
@@ -43,6 +43,7 @@ export async function queryFirebase<T extends Model>(
     newPks,
     cacheHits,
     stalePks,
+    query,
     removeFromIdx,
     removeFromVuex,
     overallCachePerformance: ctx.cachePerformance

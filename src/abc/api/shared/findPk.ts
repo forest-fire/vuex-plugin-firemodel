@@ -1,6 +1,15 @@
 import { IDictionary } from "common-types";
-import { AbcError } from "../../../private";
+import { AbcError, IAbcFirebaseQueryResult } from "../../../private";
+import { Model } from "firemodel";
 
+
+export interface IGeneralizedQuery<T extends Model> {
+  (): Promise<T[]>;
+}
+
+export interface IGeneralizedFiremodelQuery<T extends Model> {
+  (): Promise<IAbcFirebaseQueryResult<T>>
+}
 /**
  * Given a Primary Key _reference_ string; this function will find the record
  * which matches the primary key.

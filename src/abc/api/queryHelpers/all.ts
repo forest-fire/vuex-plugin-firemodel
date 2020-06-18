@@ -1,10 +1,11 @@
 
 import { AbcApi } from "../AbcApi";
 import { List } from "firemodel";
-import {  
+import {
   IAbcAllQueryDefinition,
-  QueryType,IQueryOptions, 
-  IAbcQueryHelper 
+  QueryType, IQueryOptions,
+  IAbcQueryHelper,
+  IAbcFirebaseQueryResult
 } from "../../../private";
 
 export const all: IAbcQueryHelper = function all<T>(
@@ -21,9 +22,9 @@ export const all: IAbcQueryHelper = function all<T>(
     };
 
     // The query to use for Firebase
-    const firemodelQuery = async () => {
-      const list = await List.all(ctx.model.constructor, options || {});
-      return list.data;
+    const firemodelQuery = async (): Promise<IAbcFirebaseQueryResult<T>> => {
+      const { data, query } = await List.all(ctx.model.constructor, options || {});
+      return { data, query };
     };
 
     return { dexieQuery, firemodelQuery, queryDefn: defn };
@@ -31,35 +32,3 @@ export const all: IAbcQueryHelper = function all<T>(
 };
 
 all.prototype.isQueryHelper = true;
-
-/* export const allOld: IAbcQueryHelper = function all<T>(
-  defn:
-    | Omit<IAbcAllQueryDefinition<T>, "queryType">
-    | IAbcAllQueryDefinition<T> = {}
-) {
-  return async (command, ctx: AbcApi<T>, options: IQueryOptions<T> = {}): Promise<AbcResult<T>> => {
-    defn = { ...defn, queryType: QueryType.all };
-    // The query to use for IndexedDB
-    const dexieQuery = async () => {
-      const recs = await ctx.dexieList.all();
-      return recs;
-    };
-
-    // The query to use for Firebase
-    const firemodelQuery = async () => {
-      const list = await List.all(ctx.model.constructor, options || {});
-      return list.data;
-    };
-
-    return generalizedQuery(
-      defn,
-      command,
-      dexieQuery,
-      firemodelQuery,
-      ctx,
-      options
-    );
-  };
-};
-
-allOld.prototype.isQueryHelper = true; */

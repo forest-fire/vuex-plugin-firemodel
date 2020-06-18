@@ -8,19 +8,3 @@ export * from "./firemodel";
 export * from "./actions/index";
 export * from "./mutations/index";
 //#endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

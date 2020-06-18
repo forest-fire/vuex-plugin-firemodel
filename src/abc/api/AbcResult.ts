@@ -1,6 +1,7 @@
 import { Model, Record } from "firemodel";
 import { arrayToHash, hashToArray } from "typed-conversions";
 import { IDictionary } from "common-types";
+import type { SerializedQuery } from "universal-fire";
 import { AbcApi, IAbcPostWatcher, IAbcResult, AbcError } from "../../private";
 
 /**
@@ -56,7 +57,7 @@ export class AbcResult<T extends Model> {
    */
   get resultFromQuery(): boolean {
     // TODO: we will add the correct option to the AbcResult constructor later
-    return true
+    return this._results.type === "query"
   }
 
   /**
@@ -96,6 +97,13 @@ export class AbcResult<T extends Model> {
     return this._results.options;
   }
 
+  get query() {
+    if (this._results.type !== "query") {
+      return;
+    }
+    return this._results.query
+  }
+
   /** the query definition used to arrive at these results */
   get queryDefn() {
     if (this._results.type !== "query") {
@@ -106,16 +114,5 @@ export class AbcResult<T extends Model> {
     }
 
     return this._results.queryDefn;
-  }
-
-  /**
-   * Runs a callback which filters down the set of results
-   * which should be watched. This list is then filtered down
-   * to just those which do not currently have a watcher on them.
-   *
-   * @param fn the callback function to call
-   */
-  watch(fn: IAbcPostWatcher<T>) {
-    // const watcherIds = fn(this.results);
   }
 }

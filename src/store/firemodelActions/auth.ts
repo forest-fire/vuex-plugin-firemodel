@@ -85,7 +85,8 @@ export const authActions = <T>() =>
         actionCodeSettings
       }: { email: string; actionCodeSettings?: ActionCodeSettings | null }
     ) {
-      try {;
+      try {
+        ;
         const auth = await getAuth();
         await auth.sendPasswordResetEmail(email, actionCodeSettings);
         commit("sendPasswordResetEmail", { email, actionCodeSettings });
@@ -278,7 +279,7 @@ export const authActions = <T>() =>
       }
     },
 
-    async reauthenticateWithCredential({ commit }, { credential } : { credential: AuthCredential }) {
+    async reauthenticateWithCredential({ commit }, { credential }: { credential: AuthCredential }) {
       try {
         const db = await getDatabase();
         Record.defaultDb = db;

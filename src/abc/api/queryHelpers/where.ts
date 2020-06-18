@@ -4,6 +4,7 @@ import {
   IAbcWhereQueryDefinition,
   IQueryOptions,
   QueryType,
+  IAbcFirebaseQueryResult,
 } from "../../../private";
 import { IComparisonOperator, List, Model, PropType } from "firemodel";
 
@@ -24,8 +25,8 @@ export const where: IAbcQueryHelper = function where<T extends Model, K extends 
       defn.equals !== undefined
         ? defn.equals
         : defn.greaterThan !== undefined
-        ? [">", defn.greaterThan]
-        : ["<", defn.lessThan];
+          ? [">", defn.greaterThan]
+          : ["<", defn.lessThan];
     // The query to use for IndexedDB
     const dexieQuery = async () => {
       const recs = await ctx.dexieList.where(defn.property, valueOp);
@@ -33,14 +34,14 @@ export const where: IAbcQueryHelper = function where<T extends Model, K extends 
     };
 
     // The query to use for Firebase
-    const firemodelQuery = async () => {
-      const list = await List.where(
+    const firemodelQuery = async (): Promise<IAbcFirebaseQueryResult<T>> => {
+      const { data, query } = await List.where(
         ctx.model.constructor,
         defn.property,
         valueOp,
         options || {}
       );
-      return list.data;
+      return { data, query };
     };
 
     return { dexieQuery, firemodelQuery, queryDefn: defn };

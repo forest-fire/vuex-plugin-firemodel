@@ -10,7 +10,8 @@
   "typings": "dist/esnext/index.d.ts",
   "scripts": {
     "lint": "eslint src/**/*.ts",
-    "clean:nuclear": "rimraf lib dist node_modules && yarn cache clean && rm yarn.lock && yarn && yarn upgrade",
+    "clean:nuclear": "rimraf lib dist yarn.lock node_modules && yarn cache clean && yarn && yarn upgrade",
+    "clean": "rimraf yarn.lock node_modules && yarn cache clean && yarn && yarn upgrade",
     "test": "yarn jest --runInBand",
     "docs": "vuepress dev docs",
     "build": "yarn tsc -P tsconfig.esnext.json && yarn tsc -P tsconfig.cjs.json",
@@ -37,17 +38,17 @@
   },
   "homepage": "https://vuex.firemodel.info",
   "dependencies": {
-    "@forest-fire/types": "^0.50.1",
-    "common-types": "^1.15.5",
+    "@forest-fire/types": "^0.51.0",
+    "common-types": "^1.15.6",
     "fast-copy": "^2.0.4",
     "fast-equals": "^2.0.0",
-    "firemodel": "^0.50.4",
+    "firemodel": "^0.52.0",
     "js-cookie": "^2.2.1",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "stacktrace-js": "^2.0.2",
     "typed-conversions": "^0.10.2",
-    "universal-fire": "^0.50.7",
+    "universal-fire": "^0.52.5",
     "vuex": "^3.4.0"
   },
   "devDependencies": {

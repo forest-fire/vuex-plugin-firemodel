@@ -300,7 +300,7 @@ export class AbcApi<T extends Model> {
    * @request either a Query Helper (since, where, etc.) or an array of primary keys
    */
   async load(
-    request: IAbcParam<T>, 
+    request: IAbcParam<T>,
     options: IAbcOptions<T> = {}
   ): Promise<AbcResult<T>> {
     if (isDiscreteRequest(request)) {
@@ -317,7 +317,7 @@ export class AbcApi<T extends Model> {
     const store = getStore();
     // query types all() | where() | since()
     const { dexieQuery, firemodelQuery, queryDefn } = request(this, options);
-    
+
     let local: IQueryLocalResults<T, any> = {
       records: [],
       indexedDbPks: [],
@@ -511,7 +511,7 @@ export class AbcApi<T extends Model> {
 
     // get from Vuex
     const vuexRecords = await getFromVuex(this);
-    
+
     if (this.config.useIndexedDb) {
       // get from indexedDB
       idxRecords = await getFromIndexedDb(this.dexieRecord, requestIds);
@@ -540,7 +540,7 @@ export class AbcApi<T extends Model> {
             serverResponse
           );
         }
-        
+
         store.commit(
           `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`,
           serverResponse
@@ -704,9 +704,9 @@ export class AbcApi<T extends Model> {
           .map(p => p.id!);
         await watcher.ids(...watchIds).start();
       } else {
-        if (serverResponse.resultFromQuery) {
+        if (serverResponse.resultFromQuery && serverResponse.query) {
           // TODO: Need to get serialized query to this function
-          // watcher.fromQuery()
+          watcher.fromQuery(serverResponse.query)
         } else {
           await watcher.ids(...serverResponse.records.map(p => p.id!)).start();
         }
