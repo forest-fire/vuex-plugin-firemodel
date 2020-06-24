@@ -106,7 +106,7 @@ exports.verifyPasswordResetCode = verifyPasswordResetCode;
 async function updateEmail(newEmail) {
     return private_1.getStore().dispatch({
         type: "@firemodel/updateEmail",
-        payload: newEmail
+        newEmail
     });
 }
 exports.updateEmail = updateEmail;
