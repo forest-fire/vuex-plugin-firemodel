@@ -1,3 +1,20 @@
+const esLibsToTranspile = (returnType) => {
+  const mapperList = {
+    '^firemodel$': '<rootDir>/node_modules/firemodel/dist/es/index.js',
+    '^universal-fire$': '<rootDir>/node_modules/universal-fire/dist/es/index.js',
+    '^@forest-fire/firestore-client$': '<rootDir>/node_modules/@forest-fire/firestore-client/dist/es/index.js',
+    '^@forest-fire/real-time-client$': '<rootDir>/node_modules/@forest-fire/real-time-client/dist/es/index.js',
+  }
+
+  const createPipeSeparatedString = () => Object.keys(mapperList).join('|')
+    .replace(/\^/g, '')
+    .replace(/\$/g, '');
+
+  return returnType === 'list' ? mapperList : createPipeSeparatedString();
+};
+
+console.log(esLibsToTranspile('lis'));
+
 module.exports = {
   testMatch: ["**/test/?(*-)+(spec|test).[jt]s?(x)"],
   transform: {

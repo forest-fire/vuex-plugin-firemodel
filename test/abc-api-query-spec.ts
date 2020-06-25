@@ -24,7 +24,7 @@ import {
   since,
   saveToIndexedDb,
 } from "../src/private";
-import { Model, IPrimaryKey, FireModel, List } from "firemodel";
+import { Model, IPrimaryKey, FireModel, List, Record } from "firemodel";
 
 let events: Array<[string, any]> = [];
 let eventCounts: IDictionary<number> = {};
@@ -307,20 +307,44 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       });
     });
   });
-  // it("Starting WatchList only has a single and appropriate entry in watcher pool", async () => {
-  //   const wl = Watch.list(Person).ids("1234", "4567", "8989");
-  //   FireModel.dispatch = () => undefined;
-  //   FireModel.defaultDb = await RealTimeAdmin({
-  //     mocking: true,
-  //   });
-  //   const wId = await wl.start();
-  //   const pool = getWatcherPool();
-  //   expect(Object.keys(pool)).to.be.lengthOf(1);
-  //   expect(Object.keys(pool)).includes(wId.watcherId);
-  //   expect(wId.query).is.an("array");
-  //   expect(wId.watcherPaths).is.an("array");
-  // });
-  it.skip("get.where() with watch return results from firebase into indexedDB/Vuex", (done) => {
+
+  it("get.all() with watch return results from firebase into indexedDB/Vuex", (done) => {
+    store.subscribe(subscription);
+    const tbl = AbcApi.getModelApi(Product).dexieTable;
+    const db = AbcApi.getModelApi(Product).db;
+
+    const numProducts = Object.keys(productData.products).length;
+    expect(Object.keys(db.mock.db.products)).toHaveLength(numProducts);
+    expect(store.state.products.all).toHaveLength(0);
+
+    getProducts(all(), { strategy: AbcStrategy.getFirebase, watch: true }).then(async results => {
+      expect(await tbl.toArray()).toHaveLength(0);
+
+      expect(results).toBeInstanceOf(AbcResult);
+      store.subscribe(async (mutation: MutationPayload, state: IDictionary) => {
+        if (mutation.type === '@firemodel/WATCHER_STARTED') {
+          const { watching } = state['@firemodel']
+          expect(watching[0].watcherPaths).toHaveLength(1);
+          expect(Array.isArray(watching[0].watcherPaths)).toBeTruthy();
+          done();
+        }
+
+        if (mutation.type === `products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`) {
+          expect(await tbl.toArray()).toHaveLength(numProducts);
+
+          expect(state.products.all).toHaveLength(numProducts);
+
+          const name = 'Eves Apple';
+          await Record.update(Product, 'aaaa', {
+            name
+          });
+          expect(state.products.all[1].name).toBe(name);
+        }
+      });
+    });
+  });
+  
+  it("get.where() with watch return results from firebase into indexedDB/Vuex", (done) => {
     store.subscribe(subscription);
     const tbl = AbcApi.getModelApi(Product).dexieTable;
     const db = AbcApi.getModelApi(Product).db;
@@ -338,13 +362,66 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       expect(await tbl.toArray()).toHaveLength(0);
 
       expect(results).toBeInstanceOf(AbcResult);
-
       store.subscribe(async (mutation: MutationPayload, state: IDictionary) => {
+        if (mutation.type === '@firemodel/WATCHER_STARTED') {
+          const { watching } = state['@firemodel']
+          expect(watching[0].watcherPaths).toHaveLength(2);
+          expect(Array.isArray(watching[0].watcherPaths)).toBeTruthy();
+          expect(watching[0].watcherPaths).toEqual(['/products/aaaa', '/products/bbbb']);
+          done();
+        }
+
         if (mutation.type === `products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`) {
           expect(await tbl.toArray()).toHaveLength(numProductsFromQuery);
 
           expect(state.products.all).toHaveLength(numProductsFromQuery);
+
+          const name = 'Eves Apple';
+          await Record.update(Product, 'aaaa', {
+            name
+          });
+          expect(state.products.all[0].name).toBe(name);
+        }
+      });
+    });
+  });
+
+  it("get.where() with watch return results from firebase into indexedDB/Vuex", (done) => {
+    store.subscribe(subscription);
+    const tbl = AbcApi.getModelApi(Product).dexieTable;
+    const db = AbcApi.getModelApi(Product).db;
+
+    const numProducts = Object.keys(productData.products).length;
+    const numProductsFromQuery = Object.values(productData.products).filter((p: Product) => p.price === 452).length;
+    expect(Object.keys(db.mock.db.products)).toHaveLength(numProducts);
+    expect(store.state.products.all).toHaveLength(0);
+
+    getProducts(where({
+      property: "price",
+      equals: 452
+    }), { strategy: AbcStrategy.getFirebase, watch: true }).then(async results => {
+      expect(await tbl.toArray()).toHaveLength(0);
+
+      expect(results).toBeInstanceOf(AbcResult);
+      store.subscribe(async (mutation: MutationPayload, state: IDictionary) => {
+        if (mutation.type === '@firemodel/WATCHER_STARTED') {
+          const { watching } = state['@firemodel']
+          expect(watching[0].watcherPaths).toHaveLength(1);
+          expect(Array.isArray(watching[0].watcherPaths)).toBeTruthy();
+          expect(watching[0].watcherPaths).toEqual(['/products']);
           done();
+        }
+
+        if (mutation.type === `products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`) {
+          expect(await tbl.toArray()).toHaveLength(numProductsFromQuery);
+
+          expect(state.products.all).toHaveLength(numProductsFromQuery);
+
+          const name = 'Eves Apple';
+          await Record.update(Product, 'aaaa', {
+            name
+          });
+          expect(state.products.all[0].name).toBe(name);
         }
       });
     });

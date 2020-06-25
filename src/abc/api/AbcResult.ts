@@ -101,7 +101,7 @@ export class AbcResult<T extends Model> {
     if (this._results.type !== "query") {
       return;
     }
-    return this._results.query
+    return this._results.server?.query
   }
 
   /** the query definition used to arrive at these results */

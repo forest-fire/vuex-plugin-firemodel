@@ -367,6 +367,9 @@ export class AbcApi<T extends Model> {
           options
         });
 
+        // watch records
+        this.watch(serverResponse, options)
+
         // cache results to IndexedDB
         if (this.config.useIndexedDb) {
           saveToIndexedDb(server, this.dexieTable);
@@ -394,9 +397,6 @@ export class AbcApi<T extends Model> {
             );
           }
         }
-
-        // watch records
-        this.watch(serverResponse, options)
 
         store.commit(
           `${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`,
@@ -702,13 +702,15 @@ export class AbcApi<T extends Model> {
         const watchIds = serverResponse.records
           .filter(p => watch(p))
           .map(p => p.id!);
-        await watcher.ids(...watchIds).start();
+        await watcher.ids(...watchIds).start()
+          .then(() => console.info(`${this._modelConstructor.name} watch function: `, watchIds));
       } else {
         if (serverResponse.resultFromQuery && serverResponse.query) {
-          // TODO: Need to get serialized query to this function
-          watcher.fromQuery(serverResponse.query)
+          await watcher.fromQuery(serverResponse.query).start()
+            .then(() => console.info(`${this._modelConstructor.name} watch query: `, serverResponse.query?.toString()));
         } else {
-          await watcher.ids(...serverResponse.records.map(p => p.id!)).start();
+          await watcher.ids(...serverResponse.records.map(p => p.id!)).start()
+            .then(() => console.info(`${this._modelConstructor.name} watch all: `, ...serverResponse.records.map(p => p.id!)));
         }
       }
     }
