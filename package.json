@@ -5,9 +5,9 @@
   "files": [
     "dist"
   ],
-  "main": "dist/cjs/public.js",
-  "module": "dist/es/public.js",
-  "typings": "dist/es/public.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
+  "typings": "dist/es/index.d.ts",
   "scripts": {
     "lint": "eslint src/**/*.ts",
     "clean": "rimraf dist",

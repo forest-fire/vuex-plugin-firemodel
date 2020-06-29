@@ -1,10 +1,9 @@
-// #autoindex:named, exclude: util, abc, auth, errors, firemodelMutations, store, types
+// PROXY Firemodel through to consumers of this library
 export * from "firemodel";
-//#region autoindexed files
-// indexed at: 6th Jun, 2020, 08:57 AM ( GMT-7 )
-// local file exports
-export * from "./coreServices";
-export * from "./plugin";
-export * from "./public";
-export * from "./queueLifecycleEvents";
-//#endregion
+
+export * from "./types";
+export * from "./auth/api";
+export * from "./store";
+export { abc, AbcApi } from "./abc";
+
+export { FiremodelPlugin as default } from "./plugin";
