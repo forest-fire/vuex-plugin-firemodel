@@ -1,6 +1,6 @@
 import { IFmWatchEvent, Model } from "firemodel";
 
-import { FmCrudMutation } from "../private";
+import { FmCrudMutation } from "@/types";
 import { MutationTree } from "vuex";
 
 /**

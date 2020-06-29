@@ -1,5 +1,13 @@
 import { ICompositeKey, Model } from "firemodel";
-import { IFmEventActions, IVuexState, actions, mutations, state } from "../private";
+import {
+IFmEventActions,
+IVuexState,
+} from "@/types";
+import {
+  actions,
+  mutations,
+  state
+} from "@/store"
 
 import { Module } from "vuex";
 

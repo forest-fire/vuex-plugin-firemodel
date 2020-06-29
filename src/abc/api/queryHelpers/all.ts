@@ -4,7 +4,7 @@ import {
   IAbcQueryHelper,
   IQueryOptions,
   QueryType
-} from "../../../private";
+} from "@/types";
 
 import { AbcApi } from "@/abc";
 import { List } from "firemodel";

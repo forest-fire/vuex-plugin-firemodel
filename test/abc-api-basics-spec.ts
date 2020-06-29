@@ -1,10 +1,10 @@
-import { AbcApi, IAbcRequest, abc } from "../src/private";
+import { AbcApi, IAbcRequest, abc } from "@/public";
 
 import { Company } from "./models/Company";
-import { Person } from "./models/Person";
-import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
-import { Store } from "vuex";
 import { IRootState } from "./store";
+import { Person } from "./models/Person";
+import { Store } from "vuex";
+import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
 
 describe("ABC API Basics => ", () => {
   let store: Store<IRootState>;

@@ -1,4 +1,3 @@
-import { IDictionary } from "common-types";
 import { Store } from 'vuex'
 
 let _store: Store<any>

@@ -1,32 +1,32 @@
 import {
-  AbcError,
-  AbcMutation,
+AbcMutation,
+AbcStrategy,
+DbSyncOperation,
+IAbcApiConfig,
+IAbcOptions,
+IAbcParam,
+IAbcQueryRequest,
+IDiscreteOptions,
+IDiscreteServerResults,
+IFmModelConstructor,
+IQueryLocalResults,
+IQueryOptions,
+IQueryServerResults,
+IWatchCallback,
+QueryType,
+isDiscreteRequest,
+} from '@/types'
+import {
   AbcResult,
-  AbcStrategy,
-  DbSyncOperation,
-  IAbcApiConfig,
-  IAbcOptions,
-  IAbcParam,
-  IAbcQueryRequest,
-  IDiscreteOptions,
-  IDiscreteServerResults,
-  IFmModelConstructor,
-  IQueryLocalResults,
-  IQueryOptions,
-  IQueryServerResults,
-  IWatchCallback,
-  QueryType,
   getDefaultApiConfig,
   getFromFirebase,
   getFromIndexedDb,
   getFromVuex,
-  getStore,
-  isDiscreteRequest,
   mergeLocalRecords,
   queryFirebase,
   queryIndexedDb,
   saveToIndexedDb
-} from "../../private";
+} from "@/abc";
 import {
   DexieDb,
   FireModel,
@@ -37,10 +37,12 @@ import {
   Watch
 } from "firemodel";
 import { IDictionary, pathJoin } from "common-types";
-
 import {
 capitalize,
-} from '../../util'
+getStore,
+} from '@/util'
+
+import {AbcError,} from "@/errors"
 
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also

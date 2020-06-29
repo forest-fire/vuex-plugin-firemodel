@@ -1,4 +1,5 @@
-import { FireModelPluginError, getDatabase } from "../../../private";
+import { FireModelPluginError } from "@/errors";
+import { getDatabase } from "@/util"
 
 export class EmailAuthProvider {
   static async credential(email: string, password: string) {

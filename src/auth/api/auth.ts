@@ -11,11 +11,10 @@ import {
   UserCredential
 } from "@firebase/auth-types";
 import { IAuthProfile, IVuexState } from "@/types";
-import { getAuth, getStore } from "../../private";
+import { getAuth, getStore } from "@/util";
 
-import { FireModelPluginError } from "../../errors/FiremodelPluginError";
+import { FireModelPluginError } from "@/errors";
 import { IModelConstructor } from "firemodel";
-import { setAuth } from "../../state-mgmt";
 
 /**
  * Log into the Firebase AUTH sytem using email/password. If successful it returns

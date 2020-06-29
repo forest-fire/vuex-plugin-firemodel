@@ -1,6 +1,5 @@
 import { FireModel, List, Record, Watch } from "firemodel";
 import {
-  FireModelPluginError,
   FmConfigAction,
   FmConfigMutation,
   IFiremodelConfig,
@@ -17,6 +16,7 @@ runQueue,
 } from "@/util";
 
 import { ActionTree } from "vuex";
+import { FireModelPluginError, } from '@/errors'
 import { FirebaseAuth } from "@forest-fire/types";
 
 /**

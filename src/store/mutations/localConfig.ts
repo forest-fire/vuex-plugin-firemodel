@@ -4,7 +4,7 @@ import {
   IFmLifecycleEvent,
   IFmQueuedAction,
   IVuexState
-} from "../../private";
+} from "@/types";
 import { User, UserCredential } from "@firebase/auth-types";
 
 import { MutationTree } from "vuex";

@@ -1,14 +1,14 @@
 import {
-  AbcApi,
+  IAbcFirebaseQueryResult,
   IAbcQueryHelper,
   IAbcSinceQueryDefinition,
   IQueryOptions,
   QueryType,
-  SINCE_LAST_COOKIE,
-  IAbcFirebaseQueryResult
-} from "../../../private";
+  SINCE_LAST_COOKIE
+} from "@/types";
 import { List, Model } from "firemodel";
 
+import { AbcApi } from "@/abc";
 import cookies from "js-cookie";
 
 /**

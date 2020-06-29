@@ -1,7 +1,8 @@
-import { Module, GetterTree } from "vuex";
-import { IRootState } from "../index";
-import { firemodelMutations } from "../../../src/private";
+import { GetterTree, Module } from "vuex";
+
 import { Company } from "../../models/Company";
+import { IRootState } from "../index";
+import { firemodelMutations } from "@/public";
 
 export type ICompaniesState = {
   all: Company[];

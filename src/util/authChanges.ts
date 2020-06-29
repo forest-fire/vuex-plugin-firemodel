@@ -4,10 +4,10 @@ import {
   IFmAuthenticatatedContext,
   IFmLoginEventContext,
   IFmLogoutEventContext,
-  getPluginConfig
-} from "../private";
+} from "@/types";
 
 import { User } from "@firebase/auth-types";
+import { getPluginConfig } from "@/util"
 import { runQueue } from "./runQueue";
 
 let _uid: string;

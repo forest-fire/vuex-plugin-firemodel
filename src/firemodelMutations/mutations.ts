@@ -1,4 +1,4 @@
-import { abc, addedLocally, reset, serverConfirms, serverEvents, serverRollbacks, watchEvents } from '../private';
+import { addedLocally, reset, serverConfirms, serverEvents, serverRollbacks, watchEvents } from '@/firemodelMutations';
 
 import { AbcFiremodelMutation } from './abc';
 import {IDictionary} from 'common-types'

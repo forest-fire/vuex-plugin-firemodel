@@ -4,7 +4,7 @@ import { FmEvents, IFmWatchEvent, IFmWatcherStopped } from "firemodel";
 import { ActionTree } from "vuex";
 import {
 determineLocalStateNode
-} from '../../util'
+} from '@/util'
 
 export const watchActions = <T>() =>
   ({

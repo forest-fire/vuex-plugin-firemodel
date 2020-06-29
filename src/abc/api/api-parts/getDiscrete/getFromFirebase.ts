@@ -1,4 +1,4 @@
-import { AbcApi,  serverRecords } from "../../../../private";
+import { AbcApi, serverRecords } from "@/abc";
 
 export async function getFromFirebase<T>(
   ctx: AbcApi<T>, 

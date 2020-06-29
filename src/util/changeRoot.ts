@@ -1,9 +1,9 @@
-import {  } from "..";
+import {  } from "../public";
 
-import { FireModelPluginError, getInitialState } from "../private";
-
+import { FireModelPluginError } from "@/errors";
 import { Model } from "firemodel";
 import Vue from "vue";
+import { getInitialState } from "@/util"
 
 /**
  * **changeRoot**

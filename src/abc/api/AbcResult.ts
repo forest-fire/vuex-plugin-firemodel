@@ -2,7 +2,10 @@ import { Model, Record } from "firemodel";
 import { arrayToHash, hashToArray } from "typed-conversions";
 import { IDictionary } from "common-types";
 import type { SerializedQuery } from "universal-fire";
-import { AbcApi, IAbcPostWatcher, IAbcResult, AbcError } from "../../private";
+import { IAbcPostWatcher, IAbcResult } from "@/types";
+
+import { AbcError } from "@/errors";
+import { AbcApi } from "@/abc";
 
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will

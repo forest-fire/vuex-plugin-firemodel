@@ -1,7 +1,7 @@
 import { IFmWatchEvent, Model } from "firemodel";
 import { changeRoot, isRecord, updateList } from "@/util";
 
-import { FmCrudMutation, } from "../private";
+import { FmCrudMutation, } from "@/types";
 import { MutationTree } from "vuex";
 
 export function serverEvents<T>(

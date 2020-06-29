@@ -1,12 +1,12 @@
-import { FmConfigAction, IFiremodelConfig, IVuexState, coreServices, queueLifecycleEvents, setInitialState, storeDatabase, storePluginConfig } from "./private";
-import { FiremodelModule } from "@/types";
-import { addNamespace } from "@/util";
+import { FmConfigAction, IFiremodelConfig, IVuexState, FiremodelModule} from "@/types";
+import { addNamespace, setInitialState, storeDatabase, storePluginConfig, } from "@/util";
+import { coreServices, queueLifecycleEvents,} from "."
 
 import { FireModel } from "firemodel";
 import type { IAbstractedDatabase } from "universal-fire";
 import type { Store } from "vuex";
 import copy from "fast-copy";
-import { preserveStore } from "@/state-mgmt";
+import { preserveStore } from "@/util";
 
 export type IFiremodelVuexModule<T> = { "@firemodel": IVuexState<T> };
 

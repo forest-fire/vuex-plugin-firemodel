@@ -1,23 +1,22 @@
+import {AbcApi, AbcResult,} from "@/abc"
 import {
-  AbcApi,
-  AbcError,
   AbcMutation,
-  AbcResult,
   DbSyncOperation,
   IAbcResult,
   IDiscreteLocalResults,
   IDiscreteResult,
   IDiscreteServerResults,
-} from "../private";
+} from "@/types";
 import { arrayToHash, hashToArray } from "typed-conversions";
+import {
+changeRoot,
+get
+} from '@/util'
 
+import { AbcError } from "@/errors";
 import { IDictionary } from "common-types";
 import { MutationTree } from "vuex";
 import Vue from "vue";
-import {
-changeRoot
-} from '../util'
-import {get} from "@/util";
 
 export function AbcFiremodelMutation<T>(propOffset?: keyof T & string): MutationTree<T> {
   return {

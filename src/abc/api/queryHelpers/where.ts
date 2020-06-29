@@ -1,12 +1,13 @@
 import {
-  AbcApi,
+  IAbcFirebaseQueryResult,
   IAbcQueryHelper,
   IAbcWhereQueryDefinition,
   IQueryOptions,
   QueryType,
-  IAbcFirebaseQueryResult,
-} from "../../../private";
+} from "@/types";
 import { IComparisonOperator, List, Model, PropType } from "firemodel";
+
+import { AbcApi } from "@/abc";
 
 /**
  * Offers a configuration to consumers of the standard _where_ clause that Firebase

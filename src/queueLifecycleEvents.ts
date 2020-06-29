@@ -1,9 +1,10 @@
-import { FireModelPluginError, FmCallback, FmConfigMutation, IFiremodelConfig, IFmQueuedAction, } from './private'
+import { FmCallback, FmConfigMutation, IFiremodelConfig, IFmQueuedAction, } from '@/types'
 
+import { FireModelPluginError, } from '@/errors'
 import { Store } from 'vuex';
 import {
 addNamespace
-} from './util'
+} from '@/util'
 
 export async function queueLifecycleEvents<T>(
   store: Store<T>,

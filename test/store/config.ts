@@ -1,8 +1,10 @@
-import { IFiremodelConfig, AsyncMockData } from "../../src/private";
 import * as lifecycle from "./lifecycle";
-import { IRootState } from "./index";
+
+import { AsyncMockData, IFiremodelConfig } from "@/public";
+
 import { IDictionary } from "common-types";
 import { IMockConfig } from "universal-fire";
+import { IRootState } from "./index";
 
 const defaultData = async () => ({});
 

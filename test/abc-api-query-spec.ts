@@ -1,17 +1,18 @@
 import {
   AbcApi,
   AbcResult,
+  all,
+  saveToIndexedDb,
+  since,
+  where,
+} from "@/abc";
+import {
   AbcStrategy,
   DbSyncOperation,
   IAbcQueryRequest,
   IAbcRequest,
   IQueryServerResults,
-  all,
-  getStore,
-  saveToIndexedDb,
-  since,
-  where,
-} from "../src/private";
+} from '@/types'
 import { FireModel, IPrimaryKey, List, Model, Record } from "firemodel";
 import { MutationPayload, Store } from "vuex";
 
@@ -22,6 +23,7 @@ import { Mock } from "firemock"
 import { Order } from "./models/Order";
 import { Product } from "./models/Product";
 import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
+import { getStore } from '@/util'
 import { hashToArray } from "typed-conversions";
 import { orderData } from "./data/orderData";
 import { productData } from "./data/productData";

@@ -5,7 +5,7 @@ import {
   UserCredential
 } from "universal-fire";
 import { IAuthProfile, ISignOutPayload, IVuexState } from "@/types";
-import { getAuth, getDatabase } from "@/state-mgmt";
+import { getAuth, getDatabase } from "@/util";
 
 import { ActionTree } from "vuex";
 import { FireModelPluginError } from "@/errors"

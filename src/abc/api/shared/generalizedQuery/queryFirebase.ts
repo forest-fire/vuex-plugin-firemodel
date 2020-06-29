@@ -1,4 +1,5 @@
-import { AbcApi, IGeneralizedFiremodelQuery, IQueryLocalResults, IQueryServerResults, findPk } from "../../../../private";
+import { AbcApi, findPk } from "@/abc";
+import { IGeneralizedFiremodelQuery, IQueryLocalResults, IQueryServerResults } from "@/types";
 import { Model, Record } from "firemodel";
 
 import { deepEqual } from "fast-equals";

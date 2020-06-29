@@ -1,20 +1,23 @@
 import {
   AbcApi,
-  IAbcRequest,
   AbcResult,
+} from "@/abc";
+import {
   AbcStrategy,
   DbSyncOperation,
-  getStore,
-} from "../src/private";
-import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
-import { productData } from "./data/productData";
-import { IRootState } from "./store/index";
-import { Product } from "./models/Product";
-import { Store, MutationPayload } from "vuex";
-import { hashToArray } from "typed-conversions";
-import { companyData } from "./data/companyData";
+  IAbcRequest,
+} from "@/types"
+import { MutationPayload, Store } from "vuex";
+
 import { Company } from "./models/Company";
 import { IDictionary } from "common-types";
+import { IRootState } from "./store/index";
+import { Product } from "./models/Product";
+import { companyData } from "./data/companyData";
+import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
+import { getStore } from "@/util"
+import { hashToArray } from "typed-conversions";
+import { productData } from "./data/productData";
 
 let events: Array<[string, any]> = [];
 let eventCounts: IDictionary<number> = {};

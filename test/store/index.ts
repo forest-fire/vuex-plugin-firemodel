@@ -1,20 +1,22 @@
-import { AsyncMockData, IVuexState, abc } from "../../src/private";
-import Vue from "vue";
+import * as lifecycle from "./lifecycle";
+
+import { AsyncMockData, IVuexState, } from '@/types'
 import Vuex, { Store } from "vuex";
 import companies, { ICompaniesState } from "./modules/companies";
+import orders, { IOrdersState } from "./modules/orders";
 import products, { IProductsState } from "./modules/products";
 import userProfile, { IUserProfileState } from "./modules/userProfile";
-import orders, { IOrdersState } from "./modules/orders";
 
 import { Company } from "../models/Company";
-import { FiremodelPlugin } from "../../src/private"
+import { FiremodelPlugin } from "@/plugin"
 import { IDictionary } from "common-types";
+import { Order } from "../models/Order";
 import { Person } from "../models/Person";
 import { Product } from "../models/Product";
 import { RealTimeClient } from "@forest-fire/real-time-client";
-import { Order } from "../models/Order";
+import Vue from "vue";
+import { abc } from "@/abc";
 import { config } from "./config";
-import * as lifecycle from "./lifecycle";
 
 Vue.use(Vuex);
 

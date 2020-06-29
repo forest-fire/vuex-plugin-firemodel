@@ -1,8 +1,13 @@
 import {
   AbcApi,
+  AbcResult,
+  queryFirebase,
+  queryIndexedDb,
+  saveToIndexedDb
+} from "@/abc";
+import {
   AbcMutation,
   AbcRequestCommand,
-  AbcResult,
   AbcStrategy,
   DbSyncOperation,
   IAbcOptions,
@@ -12,14 +17,9 @@ import {
   IQueryLocalResults,
   IQueryServerResults,
   QueryType,
-  getStore,
-  queryFirebase,
-  queryIndexedDb,
-  saveToIndexedDb
-} from "../../../private";
+} from "@/types"
 import { Model, Record } from "firemodel";
-
-import {get} from "@/util";
+import {get, getStore,} from "@/util";
 
 /**
  * A generalized flow for queries; specific query helpers
