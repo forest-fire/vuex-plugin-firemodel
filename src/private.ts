@@ -1,6 +1,6 @@
 // #autoindex:named, exclude: util
 //#region autoindexed files
-// indexed at: 6th Jun, 2020, 08:59 PM ( GMT-7 )
+// indexed at: 6th Jun, 2020, 09:16 PM ( GMT-7 )
 // local file exports
 export * from "./coreServices";
 export * from "./plugin";

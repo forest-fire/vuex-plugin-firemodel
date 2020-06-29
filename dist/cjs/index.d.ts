@@ -1,5 +1,5 @@
 export * from "firemodel";
 export * from "./types";
 export * from "./auth/api";
-export { FiremodelPlugin as default, firemodelMutations, abc, AbcApi } from "./private";
-export { IVuexState } from "./types";
+export { abc, AbcApi } from "./abc";
+export { FiremodelPlugin as default, firemodelMutations } from "./private";

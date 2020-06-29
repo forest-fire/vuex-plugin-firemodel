@@ -1,4 +1,4 @@
-import { IFmLifecycleContext, IFmLifecycleEvent } from "../types/index";
+import { IFmLifecycleContext, IFmLifecycleEvent } from "../types";
 /**
  * **runQueue**
  *

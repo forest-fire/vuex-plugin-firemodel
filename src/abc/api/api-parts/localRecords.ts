@@ -2,12 +2,12 @@ import {
   AbcRequestCommand,
   IDiscreteLocalResults,
   IDiscreteOptions
-} from "../../../types";
+} from "@/types";
 import { IPrimaryKey, Model, Record } from "firemodel";
 
-import { AbcApi } from "../AbcApi";
-import {get} from "../../../util/index";
-import { getStore } from "../../../private";
+import { AbcApi } from "@/abc";
+import {get} from "@/util";
+import { getStore } from "@/state-mgmt";
 
 /**
  * For a discrete set of primary keys, get's all knowledge of these locally. This means

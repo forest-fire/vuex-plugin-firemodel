@@ -17,7 +17,7 @@ import Vue from "vue";
 import {
 changeRoot
 } from '../util'
-import {get} from "../util/index";
+import {get} from "@/util";
 
 export function AbcFiremodelMutation<T>(propOffset?: keyof T & string): MutationTree<T> {
   return {

@@ -1,4 +1,4 @@
-import { IFiremodelConfig } from "../private";
+import { IFiremodelConfig } from "@/types";
 
 let _pluginConfig: IFiremodelConfig<any>;
 

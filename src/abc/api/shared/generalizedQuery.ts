@@ -19,7 +19,7 @@ import {
 } from "../../../private";
 import { Model, Record } from "firemodel";
 
-import {get} from "../../../util/index";
+import {get} from "@/util";
 
 /**
  * A generalized flow for queries; specific query helpers

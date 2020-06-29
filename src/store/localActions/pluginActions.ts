@@ -14,7 +14,7 @@ import {
 import {
 authChanged,
 runQueue
-} from "../../util"
+} from "@/util";
 
 import { ActionTree } from "vuex";
 import { FirebaseAuth } from "@forest-fire/types";

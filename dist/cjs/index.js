@@ -14729,15 +14729,6 @@ const SINCE_LAST_COOKIE = "slc";
     AuthPersistenceStrategy["none"] = "none";
 })(exports.AuthPersistenceStrategy || (exports.AuthPersistenceStrategy = {}));
 
-(function (FmConfigAction) {
-    FmConfigAction["connect"] = "CONNECT";
-    FmConfigAction["firebaseAuth"] = "FIREBASE_AUTH";
-    FmConfigAction["anonymousLogin"] = "ANONYMOUS_LOGIN";
-    FmConfigAction["watchRouteChanges"] = "WATCH_ROUTE_CHANGES";
-    FmConfigAction["routeChanged"] = "CALL_ROUTE_HOOKS";
-    FmConfigAction["watcherStarting"] = "WATCHER_STARTING";
-})(exports.FmConfigAction || (exports.FmConfigAction = {}));
-
 /** adds the `@firemodel` namespace in front of a localized name */
 function addNamespace(event) {
     return `@firemodel/${event}`;
@@ -26468,6 +26459,162 @@ function getDefaultApiConfig() {
     return defaultConfig;
 }
 
+/**
+ * These functions are really just wrappers around the available actions
+ * which Firemodel provides but are type-safe and often are a more easily
+ * used means to achieve **Firebase** _auth_ functions
+ */
+/**
+ * Log into the Firebase AUTH sytem using email/password. If successful it returns
+ * a Firebase "user credential".
+ */
+async function signInWithEmailAndPassword(email, password) {
+    return getStore().dispatch({
+        type: "@firemodel/signInWithEmailAndPassword",
+        email,
+        password
+    });
+}
+/**
+ * Allows a frontend app to create a new user for email and password
+ * authentication. The account will initially be set to _un-verified_ but
+ * the email used will be sent a link to make the account verified.
+ */
+async function createUserWithEmailAndPassword(email, password) {
+    return getStore().dispatch({
+        type: "@firemodel/createUserWithEmailAndPassword",
+        email,
+        password
+    });
+}
+/**
+ * Signs out the current user from Firebase; it will also
+ * optionally send a **reset** to the `Model` which stores the
+ * user profile of the user.
+ */
+async function signOut(payload) {
+    return getStore().dispatch({
+        type: "@firemodel/signOut",
+        payload
+    });
+}
+async function getIdToken(forceRefresh) {
+    var _a;
+    const fmState = getStore().state["@firemodel"];
+    if (fmState.token && forceRefresh !== true) {
+        return fmState.token;
+    }
+    const auth = await getAuth();
+    const tokenPromise = (_a = auth.currentUser) === null || _a === void 0 ? void 0 : _a.getIdTokenResult(forceRefresh);
+    if (tokenPromise) {
+        const token = await tokenPromise;
+        return token;
+    }
+    throw new FireModelPluginError(`Call to getIdToken() returned nothing! ${auth.currentUser
+        ? ""
+        : 'This was because -- for some reason -- the "userProfile" was not set!'}`, "firemodel-plugin/not-allowed");
+}
+/**
+ * Sends a password reset email to the given email address.
+ * To complete the password reset, dispatch `confirmPasswordReset` with
+ * the code supplied in the email sent to the user, along with the new password
+ * specified by the user.
+ */
+async function sendPasswordResetEmail(email, actionCodeSettings) {
+    return getStore().dispatch({
+        type: "@firemodel/sendPasswordResetEmail",
+        email,
+        actionCodeSettings
+    });
+}
+/**
+ * Completes the password reset process, given a _confirmation code_
+ * and new _password_.
+ */
+async function confirmPasswordReset(code, newPassword) {
+    return getStore().dispatch({
+        type: "@firemodel/confirmPassordReset",
+        code,
+        newPassword
+    });
+}
+/**
+ * Checks a password reset code sent to the user by email or other
+ * out-of-band mechanism. Returns the user's email address if valid.
+ */
+async function verifyPasswordResetCode(code) {
+    return getStore().dispatch({
+        type: "@firemodel/verifyPasswordResetCode",
+        code
+    });
+}
+/**
+ * Updates the user's email address. An email will be sent to the original email address
+ * that allows owner of that email address to revoke the email address change.
+ */
+async function updateEmail(newEmail) {
+    return getStore().dispatch({
+        type: "@firemodel/updateEmail",
+        newEmail
+    });
+}
+/**
+ * Updates the user's password. In order to allow this operation a user
+ * must have logged in recently. If this requirement isn't met a
+ * `auth/requires-recent-login` error will be thrown. You will then have to
+ * call the `reauthenticateWithCredential` to resolve this.
+ */
+async function updatePassword(password) {
+    return getStore().dispatch({
+        type: "@firemodel/updatePassword",
+        password
+    });
+}
+/**
+ * Update a user's basic profile information with name and/or
+ * photo URL.
+ */
+async function updateProfile(profile) {
+    return getStore().dispatch({
+        type: "@firemodel/updateProfile",
+        profile
+    });
+}
+/**
+ * Sends a verification email to the currently logged in user
+ */
+async function sendEmailVerification() {
+    return getStore().dispatch({
+        type: "@firemodel/sendEmailVerification"
+    });
+}
+async function reauthenticateWithCredential(credential) {
+    return getStore().dispatch({
+        type: "@firemodel/reauthenticateWithCredential",
+        credential
+    });
+}
+async function linkWithCredential(credential) {
+    return getStore().dispatch({
+        type: "@firemodel/linkWithCredential",
+        credential
+    });
+}
+
+function resetModule(module) {
+    return getStore().commit(`${module}/RESET`, module);
+}
+
+class EmailAuthProvider {
+    static async credential(email, password) {
+        const db = await getDatabase();
+        if (!db.authProviders) {
+            throw new FireModelPluginError(`Attempt to call connect() was not possible because the current DB connection -- via universal-fire -- does not have a "authProviders" API available yet.`);
+        }
+        return db.authProviders.EmailAuthProvider.credential(email, password);
+    }
+}
+
 function AbcFiremodelMutation(propOffset) {
     return {
         [exports.AbcMutation.ABC_VUEX_UPDATE_FROM_IDX](state, payload) {
@@ -27408,16 +27555,6 @@ const state = () => ({
 });
 
 /**
- * The **Vuex** module that this plugin exports
- */
-const FiremodelModule = () => ({
-    state: state(),
-    mutations: mutations(),
-    actions: actions(),
-    namespaced: true
-});
-
-/**
  * The **mutations** associated to the Firebase Auth API.
  */
 const authMutations = () => ({
@@ -27665,161 +27802,27 @@ const watcher = () => ({
     }
 });
 
-/**
- * These functions are really just wrappers around the available actions
- * which Firemodel provides but are type-safe and often are a more easily
- * used means to achieve **Firebase** _auth_ functions
- */
-/**
- * Log into the Firebase AUTH sytem using email/password. If successful it returns
- * a Firebase "user credential".
- */
-async function signInWithEmailAndPassword(email, password) {
-    return getStore().dispatch({
-        type: "@firemodel/signInWithEmailAndPassword",
-        email,
-        password
-    });
+function generateLocalId(compositeKey, action) {
+    return action;
 }
 /**
- * Allows a frontend app to create a new user for email and password
- * authentication. The account will initially be set to _un-verified_ but
- * the email used will be sent a link to make the account verified.
+ * The **Vuex** module that this plugin exports
  */
-async function createUserWithEmailAndPassword(email, password) {
-    return getStore().dispatch({
-        type: "@firemodel/createUserWithEmailAndPassword",
-        email,
-        password
-    });
-}
-/**
- * Signs out the current user from Firebase; it will also
- * optionally send a **reset** to the `Model` which stores the
- * user profile of the user.
- */
-async function signOut(payload) {
-    return getStore().dispatch({
-        type: "@firemodel/signOut",
-        payload
-    });
-}
-async function getIdToken(forceRefresh) {
-    var _a;
-    const fmState = getStore().state["@firemodel"];
-    if (fmState.token && forceRefresh !== true) {
-        return fmState.token;
-    }
-    const auth = await getAuth();
-    const tokenPromise = (_a = auth.currentUser) === null || _a === void 0 ? void 0 : _a.getIdTokenResult(forceRefresh);
-    if (tokenPromise) {
-        const token = await tokenPromise;
-        return token;
-    }
-    throw new FireModelPluginError(`Call to getIdToken() returned nothing! ${auth.currentUser
-        ? ""
-        : 'This was because -- for some reason -- the "userProfile" was not set!'}`, "firemodel-plugin/not-allowed");
-}
-/**
- * Sends a password reset email to the given email address.
- * To complete the password reset, dispatch `confirmPasswordReset` with
- * the code supplied in the email sent to the user, along with the new password
- * specified by the user.
- */
-async function sendPasswordResetEmail(email, actionCodeSettings) {
-    return getStore().dispatch({
-        type: "@firemodel/sendPasswordResetEmail",
-        email,
-        actionCodeSettings
-    });
-}
-/**
- * Completes the password reset process, given a _confirmation code_
- * and new _password_.
- */
-async function confirmPasswordReset(code, newPassword) {
-    return getStore().dispatch({
-        type: "@firemodel/confirmPassordReset",
-        code,
-        newPassword
-    });
-}
-/**
- * Checks a password reset code sent to the user by email or other
- * out-of-band mechanism. Returns the user's email address if valid.
- */
-async function verifyPasswordResetCode(code) {
-    return getStore().dispatch({
-        type: "@firemodel/verifyPasswordResetCode",
-        code
-    });
-}
-/**
- * Updates the user's email address. An email will be sent to the original email address
- * that allows owner of that email address to revoke the email address change.
- */
-async function updateEmail(newEmail) {
-    return getStore().dispatch({
-        type: "@firemodel/updateEmail",
-        newEmail
-    });
-}
-/**
- * Updates the user's password. In order to allow this operation a user
- * must have logged in recently. If this requirement isn't met a
- * `auth/requires-recent-login` error will be thrown. You will then have to
- * call the `reauthenticateWithCredential` to resolve this.
- */
-async function updatePassword(password) {
-    return getStore().dispatch({
-        type: "@firemodel/updatePassword",
-        password
-    });
-}
-/**
- * Update a user's basic profile information with name and/or
- * photo URL.
- */
-async function updateProfile(profile) {
-    return getStore().dispatch({
-        type: "@firemodel/updateProfile",
-        profile
-    });
-}
-/**
- * Sends a verification email to the currently logged in user
- */
-async function sendEmailVerification() {
-    return getStore().dispatch({
-        type: "@firemodel/sendEmailVerification"
-    });
-}
-async function reauthenticateWithCredential(credential) {
-    return getStore().dispatch({
-        type: "@firemodel/reauthenticateWithCredential",
-        credential
-    });
-}
-async function linkWithCredential(credential) {
-    return getStore().dispatch({
-        type: "@firemodel/linkWithCredential",
-        credential
-    });
-}
+const FiremodelModule = () => ({
+    state: state(),
+    mutations: mutations(),
+    actions: actions(),
+    namespaced: true
+});
 
-function resetModule(module) {
-    return getStore().commit(`${module}/RESET`, module);
-}
-
-class EmailAuthProvider {
-    static async credential(email, password) {
-        const db = await getDatabase();
-        if (!db.authProviders) {
-            throw new FireModelPluginError(`Attempt to call connect() was not possible because the current DB connection -- via universal-fire -- does not have a "authProviders" API available yet.`);
-        }
-        return db.authProviders.EmailAuthProvider.credential(email, password);
-    }
-}
+(function (FmConfigAction) {
+    FmConfigAction["connect"] = "CONNECT";
+    FmConfigAction["firebaseAuth"] = "FIREBASE_AUTH";
+    FmConfigAction["anonymousLogin"] = "ANONYMOUS_LOGIN";
+    FmConfigAction["watchRouteChanges"] = "WATCH_ROUTE_CHANGES";
+    FmConfigAction["routeChanged"] = "CALL_ROUTE_HOOKS";
+    FmConfigAction["watcherStarting"] = "WATCHER_STARTING";
+})(exports.FmConfigAction || (exports.FmConfigAction = {}));
 
 exports.AbcApi = AbcApi;
 exports.DexieDb = DexieDb;
@@ -27827,6 +27830,7 @@ exports.DexieList = DexieList;
 exports.DexieRecord = DexieRecord;
 exports.EmailAuthProvider = EmailAuthProvider;
 exports.FireModel = FireModel;
+exports.FiremodelModule = FiremodelModule;
 exports.List = List;
 exports.Mock = Mock;
 exports.MockApi = MockApi;
@@ -27867,6 +27871,7 @@ exports.extractFksFromPaths = extractFksFromPaths;
 exports.fakeIt = fakeIt;
 exports.findWatchers = findWatchers;
 exports.firemodelMutations = firemodelMutations;
+exports.generateLocalId = generateLocalId;
 exports.getDbIndexes = getDbIndexes;
 exports.getFromWatcherPool = getFromWatcherPool;
 exports.getIdToken = getIdToken;

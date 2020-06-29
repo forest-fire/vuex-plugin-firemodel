@@ -10,7 +10,7 @@ import {
   IdTokenResult,
   UserCredential
 } from "@firebase/auth-types";
-import { IAuthProfile, IVuexState } from "../../types";
+import { IAuthProfile, IVuexState } from "@/types";
 import { getAuth, getStore } from "../../private";
 
 import { FireModelPluginError } from "../../errors/FiremodelPluginError";

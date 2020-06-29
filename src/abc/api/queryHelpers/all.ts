@@ -1,12 +1,13 @@
-
-import { AbcApi } from "../AbcApi";
-import { List } from "firemodel";
 import {
   IAbcAllQueryDefinition,
-  QueryType, IQueryOptions,
+  IAbcFirebaseQueryResult,
   IAbcQueryHelper,
-  IAbcFirebaseQueryResult
+  IQueryOptions,
+  QueryType
 } from "../../../private";
+
+import { AbcApi } from "@/abc";
+import { List } from "firemodel";
 
 export const all: IAbcQueryHelper = function all<T>(
   defn:

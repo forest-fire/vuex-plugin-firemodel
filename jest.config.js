@@ -1,35 +1,28 @@
-const esLibsToTranspile = (returnType) => {
-  const mapperList = {
-    '^firemodel$': '<rootDir>/node_modules/firemodel/dist/es/index.js',
-    '^universal-fire$': '<rootDir>/node_modules/universal-fire/dist/es/index.js',
-    '^@forest-fire/firestore-client$': '<rootDir>/node_modules/@forest-fire/firestore-client/dist/es/index.js',
-    '^@forest-fire/real-time-client$': '<rootDir>/node_modules/@forest-fire/real-time-client/dist/es/index.js',
-  }
-
-  const createPipeSeparatedString = () => Object.keys(mapperList).join('|')
-    .replace(/\^/g, '')
-    .replace(/\$/g, '');
-
-  return returnType === 'list' ? mapperList : createPipeSeparatedString();
-};
-
-console.log(esLibsToTranspile('lis'));
-
+const { resolve } = require("path");
 module.exports = {
   testMatch: ["**/test/?(*-)+(spec|test).[jt]s?(x)"],
+
+  // Maps a regular expression for a "path" and maps it to a transformer
+  // https://jestjs.io/docs/en/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object
   transform: {
-    // '(firemodel|universal-fire|@forest-fire).+\\.js$': 'babel-jest',
-    '^.+\\.tsx?$': 'ts-jest',
+    "^.+\\.tsx?$": "ts-jest",
   },
+
+  // https://jestjs.io/docs/en/configuration#transformignorepatterns-arraystring
   transformIgnorePatterns: [
-    // '<rootDir>/node_modules/(?!(firemodel|universal-fire|@forest-fire)).+\\.js$',
+    // "<rootDir>/node_modules/(?!(universal-fire|@forest-fire)).+\\.js$",
+    resolve(process.cwd(), "node_modules") +
+      `/(?!(universal-fire|@forest-fire)).+\\.js$`,
   ],
+
+  // modules which do NOT export CJS must have an entry to
+  // https://jestjs.io/docs/en/configuration#modulenamemapper-objectstring-string--arraystring
   moduleNameMapper: {
-    // '^firemodel$': '<rootDir>/node_modules/firemodel/dist/es/index.js',
-    // '^universal-fire$': '<rootDir>/node_modules/universal-fire/dist/es/index.js',
-    // '^@forest-fire/firestore-client$': '<rootDir>/node_modules/@forest-fire/firestore-client/dist/es/index.js',
-    // '^@forest-fire/real-time-client$': '<rootDir>/node_modules/@forest-fire/real-time-client/dist/es/index.js',
+    "^@/(.*)$": resolve(process.cwd(), "src", "$1"),
   },
-  setupFilesAfterEnv: ['<rootDir>/test/jest.setup.js'],
-  testEnvironment: 'node',
+
+  // adds more assertions to the default library that Jest provides
+  setupFilesAfterEnv: ["jest-extended"],
+  testEnvironment: "node",
 };
+

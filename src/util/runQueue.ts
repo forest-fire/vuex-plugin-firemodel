@@ -3,8 +3,7 @@ import {
   IFmLifecycleContext,
   IFmLifecycleEvent,
   IFmQueuedAction,
-  IVuexState
-} from "../types/index";
+} from "@/types";
 
 /**
  * **runQueue**
