@@ -25909,418 +25909,6 @@ var FmConfigAction;
 })(FmConfigAction || (FmConfigAction = {}));
 
 /**
- * Based on the configuration passed in by the consuming app, core
- * services will be started by firing off the appropriate Vuex _action_.
- */
-async function coreServices(store, config) {
-    const db = getDatabase();
-    const starting = [];
-    // CONNECT
-    if (config === null || config === void 0 ? void 0 : config.connect) {
-        if (!db.isConnected) {
-            await db.connect();
-        }
-        // run connect action
-        starting.push(store.dispatch(addNamespace(FmConfigAction.connect), getDatabase()));
-    }
-    // AUTH
-    if (config === null || config === void 0 ? void 0 : config.auth) {
-        // run auth action
-        starting.push(store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config));
-    }
-    if (config === null || config === void 0 ? void 0 : config.routeChanges) {
-        // run routeChanges action
-        starting.push(store.dispatch(addNamespace(FmConfigAction.watchRouteChanges)));
-    }
-    await Promise.all(starting);
-    store.commit(addNamespace("CORE_SERVICES_STARTED" /* coreServicesStarted */), {
-        message: `all core firemodel plugin services started`,
-        config: db.config
-    });
-}
-
-var toStringFunction$1 = Function.prototype.toString;
-var create$1 = Object.create, defineProperty$2 = Object.defineProperty, getOwnPropertyDescriptor$2 = Object.getOwnPropertyDescriptor, getOwnPropertyNames$1 = Object.getOwnPropertyNames, getOwnPropertySymbols$1 = Object.getOwnPropertySymbols, getPrototypeOf$1 = Object.getPrototypeOf;
-var _a$2 = Object.prototype, hasOwnProperty$7 = _a$2.hasOwnProperty, propertyIsEnumerable$1 = _a$2.propertyIsEnumerable;
-/**
- * @enum
- *
- * @const {Object} SUPPORTS
- *
- * @property {boolean} SYMBOL_PROPERTIES are symbol properties supported
- * @property {boolean} WEAKMAP is WeakMap supported
- */
-var SUPPORTS$1 = {
-    SYMBOL_PROPERTIES: typeof getOwnPropertySymbols$1 === 'function',
-    WEAKMAP: typeof WeakMap === 'function',
-};
-/**
- * @function createCache
- *
- * @description
- * get a new cache object to prevent circular references
- *
- * @returns the new cache object
- */
-var createCache$1 = function () {
-    if (SUPPORTS$1.WEAKMAP) {
-        return new WeakMap();
-    }
-    // tiny implementation of WeakMap
-    var object = create$1({
-        has: function (key) { return !!~object._keys.indexOf(key); },
-        set: function (key, value) {
-            object._keys.push(key);
-            object._values.push(value);
-        },
-        get: function (key) { return object._values[object._keys.indexOf(key)]; },
-    });
-    object._keys = [];
-    object._values = [];
-    return object;
-};
-/**
- * @function getCleanClone
- *
- * @description
- * get an empty version of the object with the same prototype it has
- *
- * @param object the object to build a clean clone from
- * @param realm the realm the object resides in
- * @returns the empty cloned object
- */
-var getCleanClone$1 = function (object, realm) {
-    if (!object.constructor) {
-        return create$1(null);
-    }
-    var Constructor = object.constructor;
-    var prototype = object.__proto__ || getPrototypeOf$1(object);
-    if (Constructor === realm.Object) {
-        return prototype === realm.Object.prototype ? {} : create$1(prototype);
-    }
-    if (~toStringFunction$1.call(Constructor).indexOf('[native code]')) {
-        try {
-            return new Constructor();
-        }
-        catch (_a) { }
-    }
-    return create$1(prototype);
-};
-/**
- * @function getObjectCloneLoose
- *
- * @description
- * get a copy of the object based on loose rules, meaning all enumerable keys
- * and symbols are copied, but property descriptors are not considered
- *
- * @param object the object to clone
- * @param realm the realm the object resides in
- * @param handleCopy the function that handles copying the object
- * @returns the copied object
- */
-var getObjectCloneLoose$1 = function (object, realm, handleCopy, cache) {
-    var clone = getCleanClone$1(object, realm);
-    // set in the cache immediately to be able to reuse the object recursively
-    cache.set(object, clone);
-    for (var key in object) {
-        if (hasOwnProperty$7.call(object, key)) {
-            clone[key] = handleCopy(object[key], cache);
-        }
-    }
-    if (SUPPORTS$1.SYMBOL_PROPERTIES) {
-        var symbols = getOwnPropertySymbols$1(object);
-        var length_1 = symbols.length;
-        if (length_1) {
-            for (var index = 0, symbol = void 0; index < length_1; index++) {
-                symbol = symbols[index];
-                if (propertyIsEnumerable$1.call(object, symbol)) {
-                    clone[symbol] = handleCopy(object[symbol], cache);
-                }
-            }
-        }
-    }
-    return clone;
-};
-/**
- * @function getObjectCloneStrict
- *
- * @description
- * get a copy of the object based on strict rules, meaning all keys and symbols
- * are copied based on the original property descriptors
- *
- * @param object the object to clone
- * @param realm the realm the object resides in
- * @param handleCopy the function that handles copying the object
- * @returns the copied object
- */
-var getObjectCloneStrict$1 = function (object, realm, handleCopy, cache) {
-    var clone = getCleanClone$1(object, realm);
-    // set in the cache immediately to be able to reuse the object recursively
-    cache.set(object, clone);
-    var properties = SUPPORTS$1.SYMBOL_PROPERTIES
-        ? getOwnPropertyNames$1(object).concat(getOwnPropertySymbols$1(object))
-        : getOwnPropertyNames$1(object);
-    var length = properties.length;
-    if (length) {
-        for (var index = 0, property = void 0, descriptor = void 0; index < length; index++) {
-            property = properties[index];
-            if (property !== 'callee' && property !== 'caller') {
-                descriptor = getOwnPropertyDescriptor$2(object, property);
-                if (descriptor) {
-                    // Only clone the value if actually a value, not a getter / setter.
-                    if (!descriptor.get && !descriptor.set) {
-                        descriptor.value = handleCopy(object[property], cache);
-                    }
-                    try {
-                        defineProperty$2(clone, property, descriptor);
-                    }
-                    catch (error) {
-                        // Tee above can fail on node in edge cases, so fall back to the loose assignment.
-                        clone[property] = descriptor.value;
-                    }
-                }
-                else {
-                    // In extra edge cases where the property descriptor cannot be retrived, fall back to
-                    // the loose assignment.
-                    clone[property] = handleCopy(object[property], cache);
-                }
-            }
-        }
-    }
-    return clone;
-};
-/**
- * @function getRegExpFlags
- *
- * @description
- * get the flags to apply to the copied regexp
- *
- * @param regExp the regexp to get the flags of
- * @returns the flags for the regexp
- */
-var getRegExpFlags$1 = function (regExp) {
-    var flags = '';
-    if (regExp.global) {
-        flags += 'g';
-    }
-    if (regExp.ignoreCase) {
-        flags += 'i';
-    }
-    if (regExp.multiline) {
-        flags += 'm';
-    }
-    if (regExp.unicode) {
-        flags += 'u';
-    }
-    if (regExp.sticky) {
-        flags += 'y';
-    }
-    return flags;
-};
-
-// utils
-var isArray$2 = Array.isArray;
-var GLOBAL_THIS$1 = (function () {
-    if (typeof self !== 'undefined') {
-        return self;
-    }
-    if (typeof window !== 'undefined') {
-        return window;
-    }
-    if (typeof global !== 'undefined') {
-        return global;
-    }
-    if (console && console.error) {
-        console.error('Unable to locate global object, returning "this".');
-    }
-})();
-/**
- * @function copy
- *
- * @description
- * copy an object deeply as much as possible
- *
- * If `strict` is applied, then all properties (including non-enumerable ones)
- * are copied with their original property descriptors on both objects and arrays.
- *
- * The object is compared to the global constructors in the `realm` provided,
- * and the native constructor is always used to ensure that extensions of native
- * objects (allows in ES2015+) are maintained.
- *
- * @param object the object to copy
- * @param [options] the options for copying with
- * @param [options.isStrict] should the copy be strict
- * @param [options.realm] the realm (this) object the object is copied from
- * @returns the copied object
- */
-function copy$1(object, options) {
-    // manually coalesced instead of default parameters for performance
-    var isStrict = !!(options && options.isStrict);
-    var realm = (options && options.realm) || GLOBAL_THIS$1;
-    var getObjectClone = isStrict
-        ? getObjectCloneStrict$1
-        : getObjectCloneLoose$1;
-    /**
-     * @function handleCopy
-     *
-     * @description
-     * copy the object recursively based on its type
-     *
-     * @param object the object to copy
-     * @returns the copied object
-     */
-    var handleCopy = function (object, cache) {
-        if (!object || typeof object !== 'object') {
-            return object;
-        }
-        if (cache.has(object)) {
-            return cache.get(object);
-        }
-        var Constructor = object.constructor;
-        // plain objects
-        if (Constructor === realm.Object) {
-            return getObjectClone(object, realm, handleCopy, cache);
-        }
-        var clone;
-        // arrays
-        if (isArray$2(object)) {
-            // if strict, include non-standard properties
-            if (isStrict) {
-                return getObjectCloneStrict$1(object, realm, handleCopy, cache);
-            }
-            var length_1 = object.length;
-            clone = new Constructor();
-            cache.set(object, clone);
-            for (var index = 0; index < length_1; index++) {
-                clone[index] = handleCopy(object[index], cache);
-            }
-            return clone;
-        }
-        // dates
-        if (object instanceof realm.Date) {
-            return new Constructor(object.getTime());
-        }
-        // regexps
-        if (object instanceof realm.RegExp) {
-            clone = new Constructor(object.source, object.flags || getRegExpFlags$1(object));
-            clone.lastIndex = object.lastIndex;
-            return clone;
-        }
-        // maps
-        if (realm.Map && object instanceof realm.Map) {
-            clone = new Constructor();
-            cache.set(object, clone);
-            object.forEach(function (value, key) {
-                clone.set(key, handleCopy(value, cache));
-            });
-            return clone;
-        }
-        // sets
-        if (realm.Set && object instanceof realm.Set) {
-            clone = new Constructor();
-            cache.set(object, clone);
-            object.forEach(function (value) {
-                clone.add(handleCopy(value, cache));
-            });
-            return clone;
-        }
-        // blobs
-        if (realm.Blob && object instanceof realm.Blob) {
-            clone = new Blob([object], { type: object.type });
-            return clone;
-        }
-        // buffers (node-only)
-        if (realm.Buffer && realm.Buffer.isBuffer(object)) {
-            clone = realm.Buffer.allocUnsafe
-                ? realm.Buffer.allocUnsafe(object.length)
-                : new Constructor(object.length);
-            cache.set(object, clone);
-            object.copy(clone);
-            return clone;
-        }
-        // arraybuffers / dataviews
-        if (realm.ArrayBuffer) {
-            // dataviews
-            if (realm.ArrayBuffer.isView(object)) {
-                clone = new Constructor(object.buffer.slice(0));
-                cache.set(object, clone);
-                return clone;
-            }
-            // arraybuffers
-            if (object instanceof realm.ArrayBuffer) {
-                clone = object.slice(0);
-                cache.set(object, clone);
-                return clone;
-            }
-        }
-        // if the object cannot / should not be cloned, don't
-        if (
-        // promise-like
-        typeof object.then === 'function' ||
-            // errors
-            object instanceof Error ||
-            // weakmaps
-            (realm.WeakMap && object instanceof realm.WeakMap) ||
-            // weaksets
-            (realm.WeakSet && object instanceof realm.WeakSet)) {
-            return object;
-        }
-        // assume anything left is a custom constructor
-        return getObjectClone(object, realm, handleCopy, cache);
-    };
-    return handleCopy(object, createCache$1());
-}
-/**
- * @function strictCopy
- *
- * @description
- * copy the object with `strict` option pre-applied
- *
- * @param object the object to copy
- * @param [options] the options for copying with
- * @param [options.realm] the realm (this) object the object is copied from
- * @returns the copied object
- */
-copy$1.strict = function strictCopy(object, options) {
-    return copy$1(object, {
-        isStrict: true,
-        realm: options ? options.realm : void 0,
-    });
-};
-
-/**
- * **FiremodelPlugin**
- *
- * @param db the database connection (provided by SDK from `universal-fire`)
- * @param config the configuration of the core services this plugin provides
- */
-const FiremodelPlugin = (
-/**
- * Provide a connection to the database with one of the SDK's provided
- * by the `universal-fire` library.
- */
-db, 
-/**
- * Specify the configuration of the "core services" this plugin provides
- */
-config) => {
-    storeDatabase(db);
-    storePluginConfig(config);
-    return (store) => {
-        setInitialState(copy$1(store.state));
-        preserveStore(store);
-        FireModel.dispatch = store.dispatch;
-        store.subscribe((mutation, state) => {
-            if (mutation.type === "route/ROUTE_CHANGED") {
-                store.dispatch(addNamespace(FmConfigAction.watchRouteChanges), Object.assign({}, mutation.payload));
-            }
-        });
-        store.registerModule("@firemodel", FiremodelModule());
-        queueLifecycleEvents(store, config).then(() => coreServices(store, Object.assign({ connect: true }, config)));
-    };
-};
-
-/**
  * These functions are really just wrappers around the available actions
  * which Firemodel provides but are type-safe and often are a more easily
  * used means to achieve **Firebase** _auth_ functions
@@ -27575,7 +27163,7 @@ function areMapsEqual(a, b, isEqual, meta) {
     return true;
 }
 var OWNER = '_owner';
-var hasOwnProperty$8 = Function.prototype.bind.call(Function.prototype.call, Object.prototype.hasOwnProperty);
+var hasOwnProperty$7 = Function.prototype.bind.call(Function.prototype.call, Object.prototype.hasOwnProperty);
 /**
  * @function areObjectsEqual
  *
@@ -27597,7 +27185,7 @@ function areObjectsEqual(a, b, isEqual, meta) {
     var key;
     for (var index = 0; index < length; index++) {
         key = keysA[index];
-        if (!hasOwnProperty$8(b, key)) {
+        if (!hasOwnProperty$7(b, key)) {
             return false;
         }
         if (key === OWNER && isReactElement(a)) {
@@ -27658,7 +27246,7 @@ function areSetsEqual(a, b, isEqual, meta) {
     return true;
 }
 
-var isArray$3 = Array.isArray;
+var isArray$2 = Array.isArray;
 var HAS_MAP_SUPPORT = typeof Map === 'function';
 var HAS_SET_SUPPORT = typeof Set === 'function';
 var OBJECT_TYPEOF = 'object';
@@ -27688,8 +27276,8 @@ function createComparator(createIsEqual) {
             if (isPlainObject$1(a) && isPlainObject$1(b)) {
                 return areObjectsEqual(a, b, isEqual, meta);
             }
-            var arrayA = isArray$3(a);
-            var arrayB = isArray$3(b);
+            var arrayA = isArray$2(a);
+            var arrayB = isArray$2(b);
             if (arrayA || arrayB) {
                 return arrayA === arrayB && areArraysEqual(a, b, isEqual, meta);
             }
@@ -27816,6 +27404,37 @@ function getDefaultApiConfig() {
     return defaultConfig;
 }
 
+/**
+ * Based on the configuration passed in by the consuming app, core
+ * services will be started by firing off the appropriate Vuex _action_.
+ */
+async function coreServices(store, config) {
+    const db = getDatabase();
+    const starting = [];
+    // CONNECT
+    if (config === null || config === void 0 ? void 0 : config.connect) {
+        if (!db.isConnected) {
+            await db.connect();
+        }
+        // run connect action
+        starting.push(store.dispatch(addNamespace(FmConfigAction.connect), getDatabase()));
+    }
+    // AUTH
+    if (config === null || config === void 0 ? void 0 : config.auth) {
+        // run auth action
+        starting.push(store.dispatch(addNamespace(FmConfigAction.firebaseAuth), config));
+    }
+    if (config === null || config === void 0 ? void 0 : config.routeChanges) {
+        // run routeChanges action
+        starting.push(store.dispatch(addNamespace(FmConfigAction.watchRouteChanges)));
+    }
+    await Promise.all(starting);
+    store.commit(addNamespace("CORE_SERVICES_STARTED" /* coreServicesStarted */), {
+        message: `all core firemodel plugin services started`,
+        config: db.config
+    });
+}
+
 async function queueLifecycleEvents(store, config) {
     if (!config) {
         throw new FireModelPluginError(`There was no configuration sent into the FiremodelPlugin!`, "not-allowed");
@@ -27842,5 +27461,387 @@ async function queueLifecycleEvents(store, config) {
     }
 }
 
-export { AbcApi, AbcDataSource, AbcFiremodelMutation, AbcMutation, AbcStrategy, AuditLog, AuthPersistenceStrategy, DbSyncOperation, DexieDb, DexieList, DexieRecord, EmailAuthProvider, FireModel, FiremodelModule, FiremodelPlugin, FmConfigAction, FmEvents, List, Mock, MockApi, Model, NamedFakes, OneWay, PropertyNamePatterns, QueryType, Record, RelationshipCardinality, RelationshipPolicy, SINCE_LAST_COOKIE, UnwatchedLocalEvent, VeuxWrapper, Watch, WatchBase, WatchDispatcher, WatchList, WatchRecord, abc, actions, addDispatchForWatcher, addRelationships, addToWatcherPool, addedLocally, authActions, authMutations, belongsTo, buildDeepRelationshipLinks, buildRelationshipPaths, clearWatcherPool, confirmPasswordReset, constrain, constrainedProperty, coreServices, createCompositeKey, createCompositeKeyFromFkString, createCompositeKeyRefFromRecord, createCompositeRef, createUserWithEmailAndPassword, defaultValue, desc, discoverRootPath, encrypt, errorMutations, errors, extractFksFromPaths, fakeIt, key as fbKey, findWatchers, firemodelActions, firemodelMutations, generateLocalId, getDbIndexes, getFromWatcherPool, getIdToken, getWatchList, getWatchRecord, getWatcherPool, getWatcherPoolList, hasInitialized, hasMany, hasOne, index, indexesForModel, isDiscreteRequest, length, linkWithCredential, localConfig, localCrud, localRelnOp, locallyUpdateFkOnRecord, max, min, mock, mockProperties, mockValue, model, mutations, other, ownedBy, pluginActions, processHasMany, processHasOne, property, propertyDecorator, propertyReflector, pushKey, queueLifecycleEvents, reauthenticateWithCredential, recordConfirms, recordLocal, recordRollbacks, recordServerChanges, reduceCompositeNotationToStringRepresentation, relationship, relationshipOperation, relationships, relnConfirmation, relnRollback, removeFromWatcherPool, reset, resetModule, sendEmailVerification, sendPasswordResetEmail, serverConfirm, serverConfirms, serverEvents, serverRollback, serverRollbacks, signInWithEmailAndPassword, signOut, state, uniqueIndex, updateEmail, updatePassword, updateProfile, verifyPasswordResetCode, waitForInitialization, watchActions, watchEvents, watcher };
+var toStringFunction$1 = Function.prototype.toString;
+var create$1 = Object.create, defineProperty$2 = Object.defineProperty, getOwnPropertyDescriptor$2 = Object.getOwnPropertyDescriptor, getOwnPropertyNames$1 = Object.getOwnPropertyNames, getOwnPropertySymbols$1 = Object.getOwnPropertySymbols, getPrototypeOf$1 = Object.getPrototypeOf;
+var _a$2 = Object.prototype, hasOwnProperty$8 = _a$2.hasOwnProperty, propertyIsEnumerable$1 = _a$2.propertyIsEnumerable;
+/**
+ * @enum
+ *
+ * @const {Object} SUPPORTS
+ *
+ * @property {boolean} SYMBOL_PROPERTIES are symbol properties supported
+ * @property {boolean} WEAKMAP is WeakMap supported
+ */
+var SUPPORTS$1 = {
+    SYMBOL_PROPERTIES: typeof getOwnPropertySymbols$1 === 'function',
+    WEAKMAP: typeof WeakMap === 'function',
+};
+/**
+ * @function createCache
+ *
+ * @description
+ * get a new cache object to prevent circular references
+ *
+ * @returns the new cache object
+ */
+var createCache$1 = function () {
+    if (SUPPORTS$1.WEAKMAP) {
+        return new WeakMap();
+    }
+    // tiny implementation of WeakMap
+    var object = create$1({
+        has: function (key) { return !!~object._keys.indexOf(key); },
+        set: function (key, value) {
+            object._keys.push(key);
+            object._values.push(value);
+        },
+        get: function (key) { return object._values[object._keys.indexOf(key)]; },
+    });
+    object._keys = [];
+    object._values = [];
+    return object;
+};
+/**
+ * @function getCleanClone
+ *
+ * @description
+ * get an empty version of the object with the same prototype it has
+ *
+ * @param object the object to build a clean clone from
+ * @param realm the realm the object resides in
+ * @returns the empty cloned object
+ */
+var getCleanClone$1 = function (object, realm) {
+    if (!object.constructor) {
+        return create$1(null);
+    }
+    var Constructor = object.constructor;
+    var prototype = object.__proto__ || getPrototypeOf$1(object);
+    if (Constructor === realm.Object) {
+        return prototype === realm.Object.prototype ? {} : create$1(prototype);
+    }
+    if (~toStringFunction$1.call(Constructor).indexOf('[native code]')) {
+        try {
+            return new Constructor();
+        }
+        catch (_a) { }
+    }
+    return create$1(prototype);
+};
+/**
+ * @function getObjectCloneLoose
+ *
+ * @description
+ * get a copy of the object based on loose rules, meaning all enumerable keys
+ * and symbols are copied, but property descriptors are not considered
+ *
+ * @param object the object to clone
+ * @param realm the realm the object resides in
+ * @param handleCopy the function that handles copying the object
+ * @returns the copied object
+ */
+var getObjectCloneLoose$1 = function (object, realm, handleCopy, cache) {
+    var clone = getCleanClone$1(object, realm);
+    // set in the cache immediately to be able to reuse the object recursively
+    cache.set(object, clone);
+    for (var key in object) {
+        if (hasOwnProperty$8.call(object, key)) {
+            clone[key] = handleCopy(object[key], cache);
+        }
+    }
+    if (SUPPORTS$1.SYMBOL_PROPERTIES) {
+        var symbols = getOwnPropertySymbols$1(object);
+        var length_1 = symbols.length;
+        if (length_1) {
+            for (var index = 0, symbol = void 0; index < length_1; index++) {
+                symbol = symbols[index];
+                if (propertyIsEnumerable$1.call(object, symbol)) {
+                    clone[symbol] = handleCopy(object[symbol], cache);
+                }
+            }
+        }
+    }
+    return clone;
+};
+/**
+ * @function getObjectCloneStrict
+ *
+ * @description
+ * get a copy of the object based on strict rules, meaning all keys and symbols
+ * are copied based on the original property descriptors
+ *
+ * @param object the object to clone
+ * @param realm the realm the object resides in
+ * @param handleCopy the function that handles copying the object
+ * @returns the copied object
+ */
+var getObjectCloneStrict$1 = function (object, realm, handleCopy, cache) {
+    var clone = getCleanClone$1(object, realm);
+    // set in the cache immediately to be able to reuse the object recursively
+    cache.set(object, clone);
+    var properties = SUPPORTS$1.SYMBOL_PROPERTIES
+        ? getOwnPropertyNames$1(object).concat(getOwnPropertySymbols$1(object))
+        : getOwnPropertyNames$1(object);
+    var length = properties.length;
+    if (length) {
+        for (var index = 0, property = void 0, descriptor = void 0; index < length; index++) {
+            property = properties[index];
+            if (property !== 'callee' && property !== 'caller') {
+                descriptor = getOwnPropertyDescriptor$2(object, property);
+                if (descriptor) {
+                    // Only clone the value if actually a value, not a getter / setter.
+                    if (!descriptor.get && !descriptor.set) {
+                        descriptor.value = handleCopy(object[property], cache);
+                    }
+                    try {
+                        defineProperty$2(clone, property, descriptor);
+                    }
+                    catch (error) {
+                        // Tee above can fail on node in edge cases, so fall back to the loose assignment.
+                        clone[property] = descriptor.value;
+                    }
+                }
+                else {
+                    // In extra edge cases where the property descriptor cannot be retrived, fall back to
+                    // the loose assignment.
+                    clone[property] = handleCopy(object[property], cache);
+                }
+            }
+        }
+    }
+    return clone;
+};
+/**
+ * @function getRegExpFlags
+ *
+ * @description
+ * get the flags to apply to the copied regexp
+ *
+ * @param regExp the regexp to get the flags of
+ * @returns the flags for the regexp
+ */
+var getRegExpFlags$1 = function (regExp) {
+    var flags = '';
+    if (regExp.global) {
+        flags += 'g';
+    }
+    if (regExp.ignoreCase) {
+        flags += 'i';
+    }
+    if (regExp.multiline) {
+        flags += 'm';
+    }
+    if (regExp.unicode) {
+        flags += 'u';
+    }
+    if (regExp.sticky) {
+        flags += 'y';
+    }
+    return flags;
+};
+
+// utils
+var isArray$3 = Array.isArray;
+var GLOBAL_THIS$1 = (function () {
+    if (typeof self !== 'undefined') {
+        return self;
+    }
+    if (typeof window !== 'undefined') {
+        return window;
+    }
+    if (typeof global !== 'undefined') {
+        return global;
+    }
+    if (console && console.error) {
+        console.error('Unable to locate global object, returning "this".');
+    }
+})();
+/**
+ * @function copy
+ *
+ * @description
+ * copy an object deeply as much as possible
+ *
+ * If `strict` is applied, then all properties (including non-enumerable ones)
+ * are copied with their original property descriptors on both objects and arrays.
+ *
+ * The object is compared to the global constructors in the `realm` provided,
+ * and the native constructor is always used to ensure that extensions of native
+ * objects (allows in ES2015+) are maintained.
+ *
+ * @param object the object to copy
+ * @param [options] the options for copying with
+ * @param [options.isStrict] should the copy be strict
+ * @param [options.realm] the realm (this) object the object is copied from
+ * @returns the copied object
+ */
+function copy$1(object, options) {
+    // manually coalesced instead of default parameters for performance
+    var isStrict = !!(options && options.isStrict);
+    var realm = (options && options.realm) || GLOBAL_THIS$1;
+    var getObjectClone = isStrict
+        ? getObjectCloneStrict$1
+        : getObjectCloneLoose$1;
+    /**
+     * @function handleCopy
+     *
+     * @description
+     * copy the object recursively based on its type
+     *
+     * @param object the object to copy
+     * @returns the copied object
+     */
+    var handleCopy = function (object, cache) {
+        if (!object || typeof object !== 'object') {
+            return object;
+        }
+        if (cache.has(object)) {
+            return cache.get(object);
+        }
+        var Constructor = object.constructor;
+        // plain objects
+        if (Constructor === realm.Object) {
+            return getObjectClone(object, realm, handleCopy, cache);
+        }
+        var clone;
+        // arrays
+        if (isArray$3(object)) {
+            // if strict, include non-standard properties
+            if (isStrict) {
+                return getObjectCloneStrict$1(object, realm, handleCopy, cache);
+            }
+            var length_1 = object.length;
+            clone = new Constructor();
+            cache.set(object, clone);
+            for (var index = 0; index < length_1; index++) {
+                clone[index] = handleCopy(object[index], cache);
+            }
+            return clone;
+        }
+        // dates
+        if (object instanceof realm.Date) {
+            return new Constructor(object.getTime());
+        }
+        // regexps
+        if (object instanceof realm.RegExp) {
+            clone = new Constructor(object.source, object.flags || getRegExpFlags$1(object));
+            clone.lastIndex = object.lastIndex;
+            return clone;
+        }
+        // maps
+        if (realm.Map && object instanceof realm.Map) {
+            clone = new Constructor();
+            cache.set(object, clone);
+            object.forEach(function (value, key) {
+                clone.set(key, handleCopy(value, cache));
+            });
+            return clone;
+        }
+        // sets
+        if (realm.Set && object instanceof realm.Set) {
+            clone = new Constructor();
+            cache.set(object, clone);
+            object.forEach(function (value) {
+                clone.add(handleCopy(value, cache));
+            });
+            return clone;
+        }
+        // blobs
+        if (realm.Blob && object instanceof realm.Blob) {
+            clone = new Blob([object], { type: object.type });
+            return clone;
+        }
+        // buffers (node-only)
+        if (realm.Buffer && realm.Buffer.isBuffer(object)) {
+            clone = realm.Buffer.allocUnsafe
+                ? realm.Buffer.allocUnsafe(object.length)
+                : new Constructor(object.length);
+            cache.set(object, clone);
+            object.copy(clone);
+            return clone;
+        }
+        // arraybuffers / dataviews
+        if (realm.ArrayBuffer) {
+            // dataviews
+            if (realm.ArrayBuffer.isView(object)) {
+                clone = new Constructor(object.buffer.slice(0));
+                cache.set(object, clone);
+                return clone;
+            }
+            // arraybuffers
+            if (object instanceof realm.ArrayBuffer) {
+                clone = object.slice(0);
+                cache.set(object, clone);
+                return clone;
+            }
+        }
+        // if the object cannot / should not be cloned, don't
+        if (
+        // promise-like
+        typeof object.then === 'function' ||
+            // errors
+            object instanceof Error ||
+            // weakmaps
+            (realm.WeakMap && object instanceof realm.WeakMap) ||
+            // weaksets
+            (realm.WeakSet && object instanceof realm.WeakSet)) {
+            return object;
+        }
+        // assume anything left is a custom constructor
+        return getObjectClone(object, realm, handleCopy, cache);
+    };
+    return handleCopy(object, createCache$1());
+}
+/**
+ * @function strictCopy
+ *
+ * @description
+ * copy the object with `strict` option pre-applied
+ *
+ * @param object the object to copy
+ * @param [options] the options for copying with
+ * @param [options.realm] the realm (this) object the object is copied from
+ * @returns the copied object
+ */
+copy$1.strict = function strictCopy(object, options) {
+    return copy$1(object, {
+        isStrict: true,
+        realm: options ? options.realm : void 0,
+    });
+};
+
+/**
+ * **FiremodelPlugin**
+ *
+ * @param db the database connection (provided by SDK from `universal-fire`)
+ * @param config the configuration of the core services this plugin provides
+ */
+const FiremodelPlugin = (
+/**
+ * Provide a connection to the database with one of the SDK's provided
+ * by the `universal-fire` library.
+ */
+db, 
+/**
+ * Specify the configuration of the "core services" this plugin provides
+ */
+config) => {
+    storeDatabase(db);
+    storePluginConfig(config);
+    return (store) => {
+        setInitialState(copy$1(store.state));
+        preserveStore(store);
+        FireModel.dispatch = store.dispatch;
+        store.subscribe((mutation, state) => {
+            if (mutation.type === "route/ROUTE_CHANGED") {
+                store.dispatch(addNamespace(FmConfigAction.watchRouteChanges), Object.assign({}, mutation.payload));
+            }
+        });
+        store.registerModule("@firemodel", FiremodelModule());
+        queueLifecycleEvents(store, config).then(() => coreServices(store, Object.assign({ connect: true }, config)));
+    };
+};
+
+export default FiremodelPlugin;
+export { AbcApi, AbcDataSource, AbcFiremodelMutation, AbcMutation, AbcStrategy, AuditLog, AuthPersistenceStrategy, DbSyncOperation, DexieDb, DexieList, DexieRecord, EmailAuthProvider, FireModel, FiremodelModule, FmConfigAction, FmEvents, List, Mock, MockApi, Model, NamedFakes, OneWay, PropertyNamePatterns, QueryType, Record, RelationshipCardinality, RelationshipPolicy, SINCE_LAST_COOKIE, UnwatchedLocalEvent, VeuxWrapper, Watch, WatchBase, WatchDispatcher, WatchList, WatchRecord, abc, actions, addDispatchForWatcher, addRelationships, addToWatcherPool, addedLocally, authActions, authMutations, belongsTo, buildDeepRelationshipLinks, buildRelationshipPaths, clearWatcherPool, confirmPasswordReset, constrain, constrainedProperty, createCompositeKey, createCompositeKeyFromFkString, createCompositeKeyRefFromRecord, createCompositeRef, createUserWithEmailAndPassword, defaultValue, desc, discoverRootPath, encrypt, errorMutations, errors, extractFksFromPaths, fakeIt, key as fbKey, findWatchers, firemodelActions, firemodelMutations, generateLocalId, getDbIndexes, getFromWatcherPool, getIdToken, getWatchList, getWatchRecord, getWatcherPool, getWatcherPoolList, hasInitialized, hasMany, hasOne, index, indexesForModel, isDiscreteRequest, length, linkWithCredential, localConfig, localCrud, localRelnOp, locallyUpdateFkOnRecord, max, min, mock, mockProperties, mockValue, model, mutations, other, ownedBy, pluginActions, processHasMany, processHasOne, property, propertyDecorator, propertyReflector, pushKey, reauthenticateWithCredential, recordConfirms, recordLocal, recordRollbacks, recordServerChanges, reduceCompositeNotationToStringRepresentation, relationship, relationshipOperation, relationships, relnConfirmation, relnRollback, removeFromWatcherPool, reset, resetModule, sendEmailVerification, sendPasswordResetEmail, serverConfirm, serverConfirms, serverEvents, serverRollback, serverRollbacks, signInWithEmailAndPassword, signOut, state, uniqueIndex, updateEmail, updatePassword, updateProfile, verifyPasswordResetCode, waitForInitialization, watchActions, watchEvents, watcher };
 //# sourceMappingURL=index.js.map

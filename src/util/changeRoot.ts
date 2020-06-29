@@ -1,5 +1,3 @@
-import {} from "../public";
-
 import { FireModelPluginError } from "@/errors";
 import { Model } from "firemodel";
 import Vue from "vue";
