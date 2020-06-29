@@ -13,6 +13,7 @@
     "clean": "rimraf dist",
     "clean:nuclear": "rimraf lib dist yarn.lock node_modules && yarn cache clean && yarn && yarn upgrade",
     "test": "yarn jest",
+    "test:dirs": "yarn tnode src/types && yarn tnode src/auth && yarn tnode src/errors && yarn tnode src/store &&  yarn tnode src/util",
     "tnode": "yarn ts-node -r tsconfig-paths/register",
     "docs": "vuepress dev docs",
     "build": "run-s clean build:bundle",

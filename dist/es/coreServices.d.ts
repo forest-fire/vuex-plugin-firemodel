@@ -1,4 +1,4 @@
-import { IFiremodelConfig } from "./private";
+import { IFiremodelConfig } from "./types";
 import { Store } from "vuex";
 /**
  * Based on the configuration passed in by the consuming app, core

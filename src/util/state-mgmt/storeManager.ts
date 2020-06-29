@@ -1,6 +1,6 @@
-import { Store } from 'vuex'
+import { Store } from "vuex";
 
-let _store: Store<any>
+let _store: Store<any>;
 
 export function preserveStore<T = any>(store: Store<T>) {
   _store = store;

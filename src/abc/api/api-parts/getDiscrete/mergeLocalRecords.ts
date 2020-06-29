@@ -8,7 +8,7 @@ export function mergeLocalRecords<T>(
   context: AbcApi<T>,
   idxRecords: T[],
   vuexRecords: T[],
-  requestPks: IPrimaryKey<T>[],
+  requestPks: IPrimaryKey<T>[]
 ) {
   const model = context.model.constructor;
   const vuexPks = vuexRecords.map(v => Record.compositeKeyRef(model, v));
@@ -31,9 +31,9 @@ export function mergeLocalRecords<T>(
     foundInVuex: vuexPks,
     foundExclusivelyInIndexedDb: idxPks.filter(i => !vuexPks.includes(i)),
     allFoundLocally: missingIds.length === 0 ? true : false,
-    records: hashToArray({ 
-      ...arrayToHash(vuexRecords), 
-      ...arrayToHash(idxRecords) 
+    records: hashToArray({
+      ...arrayToHash(vuexRecords),
+      ...arrayToHash(idxRecords)
     }),
     missing: missingIds,
     modelConfig: context.config

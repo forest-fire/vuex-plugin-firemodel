@@ -3,7 +3,7 @@ import {
   IAbcQueryHelper,
   IAbcWhereQueryDefinition,
   IQueryOptions,
-  QueryType,
+  QueryType
 } from "@/types";
 import { IComparisonOperator, List, Model, PropType } from "firemodel";
 
@@ -14,10 +14,13 @@ import { AbcApi } from "@/abc";
  * provides and then provides an implementation that is aligned with the ABC `get`
  * and `load` endpoints.
  */
-export const where: IAbcQueryHelper = function where<T extends Model, K extends keyof T>(
+export const where: IAbcQueryHelper = function where<
+  T extends Model,
+  K extends keyof T
+>(
   defn:
     | IAbcWhereQueryDefinition<T>
-    | (IAbcWhereQueryDefinition<T> & { queryType: QueryType.where }),
+    | (IAbcWhereQueryDefinition<T> & { queryType: QueryType.where })
 ) {
   defn = { ...defn, queryType: QueryType.where };
   return (ctx: AbcApi<T>, options: IQueryOptions<T> = {}) => {
@@ -26,8 +29,8 @@ export const where: IAbcQueryHelper = function where<T extends Model, K extends 
       defn.equals !== undefined
         ? defn.equals
         : defn.greaterThan !== undefined
-          ? [">", defn.greaterThan]
-          : ["<", defn.lessThan];
+        ? [">", defn.greaterThan]
+        : ["<", defn.lessThan];
     // The query to use for IndexedDB
     const dexieQuery = async () => {
       const recs = await ctx.dexieList.where(defn.property, valueOp);

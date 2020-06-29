@@ -1,4 +1,4 @@
-import { IVuexState } from "../../private";
+import { IVuexState } from "../../types";
 import { ActionTree } from "vuex";
 /**
  * **pluginActions**

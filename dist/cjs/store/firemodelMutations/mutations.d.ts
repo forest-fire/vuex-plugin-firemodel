@@ -1,6 +1,6 @@
-import { IDictionary } from 'common-types';
-import { Model } from 'firemodel';
-import { MutationTree } from 'vuex';
+import { IDictionary } from "common-types";
+import { Model } from "firemodel";
+import { MutationTree } from "vuex";
 export declare type ListPropertyCandidates<T> = Pick<T, {
     [K in keyof T]: T[K] extends Model[] ? K : never;
 }[keyof T]>;

@@ -2,7 +2,7 @@ import {
   FmConfigMutation,
   IFmLifecycleContext,
   IFmLifecycleEvent,
-  IFmQueuedAction,
+  IFmQueuedAction
 } from "@/types";
 
 /**

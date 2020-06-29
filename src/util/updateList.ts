@@ -1,7 +1,7 @@
-import { IDictionary } from "common-types";
-import Vue from "vue";
 import { FireModelPluginError } from "../errors/FiremodelPluginError";
+import { IDictionary } from "common-types";
 import { Model } from "firemodel";
+import Vue from "vue";
 
 interface IDictionaryWithId extends IDictionary {
   id: string;

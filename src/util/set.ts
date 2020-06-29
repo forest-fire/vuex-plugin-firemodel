@@ -28,7 +28,7 @@ export function set(
   let ref = obj;
 
   // iterate the ref to the leaf node
-  allButLast.forEach((p) => {
+  allButLast.forEach(p => {
     if (!ref[p]) {
       if (createIfNonExistant) {
         ref[p as keyof typeof ref] = {};
@@ -48,4 +48,3 @@ export function set(
 
   ref[key as keyof typeof ref] = value;
 }
-

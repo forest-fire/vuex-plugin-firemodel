@@ -1,4 +1,5 @@
-import { AbcApi, AbcRequestCommand, AbcResult, IAbcOptions, IAbcQueryDefinition, IGeneralizedFiremodelQuery, IGeneralizedQuery } from "../../../private";
+import { AbcApi, AbcResult } from "../..";
+import { AbcRequestCommand, IAbcOptions, IAbcQueryDefinition, IGeneralizedFiremodelQuery, IGeneralizedQuery } from "../../../types";
 import { Model } from "firemodel";
 /**
  * A generalized flow for queries; specific query helpers

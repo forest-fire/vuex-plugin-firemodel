@@ -4,10 +4,7 @@ import {
   IDiscreteOptions
 } from "@/types";
 import { IPrimaryKey, Model, Record } from "firemodel";
-import {
-get,
-getStore
-} from "@/util";
+import { get, getStore } from "@/util";
 
 import { AbcApi } from "@/abc";
 
@@ -29,15 +26,10 @@ export async function localRecords<T extends Model>(
   const store = getStore();
   const moduleIsList = context.about.config.isList as boolean;
 
-  const data = get(
-    store.state,
-    context.vuex.fullPath.replace(/\//g, "."),
-    []
-  )
+  const data = get(store.state, context.vuex.fullPath.replace(/\//g, "."), []);
 
   const vuexRecords: T[] = moduleIsList ? data : [data];
 
-  
   if (context.config.useIndexedDb) {
     if (!AbcApi.indexedDbConnected) {
       await AbcApi.connectIndexedDb();
@@ -54,7 +46,12 @@ export async function localRecords<T extends Model>(
     await Promise.all(waitFor);
   }
   const model = context.model.constructor;
-  console.log(Array.isArray(vuexRecords), typeof vuexRecords, Object.getPrototypeOf(vuexRecords), Object.keys(vuexRecords))
+  console.log(
+    Array.isArray(vuexRecords),
+    typeof vuexRecords,
+    Object.getPrototypeOf(vuexRecords),
+    Object.keys(vuexRecords)
+  );
   const vuexPks = vuexRecords.map(v => Record.compositeKeyRef(model, v));
   const idxPks = idxRecords.map(i => Record.compositeKeyRef(model, i));
 
@@ -80,7 +77,7 @@ export async function localRecords<T extends Model>(
     foundInVuex: vuexPks,
     foundExclusivelyInIndexedDb: idxPks.filter(i => !vuexPks.includes(i)),
     allFoundLocally: missingIds.length === 0 ? true : false,
-    records: {...vuexRecords, ...idxRecords},
+    records: { ...vuexRecords, ...idxRecords },
     missing: missingIds,
     apiCommand: command,
     modelConfig: context.config

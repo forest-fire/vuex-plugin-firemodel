@@ -1,8 +1,8 @@
 import { FmConfigAction, FmConfigMutation, IFiremodelConfig } from "@/types";
 
 import { Store } from "vuex";
-import {addNamespace} from "@/util";
-import {getDatabase} from "@/util/state-mgmt";
+import { addNamespace } from "@/util";
+import { getDatabase } from "@/util/state-mgmt";
 
 /**
  * Based on the configuration passed in by the consuming app, core
@@ -12,11 +12,11 @@ export async function coreServices<T>(
   store: Store<T>,
   config?: IFiremodelConfig<T>
 ) {
-  const db =  getDatabase();
+  const db = getDatabase();
   const starting: Promise<any>[] = [];
   // CONNECT
   if (config?.connect) {
-    if(!db.isConnected) {
+    if (!db.isConnected) {
       await db.connect();
     }
 

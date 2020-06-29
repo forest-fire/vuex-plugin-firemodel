@@ -1,6 +1,6 @@
 import { AbcRequestCommand, IDiscreteLocalResults, IDiscreteOptions } from "../../../types";
 import { IPrimaryKey, Model } from "firemodel";
-import { AbcApi } from "../AbcApi";
+import { AbcApi } from "../..";
 /**
  * For a discrete set of primary keys, get's all knowledge of these locally. This means
  * at least Vuex but also IndexedDB if the model is configured for it.

@@ -1,4 +1,4 @@
-import { IVuexState } from "../../private";
+import { IVuexState } from "../../types";
 import { MutationTree } from "vuex";
 /**
  * The **mutations** scoped to the local configuration of Firebase

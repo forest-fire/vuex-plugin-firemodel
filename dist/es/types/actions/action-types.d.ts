@@ -1,4 +1,4 @@
-import { FmConfigAction } from "../../private";
+import { FmConfigAction } from "..";
 import { FmEvents } from "firemodel";
 export declare type IFmConfigActions = keyof typeof FmConfigAction;
 export declare type IFmCrudActions = keyof typeof FmEvents;

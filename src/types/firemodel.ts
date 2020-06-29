@@ -1,4 +1,9 @@
-import { AuthCredential, IClientConfig, IdTokenResult, User } from "universal-fire";
+import {
+  AuthCredential,
+  IClientConfig,
+  IdTokenResult,
+  User
+} from "universal-fire";
 import { ICurrentUser, IFmQueuedAction } from "@/types";
 import { IFmLocalEvent, IWatcherEventContext } from "firemodel";
 

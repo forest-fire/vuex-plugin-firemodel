@@ -1,5 +1,5 @@
 import { FireModelPluginError } from "@/errors";
-import { getDatabase } from "@/util"
+import { getDatabase } from "@/util";
 
 export class EmailAuthProvider {
   static async credential(email: string, password: string) {

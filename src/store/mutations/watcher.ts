@@ -36,17 +36,11 @@ export const watcher = <T>() =>
       state.watching = [];
     },
 
-    [FmConfigMutation.watcherMuted](
-      state: IVuexState<T>,
-      watcherId: string
-    ) {
+    [FmConfigMutation.watcherMuted](state: IVuexState<T>, watcherId: string) {
       state.muted = state.muted.concat(watcherId);
     },
 
-    [FmConfigMutation.watcherUnmuted](
-      state: IVuexState<T>,
-      watcherId: string
-    ) {
+    [FmConfigMutation.watcherUnmuted](state: IVuexState<T>, watcherId: string) {
       state.muted = state.muted.filter(i => i !== watcherId);
     }
   } as MutationTree<IVuexState<T>>);

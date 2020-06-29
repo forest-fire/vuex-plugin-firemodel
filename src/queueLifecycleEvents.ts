@@ -1,10 +1,13 @@
-import { FmCallback, FmConfigMutation, IFiremodelConfig, IFmQueuedAction, } from '@/types'
-
-import { FireModelPluginError, } from '@/errors'
-import { Store } from 'vuex';
 import {
-addNamespace
-} from '@/util'
+  FmCallback,
+  FmConfigMutation,
+  IFiremodelConfig,
+  IFmQueuedAction
+} from "@/types";
+
+import { FireModelPluginError } from "@/errors";
+import { Store } from "vuex";
+import { addNamespace } from "@/util";
 
 export async function queueLifecycleEvents<T>(
   store: Store<T>,
@@ -30,9 +33,7 @@ export async function queueLifecycleEvents<T>(
   for (const i of iterable) {
     const [name, event] = i;
     if (config[name as keyof IFiremodelConfig<T>]) {
-      const cb: FmCallback = config[
-        name as keyof IFiremodelConfig<T>
-      ] as any;
+      const cb: FmCallback = config[name as keyof IFiremodelConfig<T>] as any;
       store.commit(addNamespace(FmConfigMutation.queueHook), {
         on: event,
         name: `lifecycle-event-${event}`,

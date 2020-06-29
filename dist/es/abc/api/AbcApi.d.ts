@@ -1,4 +1,5 @@
-import { AbcResult, IAbcApiConfig, IAbcOptions, IAbcParam, IFmModelConstructor } from "../../private";
+import { IAbcApiConfig, IAbcOptions, IAbcParam, IFmModelConstructor } from "../../types";
+import { AbcResult } from "..";
 import { DexieDb, IFmModelMeta, IPrimaryKey, Model } from "firemodel";
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also

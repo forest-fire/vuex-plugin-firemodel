@@ -1,5 +1,5 @@
-import { AuthCredential, IClientConfig, IdTokenResult, User } from "@forest-fire/types";
-import { ICurrentUser, IFmQueuedAction } from "../private";
+import { AuthCredential, IClientConfig, IdTokenResult, User } from "universal-fire";
+import { ICurrentUser, IFmQueuedAction } from "./";
 import { IFmLocalEvent, IWatcherEventContext } from "firemodel";
 import { IDictionary } from "common-types";
 export interface IFiremodelAbbreviatedUser {

@@ -24,7 +24,10 @@ export const all: IAbcQueryHelper = function all<T>(
 
     // The query to use for Firebase
     const firemodelQuery = async (): Promise<IAbcFirebaseQueryResult<T>> => {
-      const { data, query } = await List.all(ctx.model.constructor, options || {});
+      const { data, query } = await List.all(
+        ctx.model.constructor,
+        options || {}
+      );
       return { data, query };
     };
 

@@ -1,5 +1,5 @@
-import { pathJoin } from "common-types";
 import { IFmWatchEvent } from "firemodel";
+import { pathJoin } from "common-types";
 
 /**
  * **pathToState**

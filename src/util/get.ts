@@ -15,7 +15,7 @@ export function get<T = any>(
   const parts = dotPath.split(".");
   let value: any = obj;
 
-  parts.forEach((p) => {
+  parts.forEach(p => {
     value =
       typeof value === "object" && Object.keys(value).includes(p)
         ? value[p as keyof typeof value]
@@ -24,4 +24,3 @@ export function get<T = any>(
 
   return value ? value : defaultValue;
 }
-

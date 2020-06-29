@@ -1,24 +1,23 @@
-import {AbcApi, AbcResult,} from "@/abc"
+import { AbcApi, AbcResult } from "@/abc";
 import {
   AbcMutation,
   DbSyncOperation,
   IAbcResult,
   IDiscreteLocalResults,
   IDiscreteResult,
-  IDiscreteServerResults,
+  IDiscreteServerResults
 } from "@/types";
 import { arrayToHash, hashToArray } from "typed-conversions";
-import {
-changeRoot,
-get
-} from '@/util'
+import { changeRoot, get } from "@/util";
 
 import { AbcError } from "@/errors";
 import { IDictionary } from "common-types";
 import { MutationTree } from "vuex";
 import Vue from "vue";
 
-export function AbcFiremodelMutation<T>(propOffset?: keyof T & string): MutationTree<T> {
+export function AbcFiremodelMutation<T>(
+  propOffset?: keyof T & string
+): MutationTree<T> {
   return {
     [AbcMutation.ABC_VUEX_UPDATE_FROM_IDX]<T extends IDictionary>(
       state: T,
@@ -115,12 +114,21 @@ export function AbcFiremodelMutation<T>(propOffset?: keyof T & string): Mutation
     ) {
       if (payload.vuex.isList) {
         if (!payload.resultFromQuery) {
-          throw new AbcError(`Attempt to use mutation ${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX} with a discrete request.`, 'not-allowed');
+          throw new AbcError(
+            `Attempt to use mutation ${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX} with a discrete request.`,
+            "not-allowed"
+          );
         }
-        Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), payload.records);
+        Vue.set(
+          state,
+          payload.vuex.modulePostfix.replace(/\//g, "."),
+          payload.records
+        );
       } else {
-        if (process.env.NODE_ENV !== 'production') {
-          console.info(`You are using a query on a singular model ${payload.vuex.moduleName}; this typically should be avoided.`);
+        if (process.env.NODE_ENV !== "production") {
+          console.info(
+            `You are using a query on a singular model ${payload.vuex.moduleName}; this typically should be avoided.`
+          );
         }
         changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
       }
@@ -130,18 +138,19 @@ export function AbcFiremodelMutation<T>(propOffset?: keyof T & string): Mutation
       state: T,
       payload: AbcResult<any>
     ) {
-      console.log(payload.options.offsets)
+      console.log(payload.options.offsets);
       // getProduct(all(), { offsets: { store: '1234' } })
       if (payload.vuex.isList) {
         /* if (!payload.resultFromQuery) {
           throw new AbcError(`Attempt to use mutation ${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX} with a discrete request.`, 'not-allowed');
         } */
         // Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), payload.records);
-
         // get dynamic path from payload
       } else {
-        if (process.env.NODE_ENV !== 'production') {
-          console.info(`You are using a query on a singular model ${payload.vuex.moduleName}; this typically should be avoided.`);
+        if (process.env.NODE_ENV !== "production") {
+          console.info(
+            `You are using a query on a singular model ${payload.vuex.moduleName}; this typically should be avoided.`
+          );
         }
         changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
       }

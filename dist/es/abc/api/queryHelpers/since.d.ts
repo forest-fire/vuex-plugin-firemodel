@@ -1,4 +1,4 @@
-import { IAbcQueryHelper } from "../../../private";
+import { IAbcQueryHelper } from "../../../types";
 /**
  * **since**
  *

@@ -1,21 +1,21 @@
 import {
-AbcMutation,
-AbcStrategy,
-DbSyncOperation,
-IAbcApiConfig,
-IAbcOptions,
-IAbcParam,
-IAbcQueryRequest,
-IDiscreteOptions,
-IDiscreteServerResults,
-IFmModelConstructor,
-IQueryLocalResults,
-IQueryOptions,
-IQueryServerResults,
-IWatchCallback,
-QueryType,
-isDiscreteRequest,
-} from '@/types'
+  AbcMutation,
+  AbcStrategy,
+  DbSyncOperation,
+  IAbcApiConfig,
+  IAbcOptions,
+  IAbcParam,
+  IAbcQueryRequest,
+  IDiscreteOptions,
+  IDiscreteServerResults,
+  IFmModelConstructor,
+  IQueryLocalResults,
+  IQueryOptions,
+  IQueryServerResults,
+  IWatchCallback,
+  QueryType,
+  isDiscreteRequest
+} from "@/types";
 import {
   AbcResult,
   getDefaultApiConfig,
@@ -37,12 +37,9 @@ import {
   Watch
 } from "firemodel";
 import { IDictionary, pathJoin } from "common-types";
-import {
-capitalize,
-getStore,
-} from '@/util'
+import { capitalize, getStore } from "@/util";
 
-import {AbcError,} from "@/errors"
+import { AbcError } from "@/errors";
 
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
@@ -326,12 +323,12 @@ export class AbcApi<T extends Model> {
     let local: IQueryLocalResults<T, any> = {
       records: [],
       indexedDbPks: [],
-      localPks: [],
+      localPks: []
     };
     // query indexedDb
     if (this.config.useIndexedDb) {
       // ctx should be model constructor
-      local = await queryIndexedDb(this._modelConstructor, dexieQuery)
+      local = await queryIndexedDb(this._modelConstructor, dexieQuery);
       const localResults = await AbcResult.create(this, {
         type: "query",
         queryDefn,
@@ -373,7 +370,7 @@ export class AbcApi<T extends Model> {
         });
 
         // watch records
-        this.watch(serverResponse, options)
+        this.watch(serverResponse, options);
 
         // cache results to IndexedDB
         if (this.config.useIndexedDb) {
@@ -482,7 +479,6 @@ export class AbcApi<T extends Model> {
       }
     }
 
-
     const response = await AbcResult.create(this, {
       type: "query",
       queryDefn,
@@ -552,7 +548,6 @@ export class AbcApi<T extends Model> {
         );
       });
     }
-
 
     const response = await AbcResult.create(this, {
       type: "discrete",
@@ -701,21 +696,43 @@ export class AbcApi<T extends Model> {
   async watch(serverResponse: AbcResult<T>, options: IAbcOptions<T>) {
     const { watch } = options;
     if (watch) {
-      const isFunction = (x: any): x is IWatchCallback<T> => typeof x === 'function';
+      const isFunction = (x: any): x is IWatchCallback<T> =>
+        typeof x === "function";
       const watcher = Watch.list(this._modelConstructor);
       if (isFunction(watch)) {
         const watchIds = serverResponse.records
           .filter(p => watch(p))
           .map(p => p.id!);
-        await watcher.ids(...watchIds).start()
-          .then(() => console.info(`${this._modelConstructor.name} watch function: `, watchIds));
+        await watcher
+          .ids(...watchIds)
+          .start()
+          .then(() =>
+            console.info(
+              `${this._modelConstructor.name} watch function: `,
+              watchIds
+            )
+          );
       } else {
         if (serverResponse.resultFromQuery && serverResponse.query) {
-          await watcher.fromQuery(serverResponse.query).start()
-            .then(() => console.info(`${this._modelConstructor.name} watch query: `, serverResponse.query?.toString()));
+          await watcher
+            .fromQuery(serverResponse.query)
+            .start()
+            .then(() =>
+              console.info(
+                `${this._modelConstructor.name} watch query: `,
+                serverResponse.query?.toString()
+              )
+            );
         } else {
-          await watcher.ids(...serverResponse.records.map(p => p.id!)).start()
-            .then(() => console.info(`${this._modelConstructor.name} watch all: `, ...serverResponse.records.map(p => p.id!)));
+          await watcher
+            .ids(...serverResponse.records.map(p => p.id!))
+            .start()
+            .then(() =>
+              console.info(
+                `${this._modelConstructor.name} watch all: `,
+                ...serverResponse.records.map(p => p.id!)
+              )
+            );
         }
       }
     }

@@ -1,4 +1,8 @@
-import { IFmModelConstructor, IGeneralizedQuery, IQueryLocalResults } from "@/types";
+import {
+  IFmModelConstructor,
+  IGeneralizedQuery,
+  IQueryLocalResults
+} from "@/types";
 
 import { Record } from "firemodel";
 
@@ -19,6 +23,6 @@ export async function queryIndexedDb<T>(
     records: idxRecords,
     indexedDbPks,
     localPks: []
-  }
+  };
   return local;
 }

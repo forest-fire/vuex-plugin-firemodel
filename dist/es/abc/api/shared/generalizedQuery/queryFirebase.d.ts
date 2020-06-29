@@ -1,4 +1,5 @@
-import { AbcApi, IGeneralizedFiremodelQuery, IQueryLocalResults, IQueryServerResults } from "../../../../private";
+import { AbcApi } from "../../..";
+import { IGeneralizedFiremodelQuery, IQueryLocalResults, IQueryServerResults } from "../../../../types";
 import { Model } from "firemodel";
 /**
  * Queries Firebase with a query passed in `generalizedQuery` workflow function
