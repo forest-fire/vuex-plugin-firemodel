@@ -3,11 +3,12 @@ import {
   AuthCredential,
   User,
   UserCredential
-} from "@forest-fire/types";
-import { FireModelPluginError, IAuthProfile, ISignOutPayload, IVuexState, getDatabase } from "../../private";
-import { getAuth, setAuth } from "../../state-mgmt";
+} from "universal-fire";
+import { IAuthProfile, ISignOutPayload, IVuexState } from "@/types";
+import { getAuth, getDatabase } from "@/util";
 
 import { ActionTree } from "vuex";
+import { FireModelPluginError } from "@/errors"
 import { Record } from "firemodel";
 
 /**
@@ -85,7 +86,8 @@ export const authActions = <T>() =>
         actionCodeSettings
       }: { email: string; actionCodeSettings?: ActionCodeSettings | null }
     ) {
-      try {;
+      try {
+        ;
         const auth = await getAuth();
         await auth.sendPasswordResetEmail(email, actionCodeSettings);
         commit("sendPasswordResetEmail", { email, actionCodeSettings });
@@ -145,7 +147,7 @@ export const authActions = <T>() =>
      * Updates the user's email address. An email will be sent to the original email address
      * that allows owner of that email address to revoke the email address change.
      */
-    async updateEmail({ commit, state }, newEmail: string) {
+    async updateEmail({ commit, state }, { newEmail }: { newEmail:string }) {
       if (!state.currentUser) {
         commit(
           "error",
@@ -278,7 +280,7 @@ export const authActions = <T>() =>
       }
     },
 
-    async reauthenticateWithCredential({ commit }, { credential } : { credential: AuthCredential }) {
+    async reauthenticateWithCredential({ commit }, { credential }: { credential: AuthCredential }) {
       try {
         const db = await getDatabase();
         Record.defaultDb = db;

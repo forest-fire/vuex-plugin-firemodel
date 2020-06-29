@@ -1,5 +1,5 @@
+import { AbcError } from "@/errors";
 import { IDictionary } from "common-types";
-import { AbcError } from "../../../private";
 
 /**
  * Given a Primary Key _reference_ string; this function will find the record

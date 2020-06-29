@@ -1,1 +1,0 @@
-{"version":3,"file":"other.js","sourceRoot":"","sources":["../../../../src/store/firemodelActions/other.ts"],"names":[],"mappings":";;;AAGa,QAAA,KAAK,GAAG,GAAM,EAAE,CAC3B,CAAC;IACC;;OAEG;IACH,KAAK,CAAC,KAAK,CAAC,EAAE,MAAM,EAAE,EAAE,MAAc;QACpC,MAAM,CAAC,GAAG,MAAM,QAAQ,EAAE,EAAE,MAAM,EAAE,EAAE,EAAE,IAAI,EAAE,IAAI,EAAE,CAAC,CAAC;IACxD,CAAC;CAC+B,CAAA,CAAC"}

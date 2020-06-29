@@ -1,4 +1,4 @@
-import { ICurrentUser, IVuexState } from "../../private";
+import { ICurrentUser, IVuexState } from "@/types";
 
 import { IDictionary } from "common-types";
 import { MutationTree } from "vuex";

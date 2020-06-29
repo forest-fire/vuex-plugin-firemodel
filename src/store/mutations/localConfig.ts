@@ -1,10 +1,10 @@
 import {
   FmConfigMutation,
   ICurrentUser,
-  IFmLifecycleEvents,
+  IFmLifecycleEvent,
   IFmQueuedAction,
   IVuexState
-} from "../../private";
+} from "@/types";
 import { User, UserCredential } from "@firebase/auth-types";
 
 import { MutationTree } from "vuex";
@@ -78,7 +78,7 @@ export const localConfig = <T>() =>
 
     [FmConfigMutation.lifecycleEventCompleted](
       state,
-      event: { event: IFmLifecycleEvents; actionCallbacks: string[] }
+      event: { event: IFmLifecycleEvent; actionCallbacks: string[] }
     ) {
       //
     }

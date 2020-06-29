@@ -10,12 +10,11 @@ import {
   IdTokenResult,
   UserCredential
 } from "@firebase/auth-types";
-import { IAuthProfile, IVuexState } from "../../types";
-import { getAuth, getStore } from "../../private";
+import { IAuthProfile, IVuexState } from "@/types";
+import { getAuth, getStore } from "@/util";
 
-import { FireModelPluginError } from "../../errors/FiremodelPluginError";
+import { FireModelPluginError } from "@/errors";
 import { IModelConstructor } from "firemodel";
-import { setAuth } from "../../state-mgmt";
 
 /**
  * Log into the Firebase AUTH sytem using email/password. If successful it returns
@@ -139,7 +138,7 @@ export async function verifyPasswordResetCode(code: string): Promise<string> {
 export async function updateEmail(newEmail: string): Promise<void> {
   return getStore().dispatch({
     type: "@firemodel/updateEmail",
-    payload: newEmail
+    newEmail
   });
 }
 

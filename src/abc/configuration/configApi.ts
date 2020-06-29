@@ -1,10 +1,10 @@
-import { IAbcApiConfig } from '../../private'
+import { IAbcApiConfig } from "@/types";
 
-let defaultConfig: Omit<IAbcApiConfig<any>, 'model'> = {
+let defaultConfig: Omit<IAbcApiConfig<any>, "model"> = {
   useIndexedDb: true,
   isList: true,
-  encrypt: false,
-}
+  encrypt: false
+};
 
 /**
  * Allows consumers of this plugin to state the _default_ state of 
@@ -17,12 +17,12 @@ let defaultConfig: Omit<IAbcApiConfig<any>, 'model'> = {
 }
 ```
  */
-export function configApi(config: Omit<IAbcApiConfig<any>, 'model'>) {
-  defaultConfig = { ...defaultConfig, ...config }
-  return defaultConfig
+export function configApi(config: Omit<IAbcApiConfig<any>, "model">) {
+  defaultConfig = { ...defaultConfig, ...config };
+  return defaultConfig;
 }
 
 /** the _default_ configuration for **ABC** API surfaces */
 export function getDefaultApiConfig() {
-  return defaultConfig
+  return defaultConfig;
 }

@@ -1,28 +1,25 @@
 import {
   AbcApi,
-  AbcFiremodelMutation,
+  AbcResult,
+  queryFirebase,
+  queryIndexedDb,
+  saveToIndexedDb
+} from "@/abc";
+import {
   AbcMutation,
   AbcRequestCommand,
-  AbcResult,
   AbcStrategy,
   DbSyncOperation,
   IAbcOptions,
   IAbcQueryDefinition,
+  IGeneralizedFiremodelQuery,
+  IGeneralizedQuery,
   IQueryLocalResults,
   IQueryServerResults,
-  QueryType,
-  getStore,
-  queryFirebase,
-  queryIndexedDb,
-  saveToIndexedDb
-} from "../../../private";
+  QueryType
+} from "@/types";
 import { Model, Record } from "firemodel";
-
-import get from "lodash.get";
-
-export interface IGeneralizedQuery<T extends Model> {
-  (): Promise<T[]>;
-}
+import { get, getStore } from "@/util";
 
 /**
  * A generalized flow for queries; specific query helpers
@@ -32,12 +29,13 @@ export async function generalizedQuery<T extends Model>(
   queryDefn: IAbcQueryDefinition<T>,
   command: AbcRequestCommand,
   dexieQuery: IGeneralizedQuery<T>,
-  firemodelQuery: IGeneralizedQuery<T>,
+  firemodelQuery: IGeneralizedFiremodelQuery<T>,
   ctx: AbcApi<T>,
   options: IAbcOptions<T>
 ) {
   const store = getStore();
-  const hasDynamicProperties = Record.dynamicPathProperties(ctx.model.constructor).length > 0;
+  const hasDynamicProperties =
+    Record.dynamicPathProperties(ctx.model.constructor).length > 0;
   const vuexRecords = get<T[]>(
     store.state,
     ctx.vuex.fullPath.replace(/\//g, "."),
@@ -56,7 +54,7 @@ export async function generalizedQuery<T extends Model>(
 
   if (command === "get" && ctx.config.useIndexedDb) {
     // Populate Vuex with what IndexedDB knows
-    local = await queryIndexedDb(ctx.model.constructor, dexieQuery)
+    local = await queryIndexedDb(ctx.model.constructor, dexieQuery);
     const localResults = await AbcResult.create(ctx, {
       type: "query",
       queryDefn,
@@ -86,7 +84,7 @@ export async function generalizedQuery<T extends Model>(
 
   let server: IQueryServerResults<T> | undefined;
   if (command === "get" && options.strategy === AbcStrategy.getFirebase) {
-    console.log(`${ctx.model.constructor.name}:start`)
+    console.log(`${ctx.model.constructor.name}:start`);
     // get data from firebase
     queryFirebase(ctx, firemodelQuery, local).then(async server => {
       const serverResponse = await AbcResult.create(ctx, {
@@ -132,7 +130,7 @@ export async function generalizedQuery<T extends Model>(
         serverResponse
       );
     });
-  
+
     // PRUNE
     /* const removeFromIdx = local.indexedDbPks.filter(i => !serverPks.includes(i));
     // Vuex at this point will have both it's old state and whatever IndexedDB

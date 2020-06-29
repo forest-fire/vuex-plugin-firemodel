@@ -1,5 +1,5 @@
 import { ActionTree } from "vuex";
-import { IVuexState } from "../../index";
+import { IVuexState } from "@/types";
 
 export const other = <T>() =>
   ({

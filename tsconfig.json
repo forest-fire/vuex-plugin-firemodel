@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "declaration": true,
+    "declaration": false,
     "module": "commonjs",
     "target": "es2017",
+    "lib": ["es2015.reflect", "DOM"],
     "moduleResolution": "node",
     "sourceMap": true,
     "noImplicitAny": true,
@@ -13,7 +14,15 @@
     "strictNullChecks": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "plugins": [
+      { "transform": "typescript-transform-paths" },
+      { "transform": "typescript-transform-paths", "afterDeclarations": true }
+    ]
   },
-  "include": ["src/**/*", "test/**/*", "wallaby.js"],
-  "exclude": ["node_modules", "**/*-spec.ts"]
+  "files": ["global.d.ts"],
+  "include": ["src/**/*", "global.d.ts", "test/**/*"]
 }

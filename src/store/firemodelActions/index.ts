@@ -1,6 +1,7 @@
 // #autoindex:named
 //#region autoindexed files
-// indexed at: 5th May, 2020, 09:52 PM ( GMT-7 )
+// indexed at: 6th Jun, 2020, 08:59 PM ( GMT-7 )
+// local file exports
 export * from "./auth";
 export * from "./errors";
 export * from "./firemodelActions";
@@ -10,26 +11,5 @@ export * from "./recordLocal";
 export * from "./recordRollbacks";
 export * from "./recordServerChanges";
 export * from "./relationship";
-export * from "./watch";
+export * from "./watchActions";
 //#endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

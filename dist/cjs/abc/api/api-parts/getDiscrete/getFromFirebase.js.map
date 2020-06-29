@@ -1,1 +1,0 @@
-{"version":3,"file":"getFromFirebase.js","sourceRoot":"","sources":["../../../../../../src/abc/api/api-parts/getDiscrete/getFromFirebase.ts"],"names":[],"mappings":";;;AAAA,iDAA6D;AAEtD,KAAK,UAAU,eAAe,CACnC,GAAc,EACd,UAAoB;IAEpB,MAAM,MAAM,GAAG,MAAM,uBAAa,CAAC,GAAG,EAAE,UAAU,EAAE,UAAU,CAAC,CAAC;IAChE,OAAO,MAAM,CAAA;AACf,CAAC;AAND,0CAMC"}
