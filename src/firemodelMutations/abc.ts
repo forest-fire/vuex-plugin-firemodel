@@ -8,14 +8,16 @@ import {
   IDiscreteLocalResults,
   IDiscreteResult,
   IDiscreteServerResults,
-  changeRoot
 } from "../private";
 import { arrayToHash, hashToArray } from "typed-conversions";
 
 import { IDictionary } from "common-types";
 import { MutationTree } from "vuex";
 import Vue from "vue";
-import get from "lodash.get";
+import {
+changeRoot
+} from '../shared'
+import {get} from "../shared/index";
 
 export function AbcFiremodelMutation<T>(propOffset?: keyof T & string): MutationTree<T> {
   return {

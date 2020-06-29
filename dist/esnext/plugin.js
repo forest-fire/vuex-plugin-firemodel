@@ -1,4 +1,5 @@
-import { FiremodelModule, FmConfigAction, addNamespace, coreServices, queueLifecycleEvents, setInitialState, storeDatabase, storePluginConfig } from "./private";
+import { FiremodelModule, FmConfigAction, coreServices, queueLifecycleEvents, setInitialState, storeDatabase, storePluginConfig } from "./private";
+import { addNamespace, } from "./shared";
 import { FireModel } from "firemodel";
 import copy from "fast-copy";
 import { preserveStore } from "./state-mgmt";

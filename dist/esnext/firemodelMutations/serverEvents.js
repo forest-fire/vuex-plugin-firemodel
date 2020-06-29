@@ -1,4 +1,4 @@
-import { changeRoot, isRecord, updateList } from "../private";
+import { changeRoot, isRecord, updateList } from "../shared";
 export function serverEvents(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {

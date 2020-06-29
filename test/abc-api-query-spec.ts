@@ -1,30 +1,31 @@
+import {
+  AbcApi,
+  AbcResult,
+  AbcStrategy,
+  DbSyncOperation,
+  IAbcQueryRequest,
+  IAbcRequest,
+  IQueryServerResults,
+  all,
+  getStore,
+  saveToIndexedDb,
+  since,
+  where,
+} from "../src/private";
+import { FireModel, IPrimaryKey, List, Model, Record } from "firemodel";
+import { MutationPayload, Store } from "vuex";
+
+import Dexie from "dexie";
+import { IDictionary } from "common-types";
+import { IRootState } from "./store";
+import { Mock } from "firemock"
 import { Order } from "./models/Order";
 import { Product } from "./models/Product";
-import { Store, MutationPayload } from "vuex";
-import { IRootState } from "./store";
 import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
+import { hashToArray } from "typed-conversions";
 import { orderData } from "./data/orderData";
 import { productData } from "./data/productData";
 import { productDataExtra } from "./data/productDataExtra";
-import { IDictionary } from "common-types";
-import { hashToArray } from "typed-conversions";
-import Dexie from "dexie";
-import { Mock } from "firemock"
-import {
-  all,
-  AbcApi,
-  IAbcRequest,
-  IAbcQueryRequest,
-  AbcResult,
-  getStore,
-  where,
-  AbcStrategy,
-  IQueryServerResults,
-  DbSyncOperation,
-  since,
-  saveToIndexedDb,
-} from "../src/private";
-import { Model, IPrimaryKey, FireModel, List, Record } from "firemodel";
 
 let events: Array<[string, any]> = [];
 let eventCounts: IDictionary<number> = {};
@@ -192,10 +193,10 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     expect(results.serverRecords).toBeUndefined();
 
     expect(results.records).toHaveLength(numProducts);
-  });
+  }); 
 
-  it("get.all() return results from firebase into indexedDB/Vuex", (done) => {
-    const store = getStore();
+  it("get.all() return results from firebase into indexedDB/Vuex", (done) => { 
+    const store = getStore(); 
     store.subscribe(subscription);
     const tbl = AbcApi.getModelApi(Product).dexieTable;
     const db = AbcApi.getModelApi(Product).db;

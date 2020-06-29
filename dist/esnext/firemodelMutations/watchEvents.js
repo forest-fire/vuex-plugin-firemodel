@@ -1,4 +1,4 @@
-import { changeRoot, isRecord } from "../private";
+import { changeRoot, isRecord } from '../shared';
 import Vue from "vue";
 export function watchEvents(propOffset) {
     const offset = !propOffset ? "all" : propOffset;

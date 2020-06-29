@@ -1,6 +1,7 @@
-import { AbcError, AbcMutation, AbcResult, AbcStrategy, DbSyncOperation, QueryType, capitalize, getDefaultApiConfig, getFromFirebase, getFromIndexedDb, getFromVuex, getStore, isDiscreteRequest, mergeLocalRecords, queryFirebase, queryIndexedDb, saveToIndexedDb } from "../../private";
-import { DexieDb, FireModel, Record } from "firemodel";
+import { AbcError, AbcMutation, AbcResult, AbcStrategy, DbSyncOperation, QueryType, getDefaultApiConfig, getFromFirebase, getFromIndexedDb, getFromVuex, getStore, isDiscreteRequest, mergeLocalRecords, queryFirebase, queryIndexedDb, saveToIndexedDb } from "../../private";
+import { DexieDb, FireModel, Record, Watch } from "firemodel";
 import { pathJoin } from "common-types";
+import { capitalize, } from '../../shared';
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
  * including meta-data properties too.
@@ -261,6 +262,8 @@ export class AbcApi {
                     server,
                     options
                 });
+                // watch records
+                this.watch(serverResponse, options);
                 // cache results to IndexedDB
                 if (this.config.useIndexedDb) {
                     saveToIndexedDb(server, this.dexieTable);
@@ -482,8 +485,29 @@ export class AbcApi {
     /**
      * Watch records using the **ABC** API
      */
-    async watch() {
-        return [];
+    async watch(serverResponse, options) {
+        const { watch } = options;
+        if (watch) {
+            const isFunction = (x) => typeof x === 'function';
+            const watcher = Watch.list(this._modelConstructor);
+            if (isFunction(watch)) {
+                const watchIds = serverResponse.records
+                    .filter(p => watch(p))
+                    .map(p => p.id);
+                await watcher.ids(...watchIds).start()
+                    .then(() => console.info(`${this._modelConstructor.name} watch function: `, watchIds));
+            }
+            else {
+                if (serverResponse.resultFromQuery && serverResponse.query) {
+                    await watcher.fromQuery(serverResponse.query).start()
+                        .then(() => { var _a; return console.info(`${this._modelConstructor.name} watch query: `, (_a = serverResponse.query) === null || _a === void 0 ? void 0 : _a.toString()); });
+                }
+                else {
+                    await watcher.ids(...serverResponse.records.map(p => p.id)).start()
+                        .then(() => console.info(`${this._modelConstructor.name} watch all: `, ...serverResponse.records.map(p => p.id)));
+                }
+            }
+        }
     }
     toJSON() {
         return {

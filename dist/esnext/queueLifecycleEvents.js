@@ -1,4 +1,5 @@
-import { FireModelPluginError, addNamespace } from './private';
+import { FireModelPluginError, } from './private';
+import { addNamespace } from './shared';
 export async function queueLifecycleEvents(store, config) {
     if (!config) {
         throw new FireModelPluginError(`There was no configuration sent into the FiremodelPlugin!`, "not-allowed");

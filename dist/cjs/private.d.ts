@@ -5,7 +5,6 @@ export * from "./abc/index";
 export * from "./auth/index";
 export * from "./errors/index";
 export * from "./firemodelMutations/index";
-export * from "./shared/index";
 export * from "./state-mgmt/index";
 export * from "./store/index";
 export * from "./types/index";

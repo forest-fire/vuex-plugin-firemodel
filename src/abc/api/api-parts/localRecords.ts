@@ -8,7 +8,7 @@ import {
 import { IPrimaryKey, Model, Record } from "firemodel";
 
 import { AbcApi } from "../AbcApi";
-import get from "lodash.get";
+import {get} from "../../../shared/index";
 import { getStore } from "../../../private";
 
 /**

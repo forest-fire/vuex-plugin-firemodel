@@ -187,7 +187,7 @@ export declare class AbcApi<T extends Model> {
     /**
      * Watch records using the **ABC** API
      */
-    watch(): Promise<never[]>;
+    watch(serverResponse: AbcResult<T>, options: IAbcOptions<T>): Promise<void>;
     toJSON(): {
         model: string;
         config: IAbcApiConfig<T>;

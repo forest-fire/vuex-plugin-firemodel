@@ -8,11 +8,13 @@ import {
   IFmConnectedContext,
   IFmRouteEventContext,
   IVuexState,
-  authChanged,
   getDatabase,
   getPluginConfig,
-  runQueue
 } from "../../private";
+import {
+authChanged,
+runQueue
+} from "../../shared"
 
 import { ActionTree } from "vuex";
 import { FirebaseAuth } from "@forest-fire/types";

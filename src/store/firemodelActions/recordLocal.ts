@@ -4,7 +4,7 @@ import { ActionTree } from "vuex";
 import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
 import { IVuexState } from "../../index";
 import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
-import get from "lodash.get";
+import {get} from "../../shared/index";
 
 export const recordLocal = <T>() =>
   ({

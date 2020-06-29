@@ -1,12 +1,9 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generalizedQuery = void 0;
 const private_1 = require("../../../private");
 const firemodel_1 = require("firemodel");
-const lodash_get_1 = __importDefault(require("lodash.get"));
+const index_1 = require("../../../shared/index");
 /**
  * A generalized flow for queries; specific query helpers
  * should use this flow to standarize their approach.
@@ -14,7 +11,7 @@ const lodash_get_1 = __importDefault(require("lodash.get"));
 async function generalizedQuery(queryDefn, command, dexieQuery, firemodelQuery, ctx, options) {
     const store = private_1.getStore();
     const hasDynamicProperties = firemodel_1.Record.dynamicPathProperties(ctx.model.constructor).length > 0;
-    const vuexRecords = lodash_get_1.default(store.state, ctx.vuex.fullPath.replace(/\//g, "."), []);
+    const vuexRecords = index_1.get(store.state, ctx.vuex.fullPath.replace(/\//g, "."), []);
     const vuexPks = vuexRecords.map(v => firemodel_1.Record.compositeKeyRef(ctx.model.constructor, v));
     let local = {
         records: vuexRecords,

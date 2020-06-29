@@ -1,8 +1,10 @@
 // #autoindex:named
 //#region autoindexed files
-// indexed at: 5th May, 2020, 09:52 PM ( GMT-7 )
+// indexed at: 6th Jun, 2020, 07:36 PM ( GMT-7 )
+// local file exports
 export * from "./AbcApi";
 export * from "./AbcResult";
+// directory exports
 export * from "./api-parts/index";
 export * from "./queryHelpers/index";
 export * from "./shared/index";

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.pluginActions = void 0;
 const firemodel_1 = require("firemodel");
 const private_1 = require("../../private");
+const shared_1 = require("../../shared");
 /**
  * **pluginActions**
  *
@@ -32,7 +33,7 @@ exports.pluginActions = () => ({
                 config,
                 state: rootState
             };
-            await private_1.runQueue(ctx, "connected");
+            await shared_1.runQueue(ctx, "connected");
             commit("CONFIGURE" /* configure */, config); // set Firebase configuration
         }
         catch (e) {
@@ -80,7 +81,7 @@ exports.pluginActions = () => ({
                 commit,
                 state: rootState
             };
-            auth.onAuthStateChanged(private_1.authChanged(ctx));
+            auth.onAuthStateChanged(shared_1.authChanged(ctx));
             auth.setPersistence(typeof config.auth === "object"
                 ? config.auth.persistence || "session"
                 : "session");
@@ -108,7 +109,7 @@ exports.pluginActions = () => ({
                 entering: payload.to.path,
                 queryParams: payload.to.params
             };
-            await private_1.runQueue(ctx, "route-changed");
+            await shared_1.runQueue(ctx, "route-changed");
         }
     }
 });

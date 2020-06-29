@@ -1,13 +1,4 @@
 import {
-  Model,
-  Record,
-  IFmModelMeta,
-  FireModel,
-  DexieDb,
-  IPrimaryKey,
-  Watch
-} from "firemodel";
-import {
   AbcError,
   AbcMutation,
   AbcResult,
@@ -25,7 +16,6 @@ import {
   IQueryServerResults,
   IWatchCallback,
   QueryType,
-  capitalize,
   getDefaultApiConfig,
   getFromFirebase,
   getFromIndexedDb,
@@ -37,7 +27,20 @@ import {
   queryIndexedDb,
   saveToIndexedDb
 } from "../../private";
-import { pathJoin, IDictionary } from "common-types";
+import {
+  DexieDb,
+  FireModel,
+  IFmModelMeta,
+  IPrimaryKey,
+  Model,
+  Record,
+  Watch
+} from "firemodel";
+import { IDictionary, pathJoin } from "common-types";
+
+import {
+capitalize,
+} from '../../shared'
 
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also

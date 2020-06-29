@@ -13,42 +13,11 @@ exports.all = function all(defn = {}) {
         };
         // The query to use for Firebase
         const firemodelQuery = async () => {
-            const list = await firemodel_1.List.all(ctx.model.constructor, options || {});
-            return list.data;
+            const { data, query } = await firemodel_1.List.all(ctx.model.constructor, options || {});
+            return { data, query };
         };
         return { dexieQuery, firemodelQuery, queryDefn: defn };
     };
 };
 exports.all.prototype.isQueryHelper = true;
-/* export const allOld: IAbcQueryHelper = function all<T>(
-  defn:
-    | Omit<IAbcAllQueryDefinition<T>, "queryType">
-    | IAbcAllQueryDefinition<T> = {}
-) {
-  return async (command, ctx: AbcApi<T>, options: IQueryOptions<T> = {}): Promise<AbcResult<T>> => {
-    defn = { ...defn, queryType: QueryType.all };
-    // The query to use for IndexedDB
-    const dexieQuery = async () => {
-      const recs = await ctx.dexieList.all();
-      return recs;
-    };
-
-    // The query to use for Firebase
-    const firemodelQuery = async () => {
-      const list = await List.all(ctx.model.constructor, options || {});
-      return list.data;
-    };
-
-    return generalizedQuery(
-      defn,
-      command,
-      dexieQuery,
-      firemodelQuery,
-      ctx,
-      options
-    );
-  };
-};
-
-allOld.prototype.isQueryHelper = true; */
 //# sourceMappingURL=all.js.map

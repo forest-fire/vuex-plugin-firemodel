@@ -44,7 +44,7 @@
   "homepage": "https://vuex.firemodel.info",
   "dependencies": {
     "common-types": "^1.15.7",
-    "fast-copy": "^2.0.4",
+    "fast-copy": "^2.1.0",
     "fast-equals": "^2.0.0",
     "firemodel": "^0.53.0",
     "js-cookie": "^2.2.1",

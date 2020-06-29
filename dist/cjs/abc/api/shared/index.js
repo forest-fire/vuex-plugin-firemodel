@@ -12,10 +12,12 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // #autoindex:named
 //#region autoindexed files
-// indexed at: 5th May, 2020, 09:52 PM ( GMT-7 )
+// indexed at: 6th Jun, 2020, 06:18 PM ( GMT-7 )
+// local file exports
 __exportStar(require("./findPk"), exports);
 __exportStar(require("./generalizedQuery"), exports);
 __exportStar(require("./serverRecords"), exports);
+// directory exports
 __exportStar(require("./generalizedQuery/index"), exports);
 //#endregion
 //# sourceMappingURL=index.js.map

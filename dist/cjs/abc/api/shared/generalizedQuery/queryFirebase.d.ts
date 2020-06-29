@@ -1,3 +1,12 @@
+import { AbcApi, IGeneralizedFiremodelQuery, IQueryLocalResults, IQueryServerResults } from "../../../../private";
 import { Model } from "firemodel";
-import { IGeneralizedQuery, AbcApi, IQueryLocalResults, IQueryServerResults } from "../../../../private";
-export declare function queryFirebase<T extends Model>(ctx: AbcApi<T>, firemodelQuery: IGeneralizedQuery<T>, local: IQueryLocalResults<T, any>): Promise<IQueryServerResults<T, import("common-types").IDictionary<any>>>;
+/**
+ * Queries Firebase with a query passed in `generalizedQuery` workflow function
+ * which manages both local dexie queries along with firebase queries. This function
+ * is to manage the Firebase aspects of the workflow.
+ *
+ * @param ctx the ABC API
+ * @param firemodelQuery the query which will be run against Firebase
+ * @param local results that came from the dexie query
+ */
+export declare function queryFirebase<T extends Model>(ctx: AbcApi<T>, firemodelQuery: IGeneralizedFiremodelQuery<T>, local: IQueryLocalResults<T, any>): Promise<IQueryServerResults<T, import("common-types").IDictionary<any>>>;

@@ -1,6 +1,7 @@
+import { FmConfigAction, FmConfigMutation, IFiremodelConfig, getDatabase } from "./private";
+
 import { Store } from "vuex";
-import { addNamespace, FmConfigAction, FmConfigMutation, IFiremodelConfig, getDatabase } from "./private";
-import type { IClientConfig, IMockConfig } from "universal-fire"
+import {addNamespace} from "./shared"
 
 /**
  * Based on the configuration passed in by the consuming app, core

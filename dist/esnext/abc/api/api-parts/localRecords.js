@@ -1,6 +1,6 @@
 import { Record } from "firemodel";
 import { AbcApi } from "../AbcApi";
-import get from "lodash.get";
+import { get } from "../../../shared/index";
 import { getStore } from "../../../private";
 /**
  * For a discrete set of primary keys, get's all knowledge of these locally. This means

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.serverEvents = void 0;
-const private_1 = require("../private");
+const shared_1 = require("../shared");
 function serverEvents(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {
@@ -11,11 +11,11 @@ function serverEvents(propOffset) {
          * of records at the root of the state structure
          */
         state, payload) {
-            if (private_1.isRecord(state, payload)) {
-                private_1.changeRoot(state, payload.value, payload.localPath);
+            if (shared_1.isRecord(state, payload)) {
+                shared_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
-                private_1.updateList(state, offset, payload.value);
+                shared_1.updateList(state, offset, payload.value);
             }
         },
         ["SERVER_CHANGE" /* serverChange */](
@@ -31,11 +31,11 @@ function serverEvents(propOffset) {
                 // change.
                 return;
             }
-            if (private_1.isRecord(state, payload)) {
-                private_1.changeRoot(state, payload.value, payload.localPath);
+            if (shared_1.isRecord(state, payload)) {
+                shared_1.changeRoot(state, payload.value, payload.localPath);
             }
             else {
-                private_1.updateList(state, offset, payload.value);
+                shared_1.updateList(state, offset, payload.value);
             }
         },
         ["SERVER_REMOVE" /* serverRemove */](
@@ -44,11 +44,11 @@ function serverEvents(propOffset) {
          * of records at the root of the state structure
          */
         state, payload) {
-            if (private_1.isRecord(state, payload)) {
-                private_1.changeRoot(state, null, payload.localPath);
+            if (shared_1.isRecord(state, payload)) {
+                shared_1.changeRoot(state, null, payload.localPath);
             }
             else {
-                private_1.updateList(state, offset, payload.value);
+                shared_1.updateList(state, offset, payload.value);
             }
         }
     };

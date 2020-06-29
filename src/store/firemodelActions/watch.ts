@@ -1,7 +1,10 @@
-import { FmConfigMutation, FmCrudMutation, IVuexState, determineLocalStateNode } from "../../private";
+import { FmConfigMutation, FmCrudMutation, IVuexState } from "../../private";
 import { FmEvents, IFmWatchEvent, IFmWatcherStopped } from "firemodel";
 
 import { ActionTree } from "vuex";
+import {
+determineLocalStateNode
+} from '../../shared'
 
 export const watch = <T>() =>
   ({

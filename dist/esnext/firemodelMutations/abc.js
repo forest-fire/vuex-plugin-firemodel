@@ -1,7 +1,8 @@
-import { AbcError, AbcMutation, DbSyncOperation, changeRoot } from "../private";
+import { AbcError, AbcMutation, DbSyncOperation, } from "../private";
 import { arrayToHash, hashToArray } from "typed-conversions";
 import Vue from "vue";
-import get from "lodash.get";
+import { changeRoot } from '../shared';
+import { get } from "../shared/index";
 export function AbcFiremodelMutation(propOffset) {
     return {
         [AbcMutation.ABC_VUEX_UPDATE_FROM_IDX](state, payload) {

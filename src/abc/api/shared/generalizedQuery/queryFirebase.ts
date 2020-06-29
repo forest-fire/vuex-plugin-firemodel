@@ -1,7 +1,17 @@
-import { Record, Model } from "firemodel";
-import { deepEqual } from "fast-equals";
-import { findPk, AbcApi, IQueryLocalResults, IQueryServerResults, IGeneralizedFiremodelQuery } from "../../../../private";
+import { AbcApi, IGeneralizedFiremodelQuery, IQueryLocalResults, IQueryServerResults, findPk } from "../../../../private";
+import { Model, Record } from "firemodel";
 
+import { deepEqual } from "fast-equals";
+
+/**
+ * Queries Firebase with a query passed in `generalizedQuery` workflow function
+ * which manages both local dexie queries along with firebase queries. This function
+ * is to manage the Firebase aspects of the workflow.
+ * 
+ * @param ctx the ABC API
+ * @param firemodelQuery the query which will be run against Firebase
+ * @param local results that came from the dexie query
+ */
 export async function queryFirebase<T extends Model>(
   ctx: AbcApi<T>,
   firemodelQuery: IGeneralizedFiremodelQuery<T>,

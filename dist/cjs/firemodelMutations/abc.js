@@ -7,7 +7,8 @@ exports.AbcFiremodelMutation = void 0;
 const private_1 = require("../private");
 const typed_conversions_1 = require("typed-conversions");
 const vue_1 = __importDefault(require("vue"));
-const lodash_get_1 = __importDefault(require("lodash.get"));
+const shared_1 = require("../shared");
+const index_1 = require("../shared/index");
 function AbcFiremodelMutation(propOffset) {
     return {
         [private_1.AbcMutation.ABC_VUEX_UPDATE_FROM_IDX](state, payload) {
@@ -18,7 +19,7 @@ function AbcFiremodelMutation(propOffset) {
                 if (!validResultSize(payload, "local")) {
                     return;
                 }
-                private_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
+                shared_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
             }
         },
         [private_1.AbcMutation.ABC_INDEXED_SKIPPED](state, payload) {
@@ -34,7 +35,7 @@ function AbcFiremodelMutation(propOffset) {
                 if (!validResultSize(payload, "server")) {
                     return;
                 }
-                private_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
+                shared_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
             }
         },
         [private_1.DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_VUEX](state, payload) {
@@ -50,7 +51,7 @@ function AbcFiremodelMutation(propOffset) {
                 if (!validResultSize(payload, "server")) {
                     return;
                 }
-                private_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
+                shared_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
             }
         },
         [private_1.DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB](state, payload) {
@@ -73,7 +74,7 @@ function AbcFiremodelMutation(propOffset) {
                 if (process.env.NODE_ENV !== 'production') {
                     console.info(`You are using a query on a singular model ${payload.vuex.moduleName}; this typically should be avoided.`);
                 }
-                private_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
+                shared_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
             }
         },
         [private_1.DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX](state, payload) {
@@ -90,7 +91,7 @@ function AbcFiremodelMutation(propOffset) {
                 if (process.env.NODE_ENV !== 'production') {
                     console.info(`You are using a query on a singular model ${payload.vuex.moduleName}; this typically should be avoided.`);
                 }
-                private_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
+                shared_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
             }
         },
         [private_1.DbSyncOperation.ABC_INDEXED_DB_MERGE_VUEX](state, payload) {
@@ -133,7 +134,7 @@ function AbcFiremodelMutation(propOffset) {
                 if (!validResultSize(payload)) {
                     return;
                 }
-                private_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
+                shared_1.changeRoot(state, payload.records[0], payload.vuex.moduleName);
             }
         },
         [private_1.AbcMutation.ABC_PRUNE_STALE_IDX_RECORDS](state, payload) {
@@ -141,11 +142,11 @@ function AbcFiremodelMutation(propOffset) {
         },
         [private_1.AbcMutation.ABC_PRUNE_STALE_VUEX_RECORDS](state, payload) {
             if (payload.vuex.isList) {
-                const current = lodash_get_1.default(state, payload.vuex.modulePostfix, []);
+                const current = index_1.get(state, payload.vuex.modulePostfix, []);
                 vue_1.default.set(state, payload.vuex.modulePostfix, current.filter(i => !payload.pks.includes(i.id)));
             }
             else {
-                private_1.changeRoot(state, null, payload.vuex.moduleName);
+                shared_1.changeRoot(state, null, payload.vuex.moduleName);
             }
         }
     };

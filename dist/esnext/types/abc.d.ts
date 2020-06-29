@@ -1,7 +1,7 @@
 import { Model, IPrimaryKey } from "firemodel";
-import type { IAbstractedDatabase } from "universal-fire";
+import type { IAbstractedDatabase, ISerializedQuery } from "universal-fire";
 import { epochWithMilliseconds, IDictionary } from "common-types";
-import { AbcApi, AbcResult } from "../private";
+import type { AbcApi, AbcResult } from "../private";
 export interface IAbcApiConfig<T extends Model> {
     /**
      * indicates whether the Vuex store is storing a _list_
@@ -56,10 +56,14 @@ export interface IAbcDiscreteRequest<T extends Model> extends IAbcRequest<T> {
     (pks: IPrimaryKey<T>[], options?: IAbcOptions<T>): Promise<AbcResult<T>>;
 }
 export declare type IAbcParam<T> = IPrimaryKey<T>[] | IAbcQueryRequest<T>;
+export interface IAbcFirebaseQueryResult<T> {
+    data: T[];
+    query: ISerializedQuery;
+}
 export interface IAbcQueryResults<T extends Model> {
     queryDefn: IAbcQueryDefinition<T>;
-    dexieQuery: () => Promise<T[]>;
-    firemodelQuery: () => Promise<T[]>;
+    dexieQuery: IGeneralizedQuery<T>;
+    firemodelQuery: () => Promise<IAbcFirebaseQueryResult<T>>;
 }
 /** An **ABC** request for records using a Query Helper */
 export interface IAbcQueryRequest<T extends Model> {
@@ -97,6 +101,7 @@ export interface IQueryServerResults<T, K = IDictionary> {
     removeFromIdx: string[];
     /** pks removed from Vuex */
     removeFromVuex: string[];
+    query?: ISerializedQuery;
     overallCachePerformance: ICachePerformance;
 }
 /**
@@ -419,3 +424,6 @@ export interface IAbcQueryApi<T> {
     load: (props: IAbcQueryDefinition<T>, options: IQueryOptions<T>) => Promise<AbcResult<T>>;
 }
 export declare const SINCE_LAST_COOKIE = "slc";
+export interface IGeneralizedQuery<T extends Model> {
+    (): Promise<T[]>;
+}

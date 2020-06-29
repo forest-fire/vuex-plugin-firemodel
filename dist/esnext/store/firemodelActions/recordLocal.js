@@ -1,6 +1,6 @@
 import { FmEvents } from "firemodel";
 import { determineLocalStateNode } from "../../shared/determineLocalStateNode";
-import get from "lodash.get";
+import { get } from "../../shared/index";
 export const recordLocal = () => ({
     async [FmEvents.RECORD_CHANGED_LOCALLY]({ commit, rootState }, payload) {
         const payloadPlus = Object.assign(Object.assign({}, payload), { priorValue: get(rootState, payload.localPath) });

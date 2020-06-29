@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FiremodelPlugin = void 0;
 const private_1 = require("./private");
+const shared_1 = require("./shared");
 const firemodel_1 = require("firemodel");
 const fast_copy_1 = __importDefault(require("fast-copy"));
 const state_mgmt_1 = require("./state-mgmt");
@@ -32,7 +33,7 @@ config) => {
         firemodel_1.FireModel.dispatch = store.dispatch;
         store.subscribe((mutation, state) => {
             if (mutation.type === "route/ROUTE_CHANGED") {
-                store.dispatch(private_1.addNamespace(private_1.FmConfigAction.watchRouteChanges), Object.assign({}, mutation.payload));
+                store.dispatch(shared_1.addNamespace(private_1.FmConfigAction.watchRouteChanges), Object.assign({}, mutation.payload));
             }
         });
         store.registerModule("@firemodel", private_1.FiremodelModule());

@@ -1,14 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.queryFirebase = void 0;
+const private_1 = require("../../../../private");
 const firemodel_1 = require("firemodel");
 const fast_equals_1 = require("fast-equals");
-const private_1 = require("../../../../private");
+/**
+ * Queries Firebase with a query passed in `generalizedQuery` workflow function
+ * which manages both local dexie queries along with firebase queries. This function
+ * is to manage the Firebase aspects of the workflow.
+ *
+ * @param ctx the ABC API
+ * @param firemodelQuery the query which will be run against Firebase
+ * @param local results that came from the dexie query
+ */
 async function queryFirebase(ctx, firemodelQuery, local) {
     // get data from firebase
     const cacheHits = [];
     const stalePks = [];
-    const serverRecords = await firemodelQuery();
+    const { data: serverRecords, query } = await firemodelQuery();
     const serverPks = serverRecords.map(i => firemodel_1.Record.compositeKeyRef(ctx.model.constructor, i));
     const newPks = serverPks.filter(i => local.localPks.includes(i));
     serverRecords.forEach(rec => {
@@ -37,6 +46,7 @@ async function queryFirebase(ctx, firemodelQuery, local) {
         newPks,
         cacheHits,
         stalePks,
+        query,
         removeFromIdx,
         removeFromVuex,
         overallCachePerformance: ctx.cachePerformance

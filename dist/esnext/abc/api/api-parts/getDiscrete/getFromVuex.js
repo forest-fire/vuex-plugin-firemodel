@@ -1,5 +1,5 @@
 import { getStore } from "../../../../private";
-import get from "lodash.get";
+import { get } from "../../../../shared/index";
 export async function getFromVuex(ctx) {
     const store = getStore();
     const moduleIsList = ctx.about.config.isList;

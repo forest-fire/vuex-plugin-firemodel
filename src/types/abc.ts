@@ -1,7 +1,7 @@
 import { Model, IPrimaryKey } from "firemodel";
 import type { IAbstractedDatabase, ISerializedQuery } from "universal-fire";
 import { epochWithMilliseconds, IDictionary } from "common-types";
-import { AbcApi, AbcResult, IGeneralizedQuery } from "../private";
+import type { AbcApi, AbcResult } from "../private";
 
 export interface IAbcApiConfig<T extends Model> {
   /**
@@ -493,3 +493,7 @@ export interface IAbcQueryApi<T> {
 }
 
 export const SINCE_LAST_COOKIE = "slc";
+
+export interface IGeneralizedQuery<T extends Model> {
+  (): Promise<T[]>;
+}

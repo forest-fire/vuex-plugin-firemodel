@@ -1,4 +1,4 @@
-import { changeRoot, isRecord, updateList } from "../private";
+import { changeRoot, isRecord, updateList } from "../shared";
 export function addedLocally(propOffset) {
     const offset = !propOffset ? "all" : propOffset;
     return {

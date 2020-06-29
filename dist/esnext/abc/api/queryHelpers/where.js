@@ -21,8 +21,8 @@ export const where = function where(defn) {
         };
         // The query to use for Firebase
         const firemodelQuery = async () => {
-            const list = await List.where(ctx.model.constructor, defn.property, valueOp, options || {});
-            return list.data;
+            const { data, query } = await List.where(ctx.model.constructor, defn.property, valueOp, options || {});
+            return { data, query };
         };
         return { dexieQuery, firemodelQuery, queryDefn: defn };
     };

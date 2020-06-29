@@ -1,5 +1,5 @@
-import { Store } from "vuex";
 import { IFiremodelConfig } from "./private";
+import { Store } from "vuex";
 /**
  * Based on the configuration passed in by the consuming app, core
  * services will be started by firing off the appropriate Vuex _action_.

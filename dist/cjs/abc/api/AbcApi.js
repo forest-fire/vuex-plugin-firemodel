@@ -4,6 +4,7 @@ exports.AbcApi = void 0;
 const private_1 = require("../../private");
 const firemodel_1 = require("firemodel");
 const common_types_1 = require("common-types");
+const shared_1 = require("../../shared");
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
  * including meta-data properties too.
@@ -27,7 +28,7 @@ class AbcApi {
         this._modelName = {
             singular: rec.modelName,
             plural: rec.pluralName,
-            pascal: private_1.capitalize(rec.modelName)
+            pascal: shared_1.capitalize(rec.modelName)
         };
         this._modelMeta = rec.META;
         AbcApi.addModel(this);
@@ -70,7 +71,7 @@ class AbcApi {
      */
     static getModelApi(model) {
         const r = firemodel_1.Record.create(model);
-        const name = private_1.capitalize(r.modelName);
+        const name = shared_1.capitalize(r.modelName);
         if (!AbcApi._modelsManaged[name]) {
             throw new private_1.AbcError(`You attempted to get an AbcApi for the model ${name} but it is not yet configured!`, "abc-api/invalid-model");
         }
@@ -264,6 +265,8 @@ class AbcApi {
                     server,
                     options
                 });
+                // watch records
+                this.watch(serverResponse, options);
                 // cache results to IndexedDB
                 if (this.config.useIndexedDb) {
                     private_1.saveToIndexedDb(server, this.dexieTable);
@@ -485,8 +488,29 @@ class AbcApi {
     /**
      * Watch records using the **ABC** API
      */
-    async watch() {
-        return [];
+    async watch(serverResponse, options) {
+        const { watch } = options;
+        if (watch) {
+            const isFunction = (x) => typeof x === 'function';
+            const watcher = firemodel_1.Watch.list(this._modelConstructor);
+            if (isFunction(watch)) {
+                const watchIds = serverResponse.records
+                    .filter(p => watch(p))
+                    .map(p => p.id);
+                await watcher.ids(...watchIds).start()
+                    .then(() => console.info(`${this._modelConstructor.name} watch function: `, watchIds));
+            }
+            else {
+                if (serverResponse.resultFromQuery && serverResponse.query) {
+                    await watcher.fromQuery(serverResponse.query).start()
+                        .then(() => { var _a; return console.info(`${this._modelConstructor.name} watch query: `, (_a = serverResponse.query) === null || _a === void 0 ? void 0 : _a.toString()); });
+                }
+                else {
+                    await watcher.ids(...serverResponse.records.map(p => p.id)).start()
+                        .then(() => console.info(`${this._modelConstructor.name} watch all: `, ...serverResponse.records.map(p => p.id)));
+                }
+            }
+        }
     }
     toJSON() {
         return {

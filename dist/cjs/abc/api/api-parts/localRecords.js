@@ -1,12 +1,9 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.localRecords = void 0;
 const firemodel_1 = require("firemodel");
 const AbcApi_1 = require("../AbcApi");
-const lodash_get_1 = __importDefault(require("lodash.get"));
+const index_1 = require("../../../shared/index");
 const private_1 = require("../../../private");
 /**
  * For a discrete set of primary keys, get's all knowledge of these locally. This means
@@ -20,7 +17,7 @@ async function localRecords(command, requestPks, options, context) {
     const idxRecords = [];
     const store = private_1.getStore();
     const moduleIsList = context.about.config.isList;
-    const data = lodash_get_1.default(store.state, context.vuex.fullPath.replace(/\//g, "."), []);
+    const data = index_1.get(store.state, context.vuex.fullPath.replace(/\//g, "."), []);
     const vuexRecords = moduleIsList ? data : [data];
     if (context.config.useIndexedDb) {
         if (!AbcApi_1.AbcApi.indexedDbConnected) {

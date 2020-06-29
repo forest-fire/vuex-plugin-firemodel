@@ -1,11 +1,7 @@
-import { IDictionary } from "common-types";
 import { AbcError, IAbcFirebaseQueryResult } from "../../../private";
+
+import { IDictionary } from "common-types";
 import { Model } from "firemodel";
-
-
-export interface IGeneralizedQuery<T extends Model> {
-  (): Promise<T[]>;
-}
 
 export interface IGeneralizedFiremodelQuery<T extends Model> {
   (): Promise<IAbcFirebaseQueryResult<T>>

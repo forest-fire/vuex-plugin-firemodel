@@ -1,4 +1,6 @@
-import { FiremodelModule, FmConfigAction, IFiremodelConfig, IVuexState, addNamespace, coreServices, queueLifecycleEvents, setInitialState, storeDatabase, storePluginConfig } from "./private";
+import { FiremodelModule, FmConfigAction, IFiremodelConfig, IVuexState, coreServices, queueLifecycleEvents, setInitialState, storeDatabase, storePluginConfig } from "./private";
+import { addNamespace, 
+} from "./shared"
 
 import { FireModel } from "firemodel";
 import type { IAbstractedDatabase } from "universal-fire";

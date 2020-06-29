@@ -1,6 +1,5 @@
 import {
   AbcApi,
-  AbcFiremodelMutation,
   AbcMutation,
   AbcRequestCommand,
   AbcResult,
@@ -8,6 +7,8 @@ import {
   DbSyncOperation,
   IAbcOptions,
   IAbcQueryDefinition,
+  IGeneralizedFiremodelQuery,
+  IGeneralizedQuery,
   IQueryLocalResults,
   IQueryServerResults,
   QueryType,
@@ -18,11 +19,7 @@ import {
 } from "../../../private";
 import { Model, Record } from "firemodel";
 
-import get from "lodash.get";
-
-export interface IGeneralizedQuery<T extends Model> {
-  (): Promise<T[]>;
-}
+import {get} from "../../../shared/index";
 
 /**
  * A generalized flow for queries; specific query helpers
@@ -32,7 +29,7 @@ export async function generalizedQuery<T extends Model>(
   queryDefn: IAbcQueryDefinition<T>,
   command: AbcRequestCommand,
   dexieQuery: IGeneralizedQuery<T>,
-  firemodelQuery: IGeneralizedQuery<T>,
+  firemodelQuery: IGeneralizedFiremodelQuery<T>,
   ctx: AbcApi<T>,
   options: IAbcOptions<T>
 ) {

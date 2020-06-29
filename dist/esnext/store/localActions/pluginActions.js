@@ -1,5 +1,6 @@
 import { FireModel, List, Record, Watch } from "firemodel";
-import { FireModelPluginError, FmConfigAction, authChanged, getDatabase, getPluginConfig, runQueue } from "../../private";
+import { FireModelPluginError, FmConfigAction, getDatabase, getPluginConfig, } from "../../private";
+import { authChanged, runQueue } from "../../shared";
 /**
  * **pluginActions**
  *
