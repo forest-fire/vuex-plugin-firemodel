@@ -1,12 +1,13 @@
+import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import typescript2 from "rollup-plugin-typescript2";
 
-const generalConfig = (moduleSystem) => ({
+const generalConfig = moduleSystem => ({
   input: "src/index.ts",
   output: {
     dir: `dist/${moduleSystem}`,
     format: `${moduleSystem}`,
-    sourcemap: true,
+    sourcemap: true
   },
   external: ["universal-fire", "firemock"],
   plugins: [
@@ -15,10 +16,10 @@ const generalConfig = (moduleSystem) => ({
       rootDir: ".",
       tsconfig: `tsconfig.es.json`,
       typescript: require("ttypescript"),
-      declaration: moduleSystem === "es" ? true : false,
+      declaration: moduleSystem === "es" ? true : false
     }),
-  ],
+    ...(moduleSystem === "cjs" ? [commonjs()] : [])
+  ]
 });
 
 export default [generalConfig("es"), generalConfig("cjs")];
-
