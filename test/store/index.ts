@@ -1,16 +1,21 @@
-import { AsyncMockData, IVuexState, abc } from "../../src/private";
+import * as lifecycle from "./lifecycle";
+
+import { AsyncMockData, IVuexState, } from '@/types'
 import Vuex, { Store } from "vuex";
 import companies, { ICompaniesState } from "./modules/companies";
+import orders, { IOrdersState } from "./modules/orders";
 import products, { IProductsState } from "./modules/products";
 import userProfile, { IUserProfileState } from "./modules/userProfile";
 
 import { Company } from "../models/Company";
-import {FiremodelPlugin} from "../../src/private"
+import { FiremodelPlugin } from "@/plugin"
 import { IDictionary } from "common-types";
+import { Order } from "../models/Order";
 import { Person } from "../models/Person";
 import { Product } from "../models/Product";
 import { RealTimeClient } from "@forest-fire/real-time-client";
 import Vue from "vue";
+import { abc } from "@/abc";
 import { config } from "./config";
 
 Vue.use(Vuex);
@@ -19,6 +24,7 @@ export interface IRootState {
   products: IProductsState;
   userProfiles: IUserProfileState;
   companies: ICompaniesState;
+  orders: IOrdersState;
   ["@firemodel"]: IVuexState<IRootState>;
 }
 
@@ -31,19 +37,25 @@ export let store: Store<IRootState>;
  * as a parameter
  */
 export const setupStore = (data?: IDictionary | AsyncMockData) => {
-  const db = new RealTimeClient({mocking: true})
+  const db = new RealTimeClient(config(data))
   store = new Vuex.Store<IRootState>({
     modules: {
       products,
       userProfile,
-      companies
+      companies,
+      orders,
     },
-    plugins: [FiremodelPlugin(db, config(data))]
+    plugins: [FiremodelPlugin(db, {
+      connect: true,
+      auth: true,
+      ...lifecycle
+    })]
   });
   return store;
 };
 
 export const getAbc = () => {
+  const [getOrders, loadOrders] = abc(Order, { useIndexedDb: true });
   const [getProducts, loadProducts] = abc(Product, { useIndexedDb: true });
   const [getCompanies, loadCompanies] = abc(Company, {
     useIndexedDb: false
@@ -53,6 +65,8 @@ export const getAbc = () => {
   return {
     getProducts,
     loadProducts,
+    getOrders,
+    loadOrders,
     getCompanies,
     loadCompanies,
     getUserProfile,

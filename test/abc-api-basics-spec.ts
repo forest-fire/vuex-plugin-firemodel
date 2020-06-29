@@ -1,70 +1,67 @@
-import { AbcApi, abc } from "../src/private";
+import { AbcApi, IAbcRequest, abc } from "@/public";
 
 import { Company } from "./models/Company";
+import { IRootState } from "./store";
 import { Person } from "./models/Person";
-import { expect } from "chai";
+import { Store } from "vuex";
 import { fakeIndexedDb } from "./helpers/fakeIndexedDb";
 
 describe("ABC API Basics => ", () => {
+  let store: Store<IRootState>;
+  let getPerson: IAbcRequest<Person>;
+  let loadPerson: IAbcRequest<Person>;
+  let getCompanies: IAbcRequest<Company>;
+  let loadCompanies: IAbcRequest<Company>;
+
   beforeEach(async () => {
     await fakeIndexedDb();
-    AbcApi.clear();
+    store = (await import("./store")).setupStore();
+    [getPerson, loadPerson] = abc(Person);
+    [getCompanies, loadCompanies] = abc(Company, { useIndexedDb: false });
+    await AbcApi.connectIndexedDb();
+    // TODO: find a better solution to get the mock database reset
+    expect(AbcApi.getModelApi(Person).db.isConnected);
+    expect(AbcApi.getModelApi(Company).db.isConnected);
+    expect(AbcApi.indexedDbConnected).toBe(true);
   });
 
+  afterEach(async () => {
+    await AbcApi.clear();
+  })
+
   it("Instantiating returns ABC API surface", () => {
-    const api = new AbcApi(Person);
-    expect(api).to.be.an.instanceOf(AbcApi);
+    const api = AbcApi.getModelApi(Person);
+    expect(api).toBeInstanceOf(AbcApi);
 
-    expect(api.about.model.pascal).to.equal("Person");
-    expect(api.cachePerformance.hits).to.equal(0);
-    expect(api.cachePerformance.misses).to.equal(0);
+    expect(api.about.model.pascal).toBe("Person");
+    expect(api.cachePerformance.hits).toBe(0);
+    expect(api.cachePerformance.misses).toBe(0);
 
-    expect(AbcApi.configuredFiremodelModels).to.contain("Person");
+    expect(AbcApi.configuredFiremodelModels).toEqual(expect.arrayContaining(["Person"]));
 
-    expect(api.get).is.a("function");
-    expect(api.load).is.a("function");
-    expect(api.watch).is.a("function");
+    expect(api.get).toBeInstanceOf(Function);
+    expect(api.load).toBeInstanceOf(Function);
+    expect(api.watch).toBeInstanceOf(Function);
   });
 
   it("Calling abc() returns get, load, and watch API's of ABC API", () => {
-    const [getPerson, loadPerson, watchPerson] = abc(Person);
-    expect(getPerson).to.be.a("function");
-    expect(loadPerson).to.be.a("function");
-    expect(watchPerson).to.be.a("function");
+    expect(getPerson).toBeInstanceOf(Function);
+    expect(loadPerson).toBeInstanceOf(Function);
   });
 
   it("Prior to using a get/load API the IndexedDB is not openned but models with indexedDb are known", () => {
-    const [getPerson, loadPerson, watchPerson] = abc(Person);
-    const [getCompanies, loadCompanies] = abc(Company, { useIndexedDb: false });
-    expect(AbcApi.indexedDbConnected).to.equal(false);
-
-    expect(AbcApi.configuredFiremodelModels).contains("Person");
-    expect(AbcApi.configuredFiremodelModels).contains("Company");
+    expect(AbcApi.configuredFiremodelModels).toEqual(expect.arrayContaining(["Person"]));
+    expect(AbcApi.configuredFiremodelModels).toEqual(expect.arrayContaining(["Company"]));
   });
 
   it("Connecting IndexedDB after at least one valid Model works and can call dexieTable() on instance", async () => {
-    const peeps = new AbcApi(Person);
-    const companies = new AbcApi(Company, { useIndexedDb: false });
-    expect(AbcApi.indexedDbConnected).to.equal(false);
-
-    await AbcApi.connectIndexedDb();
-    expect(AbcApi.indexedDbConnected).to.equal(
-      true,
-      "The indexedDbConnected getter on AbcApi should be true"
-    );
-
-    expect(peeps.dexieTable.get).to.be.a("function");
+    const peeps = AbcApi.getModelApi(Person);
+    expect(peeps.dexieTable.get).toBeInstanceOf(Function);
   });
 
   it("Connecting to IndexedDB and then trying to get table of model not included fails", async () => {
-    const peeps = new AbcApi(Person);
-    const companies = new AbcApi(Company, { useIndexedDb: false });
-
-    await AbcApi.connectIndexedDb();
-    expect(AbcApi.indexedDbConnected).to.equal(
-      true,
-      "database is connected after call to connectIndexedDb"
-    );
+    const companies = AbcApi.getModelApi(Company);
+    expect(AbcApi.indexedDbConnected).toBe(true);
 
     try {
       companies.dexieTable;
@@ -72,27 +69,23 @@ describe("ABC API Basics => ", () => {
         "companies should NOT be part of the models managed by Dexie/IndexedDB"
       );
     } catch (e) {
-      expect(e).to.be.instanceOf(Error);
-      expect(e.message).to.contain(
-        "configured NOT to use IndexedDB",
-        "the error thrown has an appropriate message"
-      );
+      expect(e).toBeInstanceOf(Error);
+      expect(e.message).toContain("You are attempting to access Dexie while connected");
     }
   });
 
   it("After connecting to IndexedDB, can access dexieList property and gain access to the Dexie List API", async () => {
-    const peeps = new AbcApi(Person);
-    await AbcApi.connectIndexedDb();
-    expect(peeps.dexieList).to.exist;
-    expect(peeps.dexieList.all).to.be.a("function");
-    expect(peeps.dexieList.since).to.be.a("function");
+    const peeps = AbcApi.getModelApi(Person);
+    expect(peeps.dexieList).toBeDefined();
+    expect(peeps.dexieList.all).toBeInstanceOf(Function);
+    expect(peeps.dexieList.since).toBeInstanceOf(Function);
   });
 
   it("After connecting to IndexedDB, can access dexieRecord property and gain access to the Dexie Record API", async () => {
-    const peeps = new AbcApi(Person);
+    const peeps = AbcApi.getModelApi(Person);
     await AbcApi.connectIndexedDb();
-    expect(peeps.dexieRecord).to.exist;
-    expect(peeps.dexieRecord.get).to.be.a("function");
-    expect(peeps.dexieRecord.update).to.be.a("function");
+    expect(peeps.dexieRecord).toBeDefined();
+    expect(peeps.dexieRecord.get).toBeInstanceOf(Function);
+    expect(peeps.dexieRecord.update).toBeInstanceOf(Function);
   });
 });

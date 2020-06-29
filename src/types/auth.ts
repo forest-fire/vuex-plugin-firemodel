@@ -1,5 +1,4 @@
-import { Model} from "firemodel";
-
+import { Model } from "firemodel";
 
 export enum AuthPersistenceStrategy {
   /**

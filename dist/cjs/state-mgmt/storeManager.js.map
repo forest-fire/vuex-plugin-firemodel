@@ -1,1 +1,0 @@
-{"version":3,"file":"storeManager.js","sourceRoot":"","sources":["../../../src/state-mgmt/storeManager.ts"],"names":[],"mappings":";;;AAGA,IAAI,MAAkB,CAAA;AAEtB,SAAgB,aAAa,CAAU,KAAe;IACpD,MAAM,GAAG,KAAK,CAAC;AACjB,CAAC;AAFD,sCAEC;AAED,SAAgB,QAAQ;IACtB,OAAO,MAAM,CAAC;AAChB,CAAC;AAFD,4BAEC"}

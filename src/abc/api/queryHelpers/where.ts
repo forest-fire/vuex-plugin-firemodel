@@ -1,21 +1,26 @@
 import {
-  AbcApi,
+  IAbcFirebaseQueryResult,
   IAbcQueryHelper,
   IAbcWhereQueryDefinition,
   IQueryOptions,
-  QueryType,
-} from "../../../private";
+  QueryType
+} from "@/types";
 import { IComparisonOperator, List, Model, PropType } from "firemodel";
+
+import { AbcApi } from "@/abc";
 
 /**
  * Offers a configuration to consumers of the standard _where_ clause that Firebase
  * provides and then provides an implementation that is aligned with the ABC `get`
  * and `load` endpoints.
  */
-export const where: IAbcQueryHelper = function where<T extends Model, K extends keyof T>(
+export const where: IAbcQueryHelper = function where<
+  T extends Model,
+  K extends keyof T
+>(
   defn:
     | IAbcWhereQueryDefinition<T>
-    | (IAbcWhereQueryDefinition<T> & { queryType: QueryType.where }),
+    | (IAbcWhereQueryDefinition<T> & { queryType: QueryType.where })
 ) {
   defn = { ...defn, queryType: QueryType.where };
   return (ctx: AbcApi<T>, options: IQueryOptions<T> = {}) => {
@@ -33,14 +38,14 @@ export const where: IAbcQueryHelper = function where<T extends Model, K extends 
     };
 
     // The query to use for Firebase
-    const firemodelQuery = async () => {
-      const list = await List.where(
+    const firemodelQuery = async (): Promise<IAbcFirebaseQueryResult<T>> => {
+      const { data, query } = await List.where(
         ctx.model.constructor,
         defn.property,
         valueOp,
         options || {}
       );
-      return list.data;
+      return { data, query };
     };
 
     return { dexieQuery, firemodelQuery, queryDefn: defn };

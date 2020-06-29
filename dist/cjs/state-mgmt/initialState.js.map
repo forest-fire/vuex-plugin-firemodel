@@ -1,1 +1,0 @@
-{"version":3,"file":"initialState.js","sourceRoot":"","sources":["../../../src/state-mgmt/initialState.ts"],"names":[],"mappings":";;;AAEA,IAAI,aAA0B,CAAC;AAE/B;;GAEG;AACH,SAAgB,eAAe,CAAC,KAAkB;IAChD,aAAa,GAAG,KAAK,CAAA;AACvB,CAAC;AAFD,0CAEC;AAED;;GAEG;AACH,SAAgB,eAAe;IAC7B,OAAO,aAAkB,CAAA;AAC3B,CAAC;AAFD,0CAEC"}

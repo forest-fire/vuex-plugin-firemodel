@@ -1,6 +1,6 @@
-import { DexieRecord, IPrimaryKey, Model, } from 'firemodel'
+import { DexieRecord, IPrimaryKey, Model } from "firemodel";
 
-import { AbcApi } from "../../../../private";
+import { AbcApi } from "@/abc";
 
 export async function getFromIndexedDb<T extends Model>(
   dexieRecord: DexieRecord<T>,
@@ -9,7 +9,7 @@ export async function getFromIndexedDb<T extends Model>(
   if (!AbcApi.indexedDbConnected) {
     await AbcApi.connectIndexedDb();
   }
-  
+
   const idxRecords: T[] = [];
   const waitFor: any[] = [];
   requestPks.forEach(id =>

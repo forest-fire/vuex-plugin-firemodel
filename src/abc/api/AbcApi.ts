@@ -1,8 +1,5 @@
 import {
-  AbcError,
-  AbcFiremodelMutation,
   AbcMutation,
-  AbcResult,
   AbcStrategy,
   DbSyncOperation,
   IAbcApiConfig,
@@ -15,28 +12,34 @@ import {
   IQueryLocalResults,
   IQueryOptions,
   IQueryServerResults,
+  IWatchCallback,
   QueryType,
-  capitalize,
+  isDiscreteRequest
+} from "@/types";
+import {
+  AbcResult,
   getDefaultApiConfig,
   getFromFirebase,
   getFromIndexedDb,
   getFromVuex,
-  getStore,
-  isDiscreteRequest,
   mergeLocalRecords,
   queryFirebase,
   queryIndexedDb,
   saveToIndexedDb
-} from "../../private";
+} from "@/abc";
 import {
   DexieDb,
   FireModel,
   IFmModelMeta,
   IPrimaryKey,
   Model,
-  Record
+  Record,
+  Watch
 } from "firemodel";
 import { IDictionary, pathJoin } from "common-types";
+import { capitalize, getStore } from "@/util";
+
+import { AbcError } from "@/errors";
 
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
@@ -299,7 +302,7 @@ export class AbcApi<T extends Model> {
    * @request either a Query Helper (since, where, etc.) or an array of primary keys
    */
   async load(
-    request: IAbcParam<T>, 
+    request: IAbcParam<T>,
     options: IAbcOptions<T> = {}
   ): Promise<AbcResult<T>> {
     if (isDiscreteRequest(request)) {
@@ -316,16 +319,16 @@ export class AbcApi<T extends Model> {
     const store = getStore();
     // query types all() | where() | since()
     const { dexieQuery, firemodelQuery, queryDefn } = request(this, options);
-    
+
     let local: IQueryLocalResults<T, any> = {
       records: [],
       indexedDbPks: [],
-      localPks: [],
+      localPks: []
     };
     // query indexedDb
     if (this.config.useIndexedDb) {
       // ctx should be model constructor
-      local = await queryIndexedDb(this._modelConstructor, dexieQuery)
+      local = await queryIndexedDb(this._modelConstructor, dexieQuery);
       const localResults = await AbcResult.create(this, {
         type: "query",
         queryDefn,
@@ -365,6 +368,9 @@ export class AbcApi<T extends Model> {
           server,
           options
         });
+
+        // watch records
+        this.watch(serverResponse, options);
 
         // cache results to IndexedDB
         if (this.config.useIndexedDb) {
@@ -473,7 +479,6 @@ export class AbcApi<T extends Model> {
       }
     }
 
-
     const response = await AbcResult.create(this, {
       type: "query",
       queryDefn,
@@ -507,7 +512,7 @@ export class AbcApi<T extends Model> {
 
     // get from Vuex
     const vuexRecords = await getFromVuex(this);
-    
+
     if (this.config.useIndexedDb) {
       // get from indexedDB
       idxRecords = await getFromIndexedDb(this.dexieRecord, requestIds);
@@ -536,14 +541,13 @@ export class AbcApi<T extends Model> {
             serverResponse
           );
         }
-        
+
         store.commit(
           `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`,
           serverResponse
         );
       });
     }
-
 
     const response = await AbcResult.create(this, {
       type: "discrete",
@@ -689,8 +693,49 @@ export class AbcApi<T extends Model> {
   /**
    * Watch records using the **ABC** API
    */
-  async watch() {
-    return [];
+  async watch(serverResponse: AbcResult<T>, options: IAbcOptions<T>) {
+    const { watch } = options;
+    if (watch) {
+      const isFunction = (x: any): x is IWatchCallback<T> =>
+        typeof x === "function";
+      const watcher = Watch.list(this._modelConstructor);
+      if (isFunction(watch)) {
+        const watchIds = serverResponse.records
+          .filter(p => watch(p))
+          .map(p => p.id!);
+        await watcher
+          .ids(...watchIds)
+          .start()
+          .then(() =>
+            console.info(
+              `${this._modelConstructor.name} watch function: `,
+              watchIds
+            )
+          );
+      } else {
+        if (serverResponse.resultFromQuery && serverResponse.query) {
+          await watcher
+            .fromQuery(serverResponse.query)
+            .start()
+            .then(() =>
+              console.info(
+                `${this._modelConstructor.name} watch query: `,
+                serverResponse.query?.toString()
+              )
+            );
+        } else {
+          await watcher
+            .ids(...serverResponse.records.map(p => p.id!))
+            .start()
+            .then(() =>
+              console.info(
+                `${this._modelConstructor.name} watch all: `,
+                ...serverResponse.records.map(p => p.id!)
+              )
+            );
+        }
+      }
+    }
   }
 
   toJSON() {

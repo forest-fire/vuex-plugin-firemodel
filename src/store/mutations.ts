@@ -1,5 +1,15 @@
-import { IVuexState, authMutations, errorMutations, localConfig, localCrud, relationships, serverConfirm, serverRollback, watcher } from "../private";
+import {
+  authMutations,
+  errorMutations,
+  localConfig,
+  localCrud,
+  relationships,
+  serverConfirm,
+  serverRollback,
+  watcher
+} from "@/store";
 
+import { IVuexState } from "@/types";
 import { MutationTree } from "vuex";
 
 /**

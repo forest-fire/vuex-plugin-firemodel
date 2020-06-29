@@ -1,6 +1,7 @@
-import { IVuexState, authActions, errors, other, recordConfirms, recordLocal, recordRollbacks, recordServerChanges, relationship, watch } from "../../private";
+import { authActions, errors, other, recordConfirms, recordLocal, recordRollbacks, recordServerChanges, relationship, watchActions } from "@/store";
 
 import { ActionTree } from "vuex";
+import { IVuexState } from "@/types"
 
 export const firemodelActions = <T>() =>
   stripNamespaceFromKeys<T>({
@@ -10,7 +11,7 @@ export const firemodelActions = <T>() =>
     ...recordLocal<T>(),
     ...recordConfirms<T>(),
     ...recordRollbacks<T>(),
-    ...watch<T>(),
+    ...watchActions<T>(),
     ...relationship<T>(),
     ...other<T>()
   }) as ActionTree<IVuexState<T>, T>;

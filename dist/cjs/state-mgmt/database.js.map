@@ -1,1 +1,0 @@
-{"version":3,"file":"database.js","sourceRoot":"","sources":["../../../src/state-mgmt/database.ts"],"names":[],"mappings":";;;AAEA,wCAAkD;AAElD,IAAI,GAAwB,CAAC;AAC7B;;GAEG;AACH,SAAgB,WAAW;IACzB,IAAG,CAAC,GAAG,EAAE;QACP,MAAM,IAAI,8BAAoB,CAAC,+DAA+D,CAAC,CAAA;KAChG;IACD,OAAO,GAAG,CAAC;AACb,CAAC;AALD,kCAKC;AAED,SAAgB,aAAa,CAAC,EAAwB;IACpD,GAAG,GAAG,EAAE,CAAA;AACV,CAAC;AAFD,sCAEC"}
