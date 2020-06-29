@@ -3,11 +3,12 @@ import {
   AuthCredential,
   User,
   UserCredential
-} from "@forest-fire/types";
-import { FireModelPluginError, IAuthProfile, ISignOutPayload, IVuexState, getDatabase } from "../../private";
-import { getAuth, setAuth } from "../../state-mgmt";
+} from "universal-fire";
+import { IAuthProfile, ISignOutPayload, IVuexState } from "@/types";
+import { getAuth, getDatabase } from "@/state-mgmt";
 
 import { ActionTree } from "vuex";
+import { FireModelPluginError } from "@/errors"
 import { Record } from "firemodel";
 
 /**

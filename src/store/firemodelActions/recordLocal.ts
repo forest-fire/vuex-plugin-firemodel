@@ -1,9 +1,8 @@
 import { FmEvents, IFmWatchEvent } from "firemodel";
 
 import { ActionTree } from "vuex";
-import { FmCrudMutation } from "../../types/mutations/FmCrudMutation";
-import { IVuexState } from "../../index";
-import { determineLocalStateNode } from "../../util/determineLocalStateNode";
+import { FmCrudMutation } from "@/types";
+import { determineLocalStateNode } from "@/util";
 import {get} from "@/util";
 
 export const recordLocal = <T>() =>

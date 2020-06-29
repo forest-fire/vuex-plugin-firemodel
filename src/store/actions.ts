@@ -1,7 +1,7 @@
+import { firemodelActions, pluginActions } from "@/store";
+
 import { ActionTree } from "vuex";
 import { IVuexState } from "@/types";
-import { firemodelActions } from "./firemodelActions/index";
-import { pluginActions } from "./localActions/pluginActions";
 
 export const actions = <T>() =>
   ({

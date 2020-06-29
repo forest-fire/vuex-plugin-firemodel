@@ -8,12 +8,12 @@ import {
   IFmConnectedContext,
   IFmRouteEventContext,
   IVuexState,
-  getDatabase,
-  getPluginConfig,
-} from "../../private";
+} from "@/types";
 import {
 authChanged,
-runQueue
+getDatabase,
+getPluginConfig,
+runQueue,
 } from "@/util";
 
 import { ActionTree } from "vuex";

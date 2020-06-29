@@ -1,4 +1,4 @@
-import { FmConfigMutation, FmCrudMutation, IVuexState } from "../../private";
+import { FmConfigMutation, FmCrudMutation, IVuexState } from "@/types";
 import { FmEvents, IFmWatchEvent, IFmWatcherStopped } from "firemodel";
 
 import { ActionTree } from "vuex";
