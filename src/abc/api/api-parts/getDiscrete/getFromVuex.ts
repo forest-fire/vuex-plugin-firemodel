@@ -1,6 +1,6 @@
 import { AbcApi, getStore } from "../../../../private"
 
-import {get} from "../../../../shared/index";
+import {get} from "../../../../util/index";
 
 export async function getFromVuex<T>(ctx: AbcApi<T>) {
   const store = getStore();

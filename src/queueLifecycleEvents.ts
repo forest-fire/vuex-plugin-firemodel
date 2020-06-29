@@ -3,7 +3,7 @@ import { FireModelPluginError, FmCallback, FmConfigMutation, IFiremodelConfig, I
 import { Store } from 'vuex';
 import {
 addNamespace
-} from './shared'
+} from './util'
 
 export async function queueLifecycleEvents<T>(
   store: Store<T>,

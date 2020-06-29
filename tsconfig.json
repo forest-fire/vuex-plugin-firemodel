@@ -12,8 +12,8 @@
     "noEmit": true,
     "removeComments": false,
     "strictNullChecks": true,
-    "esModuleInterop": false,
-    "allowSyntheticDefaultImports": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]

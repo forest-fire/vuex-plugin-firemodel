@@ -1,5 +1,5 @@
 import { IFmWatchEvent, Model } from "firemodel";
-import { changeRoot, isRecord, updateList } from "../shared"
+import { changeRoot, isRecord, updateList } from "../util"
 
 import { FmCrudMutation } from "../private";
 import { MutationTree } from "vuex";

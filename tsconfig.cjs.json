@@ -2,12 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2017",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "outDir": "./dist/cjs",
-    "noEmit": false
+    "noEmit": false,
+    "outDir": "./dist/cjs"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*-spec.ts"]
+  "exclude": ["test/**/*"]
 }

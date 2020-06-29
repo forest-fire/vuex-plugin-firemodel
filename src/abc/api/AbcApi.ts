@@ -40,7 +40,7 @@ import { IDictionary, pathJoin } from "common-types";
 
 import {
 capitalize,
-} from '../../shared'
+} from '../../util'
 
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also

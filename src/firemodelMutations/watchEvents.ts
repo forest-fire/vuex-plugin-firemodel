@@ -1,4 +1,4 @@
-import { changeRoot, isRecord } from '../shared'
+import { changeRoot, isRecord } from '../util'
 
 import { FmCrudMutation, } from "../private";
 import { IDictionary } from "common-types";

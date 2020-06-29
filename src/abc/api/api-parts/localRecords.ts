@@ -1,14 +1,12 @@
 import {
   AbcRequestCommand,
-  IAbcDiscreteRequest,
-  IAbcOptions,
   IDiscreteLocalResults,
   IDiscreteOptions
 } from "../../../types";
 import { IPrimaryKey, Model, Record } from "firemodel";
 
 import { AbcApi } from "../AbcApi";
-import {get} from "../../../shared/index";
+import {get} from "../../../util/index";
 import { getStore } from "../../../private";
 
 /**

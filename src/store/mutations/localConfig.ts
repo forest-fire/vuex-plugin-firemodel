@@ -1,7 +1,7 @@
 import {
   FmConfigMutation,
   ICurrentUser,
-  IFmLifecycleEvents,
+  IFmLifecycleEvent,
   IFmQueuedAction,
   IVuexState
 } from "../../private";
@@ -78,7 +78,7 @@ export const localConfig = <T>() =>
 
     [FmConfigMutation.lifecycleEventCompleted](
       state,
-      event: { event: IFmLifecycleEvents; actionCallbacks: string[] }
+      event: { event: IFmLifecycleEvent; actionCallbacks: string[] }
     ) {
       //
     }

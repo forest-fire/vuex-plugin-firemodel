@@ -16,8 +16,8 @@ import { MutationTree } from "vuex";
 import Vue from "vue";
 import {
 changeRoot
-} from '../shared'
-import {get} from "../shared/index";
+} from '../util'
+import {get} from "../util/index";
 
 export function AbcFiremodelMutation<T>(propOffset?: keyof T & string): MutationTree<T> {
   return {

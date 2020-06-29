@@ -262,7 +262,7 @@ export interface IFmLocalChange<T extends Model = Model> {
 }
 
 export type IFmModelConstructor<T extends Model = Model> = new () => T;
-export type IFmLifecycleEvents =
+export type IFmLifecycleEvent =
   | "connected"
   | "disconnected"
   | "logged-in"
@@ -278,7 +278,7 @@ export interface IFmQueuedAction<T> {
    * Lifecycle events which will trigger the
    * given queued action
    */
-  on?: IFmLifecycleEvents;
+  on?: IFmLifecycleEvent;
   /** the callback function */
   cb: IFmQueueCallback<T>;
   /**
@@ -304,7 +304,7 @@ export interface IFmActionWatchRecord {
   id: string;
   model: IFmModelConstructor;
   options: IModelOptions;
-  on: IFmLifecycleEvents;
+  on: IFmLifecycleEvent;
 }
 
 export interface IRouteSyncChange {

@@ -1,4 +1,4 @@
-import { IVuexState, authActions, errors, other, recordConfirms, recordLocal, recordRollbacks, recordServerChanges, relationship, watch } from "../../private";
+import { IVuexState, authActions, errors, other, recordConfirms, recordLocal, recordRollbacks, recordServerChanges, relationship, watchActions } from "../../private";
 
 import { ActionTree } from "vuex";
 
@@ -10,7 +10,7 @@ export const firemodelActions = <T>() =>
     ...recordLocal<T>(),
     ...recordConfirms<T>(),
     ...recordRollbacks<T>(),
-    ...watch<T>(),
+    ...watchActions<T>(),
     ...relationship<T>(),
     ...other<T>()
   }) as ActionTree<IVuexState<T>, T>;

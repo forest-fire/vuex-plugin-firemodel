@@ -1,7 +1,7 @@
 import { FmConfigAction, FmConfigMutation, IFiremodelConfig, getDatabase } from "./private";
 
 import { Store } from "vuex";
-import {addNamespace} from "./shared"
+import {addNamespace} from "./util"
 
 /**
  * Based on the configuration passed in by the consuming app, core
