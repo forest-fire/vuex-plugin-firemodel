@@ -146,7 +146,7 @@ export const authActions = <T>() =>
      * Updates the user's email address. An email will be sent to the original email address
      * that allows owner of that email address to revoke the email address change.
      */
-    async updateEmail({ commit, state }, newEmail: string) {
+    async updateEmail({ commit, state }, { newEmail }: { newEmail:string }) {
       if (!state.currentUser) {
         commit(
           "error",

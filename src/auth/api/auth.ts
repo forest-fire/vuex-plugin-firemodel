@@ -139,7 +139,7 @@ export async function verifyPasswordResetCode(code: string): Promise<string> {
 export async function updateEmail(newEmail: string): Promise<void> {
   return getStore().dispatch({
     type: "@firemodel/updateEmail",
-    payload: newEmail
+    newEmail
   });
 }
 

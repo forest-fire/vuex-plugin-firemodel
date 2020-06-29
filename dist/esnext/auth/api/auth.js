@@ -96,7 +96,7 @@ export async function verifyPasswordResetCode(code) {
 export async function updateEmail(newEmail) {
     return getStore().dispatch({
         type: "@firemodel/updateEmail",
-        payload: newEmail
+        newEmail
     });
 }
 /**

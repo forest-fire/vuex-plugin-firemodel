@@ -112,7 +112,7 @@ export const authActions = () => ({
      * Updates the user's email address. An email will be sent to the original email address
      * that allows owner of that email address to revoke the email address change.
      */
-    async updateEmail({ commit, state }, newEmail) {
+    async updateEmail({ commit, state }, { newEmail }) {
         if (!state.currentUser) {
             commit("error", `The updateEmail dispatch was dispatched but the current user profile is empty!`);
             throw new FireModelPluginError(`The updateEmail dispatch was dispatched but the current user profile is empty!`, "not-ready");
