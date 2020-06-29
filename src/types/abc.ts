@@ -1,7 +1,7 @@
 import { Model, IPrimaryKey } from "firemodel";
-import type { IAbstractedDatabase } from "universal-fire";
-import { epochWithMilliseconds , IDictionary} from "common-types";
-import { AbcApi, AbcResult } from "../private";
+import type { IAbstractedDatabase, ISerializedQuery } from "universal-fire";
+import { epochWithMilliseconds, IDictionary } from "common-types";
+import { AbcApi, AbcResult, IGeneralizedQuery } from "../private";
 
 export interface IAbcApiConfig<T extends Model> {
   /**
@@ -64,10 +64,15 @@ export interface IAbcDiscreteRequest<T extends Model> extends IAbcRequest<T> {
 
 export type IAbcParam<T> = IPrimaryKey<T>[] | IAbcQueryRequest<T>;
 
+export interface IAbcFirebaseQueryResult<T> {
+  data: T[];
+  query: ISerializedQuery;
+}
+
 export interface IAbcQueryResults<T extends Model> {
   queryDefn: IAbcQueryDefinition<T>;
-  dexieQuery: () => Promise<T[]>;
-  firemodelQuery: () => Promise<T[]>;
+  dexieQuery: IGeneralizedQuery<T>;
+  firemodelQuery: () => Promise<IAbcFirebaseQueryResult<T>>;
 }
 
 /** An **ABC** request for records using a Query Helper */
@@ -113,6 +118,7 @@ export interface IQueryServerResults<T, K = IDictionary> {
   removeFromIdx: string[];
   /** pks removed from Vuex */
   removeFromVuex: string[];
+  query?: ISerializedQuery;
   overallCachePerformance: ICachePerformance;
 }
 
@@ -404,6 +410,7 @@ export interface IQueryResult<T, K = any> {
   queryDefn: IAbcQueryDefinition<T>;
   local?: IQueryLocalResults<T, K>;
   server?: IQueryServerResults<T, K>;
+  // query?: ISerializedQuery;
   options: IQueryOptions<T>;
 }
 

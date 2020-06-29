@@ -1,6 +1,7 @@
 import { Model, Record } from "firemodel";
 import { arrayToHash, hashToArray } from "typed-conversions";
 import { IDictionary } from "common-types";
+import type { SerializedQuery } from "universal-fire";
 import { AbcApi, IAbcPostWatcher, IAbcResult, AbcError } from "../../private";
 
 /**
@@ -10,7 +11,7 @@ import { AbcApi, IAbcPostWatcher, IAbcResult, AbcError } from "../../private";
  * watch certain elements of the returned resultset.
  */
 export class AbcResult<T extends Model> {
-  constructor(private _context: AbcApi<T>, private _results: IAbcResult<T>, private _performance?: IDictionary) {}
+  constructor(private _context: AbcApi<T>, private _results: IAbcResult<T>, private _performance?: IDictionary) { }
 
   static async create<T extends Model>(_context: AbcApi<T>, _results: IAbcResult<T>, _performance?: IDictionary) {
     const obj = new AbcResult(_context, _results, _performance);
@@ -18,7 +19,7 @@ export class AbcResult<T extends Model> {
       obj.records = obj.localRecords;
       return obj;
     }
-    
+
     // Models with dynamic paths
     const hasDynamicProperties = Record.dynamicPathProperties(obj._context.model.constructor).length > 0;
     if (hasDynamicProperties) {
@@ -32,7 +33,7 @@ export class AbcResult<T extends Model> {
 
       const queryResults = await obj._context.dexieTable.where(whereClause)
         .notEqual(notEqualVal).toArray()
-      
+
       const localOffDynamicPath = arrayToHash(queryResults)
 
       const server = arrayToHash(obj.serverRecords || []);
@@ -56,7 +57,7 @@ export class AbcResult<T extends Model> {
    */
   get resultFromQuery(): boolean {
     // TODO: we will add the correct option to the AbcResult constructor later
-    return true
+    return this._results.type === "query"
   }
 
   /**
@@ -96,6 +97,13 @@ export class AbcResult<T extends Model> {
     return this._results.options;
   }
 
+  get query() {
+    if (this._results.type !== "query") {
+      return;
+    }
+    return this._results.server?.query
+  }
+
   /** the query definition used to arrive at these results */
   get queryDefn() {
     if (this._results.type !== "query") {
@@ -106,16 +114,5 @@ export class AbcResult<T extends Model> {
     }
 
     return this._results.queryDefn;
-  }
-
-  /**
-   * Runs a callback which filters down the set of results
-   * which should be watched. This list is then filtered down
-   * to just those which do not currently have a watcher on them.
-   *
-   * @param fn the callback function to call
-   */
-  watch(fn: IAbcPostWatcher<T>) {
-    // const watcherIds = fn(this.results);
   }
 }
