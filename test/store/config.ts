@@ -1,6 +1,6 @@
 import * as lifecycle from "./lifecycle";
 
-import { AsyncMockData, IFiremodelConfig } from "@/public";
+import { AsyncMockData, IFiremodelConfig } from "@/";
 
 import { IDictionary } from "common-types";
 import { IMockConfig } from "universal-fire";
@@ -12,11 +12,11 @@ export const config = (data?: IDictionary | AsyncMockData) => {
   const mockConfig: IMockConfig = {
     mocking: true,
     mockAuth: {
-      providers: ['emailPassword'],
+      providers: ["emailPassword"],
       users: [{ email: "test@test.com", password: "foobar" }]
     },
     mockData: data || defaultData || {}
   };
 
   return mockConfig;
-}
+};

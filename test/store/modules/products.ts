@@ -1,23 +1,22 @@
 import { GetterTree, Module } from "vuex";
 
 import { IRootState } from "../index";
-import { Product } from "../../models/Product"
-import { firemodelMutations } from "@/public";
+import { Product } from "../../models/Product";
+import { firemodelMutations } from "@/";
 
 export type IProductsState = {
-  all: Product[]
+  all: Product[];
 };
 
 export const state: IProductsState = {
   all: []
 };
 
-export const getters: GetterTree<IProductsState, IRootState> = {
-};
+export const getters: GetterTree<IProductsState, IRootState> = {};
 
 const productsModule: Module<IProductsState, IRootState> = {
   state,
-  mutations: firemodelMutations('all'),
+  mutations: firemodelMutations("all"),
   getters,
   namespaced: true
 };

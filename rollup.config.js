@@ -11,14 +11,14 @@ const generalConfig = moduleSystem => ({
   },
   external: ["universal-fire", "firemock"],
   plugins: [
+    commonjs(),
     resolve(),
     typescript2({
       rootDir: ".",
       tsconfig: `tsconfig.es.json`,
       typescript: require("ttypescript"),
       declaration: moduleSystem === "es" ? true : false
-    }),
-    ...(moduleSystem === "cjs" ? [commonjs()] : [])
+    })
   ]
 });
 

@@ -1,4 +1,4 @@
-import { AbcApi, IAbcRequest, abc } from "@/public";
+import { AbcApi, IAbcRequest, abc } from "@/";
 
 import { Company } from "./models/Company";
 import { IRootState } from "./store";
@@ -27,7 +27,7 @@ describe("ABC API Basics => ", () => {
 
   afterEach(async () => {
     await AbcApi.clear();
-  })
+  });
 
   it("Instantiating returns ABC API surface", () => {
     const api = AbcApi.getModelApi(Person);
@@ -37,7 +37,9 @@ describe("ABC API Basics => ", () => {
     expect(api.cachePerformance.hits).toBe(0);
     expect(api.cachePerformance.misses).toBe(0);
 
-    expect(AbcApi.configuredFiremodelModels).toEqual(expect.arrayContaining(["Person"]));
+    expect(AbcApi.configuredFiremodelModels).toEqual(
+      expect.arrayContaining(["Person"])
+    );
 
     expect(api.get).toBeInstanceOf(Function);
     expect(api.load).toBeInstanceOf(Function);
@@ -50,8 +52,12 @@ describe("ABC API Basics => ", () => {
   });
 
   it("Prior to using a get/load API the IndexedDB is not openned but models with indexedDb are known", () => {
-    expect(AbcApi.configuredFiremodelModels).toEqual(expect.arrayContaining(["Person"]));
-    expect(AbcApi.configuredFiremodelModels).toEqual(expect.arrayContaining(["Company"]));
+    expect(AbcApi.configuredFiremodelModels).toEqual(
+      expect.arrayContaining(["Person"])
+    );
+    expect(AbcApi.configuredFiremodelModels).toEqual(
+      expect.arrayContaining(["Company"])
+    );
   });
 
   it("Connecting IndexedDB after at least one valid Model works and can call dexieTable() on instance", async () => {
@@ -70,7 +76,9 @@ describe("ABC API Basics => ", () => {
       );
     } catch (e) {
       expect(e).toBeInstanceOf(Error);
-      expect(e.message).toContain("You are attempting to access Dexie while connected");
+      expect(e.message).toContain(
+        "You are attempting to access Dexie while connected"
+      );
     }
   });
 
