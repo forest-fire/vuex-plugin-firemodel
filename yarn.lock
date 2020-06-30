@@ -5624,10 +5624,10 @@ firemock@^0.53.1:
     lodash.set "^4.3.2"
     typed-conversions "^0.11.1"
 
-firemodel@^0.53.2:
-  version "0.53.2"
-  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.53.2.tgz#21a0ff73e2f4979767d56441515ff091c4bc3441"
-  integrity sha512-NssGuVpMK6xO62Bv9xpGtC6sAXnrUn1SWEyawf9vbAWmMk6CEo/xGNAtaY+CskikygkUJWpwLZTA2pIt7Yh5rg==
+firemodel@^0.53.3:
+  version "0.53.3"
+  resolved "https://registry.yarnpkg.com/firemodel/-/firemodel-0.53.3.tgz#59943912e1bc0866258ed6067b6902e664adfdda"
+  integrity sha512-kH9FNDU17M++ID4I+LFo3jlXcHsGLqSpG7euvcOJCGbfR1LNQfLqOm6QxHcADe2Pw4d5Y6vvtVegaYjw5rsHvw==
   dependencies:
     common-types "^1.15.7"
     date-fns "^2.14.0"
