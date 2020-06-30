@@ -53,11 +53,11 @@
     "firemodel": "^0.53.4",
     "js-cookie": "^3.0.0-rc.0",
     "typed-conversions": "^0.11.1",
-    "universal-fire": "^0.53.7",
+    "universal-fire": "^0.53.9",
     "vuex": "^3.4.0"
   },
   "peerDependencies": {
-    "universal-fire": ">= 0.53.3"
+    "universal-fire": ">= 0.53.9"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
