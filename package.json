@@ -50,10 +50,10 @@
     "common-types": "^1.15.7",
     "fast-copy": "^2.1.0",
     "fast-equals": "^2.0.0",
-    "firemodel": "^0.53.3",
+    "firemodel": "^0.53.4",
     "js-cookie": "^3.0.0-rc.0",
     "typed-conversions": "^0.11.1",
-    "universal-fire": "^0.53.3",
+    "universal-fire": "^0.53.7",
     "vuex": "^3.4.0"
   },
   "peerDependencies": {
