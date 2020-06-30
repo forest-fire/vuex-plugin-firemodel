@@ -122,6 +122,19 @@ export interface IQueryServerResults<T, K = IDictionary> {
   query?: ISerializedQuery;
   overallCachePerformance: ICachePerformance;
 }
+/**
+ * Results from a Query request to Firebase server
+ */
+export interface IWatchResults<T, K = IDictionary> {
+  type: "watch";
+  underlying: "query" | "discrete"; // TODO: use existing ENUM value
+  server: {
+    records: T[];
+  },
+  options: {
+    offsets?: Partial<T>;
+  }
+}
 
 /**
  * Results from an ABC get/load which were retrieved from
@@ -416,9 +429,9 @@ export interface IQueryResult<T, K = any> {
 }
 
 /**
- * The results from either a Discrete or Query-based request.
+ * The results from either a Discrete, Query-based or Watch based request.
  */
-export type IAbcResult<T, K = any> = IDiscreteResult<T, K> | IQueryResult<T, K>;
+export type IAbcResult<T, K = any> = IDiscreteResult<T, K> | IQueryResult<T, K> | IWatchResults<T, K>;
 
 export interface IQueryOptions<T> extends IUniversalOptions<T> {
   watchNew?: boolean;

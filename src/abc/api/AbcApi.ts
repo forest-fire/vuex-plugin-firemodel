@@ -34,7 +34,10 @@ import {
   IPrimaryKey,
   Model,
   Record,
-  Watch
+  Watch,
+  IReduxDispatch,
+  FmEvents,
+  IFmWatchEvent
 } from "firemodel";
 import { IDictionary, pathJoin } from "common-types";
 import { capitalize, getStore } from "@/util";
@@ -369,9 +372,6 @@ export class AbcApi<T extends Model> {
           options
         });
 
-        // watch records
-        this.watch(serverResponse, options);
-
         // cache results to IndexedDB
         if (this.config.useIndexedDb) {
           saveToIndexedDb(server, this.dexieTable);
@@ -404,6 +404,10 @@ export class AbcApi<T extends Model> {
           `${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`,
           serverResponse
         );
+
+        // watch records
+        this.watch(serverResponse, options);
+        this.watchNew(serverResponse, options);
       });
     }
 
@@ -588,7 +592,7 @@ export class AbcApi<T extends Model> {
     // cache results to IndexedDB
     if (this.config.useIndexedDb) {
       // save to indexedDB
-      await saveToIndexedDb(server, this.dexieTable);
+      saveToIndexedDb(server, this.dexieTable);
 
       if (options.strategy === AbcStrategy.loadVuex) {
         store.commit(
@@ -691,6 +695,52 @@ export class AbcApi<T extends Model> {
   }
 
   /**
+   * Create watcher and attach a dispatcher to it to ensure that all mutations
+   * are ABC related.
+   */
+  watcherSetup() {
+    const store = getStore();
+    const dispatcher: IReduxDispatch<IFmWatchEvent<T>> = async payload => {
+      const events = [
+        FmEvents.RECORD_ADDED,
+        FmEvents.RECORD_CHANGED,
+        FmEvents.RECORD_REMOVED
+      ];
+
+      if (!events.includes(payload.type)) return;
+
+      const result = await AbcResult.create(this, {
+        type: "watch",
+        underlying: payload.eventFamily === "child" ? "query" : "discrete",
+        options: {
+          offsets: payload.compositeKey
+        },
+        server: {
+          records: [payload.value]
+        }
+      });
+
+      if (this.config.useIndexedDb) {
+        // saveToIndexedDb()
+        // store.commit()
+      }
+
+      // set new cookie with timestamp
+      // cookies.set(
+      //   SINCE_LAST_COOKIE,
+      //   JSON.stringify({
+      //     ...(cookies.getJSON(SINCE_LAST_COOKIE) || {}),
+      //     [this.model.pascal]: new Date().getTime()
+      //   })
+      // );
+    };
+    const watcher = Watch.list(this._modelConstructor);
+    watcher.dispatch(dispatcher);
+
+    return watcher;
+  }
+
+  /**
    * Watch records using the **ABC** API
    */
   async watch(serverResponse: AbcResult<T>, options: IAbcOptions<T>) {
@@ -698,42 +748,28 @@ export class AbcApi<T extends Model> {
     if (watch) {
       const isFunction = (x: any): x is IWatchCallback<T> =>
         typeof x === "function";
-      const watcher = Watch.list(this._modelConstructor);
-      if (isFunction(watch)) {
-        const watchIds = serverResponse.records
-          .filter(p => watch(p))
-          .map(p => p.id!);
-        await watcher
-          .ids(...watchIds)
-          .start()
-          .then(() =>
-            console.info(
-              `${this._modelConstructor.name} watch function: `,
-              watchIds
-            )
-          );
-      } else {
-        if (serverResponse.resultFromQuery && serverResponse.query) {
-          await watcher
-            .fromQuery(serverResponse.query)
-            .start()
-            .then(() =>
-              console.info(
-                `${this._modelConstructor.name} watch query: `,
-                serverResponse.query?.toString()
-              )
-            );
-        } else {
-          await watcher
-            .ids(...serverResponse.records.map(p => p.id!))
-            .start()
-            .then(() =>
-              console.info(
-                `${this._modelConstructor.name} watch all: `,
-                ...serverResponse.records.map(p => p.id!)
-              )
-            );
-        }
+      const watcher = this.watcherSetup();
+      const watchIds = isFunction(watch)
+        ? serverResponse.records.filter(p => watch(p)).map(p => p.id!)
+        : serverResponse.records.map(p => p.id!);
+      await watcher.ids(...watchIds).start();
+    }
+  }
+
+  /**
+   * Watch records using the **ABC** API
+   */
+  async watchNew(serverResponse: AbcResult<T>, options: IQueryOptions<T>) {
+    const { watchNew } = options;
+    if (watchNew) {
+      const watcher = this.watcherSetup();
+
+      if (serverResponse.resultFromQuery && serverResponse.query) {
+        await watcher.fromQuery(serverResponse.query).start();
+        console.info(
+          `${this._modelConstructor.name} watch query: `,
+          serverResponse.query?.toString()
+        );
       }
     }
   }

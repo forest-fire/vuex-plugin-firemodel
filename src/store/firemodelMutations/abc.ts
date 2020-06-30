@@ -18,6 +18,7 @@ import Vue from "vue";
 export function AbcFiremodelMutation<T>(
   propOffset?: keyof T & string
 ): MutationTree<T> {
+  const offset = !propOffset ? ("all" as keyof T & string) : propOffset;
   return {
     [AbcMutation.ABC_VUEX_UPDATE_FROM_IDX]<T extends IDictionary>(
       state: T,
@@ -26,7 +27,7 @@ export function AbcFiremodelMutation<T>(
       if (payload.vuex.isList) {
         Vue.set(state, payload.vuex.fullPath, payload.records);
       } else {
-        if (!validResultSize(payload, "local")) {
+        if (!validResultSize(payload)) {
           return;
         }
         changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
