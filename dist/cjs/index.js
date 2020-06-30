@@ -214,6 +214,8 @@ const NamedFakes = {
     RelationshipCardinality["belongsTo"] = "belongsTo";
 })(exports.RelationshipCardinality || (exports.RelationshipCardinality = {}));
 
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
 /*! *****************************************************************************
 Copyright (C) Microsoft. All rights reserved.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -233,7 +235,7 @@ var Reflect$1;
     // Metadata Proposal
     // https://rbuckton.github.io/reflect-metadata/
     (function (factory) {
-        var root = typeof global === "object" ? global :
+        var root = typeof commonjsGlobal === "object" ? commonjsGlobal :
             typeof self === "object" ? self :
                 typeof this === "object" ? this :
                     Function("return this;")();

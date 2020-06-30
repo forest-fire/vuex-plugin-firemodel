@@ -17,8 +17,7 @@ const generalConfig = moduleSystem => ({
       tsconfig: `tsconfig.es.json`,
       typescript: require("ttypescript"),
       declaration: moduleSystem === "es" ? true : false
-    }),
-    ...(moduleSystem === "cjs" ? [commonjs()] : [])
+    })
   ]
 });
 

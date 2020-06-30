@@ -5,5 +5,5 @@ export * from "firemodel";
 // local file exports
 export * from "./coreServices";
 export * from "./plugin";
-export * from "./queueLifecycleEvents";
+export * from ".ifecycleEvents";
 //#endregion
