@@ -11,6 +11,7 @@ const generalConfig = moduleSystem => ({
   },
   external: ["universal-fire", "firemock"],
   plugins: [
+    commonjs(),
     resolve(),
     typescript2({
       rootDir: ".",
