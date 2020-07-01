@@ -1,7 +1,7 @@
 import { GetterTree, Module } from "vuex";
 
 import { IRootState } from "../index";
-import { firemodelMutations } from "@/";
+import { firemodelMutations } from "@/index";
 
 export type IUserProfileState = {
   name: {

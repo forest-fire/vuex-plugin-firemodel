@@ -1,6 +1,6 @@
 import * as lifecycle from "./lifecycle";
 
-import { AsyncMockData, IFiremodelConfig } from "@/";
+import { AsyncMockData, IFiremodelConfig } from "@/index";
 
 import { IDictionary } from "common-types";
 import { IMockConfig } from "universal-fire";

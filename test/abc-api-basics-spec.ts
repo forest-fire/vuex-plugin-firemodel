@@ -1,4 +1,4 @@
-import { AbcApi, IAbcRequest, abc } from "@/";
+import { AbcApi, IAbcRequest, abc } from "@/index";
 
 import { Company } from "./models/Company";
 import { IRootState } from "./store";
