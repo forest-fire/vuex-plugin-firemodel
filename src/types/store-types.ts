@@ -1,5 +1,5 @@
 import { ICompositeKey, Model } from "firemodel";
-import { IFmEventActions, IVuexState } from "@/types";
+import { IFmEventActions, IFiremodelState } from "@/types";
 import { actions, mutations, state } from "@/store";
 
 import { Module } from "vuex";
@@ -16,7 +16,7 @@ export function generateLocalId<T = Model>(
 // );
 // export type IFmConfigMutationTypes = keyof typeof mutationTypes;
 
-type FunctionToModule = <T>() => Module<IVuexState<T>, T>;
+type FunctionToModule = <T>() => Module<IFiremodelState<T>, T>;
 
 /**
  * The **Vuex** module that this plugin exports

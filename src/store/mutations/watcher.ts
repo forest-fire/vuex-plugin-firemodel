@@ -1,4 +1,4 @@
-import { FmConfigMutation, IVuexState } from "@/types";
+import { FmConfigMutation, IFiremodelState } from "@/types";
 import { IFmWatcherStopped, IWatcherEventContext } from "firemodel";
 
 import { MutationTree } from "vuex";
@@ -7,14 +7,14 @@ import Vue from "vue";
 export const watcher = <T>() =>
   ({
     [FmConfigMutation.watcherStarting](
-      state: IVuexState<T>,
+      state: IFiremodelState<T>,
       payload: IWatcherEventContext
     ) {
       // nothing to do
     },
 
     [FmConfigMutation.watcherStarted](
-      state: IVuexState<T>,
+      state: IFiremodelState<T>,
       payload: IWatcherEventContext
     ) {
       Vue.set(
@@ -25,22 +25,28 @@ export const watcher = <T>() =>
     },
 
     [FmConfigMutation.watcherStopped](
-      state: IVuexState<T>,
+      state: IFiremodelState<T>,
       payload: IFmWatcherStopped
     ) {
       state.watching = state.watching.filter(
         i => i.watcherId !== payload.watcherId
       );
     },
-    [FmConfigMutation.watcherAllStopped](state: IVuexState<T>, payload) {
+    [FmConfigMutation.watcherAllStopped](state: IFiremodelState<T>, payload) {
       state.watching = [];
     },
 
-    [FmConfigMutation.watcherMuted](state: IVuexState<T>, watcherId: string) {
+    [FmConfigMutation.watcherMuted](
+      state: IFiremodelState<T>,
+      watcherId: string
+    ) {
       state.muted = state.muted.concat(watcherId);
     },
 
-    [FmConfigMutation.watcherUnmuted](state: IVuexState<T>, watcherId: string) {
+    [FmConfigMutation.watcherUnmuted](
+      state: IFiremodelState<T>,
+      watcherId: string
+    ) {
       state.muted = state.muted.filter(i => i !== watcherId);
     }
-  } as MutationTree<IVuexState<T>>);
+  } as MutationTree<IFiremodelState<T>>);

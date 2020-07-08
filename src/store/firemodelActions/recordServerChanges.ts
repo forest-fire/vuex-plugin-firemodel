@@ -1,7 +1,4 @@
-import {
-FmCrudMutation,
-IVuexState
-} from "@/types";
+import { FmCrudMutation, IFiremodelState } from "@/types";
 import { FmEvents, IFmWatchEvent } from "firemodel";
 
 import { ActionTree } from "vuex";
@@ -62,4 +59,4 @@ export const recordServerChanges = <T>() =>
         );
       }
     }
-  } as ActionTree<IVuexState<T>, T>);
+  } as ActionTree<IFiremodelState<T>, T>);

@@ -1,10 +1,10 @@
-import { IVuexState } from "@/types";
+import { IFiremodelState } from "@/types";
 
 /**
  * The default state for this plugin's **Vuex** state node
  */
-export const state: <T>() => IVuexState<T> = <T>() => ({
-  authenticated: false,
+export const state: <T>() => IFiremodelState<T> = <T>() => ({
+  authenticated: undefined,
   status: "unconfigured",
   queued: [],
   watching: [],

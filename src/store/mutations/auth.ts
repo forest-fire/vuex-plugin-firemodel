@@ -1,4 +1,4 @@
-import { ICurrentUser, IVuexState } from "@/types";
+import { ICurrentUser, IFiremodelState } from "@/types";
 
 import { IDictionary } from "common-types";
 import { MutationTree } from "vuex";
@@ -66,4 +66,4 @@ export const authMutations = <T>() =>
     ANONYMOUS_LOGIN(state, payload) {
       // no-op
     }
-  } as MutationTree<IVuexState<T>>);
+  } as MutationTree<IFiremodelState<T>>);

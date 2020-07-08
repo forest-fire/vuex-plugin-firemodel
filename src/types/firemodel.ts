@@ -17,15 +17,19 @@ export interface IFiremodelAbbreviatedUser {
   fullProfile: User;
 }
 
-export interface IVuexState<T> {
+export interface IFiremodelState<T> {
   /** the configuration used to connect to the Firebase DB */
   config?: IClientConfig;
   /** a list of custom claims that this user has */
   claims?: IDictionary;
   /** the Auth tokenId and associated properties; which includes "custom claims" */
   token?: IdTokenResult;
-  /** the authentication status of the user */
-  authenticated: false | "anonymous" | "logged-in";
+  /**
+   * the authentication status of the user; default state is _undefined_ until
+   * the appropriatate state can be established as soon as the Firebase SDK loads and indicates
+   * it's status.
+   */
+  authenticated: undefined | false | "anonymous" | "logged-in";
   /** the AuthCredential received when logging in */
   userCredential?: AuthCredential;
   currentUser?: ICurrentUser;

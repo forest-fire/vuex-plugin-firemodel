@@ -1,4 +1,4 @@
-import { FmConfigAction, IFiremodelConfig, IVuexState, FiremodelModule} from "@/types";
+import { FmConfigAction, IFiremodelConfig, IFiremodelState, FiremodelModule} from "@/types";
 import { addNamespace, setInitialState, storeDatabase, storePluginConfig, } from "@/util";
 import { coreServices, queueLifecycleEvents } from "@/private"
 
@@ -8,7 +8,7 @@ import type { Store } from "vuex";
 import copy from "fast-copy";
 import { preserveStore } from "@/util";
 
-export type IFiremodelVuexModule<T> = { "@firemodel": IVuexState<T> };
+export type IFiremodelVuexModule<T> = { "@firemodel": IFiremodelState<T> };
 
 /**
  * **FiremodelPlugin**
@@ -29,7 +29,7 @@ export const FiremodelPlugin = <T>(
 ) => {
   storeDatabase(db as IAbstractedDatabase);
   storePluginConfig(config);
-  type IRootState = T & { "@firemodel": IVuexState<T> };
+  type IRootState = T & { "@firemodel": IFiremodelState<T> };
   return (store: Store<IRootState>) => {
     setInitialState(copy( store.state ));
     preserveStore(store)

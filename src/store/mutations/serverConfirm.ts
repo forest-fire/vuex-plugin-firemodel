@@ -1,4 +1,4 @@
-import { FmCrudMutation, IVuexState } from "@/types";
+import { FmCrudMutation, IFiremodelState } from "@/types";
 
 import { IFmLocalRecordEvent } from "firemodel";
 import { MutationTree } from "vuex";
@@ -39,4 +39,4 @@ export const serverConfirm = <T>() =>
 
       Vue.set(state, "localOnly", localOnly);
     }
-  } as MutationTree<IVuexState<T>>);
+  } as MutationTree<IFiremodelState<T>>);

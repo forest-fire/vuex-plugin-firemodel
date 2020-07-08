@@ -1,5 +1,5 @@
 import { ActionTree } from "vuex";
-import { IVuexState } from "@/types";
+import { IFiremodelState } from "@/types";
 
 export const other = <T>() =>
   ({
@@ -9,4 +9,4 @@ export const other = <T>() =>
     async RESET({ commit }, module: string) {
       commit(`${module}/RESET`, { module }, { root: true });
     }
-  } as ActionTree<IVuexState<T>, T>);
+  } as ActionTree<IFiremodelState<T>, T>);

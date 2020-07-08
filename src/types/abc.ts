@@ -3,6 +3,7 @@ import type { IAbstractedDatabase, ISerializedQuery } from "universal-fire";
 import { epochWithMilliseconds, IDictionary } from "common-types";
 import type { AbcApi, AbcResult } from "@/abc";
 
+
 export interface IAbcApiConfig<T extends Model> {
   /**
    * indicates whether the Vuex store is storing a _list_

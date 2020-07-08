@@ -1,6 +1,6 @@
 import * as lifecycle from "./lifecycle";
 
-import { AsyncMockData, IVuexState, } from '@/types'
+import { AsyncMockData, IFiremodelState } from "@/types";
 import Vuex, { Store } from "vuex";
 import companies, { ICompaniesState } from "./modules/companies";
 import orders, { IOrdersState } from "./modules/orders";
@@ -8,7 +8,7 @@ import products, { IProductsState } from "./modules/products";
 import userProfile, { IUserProfileState } from "./modules/userProfile";
 
 import { Company } from "../models/Company";
-import { FiremodelPlugin } from "@/plugin"
+import { FiremodelPlugin } from "@/plugin";
 import { IDictionary } from "common-types";
 import { Order } from "../models/Order";
 import { Person } from "../models/Person";
@@ -25,7 +25,7 @@ export interface IRootState {
   userProfiles: IUserProfileState;
   companies: ICompaniesState;
   orders: IOrdersState;
-  ["@firemodel"]: IVuexState<IRootState>;
+  ["@firemodel"]: IFiremodelState<IRootState>;
 }
 
 export let store: Store<IRootState>;
@@ -37,19 +37,21 @@ export let store: Store<IRootState>;
  * as a parameter
  */
 export const setupStore = (data?: IDictionary | AsyncMockData) => {
-  const db = new RealTimeClient(config(data))
+  const db = new RealTimeClient(config(data));
   store = new Vuex.Store<IRootState>({
     modules: {
       products,
       userProfile,
       companies,
-      orders,
+      orders
     },
-    plugins: [FiremodelPlugin(db, {
-      connect: true,
-      auth: true,
-      ...lifecycle
-    })]
+    plugins: [
+      FiremodelPlugin(db, {
+        connect: true,
+        auth: true,
+        ...lifecycle
+      })
+    ]
   });
   return store;
 };
