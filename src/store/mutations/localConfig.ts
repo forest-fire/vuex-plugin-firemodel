@@ -3,7 +3,7 @@ import {
   ICurrentUser,
   IFmLifecycleEvent,
   IFmQueuedAction,
-  IVuexState
+  IFiremodelState
 } from "@/types";
 import { User, UserCredential } from "@firebase/auth-types";
 
@@ -82,7 +82,7 @@ export const localConfig = <T>() =>
     ) {
       //
     }
-  } as MutationTree<IVuexState<T>>);
+  } as MutationTree<IFiremodelState<T>>);
 
 function isUserCredential(user: User | UserCredential): user is UserCredential {
   return (user as UserCredential).credential ? true : false;

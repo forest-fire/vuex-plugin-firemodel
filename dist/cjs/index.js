@@ -14744,7 +14744,7 @@ const mutations = () => (Object.assign(Object.assign(Object.assign(Object.assign
  * The default state for this plugin's **Vuex** state node
  */
 const state = () => ({
-    authenticated: false,
+    authenticated: undefined,
     status: "unconfigured",
     queued: [],
     watching: [],

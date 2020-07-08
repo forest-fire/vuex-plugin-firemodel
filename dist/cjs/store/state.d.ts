@@ -1,5 +1,5 @@
-import { IVuexState } from "../types";
+import { IFiremodelState } from "../types";
 /**
  * The default state for this plugin's **Vuex** state node
  */
-export declare const state: <T>() => IVuexState<T>;
+export declare const state: <T>() => IFiremodelState<T>;

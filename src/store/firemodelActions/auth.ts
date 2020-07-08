@@ -4,11 +4,11 @@ import {
   User,
   UserCredential
 } from "universal-fire";
-import { IAuthProfile, ISignOutPayload, IVuexState } from "@/types";
+import { IAuthProfile, ISignOutPayload, IFiremodelState } from "@/types";
 import { getAuth, getDatabase } from "@/util";
 
 import { ActionTree } from "vuex";
-import { FireModelPluginError } from "@/errors"
+import { FireModelPluginError } from "@/errors";
 import { Record } from "firemodel";
 
 /**
@@ -87,7 +87,6 @@ export const authActions = <T>() =>
       }: { email: string; actionCodeSettings?: ActionCodeSettings | null }
     ) {
       try {
-        ;
         const auth = await getAuth();
         await auth.sendPasswordResetEmail(email, actionCodeSettings);
         commit("sendPasswordResetEmail", { email, actionCodeSettings });
@@ -147,7 +146,7 @@ export const authActions = <T>() =>
      * Updates the user's email address. An email will be sent to the original email address
      * that allows owner of that email address to revoke the email address change.
      */
-    async updateEmail({ commit, state }, { newEmail }: { newEmail:string }) {
+    async updateEmail({ commit, state }, { newEmail }: { newEmail: string }) {
       if (!state.currentUser) {
         commit(
           "error",
@@ -280,7 +279,10 @@ export const authActions = <T>() =>
       }
     },
 
-    async reauthenticateWithCredential({ commit }, { credential }: { credential: AuthCredential }) {
+    async reauthenticateWithCredential(
+      { commit },
+      { credential }: { credential: AuthCredential }
+    ) {
       try {
         const db = await getDatabase();
         Record.defaultDb = db;
@@ -301,7 +303,10 @@ export const authActions = <T>() =>
       }
     },
 
-    async linkWithCredential({ commit }, { credential }: { credential: AuthCredential }) {
+    async linkWithCredential(
+      { commit },
+      { credential }: { credential: AuthCredential }
+    ) {
       try {
         const db = await getDatabase();
         Record.defaultDb = db;
@@ -312,4 +317,4 @@ export const authActions = <T>() =>
         throw new FireModelPluginError(e.message, "linkWithCredential");
       }
     }
-  } as ActionTree<IVuexState<T>, T>);
+  } as ActionTree<IFiremodelState<T>, T>);

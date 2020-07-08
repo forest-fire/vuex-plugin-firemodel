@@ -9,7 +9,7 @@ import {
   watcher
 } from "@/store";
 
-import { IVuexState } from "@/types";
+import { IFiremodelState } from "@/types";
 import { MutationTree } from "vuex";
 
 /**
@@ -27,6 +27,6 @@ export const mutations = <T>() =>
     ...localCrud<T>(),
     ...relationships<T>(),
     ...watcher<T>()
-  } as MutationTree<IVuexState<T>>);
+  } as MutationTree<IFiremodelState<T>>);
 
 export type IFiremodelMutation = keyof typeof mutations;

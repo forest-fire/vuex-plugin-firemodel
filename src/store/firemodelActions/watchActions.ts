@@ -1,10 +1,8 @@
-import { FmConfigMutation, FmCrudMutation, IVuexState } from "@/types";
+import { FmConfigMutation, FmCrudMutation, IFiremodelState } from "@/types";
 import { FmEvents, IFmWatchEvent, IFmWatcherStopped } from "firemodel";
 
 import { ActionTree } from "vuex";
-import {
-determineLocalStateNode
-} from '@/util'
+import { determineLocalStateNode } from "@/util";
 
 export const watchActions = <T>() =>
   ({
@@ -44,4 +42,4 @@ export const watchActions = <T>() =>
         commit(FmConfigMutation.watcherUnmuted, payload.watcherId);
       }, 3000);
     }
-  } as ActionTree<IVuexState<T>, T>);
+  } as ActionTree<IFiremodelState<T>, T>);

@@ -1,4 +1,4 @@
-import { IVuexState } from "@/types";
+import { IFiremodelState } from "@/types";
 import { MutationTree } from "vuex";
 
 /**
@@ -10,4 +10,4 @@ export const errorMutations = <T>() =>
     error(state, err) {
       state.errors = state.errors ? state.errors.concat(err) : [err];
     }
-  } as MutationTree<IVuexState<T>>);
+  } as MutationTree<IFiremodelState<T>>);

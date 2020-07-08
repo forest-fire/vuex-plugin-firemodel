@@ -1,4 +1,4 @@
-import { FmCrudMutation, IVuexState } from "@/types";
+import { FmCrudMutation, IFiremodelState } from "@/types";
 import { FmEvents, IFmWatchEvent } from "firemodel";
 import { determineLocalStateNode, get } from "@/util";
 
@@ -52,4 +52,4 @@ export const recordLocal = <T>() =>
         }
       );
     }
-  } as ActionTree<IVuexState<T>, T>);
+  } as ActionTree<IFiremodelState<T>, T>);
