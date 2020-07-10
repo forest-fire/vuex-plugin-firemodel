@@ -23851,7 +23851,6 @@ const authActions = () => ({
      */
     async sendPasswordResetEmail({ commit }, { email, actionCodeSettings }) {
         try {
-            ;
             const auth = await getAuth();
             await auth.sendPasswordResetEmail(email, actionCodeSettings);
             commit("sendPasswordResetEmail", { email, actionCodeSettings });

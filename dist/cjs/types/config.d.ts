@@ -2,7 +2,7 @@ import { IDictionary, epoch } from "common-types";
 import type { IClientAuth, IAbstractedDatabase } from 'universal-fire';
 import { Watch, Record, List, Model, IModelOptions } from "firemodel";
 import { Commit, Dispatch } from "vuex";
-import { IAuthPersistenceStrategy, IVuexState } from "./";
+import { IAuthPersistenceStrategy, IFiremodelState } from "./";
 export declare type AsyncMockData = () => Promise<IDictionary>;
 export declare type IFmLifecycleContext<T> = IFmAuthenticatatedContext<T> | IFmConnectedContext<T> | IFmLoginEventContext<T> | IFmLogoutEventContext<T> | IFmUserChangeEventContext<T> | IFmRouteEventContext<T>;
 /** the base properties which all events have */
@@ -16,7 +16,7 @@ export interface IFmEventBase<T> {
     commit: Commit;
     /** the root state of Vuex */
     state: T & {
-        "@firemodel": IVuexState<T>;
+        "@firemodel": IFiremodelState<T>;
     };
 }
 /**

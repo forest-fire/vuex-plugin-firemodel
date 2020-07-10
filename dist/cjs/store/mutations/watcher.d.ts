@@ -1,3 +1,3 @@
-import { IVuexState } from "../../types";
+import { IFiremodelState } from "../../types";
 import { MutationTree } from "vuex";
-export declare const watcher: <T>() => MutationTree<IVuexState<T>>;
+export declare const watcher: <T>() => MutationTree<IFiremodelState<T>>;
