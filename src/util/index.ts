@@ -1,11 +1,12 @@
 // #autoindex:named
 //#region autoindexed files
-// indexed at: 6th Jun, 2020, 07:49 PM ( GMT+0 )
+// indexed at: 7th Jul, 2020, 03:58 PM ( GMT+0 )
 // local file exports
 export * from "./addNamespace";
 export * from "./authChanges";
 export * from "./capitalize";
 export * from "./changeRoot";
+export * from "./cookie";
 export * from "./determineLocalStateNode";
 export * from "./get";
 export * from "./isRecord";

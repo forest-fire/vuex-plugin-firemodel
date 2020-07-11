@@ -14,7 +14,9 @@ import {
   IQueryServerResults,
   IWatchCallback,
   QueryType,
-  isDiscreteRequest
+  isDiscreteRequest,
+  IWatchServerResults,
+  SINCE_LAST_COOKIE
 } from "@/types";
 import {
   AbcResult,
@@ -40,7 +42,7 @@ import {
   IFmWatchEvent
 } from "firemodel";
 import { IDictionary, pathJoin } from "common-types";
-import { capitalize, getStore } from "@/util";
+import { capitalize, getStore, setCookie } from "@/util";
 
 import { AbcError } from "@/errors";
 
@@ -698,7 +700,7 @@ export class AbcApi<T extends Model> {
    * Create watcher and attach a dispatcher to it to ensure that all mutations
    * are ABC related.
    */
-  watcherSetup() {
+  watcherSetup(options: IAbcOptions<T> = {}) {
     const store = getStore();
     const dispatcher: IReduxDispatch<IFmWatchEvent<T>> = async payload => {
       const events = [
@@ -709,30 +711,33 @@ export class AbcApi<T extends Model> {
 
       if (!events.includes(payload.type)) return;
 
+      const server: IWatchServerResults<T> = {
+        records: [payload.value]
+      };
+
       const result = await AbcResult.create(this, {
         type: "watch",
         underlying: payload.eventFamily === "child" ? "query" : "discrete",
         options: {
           offsets: payload.compositeKey
         },
-        server: {
-          records: [payload.value]
-        }
+        server
       });
 
+      store.commit(FmEvents.WATCHER_STARTED, payload);
+
       if (this.config.useIndexedDb) {
-        // saveToIndexedDb()
-        // store.commit()
+        saveToIndexedDb(server, this.dexieTable);
+        if (options.strategy === AbcStrategy.loadVuex) {
+          store.commit(
+            `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`,
+            result
+          );
+        }
       }
 
       // set new cookie with timestamp
-      // cookies.set(
-      //   SINCE_LAST_COOKIE,
-      //   JSON.stringify({
-      //     ...(cookies.getJSON(SINCE_LAST_COOKIE) || {}),
-      //     [this.model.pascal]: new Date().getTime()
-      //   })
-      // );
+      setCookie(this.model.pascal);
     };
     const watcher = Watch.list(this._modelConstructor);
     watcher.dispatch(dispatcher);
@@ -748,7 +753,7 @@ export class AbcApi<T extends Model> {
     if (watch) {
       const isFunction = (x: any): x is IWatchCallback<T> =>
         typeof x === "function";
-      const watcher = this.watcherSetup();
+      const watcher = this.watcherSetup(options);
       const watchIds = isFunction(watch)
         ? serverResponse.records.filter(p => watch(p)).map(p => p.id!)
         : serverResponse.records.map(p => p.id!);
@@ -762,14 +767,13 @@ export class AbcApi<T extends Model> {
   async watchNew(serverResponse: AbcResult<T>, options: IQueryOptions<T>) {
     const { watchNew } = options;
     if (watchNew) {
-      const watcher = this.watcherSetup();
-
+      const watcher = this.watcherSetup(options);
       if (serverResponse.resultFromQuery && serverResponse.query) {
         await watcher.fromQuery(serverResponse.query).start();
-        console.info(
-          `${this._modelConstructor.name} watch query: `,
-          serverResponse.query?.toString()
-        );
+        // console.info(
+        //   `${this._modelConstructor.name} watch query: `,
+        //   serverResponse.query?.toString()
+        // );
       }
     }
   }
@@ -781,6 +785,7 @@ export class AbcApi<T extends Model> {
       cachePerformance: this.cachePerformance
     };
   }
+
   toString() {
     return `ABC API for the "${this.about.model.pascal}" model [ cache: ${this.cachePerformance.hits}/${this.cachePerformance.misses} ]`;
   }

@@ -1,10 +1,10 @@
-import { IDiscreteServerResults, IQueryServerResults } from "@/types";
+import { IServerResults } from "@/types";
 import { IPrimaryKey, Model } from "firemodel";
 
 import Dexie from "dexie";
 
 export function saveToIndexedDb<T extends Model>(
-  server: IQueryServerResults<T> | IDiscreteServerResults<T>,
+  server: IServerResults<T>,
   dexieTable: Dexie.Table<T, IPrimaryKey<T>>
 ) {
   const waitFor: any[] = [];

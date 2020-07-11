@@ -9,7 +9,7 @@ import {
 import { List, Model } from "firemodel";
 
 import { AbcApi } from "@/abc";
-import cookies from "js-cookie";
+import { getCookie, setCookie } from "@/util";
 
 /**
  * **since**
@@ -24,15 +24,9 @@ export const since: IAbcQueryHelper = function since<T extends Model>(
   return (ctx: AbcApi<T>, options: IQueryOptions<T> = {}) => {
     defn = { ...defn, queryType: QueryType.since };
     if (!defn.timestamp) {
-      const last = (cookies.getJSON(SINCE_LAST_COOKIE) || {})[ctx.model.pascal];
+      const last = getCookie(ctx.model.pascal);
       if (!last) {
-        cookies.set(
-          SINCE_LAST_COOKIE,
-          JSON.stringify({
-            ...(cookies.getJSON(SINCE_LAST_COOKIE) || {}),
-            [ctx.model.pascal]: new Date().getTime()
-          })
-        );
+        setCookie(ctx.model.pascal);
       }
       defn.timestamp = last || new Date().getTime();
     }

@@ -122,20 +122,23 @@ export interface IQueryServerResults<T, K = IDictionary> {
   query?: ISerializedQuery;
   overallCachePerformance: ICachePerformance;
 }
+
+export interface IWatchServerResults<T, K = IDictionary> {
+  records: T[]
+}
 /**
  * Results from a Query request to Firebase server
  */
 export interface IWatchResults<T, K = IDictionary> {
   type: "watch";
   underlying: "query" | "discrete"; // TODO: use existing ENUM value
-  server: {
-    records: T[];
-  },
+  server: IWatchServerResults<T, K>,
   options: {
     offsets?: Partial<T>;
   }
 }
 
+export type IServerResults<T> = IQueryServerResults<T> | IDiscreteServerResults<T> | IWatchServerResults<T>;
 /**
  * Results from an ABC get/load which were retrieved from
  * the combined knowledge of Vuex and IndexedDB. The records
