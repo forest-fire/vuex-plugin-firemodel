@@ -2,6 +2,7 @@ export * from "./addNamespace";
 export * from "./authChanges";
 export * from "./capitalize";
 export * from "./changeRoot";
+export * from "./cookie";
 export * from "./determineLocalStateNode";
 export * from "./get";
 export * from "./isRecord";

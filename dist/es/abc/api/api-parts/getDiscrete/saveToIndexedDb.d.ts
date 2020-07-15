@@ -1,4 +1,4 @@
-import { IDiscreteServerResults, IQueryServerResults } from "../../../../types";
+import { IServerResults } from "../../../../types";
 import { IPrimaryKey, Model } from "firemodel";
 import Dexie from "dexie";
-export declare function saveToIndexedDb<T extends Model>(server: IQueryServerResults<T> | IDiscreteServerResults<T>, dexieTable: Dexie.Table<T, IPrimaryKey<T>>): Promise<any[]>;
+export declare function saveToIndexedDb<T extends Model>(server: IServerResults<T>, dexieTable: Dexie.Table<T, IPrimaryKey<T>>): Promise<any[]>;

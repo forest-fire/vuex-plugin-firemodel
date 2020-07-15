@@ -7946,7 +7946,7 @@ class List extends FireModel {
      * @param options model options
      */
     static async all(model, options = {}) {
-        const query = universalFire.SerializedQuery.create(this.defaultDb).orderByChild("lastUpdated");
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb).orderByChild("lastUpdated");
         const list = await List.fromQuery(model, query, options);
         return list;
     }
@@ -7959,7 +7959,7 @@ class List extends FireModel {
      * @param options model options
      */
     static async first(model, howMany, options = {}) {
-        const query = universalFire.SerializedQuery.create(this.defaultDb)
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb)
             .orderByChild("createdAt")
             .limitToLast(howMany);
         const list = await List.fromQuery(model, query, options);
@@ -7976,7 +7976,7 @@ class List extends FireModel {
      * @param options
      */
     static async recent(model, howMany, offset = 0, options = {}) {
-        const query = universalFire.SerializedQuery.create(this.defaultDb)
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb)
             .orderByChild("lastUpdated")
             .limitToFirst(howMany);
         const list = await List.fromQuery(model, query, options);
@@ -7993,7 +7993,7 @@ class List extends FireModel {
             e.name = "NotAllowed";
             throw e;
         }
-        const query = universalFire.SerializedQuery.create(this.defaultDb)
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb)
             .orderByChild("lastUpdated")
             .startAt(since);
         const list = await List.fromQuery(model, query, options);
@@ -8007,7 +8007,7 @@ class List extends FireModel {
      * without any update for the longest.
      */
     static async inactive(model, howMany, options = {}) {
-        const query = universalFire.SerializedQuery.create(this.defaultDb)
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb)
             .orderByChild("lastUpdated")
             .limitToLast(howMany);
         const list = await List.fromQuery(model, query, options);
@@ -8020,7 +8020,7 @@ class List extends FireModel {
      * that the record was **created**.
      */
     static async last(model, howMany, options = {}) {
-        const query = universalFire.SerializedQuery.create(this.defaultDb)
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb)
             .orderByChild("createdAt")
             .limitToFirst(howMany);
         const list = await List.fromQuery(model, query, options);
@@ -8069,7 +8069,7 @@ class List extends FireModel {
             val = value[1];
             operation = value[0];
         }
-        const query = universalFire.SerializedQuery.create(this.defaultDb)
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb)
             .orderByChild(property)
             // @ts-ignore
             // Not sure why there is a typing issue here.
@@ -23374,6 +23374,125 @@ const changeRoot = (state, updatedProps, moduleName) => {
     return state;
 };
 
+/*! js-cookie v3.0.0-rc.0 | MIT */
+function assign (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+    for (var key in source) {
+      target[key] = source[key];
+    }
+  }
+  return target
+}
+
+var defaultConverter = {
+  read: function (value) {
+    return value.replace(/%3B/g, ';')
+  },
+  write: function (value) {
+    return value.replace(/;/g, '%3B')
+  }
+};
+
+function init (converter, defaultAttributes) {
+  function set (key, value, attributes) {
+    if (typeof document === 'undefined') {
+      return
+    }
+
+    attributes = assign({}, defaultAttributes, attributes);
+
+    if (typeof attributes.expires === 'number') {
+      attributes.expires = new Date(Date.now() + attributes.expires * 864e5);
+    }
+    if (attributes.expires) {
+      attributes.expires = attributes.expires.toUTCString();
+    }
+
+    key = defaultConverter.write(key).replace(/=/g, '%3D');
+
+    value = converter.write(String(value), key);
+
+    var stringifiedAttributes = '';
+    for (var attributeName in attributes) {
+      if (!attributes[attributeName]) {
+        continue
+      }
+
+      stringifiedAttributes += '; ' + attributeName;
+
+      if (attributes[attributeName] === true) {
+        continue
+      }
+
+      stringifiedAttributes += '=' + attributes[attributeName].split(';')[0];
+    }
+
+    return (document.cookie = key + '=' + value + stringifiedAttributes)
+  }
+
+  function get (key) {
+    if (typeof document === 'undefined' || (arguments.length && !key)) {
+      return
+    }
+
+    // To prevent the for loop in the first place assign an empty array
+    // in case there are no cookies at all.
+    var cookies = document.cookie ? document.cookie.split('; ') : [];
+    var jar = {};
+    for (var i = 0; i < cookies.length; i++) {
+      var parts = cookies[i].split('=');
+      var value = parts.slice(1).join('=');
+      var foundKey = defaultConverter.read(parts[0]).replace(/%3D/g, '=');
+      jar[foundKey] = converter.read(value, foundKey);
+
+      if (key === foundKey) {
+        break
+      }
+    }
+
+    return key ? jar[key] : jar
+  }
+
+  return Object.create(
+    {
+      set: set,
+      get: get,
+      remove: function (key, attributes) {
+        set(
+          key,
+          '',
+          assign({}, attributes, {
+            expires: -1
+          })
+        );
+      },
+      withAttributes: function (attributes) {
+        return init(this.converter, assign({}, this.attributes, attributes))
+      },
+      withConverter: function (converter) {
+        return init(assign({}, this.converter, converter), this.attributes)
+      }
+    },
+    {
+      attributes: { value: Object.freeze(defaultAttributes) },
+      converter: { value: Object.freeze(converter) }
+    }
+  )
+}
+
+var api = init(defaultConverter, { path: '/' });
+
+function get$1() {
+    return JSON.parse(api.get(SINCE_LAST_COOKIE) || "{}") || {};
+}
+function getCookie(modelName) {
+    return get$1()[modelName];
+}
+function setCookie(modelName) {
+    api.set(SINCE_LAST_COOKIE, JSON.stringify(Object.assign(Object.assign({}, get$1()), { [modelName]: new Date().getTime() })));
+}
+
 /**
  * Provides a logical test to see if the passed in event is a LambdaProxy request or just a
  * straight JS object response. This is useful when you have both an HTTP event and a Lambda-to-Lambda
@@ -23688,7 +23807,7 @@ function determineLocalStateNode(payload, mutation) {
  * @param dotPath the path to the object, using "." as a delimiter
  * @param defaultValue optionally you may state a default value if the operation results in `undefined`
  */
-function get$1(obj, dotPath, defaultValue) {
+function get$2(obj, dotPath, defaultValue) {
     const parts = dotPath.split(".");
     let value = obj;
     parts.forEach(p => {
@@ -24093,14 +24212,14 @@ const recordConfirms = () => ({
 
 const recordLocal = () => ({
     async [exports.FmEvents.RECORD_CHANGED_LOCALLY]({ commit, rootState }, payload) {
-        const payloadPlus = Object.assign(Object.assign({}, payload), { priorValue: get$1(rootState, payload.localPath) });
+        const payloadPlus = Object.assign(Object.assign({}, payload), { priorValue: get$2(rootState, payload.localPath) });
         commit("CHANGED_LOCALLY" /* changedLocally */, payloadPlus);
         commit(determineLocalStateNode(payload, "CHANGED_LOCALLY" /* changedLocally */), payloadPlus, {
             root: true
         });
     },
     async [exports.FmEvents.RECORD_ADDED_LOCALLY]({ commit, rootState }, payload) {
-        const payloadPlus = Object.assign(Object.assign({}, payload), { priorValue: get$1(rootState, payload.localPath) });
+        const payloadPlus = Object.assign(Object.assign({}, payload), { priorValue: get$2(rootState, payload.localPath) });
         commit("ADDED_LOCALLY" /* addedLocally */, payloadPlus);
         commit(determineLocalStateNode(payload, "ADDED_LOCALLY" /* addedLocally */), payloadPlus, {
             root: true
@@ -25158,7 +25277,7 @@ function AbcFiremodelMutation(propOffset) {
                 Vue.set(state, payload.vuex.fullPath, payload.records);
             }
             else {
-                if (!validResultSize(payload, "local")) {
+                if (!validResultSize(payload)) {
                     return;
                 }
                 changeRoot(state, payload.records[0], payload.vuex.moduleName);
@@ -25278,7 +25397,7 @@ function AbcFiremodelMutation(propOffset) {
         },
         [exports.AbcMutation.ABC_PRUNE_STALE_VUEX_RECORDS](state, payload) {
             if (payload.vuex.isList) {
-                const current = get$1(state, payload.vuex.modulePostfix, []);
+                const current = get$2(state, payload.vuex.modulePostfix, []);
                 Vue.set(state, payload.vuex.modulePostfix, current.filter(i => !payload.pks.includes(i.id)));
             }
             else {
@@ -26319,8 +26438,6 @@ class AbcApi {
                     server,
                     options
                 });
-                // watch records
-                this.watch(serverResponse, options);
                 // cache results to IndexedDB
                 if (this.config.useIndexedDb) {
                     saveToIndexedDb(server, this.dexieTable);
@@ -26341,6 +26458,9 @@ class AbcApi {
                     }
                 }
                 store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`, serverResponse);
+                // watch records
+                this.watch(serverResponse, options);
+                this.watchNew(serverResponse, options);
             });
         }
         const response = await AbcResult.create(this, {
@@ -26466,7 +26586,7 @@ class AbcApi {
         // cache results to IndexedDB
         if (this.config.useIndexedDb) {
             // save to indexedDB
-            await saveToIndexedDb(server, this.dexieTable);
+            saveToIndexedDb(server, this.dexieTable);
             if (options.strategy === exports.AbcStrategy.loadVuex) {
                 store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, serverResponse);
             }
@@ -26540,38 +26660,71 @@ class AbcApi {
         return AbcApi.connectIndexedDb();
     }
     /**
+     * Create watcher and attach a dispatcher to it to ensure that all mutations
+     * are ABC related.
+     */
+    watcherSetup(options = {}) {
+        const store = getStore();
+        const dispatcher = async (payload) => {
+            const events = [
+                exports.FmEvents.RECORD_ADDED,
+                exports.FmEvents.RECORD_CHANGED,
+                exports.FmEvents.RECORD_REMOVED
+            ];
+            if (!events.includes(payload.type))
+                return;
+            const server = {
+                records: [payload.value]
+            };
+            const result = await AbcResult.create(this, {
+                type: "watch",
+                underlying: payload.eventFamily === "child" ? "query" : "discrete",
+                options: {
+                    offsets: payload.compositeKey
+                },
+                server
+            });
+            store.commit(exports.FmEvents.WATCHER_STARTED, payload);
+            if (this.config.useIndexedDb) {
+                saveToIndexedDb(server, this.dexieTable);
+                if (options.strategy === exports.AbcStrategy.loadVuex) {
+                    store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, result);
+                }
+            }
+            // set new cookie with timestamp
+            setCookie(this.model.pascal);
+        };
+        const watcher = Watch.list(this._modelConstructor);
+        watcher.dispatch(dispatcher);
+        return watcher;
+    }
+    /**
      * Watch records using the **ABC** API
      */
     async watch(serverResponse, options) {
         const { watch } = options;
         if (watch) {
             const isFunction = (x) => typeof x === "function";
-            const watcher = Watch.list(this._modelConstructor);
-            if (isFunction(watch)) {
-                const watchIds = serverResponse.records
-                    .filter(p => watch(p))
-                    .map(p => p.id);
-                await watcher
-                    .ids(...watchIds)
-                    .start()
-                    .then(() => console.info(`${this._modelConstructor.name} watch function: `, watchIds));
-            }
-            else {
-                if (serverResponse.resultFromQuery && serverResponse.query) {
-                    await watcher
-                        .fromQuery(serverResponse.query)
-                        .start()
-                        .then(() => {
-                        var _a;
-                        return console.info(`${this._modelConstructor.name} watch query: `, (_a = serverResponse.query) === null || _a === void 0 ? void 0 : _a.toString());
-                    });
-                }
-                else {
-                    await watcher
-                        .ids(...serverResponse.records.map(p => p.id))
-                        .start()
-                        .then(() => console.info(`${this._modelConstructor.name} watch all: `, ...serverResponse.records.map(p => p.id)));
-                }
+            const watcher = this.watcherSetup(options);
+            const watchIds = isFunction(watch)
+                ? serverResponse.records.filter(p => watch(p)).map(p => p.id)
+                : serverResponse.records.map(p => p.id);
+            await watcher.ids(...watchIds).start();
+        }
+    }
+    /**
+     * Watch records using the **ABC** API
+     */
+    async watchNew(serverResponse, options) {
+        const { watchNew } = options;
+        if (watchNew) {
+            const watcher = this.watcherSetup(options);
+            if (serverResponse.resultFromQuery && serverResponse.query) {
+                await watcher.fromQuery(serverResponse.query).start();
+                // console.info(
+                //   `${this._modelConstructor.name} watch query: `,
+                //   serverResponse.query?.toString()
+                // );
             }
         }
     }
@@ -26649,7 +26802,10 @@ class AbcResult {
      */
     get localRecords() {
         var _a;
-        return ((_a = this._results.local) === null || _a === void 0 ? void 0 : _a.records) || [];
+        if (this._results.type !== "watch") {
+            return ((_a = this._results.local) === null || _a === void 0 ? void 0 : _a.records) || [];
+        }
+        return [];
     }
     /**
      * All of the updated records in Vuex that originated from Firebase
@@ -26692,10 +26848,68 @@ class AbcResult {
     }
 }
 
+async function loadQuery(query, options) {
+    return Promise.resolve([]);
+}
+async function loadIds(...args) {
+    return Promise.resolve([]);
+}
+
+/**
+ * For a discrete set of primary keys, get's all knowledge of these locally. This means
+ * at least Vuex but also IndexedDB if the model is configured for it.
+ *
+ * It returns both
+ * a complete list of the primary keys found, those still missing, as well as the records
+ * themselves (where Vuex representation of a record trumps the IndexedDB representation)
+ */
+async function localRecords(command, requestPks, options, context) {
+    const idxRecords = [];
+    const store = getStore();
+    const moduleIsList = context.about.config.isList;
+    const data = get$2(store.state, context.vuex.fullPath.replace(/\//g, "."), []);
+    const vuexRecords = moduleIsList ? data : [data];
+    if (context.config.useIndexedDb) {
+        if (!AbcApi.indexedDbConnected) {
+            await AbcApi.connectIndexedDb();
+        }
+        const waitFor = [];
+        requestPks.forEach(id => waitFor.push(context.dexieRecord.get(id).then(rec => {
+            if (rec)
+                idxRecords.push(rec);
+        })));
+        await Promise.all(waitFor);
+    }
+    const model = context.model.constructor;
+    console.log(Array.isArray(vuexRecords), typeof vuexRecords, Object.getPrototypeOf(vuexRecords), Object.keys(vuexRecords));
+    const vuexPks = vuexRecords.map(v => Record.compositeKeyRef(model, v));
+    const idxPks = idxRecords.map(i => Record.compositeKeyRef(model, i));
+    const localIds = Array.from(new Set([...vuexPks, ...idxPks]));
+    const missingIds = requestPks
+        .map(pk => typeof pk === "string" ? pk : Record.create(model, pk).compositeKeyRef)
+        .filter(pk => !localIds.includes(pk));
+    const modulePostfix = context.about.modelMeta.localPostfix;
+    const vuexModuleName = (context.config.moduleName || moduleIsList
+        ? context.about.model.plural
+        : context.about.modelMeta.localModelName);
+    return {
+        cacheHits: localIds.length,
+        cacheMisses: missingIds.length,
+        foundInIndexedDb: idxPks,
+        foundInVuex: vuexPks,
+        foundExclusivelyInIndexedDb: idxPks.filter(i => !vuexPks.includes(i)),
+        allFoundLocally: missingIds.length === 0 ? true : false,
+        records: Object.assign(Object.assign({}, vuexRecords), idxRecords),
+        missing: missingIds,
+        apiCommand: command,
+        modelConfig: context.config
+    };
+}
+
 async function getFromVuex(ctx) {
     const store = getStore();
     const moduleIsList = ctx.about.config.isList;
-    const data = get$1(store.state, ctx.vuex.fullPath.replace(/\//g, "."), []);
+    const data = get$2(store.state, ctx.vuex.fullPath.replace(/\//g, "."), []);
     return moduleIsList ? data : [data];
 }
 
@@ -26757,114 +26971,82 @@ function saveToIndexedDb(server, dexieTable) {
     return results;
 }
 
-/*! js-cookie v3.0.0-rc.0 | MIT */
-function assign (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
-    for (var key in source) {
-      target[key] = source[key];
-    }
-  }
-  return target
-}
+const all = function all(defn = {}) {
+    return (ctx, options = {}) => {
+        defn = Object.assign(Object.assign({}, defn), { queryType: exports.QueryType.all });
+        // The query to use for IndexedDB
+        const dexieQuery = async () => {
+            const recs = await ctx.dexieList.all();
+            return recs;
+        };
+        // The query to use for Firebase
+        const firemodelQuery = async () => {
+            const { data, query } = await List.all(ctx.model.constructor, options || {});
+            return { data, query };
+        };
+        return { dexieQuery, firemodelQuery, queryDefn: defn };
+    };
+};
+all.prototype.isQueryHelper = true;
 
-var defaultConverter = {
-  read: function (value) {
-    return value.replace(/%3B/g, ';')
-  },
-  write: function (value) {
-    return value.replace(/;/g, '%3B')
-  }
+/**
+ * **since**
+ *
+ * Gets all records _since_ a certain timestamp (`epoch` with milliseconds)
+ */
+const since = function since(defn) {
+    return (ctx, options = {}) => {
+        defn = Object.assign(Object.assign({}, defn), { queryType: exports.QueryType.since });
+        if (!defn.timestamp) {
+            const last = getCookie(ctx.model.pascal);
+            if (!last) {
+                setCookie(ctx.model.pascal);
+            }
+            defn.timestamp = last || new Date().getTime();
+        }
+        // The query to use for IndexedDB
+        const dexieQuery = async () => {
+            const recs = await ctx.dexieList.since(defn.timestamp);
+            return recs;
+        };
+        // The query to use for Firebase
+        const firemodelQuery = async () => {
+            const { data, query } = await List.since(ctx.model.constructor, defn.timestamp, options || {});
+            // SerializedQuery.create(list)
+            return { data, query };
+        };
+        return { dexieQuery, firemodelQuery, queryDefn: defn };
+    };
 };
 
-function init (converter, defaultAttributes) {
-  function set (key, value, attributes) {
-    if (typeof document === 'undefined') {
-      return
-    }
-
-    attributes = assign({}, defaultAttributes, attributes);
-
-    if (typeof attributes.expires === 'number') {
-      attributes.expires = new Date(Date.now() + attributes.expires * 864e5);
-    }
-    if (attributes.expires) {
-      attributes.expires = attributes.expires.toUTCString();
-    }
-
-    key = defaultConverter.write(key).replace(/=/g, '%3D');
-
-    value = converter.write(String(value), key);
-
-    var stringifiedAttributes = '';
-    for (var attributeName in attributes) {
-      if (!attributes[attributeName]) {
-        continue
-      }
-
-      stringifiedAttributes += '; ' + attributeName;
-
-      if (attributes[attributeName] === true) {
-        continue
-      }
-
-      stringifiedAttributes += '=' + attributes[attributeName].split(';')[0];
-    }
-
-    return (document.cookie = key + '=' + value + stringifiedAttributes)
-  }
-
-  function get (key) {
-    if (typeof document === 'undefined' || (arguments.length && !key)) {
-      return
-    }
-
-    // To prevent the for loop in the first place assign an empty array
-    // in case there are no cookies at all.
-    var cookies = document.cookie ? document.cookie.split('; ') : [];
-    var jar = {};
-    for (var i = 0; i < cookies.length; i++) {
-      var parts = cookies[i].split('=');
-      var value = parts.slice(1).join('=');
-      var foundKey = defaultConverter.read(parts[0]).replace(/%3D/g, '=');
-      jar[foundKey] = converter.read(value, foundKey);
-
-      if (key === foundKey) {
-        break
-      }
-    }
-
-    return key ? jar[key] : jar
-  }
-
-  return Object.create(
-    {
-      set: set,
-      get: get,
-      remove: function (key, attributes) {
-        set(
-          key,
-          '',
-          assign({}, attributes, {
-            expires: -1
-          })
-        );
-      },
-      withAttributes: function (attributes) {
-        return init(this.converter, assign({}, this.attributes, attributes))
-      },
-      withConverter: function (converter) {
-        return init(assign({}, this.converter, converter), this.attributes)
-      }
-    },
-    {
-      attributes: { value: Object.freeze(defaultAttributes) },
-      converter: { value: Object.freeze(converter) }
-    }
-  )
-}
-
-var api = init(defaultConverter, { path: '/' });
+/**
+ * Offers a configuration to consumers of the standard _where_ clause that Firebase
+ * provides and then provides an implementation that is aligned with the ABC `get`
+ * and `load` endpoints.
+ */
+const where = function where(defn) {
+    defn = Object.assign(Object.assign({}, defn), { queryType: exports.QueryType.where });
+    return (ctx, options = {}) => {
+        // The value and operation to be used
+        const valueOp = defn.equals !== undefined
+            ? defn.equals
+            : defn.greaterThan !== undefined
+                ? [">", defn.greaterThan]
+                : ["<", defn.lessThan];
+        // The query to use for IndexedDB
+        const dexieQuery = async () => {
+            const recs = await ctx.dexieList.where(defn.property, valueOp);
+            return recs;
+        };
+        // The query to use for Firebase
+        const firemodelQuery = async () => {
+            const { data, query } = await List.where(ctx.model.constructor, defn.property, valueOp, options || {});
+            return { data, query };
+        };
+        return { dexieQuery, firemodelQuery, queryDefn: defn };
+    };
+};
+where.prototype.isQueryHelper = true;
 
 /**
  * Given a Primary Key _reference_ string; this function will find the record
@@ -27394,9 +27576,32 @@ let defaultConfig = {
     isList: true,
     encrypt: false
 };
+/**
+ * Allows consumers of this plugin to state the _default_ state of
+ * their model's configuration. The normal defaults are:
+```typescript
+{
+  useIndexedDb: true,
+  plural: true,
+  encrypt: false,
+}
+```
+ */
+function configApi(config) {
+    defaultConfig = Object.assign(Object.assign({}, defaultConfig), config);
+    return defaultConfig;
+}
 /** the _default_ configuration for **ABC** API surfaces */
 function getDefaultApiConfig() {
     return defaultConfig;
+}
+
+/**
+ * Constructs a `AbcApi` object instance for the given `Model`
+ */
+function get$3(model, config = {}) {
+    const api = new AbcApi(model, config);
+    return api.get;
 }
 
 /**
@@ -27839,6 +28044,7 @@ config) => {
 
 exports.AbcApi = AbcApi;
 exports.AbcFiremodelMutation = AbcFiremodelMutation;
+exports.AbcResult = AbcResult;
 exports.DexieDb = DexieDb;
 exports.DexieList = DexieList;
 exports.DexieRecord = DexieRecord;
@@ -27866,12 +28072,14 @@ exports.addDispatchForWatcher = addDispatchForWatcher;
 exports.addRelationships = addRelationships;
 exports.addToWatcherPool = addToWatcherPool;
 exports.addedLocally = addedLocally;
+exports.all = all;
 exports.authActions = authActions;
 exports.authMutations = authMutations;
 exports.belongsTo = belongsTo;
 exports.buildDeepRelationshipLinks = buildDeepRelationshipLinks;
 exports.buildRelationshipPaths = buildRelationshipPaths;
 exports.clearWatcherPool = clearWatcherPool;
+exports.configApi = configApi;
 exports.confirmPasswordReset = confirmPasswordReset;
 exports.constrain = constrain;
 exports.constrainedProperty = constrainedProperty;
@@ -27890,11 +28098,17 @@ exports.errors = errors;
 exports.extractFksFromPaths = extractFksFromPaths;
 exports.fakeIt = fakeIt;
 exports.fbKey = key;
+exports.findPk = findPk;
 exports.findWatchers = findWatchers;
 exports.firemodelActions = firemodelActions;
 exports.firemodelMutations = firemodelMutations;
 exports.generateLocalId = generateLocalId;
+exports.get = get$3;
 exports.getDbIndexes = getDbIndexes;
+exports.getDefaultApiConfig = getDefaultApiConfig;
+exports.getFromFirebase = getFromFirebase;
+exports.getFromIndexedDb = getFromIndexedDb;
+exports.getFromVuex = getFromVuex;
 exports.getFromWatcherPool = getFromWatcherPool;
 exports.getIdToken = getIdToken;
 exports.getWatchList = getWatchList;
@@ -27909,11 +28123,15 @@ exports.indexesForModel = indexesForModel;
 exports.isDiscreteRequest = isDiscreteRequest;
 exports.length = length;
 exports.linkWithCredential = linkWithCredential;
+exports.loadIds = loadIds;
+exports.loadQuery = loadQuery;
 exports.localConfig = localConfig;
 exports.localCrud = localCrud;
+exports.localRecords = localRecords;
 exports.localRelnOp = localRelnOp;
 exports.locallyUpdateFkOnRecord = locallyUpdateFkOnRecord;
 exports.max = max;
+exports.mergeLocalRecords = mergeLocalRecords;
 exports.min = min;
 exports.mock = mock;
 exports.mockProperties = mockProperties;
@@ -27929,6 +28147,8 @@ exports.property = property;
 exports.propertyDecorator = propertyDecorator;
 exports.propertyReflector = propertyReflector;
 exports.pushKey = pushKey;
+exports.queryFirebase = queryFirebase;
+exports.queryIndexedDb = queryIndexedDb;
 exports.reauthenticateWithCredential = reauthenticateWithCredential;
 exports.recordConfirms = recordConfirms;
 exports.recordLocal = recordLocal;
@@ -27943,15 +28163,18 @@ exports.relnRollback = relnRollback;
 exports.removeFromWatcherPool = removeFromWatcherPool;
 exports.reset = reset;
 exports.resetModule = resetModule;
+exports.saveToIndexedDb = saveToIndexedDb;
 exports.sendEmailVerification = sendEmailVerification;
 exports.sendPasswordResetEmail = sendPasswordResetEmail;
 exports.serverConfirm = serverConfirm;
 exports.serverConfirms = serverConfirms;
 exports.serverEvents = serverEvents;
+exports.serverRecords = serverRecords;
 exports.serverRollback = serverRollback;
 exports.serverRollbacks = serverRollbacks;
 exports.signInWithEmailAndPassword = signInWithEmailAndPassword;
 exports.signOut = signOut;
+exports.since = since;
 exports.state = state;
 exports.uniqueIndex = uniqueIndex;
 exports.updateEmail = updateEmail;
@@ -27962,4 +28185,5 @@ exports.waitForInitialization = waitForInitialization;
 exports.watchActions = watchActions;
 exports.watchEvents = watchEvents;
 exports.watcher = watcher;
+exports.where = where;
 //# sourceMappingURL=index.js.map

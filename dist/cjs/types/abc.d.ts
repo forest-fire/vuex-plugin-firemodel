@@ -104,6 +104,21 @@ export interface IQueryServerResults<T, K = IDictionary> {
     query?: ISerializedQuery;
     overallCachePerformance: ICachePerformance;
 }
+export interface IWatchServerResults<T, K = IDictionary> {
+    records: T[];
+}
+/**
+ * Results from a Query request to Firebase server
+ */
+export interface IWatchResults<T, K = IDictionary> {
+    type: "watch";
+    underlying: "query" | "discrete";
+    server: IWatchServerResults<T, K>;
+    options: {
+        offsets?: Partial<T>;
+    };
+}
+export declare type IServerResults<T> = IQueryServerResults<T> | IDiscreteServerResults<T> | IWatchServerResults<T>;
 /**
  * Results from an ABC get/load which were retrieved from
  * the combined knowledge of Vuex and IndexedDB. The records
@@ -367,9 +382,9 @@ export interface IQueryResult<T, K = any> {
     options: IQueryOptions<T>;
 }
 /**
- * The results from either a Discrete or Query-based request.
+ * The results from either a Discrete, Query-based or Watch based request.
  */
-export declare type IAbcResult<T, K = any> = IDiscreteResult<T, K> | IQueryResult<T, K>;
+export declare type IAbcResult<T, K = any> = IDiscreteResult<T, K> | IQueryResult<T, K> | IWatchResults<T, K>;
 export interface IQueryOptions<T> extends IUniversalOptions<T> {
     watchNew?: boolean;
     /**

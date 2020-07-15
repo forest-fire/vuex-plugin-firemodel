@@ -47,7 +47,9 @@ export declare class AbcResult<T extends Model> {
     /**
      * The options passed in for the specific request which led to this result
      */
-    get options(): import("../../types").IDiscreteOptions<T> | import("../../types").IQueryOptions<T>;
+    get options(): import("../../types").IDiscreteOptions<T> | import("../../types").IQueryOptions<T> | {
+        offsets?: Partial<T> | undefined;
+    };
     get query(): import("universal-fire").ISerializedQuery<any> | undefined;
     /** the query definition used to arrive at these results */
     get queryDefn(): import("../../types").IAbcQueryDefinition<T>;

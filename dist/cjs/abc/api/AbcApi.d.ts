@@ -1,4 +1,4 @@
-import { IAbcApiConfig, IAbcOptions, IAbcParam, IFmModelConstructor } from "../../types";
+import { IAbcApiConfig, IAbcOptions, IAbcParam, IFmModelConstructor, IQueryOptions } from "../../types";
 import { AbcResult } from "..";
 import { DexieDb, IFmModelMeta, IPrimaryKey, Model } from "firemodel";
 /**
@@ -186,9 +186,18 @@ export declare class AbcApi<T extends Model> {
      */
     connectDexie(): Promise<void>;
     /**
+     * Create watcher and attach a dispatcher to it to ensure that all mutations
+     * are ABC related.
+     */
+    watcherSetup(options?: IAbcOptions<T>): import("firemodel").WatchList<T>;
+    /**
      * Watch records using the **ABC** API
      */
     watch(serverResponse: AbcResult<T>, options: IAbcOptions<T>): Promise<void>;
+    /**
+     * Watch records using the **ABC** API
+     */
+    watchNew(serverResponse: AbcResult<T>, options: IQueryOptions<T>): Promise<void>;
     toJSON(): {
         model: string;
         config: IAbcApiConfig<T>;
