@@ -26430,14 +26430,10 @@ class AbcApi {
                 local,
                 options
             });
-            console.log(local);
             if (local.records.length > 0) {
-                if (this.hasDynamicProperties) {
-                    store.commit(`${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX}`, localResults);
-                }
-                else {
-                    store.commit(`${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`, localResults);
-                }
+                store.commit(`${this.vuex.moduleName}/${this.hasDynamicProperties
+                    ? DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX
+                    : DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`, localResults);
             }
             else {
                 store.commit(`${this.vuex.moduleName}/${AbcMutation.ABC_LOCAL_QUERY_EMPTY}`, localResults);
@@ -26448,30 +26444,26 @@ class AbcApi {
         if (options.strategy === AbcStrategy.getFirebase) {
             // get data from firebase
             queryFirebase(this, firemodelQuery, local).then(async (server) => {
-                const serverResponse = await AbcResult.create(this, {
+                const serverResults = await AbcResult.create(this, {
                     type: "query",
                     queryDefn,
                     local,
                     server,
                     options
                 });
-                console.log(this.hasDynamicProperties);
                 // cache results to IndexedDB
                 if (this.config.useIndexedDb) {
                     saveToIndexedDb(server, this.dexieTable);
                     store.commit(`${this.vuex.moduleName}/${this.hasDynamicProperties
                         ? DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB
-                        : DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, serverResponse);
-                    store.commit(`${this.vuex.moduleName}/${this.hasDynamicProperties
-                        ? DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX
-                        : DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`, serverResponse);
+                        : DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, serverResults);
                 }
                 store.commit(`${this.vuex.moduleName}/${this.hasDynamicProperties
                     ? DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_VUEX
-                    : DbSyncOperation.ABC_FIREBASE_SET_VUEX}`, serverResponse);
+                    : DbSyncOperation.ABC_FIREBASE_SET_VUEX}`, serverResults);
                 // watch records
-                this.watch(serverResponse, options);
-                this.watchNew(serverResponse, options);
+                this.watch(serverResults, options);
+                this.watchNew(serverResults, options);
             });
         }
         const response = await AbcResult.create(this, {
