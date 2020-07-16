@@ -25305,7 +25305,17 @@ function AbcFiremodelMutation(propOffset) {
             }
         },
         [DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_VUEX](state, payload) {
-            // TODO: add code for dynamic path strategy here
+            if (payload.vuex.isList) {
+                const vuexRecords = state[payload.vuex.modulePostfix];
+                const updated = hashToArray$1(Object.assign(Object.assign({}, arrayToHash$1(vuexRecords || [])), arrayToHash$1(payload.records || [])));
+                Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
+            }
+            else {
+                if (!validResultSize(payload, "server")) {
+                    return;
+                }
+                changeRoot(state, payload.records[0], payload.vuex.moduleName);
+            }
         },
         [DbSyncOperation.ABC_FIREBASE_MERGE_VUEX](state, payload) {
             if (payload.vuex.isList) {
@@ -25344,9 +25354,9 @@ function AbcFiremodelMutation(propOffset) {
             }
         },
         [DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX](state, payload) {
-            console.log(payload.options.offsets);
-            // getProduct(all(), { offsets: { store: '1234' } })
-            if (payload.vuex.isList) ;
+            if (payload.vuex.isList) {
+                Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), payload.records);
+            }
             else {
                 if (process.env.NODE_ENV !== "production") {
                     console.info(`You are using a query on a singular model ${payload.vuex.moduleName}; this typically should be avoided.`);
@@ -26420,6 +26430,7 @@ class AbcApi {
                 local,
                 options
             });
+            console.log(local);
             if (local.records.length > 0) {
                 if (this.hasDynamicProperties) {
                     store.commit(`${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX}`, localResults);
@@ -26444,26 +26455,20 @@ class AbcApi {
                     server,
                     options
                 });
+                console.log(this.hasDynamicProperties);
                 // cache results to IndexedDB
                 if (this.config.useIndexedDb) {
                     saveToIndexedDb(server, this.dexieTable);
-                    if (this.hasDynamicProperties) {
-                        // check queryType to determine what to do
-                        switch (queryDefn.queryType) {
-                            case QueryType.since:
-                            case QueryType.where:
-                                store.commit(`${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`, serverResponse);
-                                break;
-                            case QueryType.all:
-                                store.commit(`${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB}`, serverResponse);
-                                break;
-                        }
-                    }
-                    else {
-                        store.commit(`${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, serverResponse);
-                    }
+                    store.commit(`${this.vuex.moduleName}/${this.hasDynamicProperties
+                        ? DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB
+                        : DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, serverResponse);
+                    store.commit(`${this.vuex.moduleName}/${this.hasDynamicProperties
+                        ? DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX
+                        : DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`, serverResponse);
                 }
-                store.commit(`${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`, serverResponse);
+                store.commit(`${this.vuex.moduleName}/${this.hasDynamicProperties
+                    ? DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_VUEX
+                    : DbSyncOperation.ABC_FIREBASE_SET_VUEX}`, serverResponse);
                 // watch records
                 this.watch(serverResponse, options);
                 this.watchNew(serverResponse, options);

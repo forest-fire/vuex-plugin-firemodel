@@ -138,6 +138,31 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     expect(eventCounts["products/ABC_INDEXED_DB_SET_VUEX"]).toBe(1);
   });
 
+  it("get.all() returns results from indexedDB into Vuex with dynamic path", async () => {
+    const store = getStore();
+    store.subscribe(subscription);
+    const tbl = AbcApi.getModelApi(Order).dexieTable;
+
+    const numOrders = Object.keys(orderData.store["1234"].orders).length;
+    expect(store.state.orders.all).toHaveLength(0);
+    expect(await tbl.toArray()).toHaveLength(0);
+
+    // Get server data and populate indexedDB
+    const offsets = { store: "1234" };
+    const o = await List.all(Order, { offsets });
+    populateIndexedDB(tbl, o.data);
+
+    const results = await getOrders(all(), { offsets });
+
+    expect(results).toBeInstanceOf(AbcResult);
+
+    expect(results.records).toHaveLength(numOrders);
+    expect(results.localRecords).toHaveLength(numOrders);
+
+    expect(eventCounts["orders/ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX"]).toBe(1);
+    expect(store.state.orders.all).toHaveLength(numOrders);
+  });
+
   it("get.all() when local has partial result", async () => {
     const store = getStore();
     const partialProducts = hashToArray(productData.products)
@@ -223,6 +248,39 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
         );
       }
     );
+  });
+
+  it.only("get.all() return results from firebase into indexedDB/Vuex with dynamic path", done => {
+    const store = getStore();
+    store.subscribe(subscription);
+    const tbl = AbcApi.getModelApi(Order).dexieTable;
+    const db = AbcApi.getModelApi(Order).db;
+
+    const numOrders = Object.keys(orderData.store["1234"].orders).length;
+    expect(Object.keys(db.mock.db.store["1234"].orders)).toHaveLength(
+      numOrders
+    );
+    expect(store.state.orders.all).toHaveLength(0);
+
+    getOrders(all(), {
+      offsets: { store: "1234" },
+      strategy: AbcStrategy.getFirebase
+    }).then(async results => {
+      expect(await tbl.toArray()).toHaveLength(0);
+      expect(results).toBeInstanceOf(AbcResult);
+
+      store.subscribe(async (mutation: MutationPayload, state: IDictionary) => {
+        if (
+          mutation.type ===
+          `orders/${DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB}`
+        ) {
+          expect(await tbl.toArray()).toHaveLength(numOrders);
+
+          expect(state.orders.all).toHaveLength(numOrders);
+          done();
+        }
+      });
+    });
   });
 
   it("get.where() when local state is empty", async () => {

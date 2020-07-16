@@ -65,7 +65,20 @@ export function AbcFiremodelMutation<T>(
       state: T,
       payload: AbcResult<T>
     ) {
-      // TODO: add code for dynamic path strategy here
+      if (payload.vuex.isList) {
+        const vuexRecords = state[payload.vuex.modulePostfix];
+        const updated = hashToArray({
+          ...arrayToHash(vuexRecords || []),
+          ...arrayToHash(payload.records || [])
+        });
+
+        Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
+      } else {
+        if (!validResultSize(payload, "server")) {
+          return;
+        }
+        changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
+      }
     },
 
     [DbSyncOperation.ABC_FIREBASE_MERGE_VUEX]<T extends IDictionary>(
@@ -135,18 +148,15 @@ export function AbcFiremodelMutation<T>(
       }
     },
 
-    [DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX]<T>(
-      state: T,
-      payload: AbcResult<any>
-    ) {
-      console.log(payload.options.offsets);
-      // getProduct(all(), { offsets: { store: '1234' } })
+    [DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX]<
+      T extends IDictionary
+    >(state: T, payload: AbcResult<any>) {
       if (payload.vuex.isList) {
-        /* if (!payload.resultFromQuery) {
-          throw new AbcError(`Attempt to use mutation ${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX} with a discrete request.`, 'not-allowed');
-        } */
-        // Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), payload.records);
-        // get dynamic path from payload
+        Vue.set(
+          state,
+          payload.vuex.modulePostfix.replace(/\//g, "."),
+          payload.records
+        );
       } else {
         if (process.env.NODE_ENV !== "production") {
           console.info(

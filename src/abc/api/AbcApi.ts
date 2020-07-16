@@ -341,6 +341,7 @@ export class AbcApi<T extends Model> {
         options
       });
 
+      console.log(local);
       if (local.records.length > 0) {
         if (this.hasDynamicProperties) {
           store.commit(
@@ -374,36 +375,36 @@ export class AbcApi<T extends Model> {
           options
         });
 
+        console.log(this.hasDynamicProperties);
+
         // cache results to IndexedDB
         if (this.config.useIndexedDb) {
           saveToIndexedDb(server, this.dexieTable);
-          if (this.hasDynamicProperties) {
-            // check queryType to determine what to do
-            switch (queryDefn.queryType) {
-              case QueryType.since:
-              case QueryType.where:
-                store.commit(
-                  `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`,
-                  serverResponse
-                );
-                break;
-              case QueryType.all:
-                store.commit(
-                  `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB}`,
-                  serverResponse
-                );
-                break;
-            }
-          } else {
-            store.commit(
-              `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`,
-              serverResponse
-            );
-          }
+          store.commit(
+            `${this.vuex.moduleName}/${
+              this.hasDynamicProperties
+                ? DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB
+                : DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB
+            }`,
+            serverResponse
+          );
+
+          store.commit(
+            `${this.vuex.moduleName}/${
+              this.hasDynamicProperties
+                ? DbSyncOperation.ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX
+                : DbSyncOperation.ABC_INDEXED_DB_SET_VUEX
+            }`,
+            serverResponse
+          );
         }
 
         store.commit(
-          `${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`,
+          `${this.vuex.moduleName}/${
+            this.hasDynamicProperties
+              ? DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_VUEX
+              : DbSyncOperation.ABC_FIREBASE_SET_VUEX
+          }`,
           serverResponse
         );
 
