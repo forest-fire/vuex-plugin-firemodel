@@ -2,9 +2,10 @@ import { IServerResults } from "@/types";
 import { IPrimaryKey, Model } from "firemodel";
 
 import Dexie from "dexie";
+import { AbcResult } from "../../AbcResult";
 
 export function saveToIndexedDb<T extends Model>(
-  server: IServerResults<T>,
+  server: AbcResult<T>,
   dexieTable: Dexie.Table<T, IPrimaryKey<T>>
 ) {
   const waitFor: any[] = [];

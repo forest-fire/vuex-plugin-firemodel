@@ -26447,7 +26447,7 @@ class AbcApi {
                 });
                 // cache results to IndexedDB
                 if (this.config.useIndexedDb) {
-                    saveToIndexedDb(server, this.dexieTable);
+                    saveToIndexedDb(serverResults, this.dexieTable);
                     store.commit(`${this.vuex.moduleName}/${this.hasDynamicProperties
                         ? exports.DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB
                         : exports.DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, serverResults);
@@ -26481,7 +26481,7 @@ class AbcApi {
         // query firebase if getFirebase strategy in place
         // get data from firebase
         const server = await queryFirebase(this, firemodelQuery, local);
-        const serverResponse = await AbcResult.create(this, {
+        const serverResults = await AbcResult.create(this, {
             type: "query",
             queryDefn,
             local,
@@ -26490,24 +26490,24 @@ class AbcApi {
         });
         // cache results to IndexedDB
         if (this.config.useIndexedDb) {
-            saveToIndexedDb(server, this.dexieTable);
+            saveToIndexedDb(serverResults, this.dexieTable);
             if (options.strategy === exports.AbcStrategy.loadVuex) {
                 if (this.hasDynamicProperties) {
                     // check queryType to determine what to do
                     switch (queryDefn.queryType) {
                         case exports.QueryType.since:
                         case exports.QueryType.where:
-                            store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`, serverResponse);
+                            store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`, serverResults);
                             break;
                         case exports.QueryType.all:
-                            store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB}`, serverResponse);
+                            store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB}`, serverResults);
                             break;
                     }
                 }
                 else {
-                    store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, serverResponse);
+                    store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, serverResults);
                 }
-                store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`, serverResponse);
+                store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`, serverResults);
             }
         }
         const response = await AbcResult.create(this, {
@@ -26550,7 +26550,7 @@ class AbcApi {
                 // cache results to IndexedDB
                 if (this.config.useIndexedDb) {
                     // save to indexedDB
-                    saveToIndexedDb(server, this.dexieTable);
+                    saveToIndexedDb(serverResponse, this.dexieTable);
                     store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`, serverResponse);
                 }
                 store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`, serverResponse);
@@ -26583,7 +26583,7 @@ class AbcApi {
         // cache results to IndexedDB
         if (this.config.useIndexedDb) {
             // save to indexedDB
-            saveToIndexedDb(server, this.dexieTable);
+            saveToIndexedDb(serverResponse, this.dexieTable);
             if (options.strategy === exports.AbcStrategy.loadVuex) {
                 store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, serverResponse);
             }
@@ -26683,7 +26683,7 @@ class AbcApi {
             });
             store.commit(exports.FmEvents.WATCHER_STARTED, payload);
             if (this.config.useIndexedDb) {
-                saveToIndexedDb(server, this.dexieTable);
+                saveToIndexedDb(result, this.dexieTable);
                 if (options.strategy === exports.AbcStrategy.loadVuex) {
                     store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`, result);
                 }

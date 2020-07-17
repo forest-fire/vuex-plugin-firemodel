@@ -43,7 +43,7 @@ function clearSubscription() {
   eventCounts = {};
 }
 
-async function populateIndexedDB<T extends Model>(
+async function populateIndexedDB<T extends Product>(
   tbl: Dexie.Table<T, IPrimaryKey<T>>,
   serverRecords: any
 ) {
@@ -61,7 +61,13 @@ async function populateIndexedDB<T extends Model>(
       ignores: 0
     }
   };
-  await saveToIndexedDb(server, tbl);
+  const serverResults = await AbcResult.create(AbcApi.getModelApi(Product), {
+    type: "query",
+    queryDefn: {},
+    server,
+    options: {}
+  });
+  await saveToIndexedDb(serverResults, tbl);
 }
 
 interface ProductData {
@@ -107,6 +113,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     expect(AbcApi.getModelApi(Order).db.isConnected);
     expect(AbcApi.indexedDbConnected).toBe(true);
     store.state.products.all = [];
+    store.state.orders.all = [];
   });
 
   afterEach(async () => {
@@ -126,15 +133,13 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
 
     // Get server data and populate indexedDB
     const p = await List.all(Product);
-    populateIndexedDB(tbl, p.data);
+    await populateIndexedDB(tbl, p.data);
 
     const results = await getProducts(all());
 
     expect(results).toBeInstanceOf(AbcResult);
-
     expect(results.records).toHaveLength(numProducts);
     expect(results.localRecords).toHaveLength(numProducts);
-
     expect(eventCounts["products/ABC_INDEXED_DB_SET_VUEX"]).toBe(1);
   });
 
@@ -150,15 +155,13 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     // Get server data and populate indexedDB
     const offsets = { store: "1234" };
     const o = await List.all(Order, { offsets });
-    populateIndexedDB(tbl, o.data);
+    await populateIndexedDB(tbl, o.data);
 
     const results = await getOrders(all(), { offsets });
 
     expect(results).toBeInstanceOf(AbcResult);
-
     expect(results.records).toHaveLength(numOrders);
     expect(results.localRecords).toHaveLength(numOrders);
-
     expect(eventCounts["orders/ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX"]).toBe(1);
     expect(store.state.orders.all).toHaveLength(numOrders);
   });
@@ -230,17 +233,15 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     getProducts(all(), { strategy: AbcStrategy.getFirebase }).then(
       async results => {
         expect(await tbl.toArray()).toHaveLength(0);
-
         expect(results).toBeInstanceOf(AbcResult);
 
         store.subscribe(
           async (mutation: MutationPayload, state: IDictionary) => {
             if (
               mutation.type ===
-              `products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`
+              `products/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`
             ) {
               expect(await tbl.toArray()).toHaveLength(numProducts);
-
               expect(state.products.all).toHaveLength(numProducts);
               done();
             }
@@ -250,7 +251,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
     );
   });
 
-  it.only("get.all() return results from firebase into indexedDB/Vuex with dynamic path", done => {
+  it("get.all() return results from firebase into indexedDB/Vuex with dynamic path", done => {
     const store = getStore();
     store.subscribe(subscription);
     const tbl = AbcApi.getModelApi(Order).dexieTable;
@@ -370,14 +371,13 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       { strategy: AbcStrategy.getFirebase }
     ).then(async results => {
       expect(await tbl.toArray()).toHaveLength(0);
-
       expect(results).toBeInstanceOf(AbcResult);
-
+      const mutationTypes = [
+        `products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`,
+        `products/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`
+      ];
       store.subscribe(async (mutation: MutationPayload, state: IDictionary) => {
-        if (
-          mutation.type ===
-          `products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`
-        ) {
+        if (mutationTypes.includes(mutation.type)) {
           expect(await tbl.toArray()).toHaveLength(numProductsFromQuery);
 
           expect(state.products.all).toHaveLength(numProductsFromQuery);
