@@ -25,7 +25,7 @@ export class AbcResult<T extends Model> {
     _performance?: IDictionary
   ) {
     const obj = new AbcResult(_context, _results, _performance);
-    if (obj.serverRecords === undefined) {
+    if (!Array.isArray(obj.serverRecords) || !obj.serverRecords.length) {
       obj.records = obj.localRecords;
       return obj;
     }

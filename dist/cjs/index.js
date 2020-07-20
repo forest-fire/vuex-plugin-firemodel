@@ -26760,7 +26760,7 @@ class AbcResult {
     }
     static async create(_context, _results, _performance) {
         const obj = new AbcResult(_context, _results, _performance);
-        if (obj.serverRecords === undefined) {
+        if (!Array.isArray(obj.serverRecords) || !obj.serverRecords.length) {
             obj.records = obj.localRecords;
             return obj;
         }
