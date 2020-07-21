@@ -28,7 +28,7 @@ export const since: IAbcQueryHelper = function since<T extends Model>(
       if (!last) {
         setCookie(ctx.model.pascal);
       }
-      defn.timestamp = last || new Date().getTime();
+      defn.timestamp = last || new Date("1970-01-01T00:00:00").getTime();
     }
 
     // The query to use for IndexedDB
@@ -44,7 +44,6 @@ export const since: IAbcQueryHelper = function since<T extends Model>(
         defn.timestamp as number,
         options || {}
       );
-      // SerializedQuery.create(list)
       return { data, query };
     };
 

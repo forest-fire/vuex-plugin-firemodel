@@ -27005,7 +27005,7 @@ const since = function since(defn) {
             if (!last) {
                 setCookie(ctx.model.pascal);
             }
-            defn.timestamp = last || new Date().getTime();
+            defn.timestamp = last || new Date("1970-01-01T00:00:00").getTime();
         }
         // The query to use for IndexedDB
         const dexieQuery = async () => {
@@ -27015,7 +27015,6 @@ const since = function since(defn) {
         // The query to use for Firebase
         const firemodelQuery = async () => {
             const { data, query } = await List.since(ctx.model.constructor, defn.timestamp, options || {});
-            // SerializedQuery.create(list)
             return { data, query };
         };
         return { dexieQuery, firemodelQuery, queryDefn: defn };
