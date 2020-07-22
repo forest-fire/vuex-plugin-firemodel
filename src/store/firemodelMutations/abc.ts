@@ -167,26 +167,18 @@ export function AbcFiremodelMutation<T>(
       }
     },
 
-    [DbSyncOperation.ABC_INDEXED_DB_MERGE_VUEX]<T>(
+    [DbSyncOperation.ABC_INDEXED_DB_MERGE_VUEX]<T extends IDictionary>(
       state: T,
       payload: AbcResult<any>
     ) {
-      console.log(payload.options.offsets);
       if (payload.vuex.isList) {
-        console.log(`Is a list`);
-        // const vuexRecords = state[payload.vuex.modulePostfix];
-        // const updated = hashToArray({
-        //   ...arrayToHash(vuexRecords || []),
-        //   ...arrayToHash(payload.records || [])
-        // });
-
-        // Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
+        Vue.set(
+          state,
+          payload.vuex.modulePostfix.replace(/\//g, "."),
+          payload.records
+        );
       } else {
-        console.log(`Is not a list`);
-        // if (!validResultSize(payload, "server")) {
-        //   return;
-        // }
-        // changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
+        changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
       }
     },
 
@@ -212,20 +204,6 @@ export function AbcFiremodelMutation<T>(
       payload: IDiscreteResult<any>
     ) {
       // nothing to do; mutation is purely for informational/debugging purposes
-    },
-
-    [DbSyncOperation.ABC_INDEXED_DB_SET_VUEX]<T extends IDictionary>(
-      state: T,
-      payload: AbcResult<T>
-    ) {
-      if (payload.vuex.isList) {
-        Vue.set(state, payload.vuex.modulePostfix, payload.records);
-      } else {
-        if (!validResultSize(payload)) {
-          return;
-        }
-        changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
-      }
     },
 
     [AbcMutation.ABC_PRUNE_STALE_IDX_RECORDS]<T extends IDictionary>(

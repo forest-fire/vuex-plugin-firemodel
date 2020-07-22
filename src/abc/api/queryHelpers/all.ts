@@ -8,6 +8,7 @@ import {
 
 import { AbcApi } from "@/abc";
 import { List } from "firemodel";
+import { setCookie } from "@/util";
 
 export const all: IAbcQueryHelper = function all<T>(
   defn:
@@ -28,6 +29,8 @@ export const all: IAbcQueryHelper = function all<T>(
         ctx.model.constructor,
         options || {}
       );
+      // set new cookie with timestamp
+      setCookie(ctx.model.pascal);
       return { data, query };
     };
 

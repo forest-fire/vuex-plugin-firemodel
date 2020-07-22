@@ -25360,22 +25360,11 @@ function AbcFiremodelMutation(propOffset) {
             }
         },
         [exports.DbSyncOperation.ABC_INDEXED_DB_MERGE_VUEX](state, payload) {
-            console.log(payload.options.offsets);
             if (payload.vuex.isList) {
-                console.log(`Is a list`);
-                // const vuexRecords = state[payload.vuex.modulePostfix];
-                // const updated = hashToArray({
-                //   ...arrayToHash(vuexRecords || []),
-                //   ...arrayToHash(payload.records || [])
-                // });
-                // Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), updated);
+                Vue.set(state, payload.vuex.modulePostfix.replace(/\//g, "."), payload.records);
             }
             else {
-                console.log(`Is not a list`);
-                // if (!validResultSize(payload, "server")) {
-                //   return;
-                // }
-                // changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
+                changeRoot(state, payload.records[0], payload.vuex.moduleName);
             }
         },
         [exports.AbcMutation.ABC_INDEXED_DB_REFRESH_FAILED](state, payload) {
@@ -25390,17 +25379,6 @@ function AbcFiremodelMutation(propOffset) {
         },
         [exports.AbcMutation.ABC_LOCAL_QUERY_EMPTY](state, payload) {
             // nothing to do; mutation is purely for informational/debugging purposes
-        },
-        [exports.DbSyncOperation.ABC_INDEXED_DB_SET_VUEX](state, payload) {
-            if (payload.vuex.isList) {
-                Vue.set(state, payload.vuex.modulePostfix, payload.records);
-            }
-            else {
-                if (!validResultSize(payload)) {
-                    return;
-                }
-                changeRoot(state, payload.records[0], payload.vuex.moduleName);
-            }
         },
         [exports.AbcMutation.ABC_PRUNE_STALE_IDX_RECORDS](state, payload) {
             // nothing to do; mutation is purely for informational/debugging purposes
@@ -26536,12 +26514,20 @@ class AbcApi {
             idxRecords = await getFromIndexedDb(this.dexieRecord, requestIds);
         }
         const local = mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
+        if (local.records.length > 0) {
+            const localResults = await AbcResult.create(this, {
+                type: "discrete",
+                local,
+                options
+            });
+            store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_INDEXED_DB_MERGE_VUEX}`, localResults);
+        }
         // query firebase if getFirebase strategy in place
         let server;
         if (options.strategy === exports.AbcStrategy.getFirebase) {
             // get from firebase
             getFromFirebase(this, requestIds).then(async (server) => {
-                const serverResponse = await AbcResult.create(this, {
+                const serverResults = await AbcResult.create(this, {
                     type: "discrete",
                     local,
                     server,
@@ -26550,10 +26536,10 @@ class AbcApi {
                 // cache results to IndexedDB
                 if (this.config.useIndexedDb) {
                     // save to indexedDB
-                    saveToIndexedDb(serverResponse, this.dexieTable);
-                    store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`, serverResponse);
+                    saveToIndexedDb(serverResults, this.dexieTable);
+                    store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`, serverResults);
                 }
-                store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`, serverResponse);
+                store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`, serverResults);
             });
         }
         const response = await AbcResult.create(this, {
@@ -26562,7 +26548,6 @@ class AbcApi {
             server,
             options
         });
-        store.commit(`${this.vuex.moduleName}/${exports.DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`, response);
         return response;
     }
     /**
@@ -26852,57 +26837,6 @@ async function loadIds(...args) {
     return Promise.resolve([]);
 }
 
-/**
- * For a discrete set of primary keys, get's all knowledge of these locally. This means
- * at least Vuex but also IndexedDB if the model is configured for it.
- *
- * It returns both
- * a complete list of the primary keys found, those still missing, as well as the records
- * themselves (where Vuex representation of a record trumps the IndexedDB representation)
- */
-async function localRecords(command, requestPks, options, context) {
-    const idxRecords = [];
-    const store = getStore();
-    const moduleIsList = context.about.config.isList;
-    const data = get$2(store.state, context.vuex.fullPath.replace(/\//g, "."), []);
-    const vuexRecords = moduleIsList ? data : [data];
-    if (context.config.useIndexedDb) {
-        if (!AbcApi.indexedDbConnected) {
-            await AbcApi.connectIndexedDb();
-        }
-        const waitFor = [];
-        requestPks.forEach(id => waitFor.push(context.dexieRecord.get(id).then(rec => {
-            if (rec)
-                idxRecords.push(rec);
-        })));
-        await Promise.all(waitFor);
-    }
-    const model = context.model.constructor;
-    console.log(Array.isArray(vuexRecords), typeof vuexRecords, Object.getPrototypeOf(vuexRecords), Object.keys(vuexRecords));
-    const vuexPks = vuexRecords.map(v => Record.compositeKeyRef(model, v));
-    const idxPks = idxRecords.map(i => Record.compositeKeyRef(model, i));
-    const localIds = Array.from(new Set([...vuexPks, ...idxPks]));
-    const missingIds = requestPks
-        .map(pk => typeof pk === "string" ? pk : Record.create(model, pk).compositeKeyRef)
-        .filter(pk => !localIds.includes(pk));
-    const modulePostfix = context.about.modelMeta.localPostfix;
-    const vuexModuleName = (context.config.moduleName || moduleIsList
-        ? context.about.model.plural
-        : context.about.modelMeta.localModelName);
-    return {
-        cacheHits: localIds.length,
-        cacheMisses: missingIds.length,
-        foundInIndexedDb: idxPks,
-        foundInVuex: vuexPks,
-        foundExclusivelyInIndexedDb: idxPks.filter(i => !vuexPks.includes(i)),
-        allFoundLocally: missingIds.length === 0 ? true : false,
-        records: Object.assign(Object.assign({}, vuexRecords), idxRecords),
-        missing: missingIds,
-        apiCommand: command,
-        modelConfig: context.config
-    };
-}
-
 async function getFromVuex(ctx) {
     const store = getStore();
     const moduleIsList = ctx.about.config.isList;
@@ -26937,7 +26871,7 @@ function mergeLocalRecords(context, idxRecords, vuexRecords, requestPks) {
     const missingIds = requestPks
         .map(pk => typeof pk === "string" ? pk : Record.create(model, pk).compositeKeyRef)
         .filter(pk => !localIds.includes(pk));
-    const results = {
+    let local = {
         cacheHits: localIds.length,
         cacheMisses: missingIds.length,
         foundInIndexedDb: idxPks,
@@ -26946,14 +26880,11 @@ function mergeLocalRecords(context, idxRecords, vuexRecords, requestPks) {
         allFoundLocally: missingIds.length === 0 ? true : false,
         records: hashToArray$1(Object.assign(Object.assign({}, arrayToHash$1(vuexRecords)), arrayToHash$1(idxRecords))),
         missing: missingIds,
-        modelConfig: context.config
+        modelConfig: context.config,
+        overallCachePerformance: context.cachePerformance
     };
-    let local = undefined;
-    if (results) {
-        context.cacheHits(results.cacheHits);
-        context.cacheMisses(results.cacheMisses);
-        local = Object.assign(Object.assign({}, results), { overallCachePerformance: context.cachePerformance });
-    }
+    context.cacheHits(local.cacheHits);
+    context.cacheMisses(local.cacheMisses);
     return local;
 }
 
@@ -26979,6 +26910,8 @@ const all = function all(defn = {}) {
         // The query to use for Firebase
         const firemodelQuery = async () => {
             const { data, query } = await List.all(ctx.model.constructor, options || {});
+            // set new cookie with timestamp
+            setCookie(ctx.model.pascal);
             return { data, query };
         };
         return { dexieQuery, firemodelQuery, queryDefn: defn };
@@ -28123,7 +28056,6 @@ exports.loadIds = loadIds;
 exports.loadQuery = loadQuery;
 exports.localConfig = localConfig;
 exports.localCrud = localCrud;
-exports.localRecords = localRecords;
 exports.localRelnOp = localRelnOp;
 exports.locallyUpdateFkOnRecord = locallyUpdateFkOnRecord;
 exports.max = max;

@@ -24,7 +24,7 @@ export function mergeLocalRecords<T>(
     )
     .filter(pk => !localIds.includes(pk));
 
-  const results = {
+  let local: IDiscreteLocalResults<T> = {
     cacheHits: localIds.length,
     cacheMisses: missingIds.length,
     foundInIndexedDb: idxPks,
@@ -36,18 +36,12 @@ export function mergeLocalRecords<T>(
       ...arrayToHash(idxRecords)
     }),
     missing: missingIds,
-    modelConfig: context.config
+    modelConfig: context.config,
+    overallCachePerformance: context.cachePerformance
   };
 
-  let local: IDiscreteLocalResults<T> | undefined = undefined;
-  if (results) {
-    context.cacheHits(results.cacheHits);
-    context.cacheMisses(results.cacheMisses);
-    local = {
-      ...results,
-      overallCachePerformance: context.cachePerformance
-    };
-  }
+  context.cacheHits(local.cacheHits);
+  context.cacheMisses(local.cacheMisses);
 
   return local;
 }
