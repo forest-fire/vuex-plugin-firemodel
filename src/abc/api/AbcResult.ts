@@ -3,7 +3,7 @@ import { arrayToHash, hashToArray } from "typed-conversions";
 
 import { AbcApi } from "@/abc";
 import { AbcError } from "@/errors";
-import { IAbcResult } from "@/types";
+import { IAbcResult, ICachePerformance } from "@/types";
 import { IDictionary } from "common-types";
 
 /**
@@ -19,6 +19,13 @@ export class AbcResult<T extends Model> {
     private _performance?: IDictionary
   ) {}
 
+  /**
+   * Static initializer for `AbcResult` which
+   *
+   * @param _context
+   * @param _results
+   * @param _performance
+   */
   static async create<T extends Model>(
     _context: AbcApi<T>,
     _results: IAbcResult<T>,
@@ -93,7 +100,7 @@ export class AbcResult<T extends Model> {
     return this._results.server?.records || undefined;
   }
 
-  get cachePerformance() {
+  get cachePerformance(): ICachePerformance {
     return this._context.cachePerformance;
   }
 

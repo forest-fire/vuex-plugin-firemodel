@@ -1,5 +1,5 @@
 import { Model, IPrimaryKey } from "firemodel";
-import type { IAbstractedDatabase, ISerializedQuery } from "universal-fire";
+import type { IAbstractedDatabase, ISerializedQuery, ISerializedIdentity } from "universal-fire";
 import { epochWithMilliseconds, IDictionary } from "common-types";
 import type { AbcApi, AbcResult } from "@/abc";
 
@@ -139,6 +139,26 @@ export interface IWatchResults<T, K = IDictionary> {
 }
 
 export type IServerResults<T> = IQueryServerResults<T> | IDiscreteServerResults<T> | IWatchServerResults<T>;
+
+export interface ICachePerformance {
+  hits: number;
+  misses: number;
+  ignores: number;
+}
+
+/**
+ * Payload type that is passed to vuex when a store commit is called
+ * in ABC.
+ */
+export interface IAbcPayload<T> {
+  records: T[];
+  cachePerformance: ICachePerformance;
+  query: ISerializedIdentity<T> | undefined;
+  localPath: string;
+  totalRecords: number;
+  isList: boolean | undefined;
+  isQuery: boolean;
+}
 /**
  * Results from an ABC get/load which were retrieved from
  * the combined knowledge of Vuex and IndexedDB. The records
@@ -446,6 +466,9 @@ export interface IQueryOptions<T> extends IUniversalOptions<T> {
   offsets?: Partial<T>;
 }
 
+/**
+ * Allows seting _strategies_ and _offsets_ for discrete operations.
+ */
 export interface IDiscreteOptions<T> extends IUniversalOptions<T> {
   /**
    * If the `Model` involved has dynamic paths, you can state the dynamic properties

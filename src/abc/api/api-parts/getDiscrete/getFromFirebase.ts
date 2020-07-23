@@ -1,6 +1,9 @@
-import { AbcApi, serverRecords } from "@/abc";
+import { AbcApi, discreteServerRecords } from "@/abc";
 
+/**
+ * REMOVE?
+ */
 export async function getFromFirebase<T>(ctx: AbcApi<T>, requestIds: string[]) {
-  const server = await serverRecords(ctx, requestIds, requestIds);
+  const server = await discreteServerRecords(ctx, requestIds, requestIds);
   return server;
 }

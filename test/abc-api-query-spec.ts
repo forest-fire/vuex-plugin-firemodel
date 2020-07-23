@@ -648,7 +648,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]
     ).toBe(1);
     expect(
-      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`]
+      eventCounts[`products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`]
     ).toBe(1);
     expect(
       eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`]
@@ -695,7 +695,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]
     ).toBe(2);
     expect(
-      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`]
+      eventCounts[`products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`]
     ).toBe(2);
     expect(
       eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`]
@@ -855,7 +855,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]
     ).toBe(1);
     expect(
-      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`]
+      eventCounts[`products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`]
     ).toBe(1);
     expect(
       eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`]
@@ -920,7 +920,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]
     ).toBe(2);
     expect(
-      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`]
+      eventCounts[`products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`]
     ).toBe(2);
     expect(
       eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`]
@@ -1031,7 +1031,7 @@ describe("ABC API Query - with a model with IndexedDB support => ", () => {
       eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]
     ).toBe(2);
     expect(
-      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`]
+      eventCounts[`products/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`]
     ).toBe(2);
     expect(
       eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`]

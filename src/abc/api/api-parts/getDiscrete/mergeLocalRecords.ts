@@ -4,6 +4,9 @@ import { arrayToHash, hashToArray } from "typed-conversions";
 import { AbcApi } from "@/abc";
 import { IDiscreteLocalResults } from "@/types";
 
+/**
+ * Calculates the delta between Indexed DB and Vuex
+ */
 export function mergeLocalRecords<T>(
   context: AbcApi<T>,
   idxRecords: T[],

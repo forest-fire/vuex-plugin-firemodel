@@ -105,7 +105,7 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
     ).toBeUndefined();
   });
 
-  it("load.discrete(product) with loadVuex strategy returns results from indexedDB/firebase into vuex", async () => {
+  it("load.discrete(product) with loadVuex strategy: returns results from indexedDB/firebase into vuex", async () => {
     const store = getStore();
     store.subscribe(subscription);
     const tbl = AbcApi.getModelApi(Product).dexieTable;
@@ -143,7 +143,7 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
     ).toBeUndefined();
   });
 
-  it("load.discrete(product) with loadVuex strategy returns results from indexedDB/firebase into vuex with existing data in vuex", async () => {
+  it.only("load.discrete(product) with loadVuex strategy: returns results from indexedDB/firebase into vuex with existing data in vuex", async () => {
     const store = getStore();
     store.subscribe(subscription);
     const tbl = AbcApi.getModelApi(Product).dexieTable;
@@ -161,11 +161,8 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
     });
 
     expect(results).toBeInstanceOf(AbcResult);
-
     expect(results.records).toHaveLength(numProducts);
-
     expect(await tbl.toArray()).toHaveLength(numProducts);
-
     expect(store.state.products.all).toHaveLength(numProducts);
 
     // update DB
@@ -173,7 +170,7 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
     const mockDbProducts = productData.products;
     const updatedProduct = Object.values(mockDbProducts)
       .filter((p: Product) => p.id === "abcd")
-      .map(p => ({ ...p, price: newPrice }));
+      .map(p => ({ ...p, price: newPrice, lastUpdated: new Date().getTime() }));
 
     db.mock.updateDB({
       products: {
@@ -191,7 +188,6 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
      * for products that weren't modified. Need to look into this.
      **/
     expect(discreteResult.records).toHaveLength(1);
-
     expect(store.state.products.all).toHaveLength(numProducts);
 
     const abcdProductInStore = store.state.products.all.find(
