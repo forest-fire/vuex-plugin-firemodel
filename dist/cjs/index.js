@@ -7946,7 +7946,7 @@ class List extends FireModel {
      * @param options model options
      */
     static async all(model, options = {}) {
-        const query = universalFire.SerializedQuery.create(this.defaultDb).orderByChild("lastUpdated");
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb).orderByChild("lastUpdated");
         const list = await List.fromQuery(model, query, options);
         return list;
     }
@@ -7959,7 +7959,7 @@ class List extends FireModel {
      * @param options model options
      */
     static async first(model, howMany, options = {}) {
-        const query = universalFire.SerializedQuery.create(this.defaultDb)
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb)
             .orderByChild("createdAt")
             .limitToLast(howMany);
         const list = await List.fromQuery(model, query, options);
@@ -7976,7 +7976,7 @@ class List extends FireModel {
      * @param options
      */
     static async recent(model, howMany, offset = 0, options = {}) {
-        const query = universalFire.SerializedQuery.create(this.defaultDb)
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb)
             .orderByChild("lastUpdated")
             .limitToFirst(howMany);
         const list = await List.fromQuery(model, query, options);
@@ -7993,7 +7993,7 @@ class List extends FireModel {
             e.name = "NotAllowed";
             throw e;
         }
-        const query = universalFire.SerializedQuery.create(this.defaultDb)
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb)
             .orderByChild("lastUpdated")
             .startAt(since);
         const list = await List.fromQuery(model, query, options);
@@ -8007,7 +8007,7 @@ class List extends FireModel {
      * without any update for the longest.
      */
     static async inactive(model, howMany, options = {}) {
-        const query = universalFire.SerializedQuery.create(this.defaultDb)
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb)
             .orderByChild("lastUpdated")
             .limitToLast(howMany);
         const list = await List.fromQuery(model, query, options);
@@ -8020,7 +8020,7 @@ class List extends FireModel {
      * that the record was **created**.
      */
     static async last(model, howMany, options = {}) {
-        const query = universalFire.SerializedQuery.create(this.defaultDb)
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb)
             .orderByChild("createdAt")
             .limitToFirst(howMany);
         const list = await List.fromQuery(model, query, options);
@@ -8048,7 +8048,8 @@ class List extends FireModel {
             records = arrayToHash(records);
         }
         const dbPath = List.dbPath(model, options.offsets);
-        await FireModel.defaultDb.update(dbPath, records);
+        const db = options.db || FireModel.defaultDb;
+        await db.update(dbPath, records);
     }
     /**
      * **List.where()**
@@ -8069,7 +8070,7 @@ class List extends FireModel {
             val = value[1];
             operation = value[0];
         }
-        const query = universalFire.SerializedQuery.create(this.defaultDb)
+        const query = universalFire.SerializedQuery.create(options.db || this.defaultDb)
             .orderByChild(property)
             // @ts-ignore
             // Not sure why there is a typing issue here.
@@ -11775,7 +11776,6 @@ async function waitForInitialization(watcher, timeout = 750) {
     while (!ready(watcher) && !stopWaiting) {
         await wait(50);
         const currentTime = new Date().getTime();
-        console.log(currentTime - startTime);
         if (currentTime - startTime > timeout) {
             stopWaiting = true;
             possibleProblem();
@@ -11899,7 +11899,7 @@ function buildRelationshipPaths(rec, property, fkRef, options = {}) {
         const fkModelConstructor = meta.relationship(property).fkConstructor();
         const inverseProperty = meta.relationship(property).inverseProperty;
         const fkRecord = Record.createWith(fkModelConstructor, fkRef, {
-            db: rec.db,
+            db: options.db || rec.db,
         });
         const results = [];
         /**
@@ -12005,7 +12005,7 @@ function createCompositeKeyFromFkString(fkCompositeRef, modelConstructor) {
 }
 function setWithType(prop, value, model) {
     if (!model.META.property(prop)) {
-        throw new FireModelError(`When building a "typed" composite key based on the model ${capitalize(model.constructor.name)}, the property "${prop}" was presented but this property doesn't exist on this model!`, "firemodel/property-does-not-exist");
+        throw new FireModelError(`When building a composite key for the model ${capitalize(model.constructor.name)}, the property "${prop}" was presented but this property doesn't exist on this model! `, "firemodel/property-does-not-exist");
     }
     const type = model.META.property(prop).type;
     switch (type) {
@@ -12888,14 +12888,14 @@ class Record extends FireModel {
      * update an existing record in the database with a dictionary of prop/value pairs
      *
      * @param model the _model_ type being updated
-     * @param id the `id` for the model being updated
+     * @param pk the `id` for the model being updated
      * @param updates properties to update; this is a non-destructive operation so properties not expressed will remain unchanged. Also, because values are _nullable_ you can set a property to `null` to REMOVE it from the database.
      * @param options
      */
-    static async update(model, id, updates, options = {}) {
+    static async update(model, pk, updates, options = {}) {
         let r;
         try {
-            r = await Record.get(model, id, options);
+            r = await Record.get(model, pk, options);
             await r.update(updates);
         }
         catch (e) {
@@ -12909,12 +12909,12 @@ class Record extends FireModel {
      * Pushes a new item into a property that is setup as a "pushKey"
      *
      * @param model the model being operated on
-     * @param id  `id` or `composite-key` that uniquely identifies a record
+     * @param pk  an `id` or `CompositeKey` that uniquely identifies a record
      * @param property the property on the record
      * @param payload the new payload you want to push into the array
      */
-    static async pushKey(model, id, property, payload, options = {}) {
-        const obj = await Record.get(model, id, options);
+    static async pushKey(model, pk, property, payload, options = {}) {
+        const obj = await Record.get(model, pk, options);
         return obj.pushKey(property, payload);
     }
     /**
@@ -12940,6 +12940,10 @@ class Record extends FireModel {
      * a hash/dictionary of attributes that are to be set as a starting point
      */
     static createWith(model, payload, options = {}) {
+        const defaultDb = FireModel.defaultDb;
+        if (options.db) {
+            FireModel.defaultDb = options.db;
+        }
         const rec = Record.create(model, options);
         if (options.setDeepRelationships === true) {
             throw new FireModelError(`Trying to create a ${capitalize(rec.modelName)} with the "setDeepRelationships" property set. This is NOT allowed; consider the 'Record.add()' method instead.`, "not-allowed");
@@ -12951,6 +12955,7 @@ class Record extends FireModel {
         // the async possibilites of this method (only if `options.setDeepRelationships`)
         // are not negatively impacting this method
         rec._initialize(properties, options);
+        FireModel.defaultDb = defaultDb;
         return rec;
     }
     /**
@@ -12963,16 +12968,16 @@ class Record extends FireModel {
      * @param id either just an "id" string or in the case of models with dynamic path prefixes you can pass in an object with the id and all dynamic prefixes
      * @param options
      */
-    static async get(model, id, options = {}) {
+    static async get(model, pk, options = {}) {
         const record = Record.create(model, options);
-        await record._getFromDB(id);
+        await record._getFromDB(pk);
         return record;
     }
-    static async remove(model, id, 
+    static async remove(model, pk, 
     /** if there is a known current state of this model you can avoid a DB call to get it */
     currentState) {
         // TODO: add lookup in local state to see if we can avoid DB call
-        const record = currentState ? currentState : await Record.get(model, id);
+        const record = currentState ? currentState : await Record.get(model, pk);
         await record.remove();
         return record;
     }
@@ -12980,10 +12985,15 @@ class Record extends FireModel {
     /**
      * Associates a new FK to a relationship on the given `Model`; returning
      * the primary model as a return value
+     *
+     * @param model The `Model` which the association will originate from
+     * @param pk the _primary key_ of the primary model above
+     * @param property the _property_ on the primary model which relates to another model(s)
+     * @param refs one or more FK references
      */
-    static async associate(model, id, property, refs) {
-        const obj = await Record.get(model, id);
-        await obj.associate(property, refs);
+    static async associate(model, pk, property, refs, options) {
+        const obj = await Record.get(model, pk);
+        await obj.associate(property, refs, options);
         return obj;
     }
     /**
@@ -13548,7 +13558,7 @@ class Record extends FireModel {
         if (isHasManyRelationship(this, property)) {
             throw new NotHasOneRelationship(this, property, "setRelationship");
         }
-        const paths = buildRelationshipPaths(this, property, fkId);
+        const paths = buildRelationshipPaths(this, property, fkId, options);
         await relationshipOperation(this, "set", property, [fkId], paths, options);
     }
     //#endregion INSTANCE DEFINITION
@@ -13584,6 +13594,10 @@ class Record extends FireModel {
      * @param data the initial state you want to start with
      */
     async _initialize(data, options = {}) {
+        const defaultDb = FireModel.defaultDb;
+        if (options.db) {
+            FireModel.defaultDb = options.db;
+        }
         if (data) {
             Object.keys(data).map((key) => {
                 this._data[key] = data[key];
@@ -13613,7 +13627,9 @@ class Record extends FireModel {
                 }
             }
         }
-        await Promise.all(promises);
+        await Promise.all(promises).finally(() => {
+            FireModel.defaultDb = defaultDb;
+        });
         const now = new Date().getTime();
         if (!this._data.lastUpdated) {
             this._data.lastUpdated = now;
@@ -13890,6 +13906,10 @@ class Record extends FireModel {
      * Allows for the static "add" method to add a record
      */
     async _adding(options) {
+        let defaultDb = FireModel.defaultDb;
+        if (options.db) {
+            FireModel.defaultDb = options.db;
+        }
         if (!this.id) {
             this.id = key();
         }
@@ -13938,6 +13958,9 @@ class Record extends FireModel {
         }
         catch (e) {
             throw new FireModelProxyError(e, `An ${capitalize(this.modelName)} [${this.id}] model was being added but when attempting to add in the relationships which were inferred by the record payload it ran into problems. The relationship(s) which had properties defined -- and which had a bi-lateral FK relationship (e.g., both models will track the relationship versus just the ${capitalize(this.modelName)} [${this.id} model) --  were: ${relationshipsTouched.join(", ")}`);
+        }
+        finally {
+            FireModel.defaultDb = defaultDb;
         }
         return this;
     }
