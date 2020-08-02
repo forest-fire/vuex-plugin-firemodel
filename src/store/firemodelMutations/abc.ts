@@ -9,7 +9,7 @@ import {
   IAbcPayload
 } from "@/types";
 import { arrayToHash, hashToArray } from "typed-conversions";
-import { changeRoot, get, updateList } from "@/util";
+import { changeRoot, get, updateList, merge, dynamicPathSet } from "@/util";
 
 import { AbcError } from "@/errors";
 import { IDictionary } from "common-types";
@@ -28,9 +28,6 @@ export function AbcFiremodelMutation<T>(
       if (payload.vuex.isList) {
         Vue.set(state, payload.vuex.fullPath, payload.records);
       } else {
-        // if (!validResultSize(payload)) {
-        //   return;
-        // }
         changeRoot<T>(state, payload.records[0], payload.vuex.moduleName);
       }
     },
@@ -73,9 +70,6 @@ export function AbcFiremodelMutation<T>(
       payload: IAbcPayload<T>
     ) {
       if (!payload.isList) {
-        // if (!validResultSize(payload, "server")) {
-        //   return;
-        // }
         changeRoot<T>(state, merge(state, payload.records), payload.localPath);
       } else {
         Vue.set(state, offset, payload.records);
@@ -182,26 +176,4 @@ export function AbcFiremodelMutation<T>(
       }
     }
   };
-}
-
-function validResultSize<T>(
-  payload: IAbcPayload<T>,
-  where: ("local" | "server") & keyof IAbcResult<T, any> = "server"
-) {
-  const records = payload.records;
-  if (records.length > 1) {
-    console.warn(
-      `There were ${records.length} records in the payload of the ${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX} mutation for the ${payload.localPath} Vuex module; this module is configured as for storage of a SINGULAR record not a list of records! This mutation will be ignored until this problem is corrected.`,
-      records
-    );
-    return false;
-  }
-  if (records.length === 0) {
-    console.warn(
-      `There were zero records in the payload of the ${AbcMutation.ABC_VUEX_UPDATE_FROM_IDX} mutation for the ${payload.localPath} Vuex module! This mutation will be ignored; use the ${AbcMutation.ABC_MODULE_CLEARED} mutation if your intent is to remove state from a Vuex module with the ABC API.`
-    );
-    return false;
-  }
-
-  return true;
 }

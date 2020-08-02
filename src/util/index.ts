@@ -1,6 +1,6 @@
 // #autoindex:named
 //#region autoindexed files
-// indexed at: 7th Jul, 2020, 12:17 AM ( GMT+0 )
+// indexed at: 7th Jul, 2020, 03:27 PM ( GMT+0 )
 // local file exports
 export * from "./abcPayload";
 export * from "./addNamespace";
@@ -9,10 +9,12 @@ export * from "./capitalize";
 export * from "./changeRoot";
 export * from "./cookie";
 export * from "./determineLocalStateNode";
+export * from "./dynamicPathSet";
 export * from "./get";
 export * from "./isRecord";
 export * from "./localChange";
 export * from "./localizeName";
+export * from "./merge";
 export * from "./removeProperty";
 export * from "./runQueue";
 export * from "./set";

@@ -46,6 +46,7 @@ import { IDictionary, pathJoin } from "common-types";
 import { capitalize, getStore, setCookie, abcPayload } from "@/util";
 
 import { AbcError } from "@/errors";
+import { FireModelError } from "firemodel/dist/es/errors";
 
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
@@ -557,17 +558,50 @@ export class AbcApi<T extends Model> {
   ): Promise<AbcResult<T>> {
     const store = getStore();
     // const t0 = performance.now();
+    if (request.length == 0) {
+      throw new AbcError(
+        `Attempt to load discrete records failed as an empty array was passed in`,
+        "invalid-request"
+      );
+    }
 
-    const requestIds =
-      this.hasDynamicProperties && !options.offsets
-        ? request.map(i => Record.compositeKeyRef(this._modelConstructor, i))
-        : options.offsets
-        ? request.map(i => ({ id: i, ...options.offsets }))
-        : request;
+    let requestIds: string[];
 
-    // 1234
-    // 1234::dispensary:abc
-    // { id: 1234, dispen}
+    switch (typeof request[0]) {
+      case "string":
+        if (
+          !request[0].includes(":") &&
+          this.hasDynamicProperties &&
+          !options.offsets
+        ) {
+          throw new AbcError(
+            `Attempt to load discrete records from ABC API but without the propert DB offsets for the model ${capitalize(
+              this._modelName.singular
+            )}`,
+            "invalid-request"
+          );
+        }
+        requestIds =
+          this.hasDynamicProperties && request[0].includes(":")
+            ? (request as string[])
+            : request.map(i =>
+                Record.compositeKeyRef(this._modelConstructor, {
+                  id: i,
+                  ...(options.offsets as Partial<T>)
+                })
+              );
+        break;
+      case "object":
+        requestIds = request.map(i =>
+          Record.compositeKeyRef(this._modelConstructor, i)
+        );
+        break;
+      default:
+        throw new AbcError(
+          `Unexpected data passed to loadDiscrete()`,
+          "not-allowed"
+        );
+    }
 
     const local = undefined;
     const server = await discreteServerRecords(this, requestIds);
