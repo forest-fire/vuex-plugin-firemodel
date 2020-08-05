@@ -26,7 +26,7 @@ export async function discreteServerRecords<T extends Model>(
   const records = (
     await List.ids(context.model.constructor, ...requestForFirebase)
   ).data;
-
+  console.log({ records });
   // const recordIds = records.map(i =>
   //   Record.compositeKeyRef(context.model.constructor, i)
   // );

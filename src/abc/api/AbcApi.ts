@@ -21,7 +21,6 @@ import {
 import {
   AbcResult,
   getDefaultApiConfig,
-  getFromFirebase,
   getFromIndexedDb,
   getFromVuex,
   mergeLocalRecords,
@@ -532,13 +531,14 @@ export class AbcApi<T extends Model> {
     // get from Vuex
     const vuexRecords = await getFromVuex(this);
 
+    let local = [];
     if (this.config.useIndexedDb) {
       // get from indexedDB
-      idxRecords = await getFromIndexedDb(this.dexieRecord, requestIds);
+      local = await getFromIndexedDb<T>(this.dexieRecord, requestIds);
     }
 
-    const local = mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
-    if (local.records.length > 0) {
+    // const local = mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
+    if (local.length > 0) {
       const localResults = await AbcResult.create(this, {
         type: "discrete",
         local,
@@ -554,7 +554,7 @@ export class AbcApi<T extends Model> {
     let server: IDiscreteServerResults<T> | undefined;
     if (options.strategy === AbcStrategy.getFirebase) {
       // get from firebase
-      getFromFirebase(this, requestIds).then(async server => {
+      discreteServerRecords(this, requestIds).then(async server => {
         const serverResults = await AbcResult.create(this, {
           type: "discrete",
           local,
@@ -562,7 +562,6 @@ export class AbcApi<T extends Model> {
           options
         });
 
-        console.log(serverResults.records);
         // cache results to IndexedDB
         if (this.config.useIndexedDb) {
           // save to indexedDB

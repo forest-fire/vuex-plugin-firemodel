@@ -263,7 +263,7 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
     ).toBe(1);
   });
 
-  it.only("get.discrete(product) with getFirebase strategy: returns results from firebase into indexedDB with existing data in vuex", async done => {
+  it("get.discrete(product) with getFirebase strategy: returns results from firebase into indexedDB with existing data in vuex", async done => {
     const store = getStore();
     store.subscribe(subscription);
     const tbl = AbcApi.getModelApi(Product).dexieTable;
@@ -320,6 +320,36 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
             price: 0
           };
           expect(abcdProductInCache.price).toBe(newPrice);
+          done();
+        }
+      });
+    });
+  });
+
+  it.only("get.discrete(product) with getFirebase strategy: returns results from firebase into indexedDB with existing data in vuex", async done => {
+    const store = getStore();
+    store.subscribe(subscription);
+    const tbl = AbcApi.getModelApi(Product).dexieTable;
+    const db = AbcApi.getModelApi(Product).db;
+    await addProductsToMockDB();
+
+    const numProducts = Object.keys(productData.products).length;
+    // start with empty Vuex and IndexedDB state
+    expect(store.state.products.all).toHaveLength(0);
+    expect(await tbl.toArray()).toHaveLength(0);
+
+    await addProductsToIndexedDB();
+
+    getProducts(["acbde"], {
+      strategy: AbcStrategy.getFirebase
+    }).then(results => {
+      store.subscribe(async (mutation: MutationPayload, state: IDictionary) => {
+        if (
+          mutation.type ===
+          `products/${DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`
+        ) {
+          expect(results.records).toHaveLength(numProducts);
+          expect(state.products.all).toHaveLength(numProducts);
           done();
         }
       });
