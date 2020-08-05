@@ -128,13 +128,13 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
     expect(store.state.products.all).toHaveLength(numProducts);
 
     expect(
-      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]
-    ).toBe(1);
-    expect(
-      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`]
-    ).toBe(1);
-    expect(
       eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`]
+    ).toBe(1);
+    expect(
+      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`]
+    ).toBe(1);
+    expect(
+      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]
     ).toBeUndefined();
     expect(
       eventCounts[
@@ -143,7 +143,7 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
     ).toBeUndefined();
   });
 
-  it.only("load.discrete(product) with loadVuex strategy: returns results from indexedDB/firebase into vuex with existing data in vuex", async () => {
+  it("load.discrete(product) with loadVuex strategy: returns results from indexedDB/firebase into vuex with existing data in vuex", async () => {
     const store = getStore();
     store.subscribe(subscription);
     const tbl = AbcApi.getModelApi(Product).dexieTable;
@@ -202,13 +202,13 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
     expect(abcdProductInCache.price).toBe(newPrice);
 
     expect(
-      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]
-    ).toBe(2);
-    expect(
-      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`]
-    ).toBe(2);
-    expect(
       eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`]
+    ).toBe(2);
+    expect(
+      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`]
+    ).toBe(2);
+    expect(
+      eventCounts[`products/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`]
     ).toBeUndefined();
     expect(
       eventCounts[
@@ -261,6 +261,69 @@ describe("ABC API Discrete - with a model with IndexedDB support => ", () => {
     expect(
       eventCounts[`products/${DbSyncOperation.ABC_INDEXED_DB_MERGE_VUEX}`]
     ).toBe(1);
+  });
+
+  it.only("get.discrete(product) with getFirebase strategy: returns results from firebase into indexedDB with existing data in vuex", async done => {
+    const store = getStore();
+    store.subscribe(subscription);
+    const tbl = AbcApi.getModelApi(Product).dexieTable;
+    const db = AbcApi.getModelApi(Product).db;
+    await addProductsToMockDB();
+
+    const numProducts = Object.keys(productData.products).length;
+    // start with empty Vuex and IndexedDB state
+    expect(store.state.products.all).toHaveLength(0);
+    expect(await tbl.toArray()).toHaveLength(0);
+
+    await addProductsToIndexedDB();
+    await getProducts(Object.keys(productData.products), {
+      strategy: AbcStrategy.getFirebase
+    });
+
+    // results from indexedDB that got loaded into Vuex
+    expect(store.state.products.all).toHaveLength(numProducts);
+    expect(await tbl.toArray()).toHaveLength(numProducts);
+
+    // update DB
+    const newPrice = 430;
+    const mockDbProducts = productData.products;
+    const updatedProduct = Object.values(mockDbProducts)
+      .filter((p: Product) => p.id === "abcd")
+      .map(p => ({ ...p, price: newPrice, lastUpdated: new Date().getTime() }));
+
+    db.mock.updateDB({
+      products: {
+        abcd: updatedProduct[0]
+      }
+    });
+
+    getProducts([updatedProduct[0].id], {
+      strategy: AbcStrategy.getFirebase
+    }).then(results => {
+      store.subscribe(async (mutation: MutationPayload, state: IDictionary) => {
+        if (
+          mutation.type ===
+          `products/${DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`
+        ) {
+          expect(results.records).toHaveLength(numProducts);
+          expect(state.products.all).toHaveLength(numProducts);
+
+          const abcdProductInStore = store.state.products.all.find(
+            (p: Product) => p.id === "abcd"
+          );
+
+          expect(abcdProductInStore.price).toBe(newPrice);
+
+          const abcdProductInCache = (await tbl
+            .where({ id: "abcd" })
+            .first()) || {
+            price: 0
+          };
+          expect(abcdProductInCache.price).toBe(newPrice);
+          done();
+        }
+      });
+    });
   });
 });
 

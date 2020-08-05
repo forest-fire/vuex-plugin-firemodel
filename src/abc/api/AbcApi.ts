@@ -485,79 +485,6 @@ export class AbcApi<T extends Model> {
   ): Promise<AbcResult<T>> {
     const store = getStore();
     let idxRecords: T[] = [];
-    const requestIds = request.map(i =>
-      Record.compositeKeyRef(this._modelConstructor, i)
-    );
-
-    // get from Vuex
-    const vuexRecords = await getFromVuex(this);
-
-    if (this.config.useIndexedDb) {
-      // get from indexedDB
-      idxRecords = await getFromIndexedDb(this.dexieRecord, requestIds);
-    }
-
-    const local = mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
-    if (local.records.length > 0) {
-      const localResults = await AbcResult.create(this, {
-        type: "discrete",
-        local,
-        options
-      });
-      store.commit(
-        `${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_MERGE_VUEX}`,
-        abcPayload(localResults)
-      );
-    }
-
-    // query firebase if getFirebase strategy in place
-    let server: IDiscreteServerResults<T> | undefined;
-    if (options.strategy === AbcStrategy.getFirebase) {
-      // get from firebase
-      getFromFirebase(this, requestIds).then(async server => {
-        const serverResults = await AbcResult.create(this, {
-          type: "discrete",
-          local,
-          server,
-          options
-        });
-
-        // cache results to IndexedDB
-        if (this.config.useIndexedDb) {
-          // save to indexedDB
-          saveToIndexedDb(serverResults, this.dexieTable);
-          store.commit(
-            `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`,
-            abcPayload(serverResults)
-          );
-        }
-
-        store.commit(
-          `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`,
-          abcPayload(serverResults)
-        );
-      });
-    }
-
-    const response = await AbcResult.create(this, {
-      type: "discrete",
-      local,
-      server,
-      options
-    });
-
-    return response;
-  }
-
-  /**
-   * Handles LOAD requests for Discrete ID requests
-   */
-  private async loadDiscrete(
-    request: IPrimaryKey<T>[],
-    options: IDiscreteOptions<T> = {}
-  ): Promise<AbcResult<T>> {
-    const store = getStore();
-    // const t0 = performance.now();
     if (request.length == 0) {
       throw new AbcError(
         `Attempt to load discrete records failed as an empty array was passed in`,
@@ -566,7 +493,6 @@ export class AbcApi<T extends Model> {
     }
 
     let requestIds: string[];
-
     switch (typeof request[0]) {
       case "string":
         if (
@@ -603,11 +529,123 @@ export class AbcApi<T extends Model> {
         );
     }
 
-    const local = undefined;
+    // get from Vuex
+    const vuexRecords = await getFromVuex(this);
+
+    if (this.config.useIndexedDb) {
+      // get from indexedDB
+      idxRecords = await getFromIndexedDb(this.dexieRecord, requestIds);
+    }
+
+    const local = mergeLocalRecords(this, idxRecords, vuexRecords, requestIds);
+    if (local.records.length > 0) {
+      const localResults = await AbcResult.create(this, {
+        type: "discrete",
+        local,
+        options
+      });
+      store.commit(
+        `${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_MERGE_VUEX}`,
+        abcPayload(localResults)
+      );
+    }
+
+    // query firebase if getFirebase strategy in place
+    let server: IDiscreteServerResults<T> | undefined;
+    if (options.strategy === AbcStrategy.getFirebase) {
+      // get from firebase
+      getFromFirebase(this, requestIds).then(async server => {
+        const serverResults = await AbcResult.create(this, {
+          type: "discrete",
+          local,
+          server,
+          options
+        });
+
+        console.log(serverResults.records);
+        // cache results to IndexedDB
+        if (this.config.useIndexedDb) {
+          // save to indexedDB
+          saveToIndexedDb(serverResults, this.dexieTable);
+          store.commit(
+            `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`,
+            abcPayload(serverResults)
+          );
+        }
+
+        store.commit(
+          `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`,
+          abcPayload(serverResults)
+        );
+      });
+    }
+
+    const response = await AbcResult.create(this, {
+      type: "discrete",
+      local,
+      server,
+      options
+    });
+
+    return response;
+  }
+
+  /**
+   * Handles LOAD requests for Discrete ID requests
+   */
+  private async loadDiscrete(
+    request: IPrimaryKey<T>[],
+    options: IDiscreteOptions<T> = {}
+  ): Promise<AbcResult<T>> {
+    const store = getStore();
+
+    if (request.length == 0) {
+      throw new AbcError(
+        `Attempt to load discrete records failed as an empty array was passed in`,
+        "invalid-request"
+      );
+    }
+
+    let requestIds: string[];
+    switch (typeof request[0]) {
+      case "string":
+        if (
+          !request[0].includes(":") &&
+          this.hasDynamicProperties &&
+          !options.offsets
+        ) {
+          throw new AbcError(
+            `Attempt to load discrete records from ABC API but without the propert DB offsets for the model ${capitalize(
+              this._modelName.singular
+            )}`,
+            "invalid-request"
+          );
+        }
+        requestIds =
+          this.hasDynamicProperties && request[0].includes(":")
+            ? (request as string[])
+            : request.map(i =>
+                Record.compositeKeyRef(this._modelConstructor, {
+                  id: i,
+                  ...(options.offsets as Partial<T>)
+                })
+              );
+        break;
+      case "object":
+        requestIds = request.map(i =>
+          Record.compositeKeyRef(this._modelConstructor, i)
+        );
+        break;
+      default:
+        throw new AbcError(
+          `Unexpected data passed to loadDiscrete()`,
+          "not-allowed"
+        );
+    }
+
     const server = await discreteServerRecords(this, requestIds);
     const serverResults = await AbcResult.create(this, {
       type: "discrete",
-      local,
       server,
       options
     });
@@ -618,7 +656,7 @@ export class AbcApi<T extends Model> {
 
       if (options.strategy === AbcStrategy.loadVuex) {
         store.commit(
-          `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_INDEXED_DB}`,
+          `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_INDEXED_DB}`,
           abcPayload(serverResults)
         );
       }
@@ -627,7 +665,7 @@ export class AbcApi<T extends Model> {
     if (options.strategy === AbcStrategy.loadVuex) {
       // load data into vuex
       store.commit(
-        `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`,
+        `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_MERGE_VUEX}`,
         abcPayload(serverResults)
       );
     }
@@ -636,7 +674,6 @@ export class AbcApi<T extends Model> {
     const results = await AbcResult.create(this, {
       type: "discrete",
       options,
-      local,
       server
     });
     return results;

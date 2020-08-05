@@ -2,14 +2,10 @@ import { AbcApi, AbcResult } from "@/abc";
 import {
   AbcMutation,
   DbSyncOperation,
-  IAbcResult,
   IDiscreteLocalResults,
-  IDiscreteResult,
-  IDiscreteServerResults,
   IAbcPayload
 } from "@/types";
-import { arrayToHash, hashToArray } from "typed-conversions";
-import { changeRoot, get, updateList, merge, dynamicPathSet } from "@/util";
+import { changeRoot, get, merge } from "@/util";
 
 import { AbcError } from "@/errors";
 import { IDictionary } from "common-types";
@@ -55,11 +51,7 @@ export function AbcFiremodelMutation<T>(
       payload: IAbcPayload<T>
     ) {
       if (!payload.isList) {
-        changeRoot<T>(
-          state,
-          dynamicPathSet(state, payload.records),
-          payload.localPath
-        );
+        changeRoot<T>(state, payload.records[0], payload.localPath);
       } else {
         Vue.set(state, offset, payload.records);
       }
@@ -70,9 +62,9 @@ export function AbcFiremodelMutation<T>(
       payload: IAbcPayload<T>
     ) {
       if (!payload.isList) {
-        changeRoot<T>(state, merge(state, payload.records), payload.localPath);
+        changeRoot<T>(state, payload.records[0], payload.localPath);
       } else {
-        Vue.set(state, offset, payload.records);
+        Vue.set(state, offset, merge(state.all, payload.records));
       }
     },
 

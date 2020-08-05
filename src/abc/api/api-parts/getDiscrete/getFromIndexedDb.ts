@@ -1,10 +1,10 @@
-import { DexieRecord, IPrimaryKey, Model } from "firemodel";
+import { DexieRecord, Model, pk } from "firemodel";
 
 import { AbcApi } from "@/abc";
 
 export async function getFromIndexedDb<T extends Model>(
   dexieRecord: DexieRecord<T>,
-  requestPks: IPrimaryKey<T>[]
+  requestPks: pk[]
 ) {
   if (!AbcApi.indexedDbConnected) {
     await AbcApi.connectIndexedDb();

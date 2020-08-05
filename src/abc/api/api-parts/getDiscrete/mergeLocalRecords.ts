@@ -1,4 +1,4 @@
-import { IPrimaryKey, Record } from "firemodel";
+import { Record, pk } from "firemodel";
 import { arrayToHash, hashToArray } from "typed-conversions";
 
 import { AbcApi } from "@/abc";
@@ -11,7 +11,7 @@ export function mergeLocalRecords<T>(
   context: AbcApi<T>,
   idxRecords: T[],
   vuexRecords: T[],
-  requestPks: IPrimaryKey<T>[]
+  requestPks: pk[]
 ) {
   const model = context.model.constructor;
   const vuexPks = vuexRecords.map(v => Record.compositeKeyRef(model, v));
@@ -21,11 +21,7 @@ export function mergeLocalRecords<T>(
     new Set<string>([...vuexPks, ...idxPks])
   );
 
-  const missingIds = requestPks
-    .map(pk =>
-      typeof pk === "string" ? pk : Record.create(model, pk).compositeKeyRef
-    )
-    .filter(pk => !localIds.includes(pk));
+  const missingIds = requestPks.filter(pk => !localIds.includes(pk));
 
   let local: IDiscreteLocalResults<T> = {
     cacheHits: localIds.length,
