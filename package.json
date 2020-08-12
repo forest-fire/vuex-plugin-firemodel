@@ -1,6 +1,6 @@
 {
   "name": "vuex-plugin-firemodel",
-  "version": "1.0.0-beta.124",
+  "version": "1.0.0-beta.125",
   "description": "A Vuex plugin which reponds to all FireModel actions as well as providing mutations which can be imported by your state tree.",
   "files": [
     "dist"
@@ -50,23 +50,23 @@
     "common-types": "^1.15.8",
     "fast-copy": "^2.1.0",
     "fast-equals": "^2.0.0",
-    "firemodel": "^0.55.4",
+    "firemodel": "^0.56.0",
     "js-cookie": "^3.0.0-rc.0",
     "typed-conversions": "^0.11.1",
     "vuex": "^3.5.1"
   },
   "peerDependencies": {
-    "universal-fire": "^0.55.12"
+    "universal-fire": "^0.56.0"
   },
   "optionalDependencies": {
-    "firemock": "^0.55.11"
+    "firemock": "^0.56.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-typescript": "^7.10.1",
-    "@firebase/app": "^0.6.8",
-    "@firebase/auth": "^0.14.8",
+    "@firebase/app": "^0.6.9",
+    "@firebase/auth": "^0.14.9",
     "@rollup/plugin-commonjs": "^13.0.0",
     "@rollup/plugin-node-resolve": "^8.1.0",
     "@types/jest": "^26.0.0",
@@ -85,7 +85,7 @@
     "madge": "^3.9.2",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.0",
-    "rollup": "^2.18.1",
+    "rollup": "^2.23.1",
     "rollup-plugin-typescript2": "^0.27.1",
     "ts-jest": "^26.1.1",
     "ts-node": "^8.10.2",
