@@ -9,7 +9,7 @@ const generalConfig = moduleSystem => ({
     format: `${moduleSystem}`,
     sourcemap: true
   },
-  external: ["universal-fire", "firemock"],
+  external: ["universal-fire", "firemock", "firemodel", "vuex", "common-types"],
   plugins: [
     commonjs(),
     resolve(),
