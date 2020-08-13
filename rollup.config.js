@@ -1,6 +1,8 @@
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import typescript2 from "rollup-plugin-typescript2";
+import pkg from "./package.json";
+import { builtinModules } from "module";
 
 const generalConfig = moduleSystem => ({
   input: "src/index.ts",
@@ -9,7 +11,12 @@ const generalConfig = moduleSystem => ({
     format: `${moduleSystem}`,
     sourcemap: true
   },
-  external: ["universal-fire", "firemock", "firemodel", "vuex", "common-types"],
+  external: [
+    ...Object.keys(pkg.dependencies),
+    ...Object.keys(pkg.peerDependencies),
+    ...Object.keys(pkg.optionalDependencies),
+    ...builtinModules
+  ],
   plugins: [
     commonjs(),
     resolve(),
