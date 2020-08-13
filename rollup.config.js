@@ -3,6 +3,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import typescript2 from "rollup-plugin-typescript2";
 import pkg from "./package.json";
 import { builtinModules } from "module";
+import analyze from "rollup-plugin-analyzer";
 
 const generalConfig = moduleSystem => ({
   input: "src/index.ts",
@@ -25,8 +26,9 @@ const generalConfig = moduleSystem => ({
       tsconfig: `tsconfig.es.json`,
       typescript: require("ttypescript"),
       declaration: moduleSystem === "es" ? true : false
-    })
+    }),
+    ...(moduleSystem === "es" ? [analyze()] : [])
   ]
 });
 
-export default [generalConfig("es"), generalConfig("cjs")];
+export default [generalConfig("cjs"), generalConfig("es")];
