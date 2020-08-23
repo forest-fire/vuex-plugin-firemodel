@@ -1,6 +1,6 @@
 {
   "name": "vuex-plugin-firemodel",
-  "version": "1.0.0-beta.132",
+  "version": "1.0.0-beta.133",
   "description": "A Vuex plugin which reponds to all FireModel actions as well as providing mutations which can be imported by your state tree.",
   "files": [
     "dist"
@@ -51,22 +51,21 @@
     "fast-equals": "^2.0.0"
   },
   "peerDependencies": {
-    "firemodel": "^0.56.1",
-    "universal-fire": "^0.56.0",
-    "vuex": "^3.5.1",
-    "vue": "^2.6.11"
+    "firemodel": "^0.58.1",
+    "js-cookie": "^3.0.0-rc.0",
+    "universal-fire": "^0.58.1",
+    "vue": "^2.6.11",
+    "vuex": "^3.5.1"
   },
   "optionalDependencies": {
     "common-types": "^1.15.8",
-    "firemock": "^0.56.4",
-    "js-cookie": "^3.0.0-rc.0",
+    "firemock": "^0.58.1",
     "typed-conversions": "^0.11.1"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-typescript": "^7.10.1",
-    "rollup-plugin-analyzer": "^3.3.0",
     "@rollup/plugin-commonjs": "^14.0.0",
     "@rollup/plugin-node-resolve": "^8.1.0",
     "@types/jest": "^26.0.0",
@@ -81,7 +80,7 @@
     "do-devops": "^0.4.8",
     "eslint-plugin-vue": "^6.2.2",
     "fake-indexeddb": "^3.0.0",
-    "firemodel": "^0.56.1",
+    "firemodel": "^0.58.1",
     "jest": "^26.1.0",
     "jest-extended": "^0.11.5",
     "js-cookie": "^3.0.0-rc.0",
@@ -89,6 +88,7 @@
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.0",
     "rollup": "^2.18.1",
+    "rollup-plugin-analyzer": "^3.3.0",
     "rollup-plugin-typescript2": "^0.27.1",
     "ts-jest": "^26.1.1",
     "ts-node": "^8.10.2",
@@ -98,7 +98,7 @@
     "typed-conversions": "^0.11.1",
     "typescript": "^3.9.5",
     "typescript-transform-paths": "^1.1.14",
-    "universal-fire": "^0.56.0",
+    "universal-fire": "^0.58.1",
     "vuepress": "^1.5.2",
     "vuepress-plugin-container": "^2.1.4",
     "vuex": "^3.5.1"

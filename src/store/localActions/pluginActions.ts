@@ -12,7 +12,7 @@ import { authChanged, getDatabase, getPluginConfig, runQueue } from "@/util";
 
 import { ActionTree } from "vuex";
 import { FireModelPluginError } from "@/errors";
-import { FirebaseAuth } from "@forest-fire/types";
+import { IClientAuth } from "universal-fire";
 
 /**
  * **pluginActions**
@@ -69,7 +69,7 @@ export const pluginActions = <T>() =>
     async [FmConfigAction.anonymousLogin](store) {
       const { commit, rootState } = store;
       const db = getDatabase();
-      const auth = (await db.auth()) as FirebaseAuth;
+      const auth = (await db.auth()) as IClientAuth;
 
       if (auth.currentUser && !auth.currentUser.isAnonymous) {
         const anon = await auth.signInAnonymously();
@@ -91,7 +91,7 @@ export const pluginActions = <T>() =>
 
       try {
         const db = getDatabase();
-        const auth = (await db.auth()) as FirebaseAuth;
+        const auth = (await db.auth()) as IClientAuth;
         FireModel.defaultDb = db;
 
         const ctx: IFmAuthenticatatedContext<T> = {
