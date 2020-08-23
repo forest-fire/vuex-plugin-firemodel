@@ -9,5 +9,6 @@ export const state: <T>() => IFiremodelState<T> = <T>() => ({
   queued: [],
   watching: [],
   localOnly: {},
-  muted: []
+  muted: [],
+  currentUser: null
 });

@@ -32,7 +32,7 @@ export interface IFiremodelState<T> {
   authenticated: undefined | false | "anonymous" | "logged-in";
   /** the AuthCredential received when logging in */
   userCredential?: AuthCredential;
-  currentUser?: ICurrentUser;
+  currentUser: ICurrentUser | null;
   /** the DB connection status */
   status:
     | "unconfigured"
