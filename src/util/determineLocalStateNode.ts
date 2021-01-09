@@ -1,5 +1,5 @@
 import { IFmWatchEvent } from "firemodel";
-import { pathJoin } from "common-types";
+import { pathJoin } from "native-dash";
 
 /**
  * **pathToState**
