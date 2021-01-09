@@ -18,10 +18,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "plugins": [
-      { "transform": "typescript-transform-paths" },
-      { "transform": "typescript-transform-paths", "afterDeclarations": true }
-    ]
+    "plugins": [{ "transform": "typescript-transform-paths" }]
   },
 
   "include": ["src", "test"]
