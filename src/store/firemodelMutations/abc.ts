@@ -8,7 +8,8 @@ import {
   IDiscreteServerResults
 } from "@/types";
 import { arrayToHash, hashToArray } from "typed-conversions";
-import { changeRoot, get } from "@/util";
+import { changeRoot } from "@/util";
+import { get } from "native-dash";
 
 import { AbcError } from "@/errors";
 import { IDictionary } from "common-types";

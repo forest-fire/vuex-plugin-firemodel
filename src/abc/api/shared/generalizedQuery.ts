@@ -19,7 +19,8 @@ import {
   QueryType
 } from "@/types";
 import { Model, Record } from "firemodel";
-import { get, getStore } from "@/util";
+import { getStore } from "@/util";
+import { get } from "native-dash";
 
 /**
  * A generalized flow for queries; specific query helpers

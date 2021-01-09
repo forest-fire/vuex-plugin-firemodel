@@ -13,8 +13,8 @@ import { IDictionary } from "common-types";
 export function set(
   obj: IDictionary,
   dotPath: string,
-  value: any,
-  createIfNonExistant: boolean = true
+  value: unknown,
+  createIfNonExistant = true
 ) {
   if (!dotPath) {
     throw new FireModelPluginError(

@@ -42,7 +42,7 @@ export interface IAbcApiConfig<T extends Model> {
 }
 
 /**
- * Any of the provided Query Helpers which include
+ * unknown of the provided Query Helpers which include
  * `all`, `since`, and `where`
  */
 export interface IAbcQueryHelper {
@@ -82,7 +82,7 @@ export interface IAbcQueryRequest<T extends Model> {
 }
 
 /**
- * Any valid ABC request including both Discrete and Query based requests
+ * unknown valid ABC request including both Discrete and Query based requests
  */
 export interface IAbcRequest<T> {
   (param: IAbcParam<T>, options?: IAbcOptions<T>): Promise<AbcResult<T>>;
@@ -130,10 +130,10 @@ export interface IQueryServerResults<T, K = IDictionary> {
  * is ever a conflict.
  */
 export interface IDiscreteLocalResults<T, K = IDictionary> extends IAbcResultsMeta<T> {
-  /** How many of the records _were_ found locally */
+  /** How munknown of the records _were_ found locally */
   cacheHits: number;
   /**
-   * How many of the records were not found locally
+   * How munknown of the records were not found locally
    */
   cacheMisses: number;
 
@@ -183,7 +183,7 @@ export interface IDiscreteServerResults<T extends Model, K = IDictionary> extend
    */
   allPks: string[];
   /**
-   * Any keys which were NOT found on the server
+   * unknown keys which were NOT found on the server
    */
   missing: string[];
   records: T[];
@@ -235,7 +235,7 @@ export enum DbSyncOperation {
    * Firebase was merged with IndexedDB. This happens when querying firebase 
    * for a subset of a particular model (e.g., discrete request or _where_ clause; 
    * but not an _all_ clause). This results in the datasets from firebase and 
-   * indexedDB being merged with firebase always winning any conflicts.
+   * indexedDB being merged with firebase always winning unknown conflicts.
    */
   ABC_FIREBASE_MERGE_INDEXED_DB = "ABC_FIREBASE_MERGE_INDEXED_DB",
   /**
@@ -276,7 +276,7 @@ export enum AbcMutation {
    */
   ABC_INDEXED_SKIPPED = "ABC_INDEXED_SKIPPED",
   /**
-   * Neither Vuex nor IndexedDB had any cached data on the records requested
+   * Neither Vuex nor IndexedDB had unknown cached data on the records requested
    */
   ABC_NO_CACHE = "ABC_NO_CACHE",
   /**
@@ -347,7 +347,7 @@ export interface IAbcAllQueryDefinition<T> extends IAbcQueryBaseDefinition {
 export interface IAbcWhereQueryEquals<T extends Model> extends IAbcQueryBaseDefinition {
   // queryType: QueryType.where;
   property: keyof T & string;
-  equals: any;
+  equals: unknown;
   lessThan?: never;
   greaterThan?: never;
 }
@@ -356,13 +356,13 @@ export interface IAbcWhereQueryGreaterThan<T extends Model> extends IAbcQueryBas
   property: keyof T & string;
   equals?: never;
   lessThan?: never;
-  greaterThan: any;
+  greaterThan: unknown;
 }
 export interface IAbcWhereQueryLessThan<T extends Model> extends IAbcQueryBaseDefinition {
   // queryType: QueryType.where;
   property: keyof T & string;
   equals?: never;
-  lessThan: any;
+  lessThan: unknown;
   greaterThan?: never;
 }
 
@@ -395,7 +395,7 @@ export interface IAbcQueryBaseDefinition {
  * a "local" response and optionally also includes a "server" response. Also
  * includes meta for Vuex.
  */
-export interface IDiscreteResult<T, K = any> {
+export interface IDiscreteResult<T, K = unknown> {
   type: "discrete";
   local?: IDiscreteLocalResults<T, K>;
   server?: IDiscreteServerResults<T, K> | undefined;
@@ -406,7 +406,7 @@ export interface IDiscreteResult<T, K = any> {
  * A query result (`IQueryLocalResults`) which definitely has a "local" response
  * and optionally also includes a "server" response. Also includes meta for Vuex.
  */
-export interface IQueryResult<T, K = any> {
+export interface IQueryResult<T, K = unknown> {
   type: "query";
   queryDefn: IAbcQueryDefinition<T>;
   local?: IQueryLocalResults<T, K>;
@@ -418,7 +418,7 @@ export interface IQueryResult<T, K = any> {
 /**
  * The results from either a Discrete or Query-based request.
  */
-export type IAbcResult<T, K = any> = IDiscreteResult<T, K> | IQueryResult<T, K>;
+export type IAbcResult<T, K = unknown> = IDiscreteResult<T, K> | IQueryResult<T, K>;
 
 export interface IQueryOptions<T> extends IUniversalOptions<T> {
   watchNew?: boolean;
@@ -446,7 +446,7 @@ export enum AbcStrategy {
   loadVuex = 'loadVuex',
   /**
    * Forces **get** based queries to always go to firebase (however promise is returned after 
-   * local query); this does not affect _discrete_ gets or any load queries.
+   * local query); this does not affect _discrete_ gets or unknown load queries.
    */
   getFirebase = 'getFirebase'
 }
@@ -458,7 +458,7 @@ export interface IUniversalOptions<T> {
   // TODO: this should be more strongly typed AND scoped to get versus load
   strategy?: string;
   /**
-   * When set, this flag tells any local & server based response to merge
+   * When set, this flag tells unknown local & server based response to merge
    * the combined knowledge into the `AbcResult.records` array. By default
    * this option is `false`.
    */

@@ -2,7 +2,7 @@ import { IDictionary } from "common-types";
 /**
  * Removes a property (or set of properties) from a hash/dictionary
  */
-export function removeProperty<T extends Object = IDictionary>(
+export function removeProperty<T extends Record<string, unknown> = IDictionary>(
   hash: T,
   ...remove: (string & keyof T)[]
 ) {

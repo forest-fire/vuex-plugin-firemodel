@@ -4,9 +4,9 @@ import {
   IDiscreteOptions
 } from "@/types";
 import { IPrimaryKey, Model, Record } from "firemodel";
-import { get, getStore } from "@/util";
-
+import { getStore } from "@/util";
 import { AbcApi } from "@/abc";
+import { get } from "native-dash";
 
 /**
  * For a discrete set of primary keys, get's all knowledge of these locally. This means

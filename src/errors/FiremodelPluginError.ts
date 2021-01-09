@@ -5,10 +5,7 @@
 export class FireModelPluginError extends Error {
   public firemodel = true;
   public code: string;
-  constructor(
-    message: string,
-    classification: string = "firemodel-plugin/error"
-  ) {
+  constructor(message: string, classification = "firemodel-plugin/error") {
     super(message);
     const parts = classification.split("/");
     const [type, subType] =

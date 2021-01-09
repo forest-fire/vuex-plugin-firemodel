@@ -1,5 +1,5 @@
 import { IDictionary } from "common-types";
-import { IFmWatchEvent } from "firemodel";
+import { IFmWatchEvent, IModel } from "firemodel";
 
 /**
  * Detects whether the change is a `Record` or a `List` and ensures
@@ -8,7 +8,7 @@ import { IFmWatchEvent } from "firemodel";
  */
 export function isRecord<T>(
   state: T | IDictionary<T[]>,
-  payload: IFmWatchEvent<any>
+  payload: IFmWatchEvent<IModel>
 ): state is T {
   return payload.watcherSource === "record";
 }
