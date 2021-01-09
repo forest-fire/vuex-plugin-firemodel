@@ -2,7 +2,7 @@ import { IPrimaryKey, Record } from "firemodel";
 import { arrayToHash, hashToArray } from "typed-conversions";
 
 import { AbcApi } from "@/abc";
-import { IDiscreteLocalResults } from "@/types";
+import type { IDiscreteLocalResults } from "@/types";
 
 export function mergeLocalRecords<T>(
   context: AbcApi<T>,

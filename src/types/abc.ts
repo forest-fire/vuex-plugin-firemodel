@@ -1,8 +1,8 @@
-import { Model, IPrimaryKey } from "firemodel";
-import type { IAbstractedDatabase, ISerializedQuery } from "universal-fire";
-import { epochWithMilliseconds, IDictionary } from "common-types";
-import type { AbcApi, AbcResult } from "@/abc";
-
+import { Model, IPrimaryKey } from 'firemodel';
+import type { IAbstractedDatabase, ISerializedQuery } from 'universal-fire';
+import { epochWithMilliseconds, IDictionary } from 'common-types';
+import type { AbcApi, AbcResult } from '@/abc';
+import { AbcMutation, DbSyncOperation } from '@/enums';
 
 export interface IAbcApiConfig<T extends Model> {
   /**
@@ -89,11 +89,11 @@ export interface IAbcRequest<T> {
 }
 
 export function isDiscreteRequest<T>(request: IAbcParam<T>): request is IPrimaryKey<T>[] {
-  return typeof request !== "function";
+  return typeof request !== 'function';
 }
 
 /** The specific **ABC** request command */
-export type AbcRequestCommand = "get" | "load";
+export type AbcRequestCommand = 'get' | 'load';
 
 export interface IQueryLocalResults<T, K = IDictionary> {
   records: T[];
@@ -172,7 +172,8 @@ export interface ICachePerformance {
   ignores: number;
 }
 
-export interface IDiscreteServerResults<T extends Model, K = IDictionary> extends IAbcResultsMeta<T> {
+export interface IDiscreteServerResults<T extends Model, K = IDictionary>
+  extends IAbcResultsMeta<T> {
   /**
    * The primary keys being requested from the server
    */
@@ -206,133 +207,18 @@ export interface IAbcResultsMeta<T> {
   modelConfig: IAbcApiConfig<T>;
 }
 
-/**
- * Operation between two data sources (Firebase, IndexedDB, Vuex) to appropriatly syncronize them.
- */
-export enum DbSyncOperation {
-  /**
-   * IndexedDB was set from Firebase (this is a non dynamic 
-   * path model and firebase fully replaced what was in indexedDB)
-   */
-  ABC_FIREBASE_SET_INDEXED_DB = "ABC_FIREBASE_SET_INDEXED_DB",
-  /**
-   * IndexedDB was set from Firebase (this is a dynamic path model
-   * and firebase should only replace whats in indexedDB for the particular 
-   * dynamic path segment, indexedDB maintains all data outside of the 
-   * dynamic path segment)
-   * 
-   * e.g. if you query firebase for all products of a particular store:
-   * 
-   * ```typescript
-   * getProducts(all(), { offsets: { storeId: '1234' }});
-   * ```
-   * Whatever firebase says about store with id 1234 is correct and indexedDB 
-   * replaces all records with storeId 1234 to the same as firebase. However,
-   * indexedDB retains all knowledge of products outside of storeId 1234.
-   */
-  ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB = "ABC_FIREBASE_SET_DYNAMIC_PATH_INDEXED_DB",
-  /**
-   * Firebase was merged with IndexedDB. This happens when querying firebase 
-   * for a subset of a particular model (e.g., discrete request or _where_ clause; 
-   * but not an _all_ clause). This results in the datasets from firebase and 
-   * indexedDB being merged with firebase always winning unknown conflicts.
-   */
-  ABC_FIREBASE_MERGE_INDEXED_DB = "ABC_FIREBASE_MERGE_INDEXED_DB",
-  /**
-   * Results from a query based GET where the underlying model does not have a 
-   * dynamic path.
-   */
-  ABC_INDEXED_DB_SET_VUEX = "ABC_INDEXED_DB_SET_VUEX",
-  /**
-   * Vuex was set from IndexedDB (this is a dynamic path model
-   * and IndexedDB should only replace whats in Vuex for the particular 
-   * dynamic path segment, Vuex maintains all data outside of the 
-   * dynamic path segment)
-   * 
-   * e.g. if you query firebase for all products of a particular store:
-   * 
-   * ```typescript
-   * getProducts(all(), { offsets: { storeId: '1234' }});
-   * ```
-   */
-  ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX = "ABC_INDEXED_DB_SET_DYNAMIC_PATH_VUEX",
-  ABC_INDEXED_DB_MERGE_VUEX = "ABC_INDEXED_DB_MERGE_VUEX",
-  ABC_FIREBASE_SET_VUEX = "ABC_FIREBASE_SET_VUEX",
-  ABC_FIREBASE_SET_DYNAMIC_PATH_VUEX = "ABC_FIREBASE_SET_DYNAMIC_PATH_VUEX",
-  ABC_FIREBASE_MERGE_VUEX = "ABC_FIREBASE_MERGE_VUEX",
-}
-
-export enum AbcMutation {
-  /**
-   * An update to a Vuex module's primary state that originated
-   * from cached information in IndexedDB. This would be the full
-   * array of records in the case of a _list_ and a hash replacement
-   * in the case of singular _record_ based module.
-   */
-  ABC_VUEX_UPDATE_FROM_IDX = "ABC_VUEX_UPDATE_FROM_IDX",
-  /**
-   * Attempt to get additional information from IndexedDB but currently
-   * Vuex has all of the records that IndexedDB has
-   */
-  ABC_INDEXED_SKIPPED = "ABC_INDEXED_SKIPPED",
-  /**
-   * Neither Vuex nor IndexedDB had unknown cached data on the records requested
-   */
-  ABC_NO_CACHE = "ABC_NO_CACHE",
-  /**
-   * The given Vuex module has been cleared from Vuex
-   */
-  ABC_MODULE_CLEARED = "ABC_MODULE_CLEAR",
-  /**
-   * The given `Model` has been cleared from IndexedDB
-   */
-  ABC_INDEXED_CLEARED = "ABC_INDEXED_CLEARED",
-  /**
-   * Vuex was updated from the server results
-   */
-  ABC_FIREBASE_TO_VUEX_UPDATE = "ABC_FIREBASE_TO_VUEX_UPDATE",
-  /**
-   * Vuex was reset with new results from Firebase
-   */
-  ABC_FIREBASE_TO_VUEX_SET = "ABC_FIREBASE_TO_VUEX_UPDATE",
-  /**
-   * A Query was run against IndexedDB and it's results will be added/updated
-   * into the current Vuex state (until/if the server provides an updated set of
-   * records)
-   */
-  ABC_LOCAL_QUERY_TO_VUEX = "ABC_LOCAL_QUERY_TO_VUEX",
-  /**
-   * A Query was run against IndexedDB but no results were returned
-   */
-  ABC_LOCAL_QUERY_EMPTY = "ABC_LOCAL_QUERY_EMPTY",
-  /**
-   * An attempt to refresh the IndexedDB failed
-   */
-  ABC_INDEXED_DB_REFRESH_FAILED = "ABC_INDEXED_DB_REFRESH_FAILED",
-  /**
-   * when a query from IndexedDb returns id's which the server doesn't return
-   * then these records are assumed to be "stale" and are removed from IndexedDb
-   */
-  ABC_PRUNE_STALE_IDX_RECORDS = "ABC_PRUNE_STALE_IDX_RECORDS",
-  /**
-   * when a record is detected as no longer available (on the back of a server response), this
-   * mutation will remove the record from Vuex.
-   */
-  ABC_PRUNE_STALE_VUEX_RECORDS = "ABC_PRUNE_STALE_VUEX_RECORDS"
-}
-
-export type IAbcMutation = keyof typeof AbcMutation | keyof typeof DbSyncOperation
+export type IAbcMutation = keyof typeof AbcMutation | keyof typeof DbSyncOperation;
 
 export enum AbcDataSource {
-  vuex = "vuex",
-  indexedDb = "indexedDb",
-  firebase = "firebase"
+  vuex = 'vuex',
+  indexedDb = 'indexedDb',
+  firebase = 'firebase',
 }
 
 export enum QueryType {
-  all = "all",
-  where = "where",
-  since = "since"
+  all = 'all',
+  where = 'where',
+  since = 'since',
 }
 
 export type IAbcQueryDefinition<T> =
@@ -396,7 +282,7 @@ export interface IAbcQueryBaseDefinition {
  * includes meta for Vuex.
  */
 export interface IDiscreteResult<T, K = unknown> {
-  type: "discrete";
+  type: 'discrete';
   local?: IDiscreteLocalResults<T, K>;
   server?: IDiscreteServerResults<T, K> | undefined;
   options: IDiscreteOptions<T>;
@@ -407,7 +293,7 @@ export interface IDiscreteResult<T, K = unknown> {
  * and optionally also includes a "server" response. Also includes meta for Vuex.
  */
 export interface IQueryResult<T, K = unknown> {
-  type: "query";
+  type: 'query';
   queryDefn: IAbcQueryDefinition<T>;
   local?: IQueryLocalResults<T, K>;
   server?: IQueryServerResults<T, K>;
@@ -445,13 +331,13 @@ export interface IDiscreteOptions<T> extends IUniversalOptions<T> {
 export enum AbcStrategy {
   loadVuex = 'loadVuex',
   /**
-   * Forces **get** based queries to always go to firebase (however promise is returned after 
+   * Forces **get** based queries to always go to firebase (however promise is returned after
    * local query); this does not affect _discrete_ gets or unknown load queries.
    */
-  getFirebase = 'getFirebase'
+  getFirebase = 'getFirebase',
 }
 
-export type IAbcStrategy = keyof typeof AbcStrategy
+export type IAbcStrategy = keyof typeof AbcStrategy;
 
 export interface IUniversalOptions<T> {
   watch?: boolean | IWatchCallback<T>;
@@ -493,11 +379,11 @@ export interface IAbcQueryApi<T> {
   load: (props: IAbcQueryDefinition<T>, options: IQueryOptions<T>) => Promise<AbcResult<T>>;
 }
 
-export const SINCE_LAST_COOKIE = "slc";
+export const SINCE_LAST_COOKIE = 'slc';
 
 export interface IGeneralizedQuery<T extends Model> {
   (): Promise<T[]>;
 }
 export interface IGeneralizedFiremodelQuery<T extends Model> {
-  (): Promise<IAbcFirebaseQueryResult<T>>
+  (): Promise<IAbcFirebaseQueryResult<T>>;
 }

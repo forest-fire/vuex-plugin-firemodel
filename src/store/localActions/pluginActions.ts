@@ -1,18 +1,17 @@
-import { FireModel, List, Record, Watch } from "firemodel";
-import {
-  FmConfigAction,
-  FmConfigMutation,
+import { FireModel, List, Record, Watch } from 'firemodel';
+import type {
   IFiremodelConfig,
   IFmAuthenticatatedContext,
   IFmConnectedContext,
   IFmRouteEventContext,
-  IFiremodelState
-} from "@/types";
-import { authChanged, getDatabase, getPluginConfig, runQueue } from "@/util";
+  IFiremodelState,
+} from '@/types';
+import { authChanged, getDatabase, getPluginConfig, runQueue } from '@/util';
 
-import { ActionTree } from "vuex";
-import { FireModelPluginError } from "@/errors";
-import { IClientAuth } from "universal-fire";
+import { ActionTree } from 'vuex';
+import { FireModelPluginError } from '@/errors';
+import { IClientAuth } from 'universal-fire';
+import { FmConfigAction, FmConfigMutation } from '@/enums';
 
 /**
  * **pluginActions**
@@ -31,7 +30,7 @@ export const pluginActions = <T>() =>
       if (!config) {
         throw new FireModelPluginError(
           `Connecting to database but NO configuration was present!`,
-          "not-allowed"
+          'not-allowed'
         );
       }
       try {
@@ -46,10 +45,10 @@ export const pluginActions = <T>() =>
           db,
           config,
 
-          state: rootState as T & { "@firemodel": IFiremodelState<T> }
+          state: rootState as T & { '@firemodel': IFiremodelState<T> },
         };
 
-        await runQueue(ctx, "connected");
+        await runQueue(ctx, 'connected');
 
         commit(FmConfigMutation.configure, config); // set Firebase configuration
       } catch (e) {
@@ -73,7 +72,7 @@ export const pluginActions = <T>() =>
 
       if (auth.currentUser && !auth.currentUser.isAnonymous) {
         const anon = await auth.signInAnonymously();
-        commit("ANONYMOUS_LOGIN", anon);
+        commit('ANONYMOUS_LOGIN', anon);
       }
     },
 
@@ -104,17 +103,15 @@ export const pluginActions = <T>() =>
 
           dispatch,
           commit,
-          state: rootState as T & { "@firemodel": IFiremodelState<T> }
+          state: rootState as T & { '@firemodel': IFiremodelState<T> },
         };
 
         auth.onAuthStateChanged(authChanged(ctx));
         auth.setPersistence(
-          typeof config.auth === "object"
-            ? config.auth.persistence || "session"
-            : "session"
+          typeof config.auth === 'object' ? config.auth.persistence || 'session' : 'session'
         );
       } catch (e) {
-        console.log("Problem hooking into onAuthStateChanged: ", e.message);
+        console.log('Problem hooking into onAuthStateChanged: ', e.message);
         console.log(e.stack);
       }
     },
@@ -124,10 +121,7 @@ export const pluginActions = <T>() =>
      *
      * Enables lifecycle hooks for route changes
      */
-    async [FmConfigAction.watchRouteChanges](
-      { dispatch, commit, rootState },
-      payload
-    ) {
+    async [FmConfigAction.watchRouteChanges]({ dispatch, commit, rootState }, payload) {
       if (getPluginConfig().onRouteChange) {
         const ctx: IFmRouteEventContext<T> = {
           Watch,
@@ -136,13 +130,13 @@ export const pluginActions = <T>() =>
 
           dispatch,
           commit,
-          state: rootState as T & { "@firemodel": IFiremodelState<T> },
+          state: rootState as T & { '@firemodel': IFiremodelState<T> },
 
           leaving: payload.from.path,
           entering: payload.to.path,
-          queryParams: payload.to.params
+          queryParams: payload.to.params,
         };
-        await runQueue(ctx, "route-changed");
+        await runQueue(ctx, 'route-changed');
       }
-    }
+    },
   } as ActionTree<IFiremodelState<T>, T>);

@@ -1,8 +1,9 @@
-import { FmConfigMutation, FmCrudMutation, IFiremodelState } from "@/types";
+import type {  IFiremodelState } from "@/types";
 import { FmEvents, IFmWatchEvent, IFmWatcherStopped } from "firemodel";
 
 import { ActionTree } from "vuex";
 import { determineLocalStateNode } from "@/util";
+import { FmConfigMutation, FmCrudMutation } from "@/enums";
 
 export const watchActions = <T>() =>
   ({

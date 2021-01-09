@@ -9,7 +9,7 @@ import {
   watcher
 } from "@/store";
 
-import { IFiremodelState } from "@/types";
+import type { IFiremodelState } from "@/types";
 import { MutationTree } from "vuex";
 
 /**

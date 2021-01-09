@@ -6,9 +6,9 @@ import { IFmWatchEvent, IModel } from "firemodel";
  * that the **state** parameter is typed correctly as well as passing
  * back a boolean flag at runtime.
  */
-export function isRecord<T>(
+export function isRecord<T extends IModel>(
   state: T | IDictionary<T[]>,
-  payload: IFmWatchEvent<IModel>
+  payload: IFmWatchEvent<T>
 ): state is T {
   return payload.watcherSource === "record";
 }

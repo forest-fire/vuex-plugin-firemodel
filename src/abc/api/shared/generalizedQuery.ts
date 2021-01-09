@@ -5,7 +5,7 @@ import {
   queryIndexedDb,
   saveToIndexedDb
 } from "@/abc";
-import {
+import type {
   AbcMutation,
   AbcRequestCommand,
   AbcStrategy,

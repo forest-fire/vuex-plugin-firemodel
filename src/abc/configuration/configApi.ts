@@ -1,4 +1,4 @@
-import { IAbcApiConfig } from "@/types";
+import type { IAbcApiConfig } from "@/types";
 
 let defaultConfig: Omit<IAbcApiConfig<any>, "model"> = {
   useIndexedDb: true,

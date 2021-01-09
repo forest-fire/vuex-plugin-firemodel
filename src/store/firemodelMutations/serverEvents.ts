@@ -1,13 +1,11 @@
-import { IFmWatchEvent, Model } from "firemodel";
-import { changeRoot, isRecord, updateList } from "@/util";
+import { IFmWatchEvent, IModel, Model } from 'firemodel';
+import { changeRoot, isRecord, updateList } from '@/util';
 
-import { FmCrudMutation } from "@/types";
-import { MutationTree } from "vuex";
+import { FmCrudMutation } from '@/enums';
+import { MutationTree } from 'vuex';
 
-export function serverEvents<T>(
-  propOffset?: keyof T & string
-): MutationTree<T> {
-  const offset = !propOffset ? ("all" as keyof T & string) : propOffset;
+export function serverEvents<T extends IModel>(propOffset?: keyof T & string): MutationTree<T> {
+  const offset = !propOffset ? ('all' as keyof T & string) : propOffset;
   return {
     [FmCrudMutation.serverAdd](
       /**
@@ -59,6 +57,6 @@ export function serverEvents<T>(
       } else {
         updateList<T>(state, offset, payload.value);
       }
-    }
+    },
   };
 }

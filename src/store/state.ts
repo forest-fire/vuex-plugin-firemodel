@@ -1,4 +1,4 @@
-import { IFiremodelState } from "@/types";
+import type { IFiremodelState } from "@/types";
 
 /**
  * The default state for this plugin's **Vuex** state node

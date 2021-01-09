@@ -1,21 +1,14 @@
-import {
-  FmConfigMutation,
-  IFmLifecycleContext,
-  IFmLifecycleEvent,
-  IFmQueuedAction
-} from "@/types";
+import { FmConfigMutation } from '@/enums';
+import type { IFmLifecycleContext, IFmLifecycleEvent, IFmQueuedAction } from '@/types';
 
 /**
  * **runQueue**
  *
  * pulls items off the lifecycle queue which match the lifecycle event
  */
-export async function runQueue<T>(
-  ctx: IFmLifecycleContext<T>,
-  lifecycle: IFmLifecycleEvent
-) {
+export async function runQueue<T>(ctx: IFmLifecycleContext<T>, lifecycle: IFmLifecycleEvent) {
   const remainingQueueItems: IFmQueuedAction<T>[] = [];
-  const queued = ctx.state["@firemodel"].queued.filter(i => i.on === lifecycle);
+  const queued = ctx.state['@firemodel'].queued.filter((i) => i.on === lifecycle);
 
   let errors = 0;
   let successes = 0;
@@ -30,18 +23,18 @@ export async function runQueue<T>(
         `deQueing ${item.name}: ${
           e.message
         }.\n\nThe callback which being called when the error occurred starts like this: ${
-          item.cb ? item.cb.toString().slice(0, 50) : "undefined callback"
+          item.cb ? item.cb.toString().slice(0, 50) : 'undefined callback'
         }`
       );
 
-      ctx.commit("error", {
+      ctx.commit('error', {
         message: e.message,
         code: e.code || e.name,
-        stack: e.stack
+        stack: e.stack,
       });
       remainingQueueItems.push({
         ...item,
-        ...{ error: e.message, errorStack: e.stack }
+        ...{ error: e.message, errorStack: e.stack },
       });
     }
   }
@@ -53,6 +46,6 @@ export async function runQueue<T>(
 
   ctx.commit(FmConfigMutation.lifecycleEventCompleted, {
     event: lifecycle,
-    actionCallbacks: queued.filter(i => i.on === lifecycle).map(i => i.name)
+    actionCallbacks: queued.filter((i) => i.on === lifecycle).map((i) => i.name),
   });
 }

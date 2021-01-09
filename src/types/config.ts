@@ -1,8 +1,8 @@
-import { IDictionary, epoch } from "common-types";
-import type {IClientAuth, IAbstractedDatabase } from 'universal-fire'
-import { Watch, Record, List, Model, IModelOptions } from "firemodel";
-import { Commit, Dispatch } from "vuex";
-import { IAuthPersistenceStrategy, IFiremodelState } from "@/types";
+import { IDictionary, epoch } from 'common-types';
+import type { IClientAuth, IAbstractedDatabase } from 'universal-fire';
+import { Watch, Record, List, Model, IModelOptions } from 'firemodel';
+import { Commit, Dispatch } from 'vuex';
+import type { IAuthPersistenceStrategy, IFiremodelState } from '@/types';
 
 export type AsyncMockData = () => Promise<IDictionary>;
 
@@ -24,16 +24,14 @@ export interface IFmEventBase<T> {
   /** commit to Vuex for direct state change */
   commit: Commit;
   /** the root state of Vuex */
-  state: T & { "@firemodel": IFiremodelState<T> };
+  state: T & { '@firemodel': IFiremodelState<T> };
 }
 
 /**
  * Once connected to the Auth API, the Auth API
  * is provided as context for all subsequent events
  */
-export interface IFmAuthenticatatedContext<T>
-  extends IFmEventBase<T>,
-    IFmConnectedContext<T> {
+export interface IFmAuthenticatatedContext<T> extends IFmEventBase<T>, IFmConnectedContext<T> {
   /** the full Firebase AUTH api */
   auth: IClientAuth;
   /** the logged in user's UID (if logged in) */
@@ -83,9 +81,7 @@ export interface IFmLogoutEventContext<T>
  * Context provided to a user who is _connected_ but not _logged into_ the
  * Firebase database
  */
-export interface IFmLogoutEventContext<T>
-  extends IFmConnectedContext<T>,
-    IFmEventBase<T> {}
+export interface IFmLogoutEventContext<T> extends IFmConnectedContext<T>, IFmEventBase<T> {}
 
 /**
  * When a Firebase user changes due to _abandonment_ of an anonymous user
@@ -117,15 +113,9 @@ export type IFmOnConnect<T> = (ctx: IFmConnectedContext<T>) => Promise<void>;
 export type IFmOnDisconnect<T> = (ctx: IFmEventBase<T>) => Promise<void>;
 export type IFmOnLogin<T> = (ctx: IFmLoginEventContext<T>) => Promise<void>;
 export type IFmOnAuth<T> = (ctx: IFmLoginEventContext<T>) => Promise<void>;
-export type IFmOnLogout<T> = (
-  ctx: IFmAuthenticatatedContext<T>
-) => Promise<void>;
-export type IFmUserUpgrade<T> = (
-  ctx: IFmUserChangeEventContext<T>
-) => Promise<void>;
-export type IFmRouteChanged<T> = (
-  ctx: IFmRouteEventContext<T>
-) => Promise<void>;
+export type IFmOnLogout<T> = (ctx: IFmAuthenticatatedContext<T>) => Promise<void>;
+export type IFmUserUpgrade<T> = (ctx: IFmUserChangeEventContext<T>) => Promise<void>;
+export type IFmRouteChanged<T> = (ctx: IFmRouteEventContext<T>) => Promise<void>;
 
 /**
  * **Firemodel Config**
@@ -138,8 +128,7 @@ export type IFmRouteChanged<T> = (
  */
 export interface IFiremodelConfig<T>
   extends IFiremodelLifecycleHooks<T>,
-    IFiremodelPluginCoreServices {
-}
+    IFiremodelPluginCoreServices {}
 
 export interface IFiremodelPluginCoreServices {
   /**
@@ -239,14 +228,14 @@ export interface IFiremodelLifecycleHooks<T> {
    * the path in the state tree where the "route" can be found;
    * it defaults to "route"
    */
-  pathToRouterSync?: "route" | string;
+  pathToRouterSync?: 'route' | string;
   /**
    * A callback function which is executed every time the
    */
   onRouteChange?: IFmRouteChanged<T>;
 }
 
-export type IFmEventActions = "add" | "update" | "remove" | "unknown";
+export type IFmEventActions = 'add' | 'update' | 'remove' | 'unknown';
 
 export interface IFmLocalChange<T extends Model = Model> {
   /** the location in the database */
@@ -263,13 +252,13 @@ export interface IFmLocalChange<T extends Model = Model> {
 
 export type IFmModelConstructor<T extends Model = Model> = new () => T;
 export type IFmLifecycleEvent =
-  | "connected"
-  | "disconnected"
-  | "logged-in"
-  | "logged-out"
-  | "user-upgraded"
-  | "user-abandoned"
-  | "route-changed";
+  | 'connected'
+  | 'disconnected'
+  | 'logged-in'
+  | 'logged-out'
+  | 'user-upgraded'
+  | 'user-abandoned'
+  | 'route-changed';
 
 export interface IFmQueuedAction<T> {
   /** a descriptive name for the queued action */

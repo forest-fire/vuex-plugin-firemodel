@@ -1,9 +1,9 @@
-import { ICurrentUser, IFiremodelState } from "@/types";
+import type { ICurrentUser, IFiremodelState } from '@/types';
 
-import { IDictionary } from "common-types";
-import { MutationTree } from "vuex";
-import { UserCredential } from "@firebase/auth-types";
-import Vue from "vue";
+import { IDictionary } from 'common-types';
+import { MutationTree } from 'vuex';
+import { UserCredential } from '@firebase/auth-types';
+import Vue from 'vue';
 
 /**
  * The **mutations** associated to the Firebase Auth API.
@@ -11,8 +11,8 @@ import Vue from "vue";
 export const authMutations = <T>() =>
   ({
     signInWithEmailAndPassword(state, userCredential: UserCredential) {
-      console.debug("user signed in with email/password");
-      Vue.set(state, "userCredential", userCredential.credential);
+      console.debug('user signed in with email/password');
+      Vue.set(state, 'userCredential', userCredential.credential);
       // the @firemodel.currentUser will be updated by the `changeAuth` function
     },
     createUserWithEmailAndPassword(state, userCredential: UserCredential) {
@@ -32,9 +32,9 @@ export const authMutations = <T>() =>
     },
 
     updatedEmail(state, email: string) {
-      Vue.set(state, "currentUser", {
+      Vue.set(state, 'currentUser', {
         ...(state.currentUser as ICurrentUser),
-        ...{ email }
+        ...{ email },
       });
     },
 
@@ -56,14 +56,14 @@ export const authMutations = <T>() =>
     },
 
     SET_CUSTOM_CLAIMS(state, claims: IDictionary) {
-      Vue.set(state, "claims", claims);
+      Vue.set(state, 'claims', claims);
     },
 
     SET_AUTH_TOKEN(state, token: string) {
-      Vue.set(state, "token", token);
+      Vue.set(state, 'token', token);
     },
 
     ANONYMOUS_LOGIN(state, payload) {
       // no-op
-    }
+    },
   } as MutationTree<IFiremodelState<T>>);

@@ -1,7 +1,7 @@
-import { IFmWatchEvent, Model } from "firemodel";
+import { IFmWatchEvent, Model } from 'firemodel';
 
-import { FmCrudMutation } from "@/types";
-import { MutationTree } from "vuex";
+import { FmCrudMutation } from '@/enums';
+import { MutationTree } from 'vuex';
 
 /**
  * **serverConfirms**
@@ -14,9 +14,7 @@ import { MutationTree } from "vuex";
  * event. If for some reason the consuming application wants to go further, they
  * may override the confirm funtions.
  */
-export function serverConfirms<T extends Model>(
-  propOffset?: keyof T
-): MutationTree<T> {
+export function serverConfirms<T extends Model>(propOffset?: keyof T): MutationTree<T> {
   return {
     [FmCrudMutation.serverAddConfirm](state, payload: IFmWatchEvent<Model>) {
       // console.log("server add confirmed", payload.value.id);
@@ -28,6 +26,6 @@ export function serverConfirms<T extends Model>(
 
     [FmCrudMutation.serverRemoveConfirm](state, payload: IFmWatchEvent<Model>) {
       // console.log("server remove confirmed", payload);
-    }
+    },
   };
 }

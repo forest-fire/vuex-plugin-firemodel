@@ -1,14 +1,17 @@
-// #autoindex:named
-
+// #autoindex
 
 // #region autoindexed files
 
-// index last changed at: 1st Jan, 2021, 09:33 AM ( GMT-8 )
+// index last changed at: 1st Jan, 2021, 10:42 AM ( GMT-8 )
 // export: named; exclusions: index, private.
-// directories: api.
+// files: AbcMutation, DbSyncOperation, FmConfigActions, FmConfigMutation, FmCrudMutation.
 
-// directory exports
-export * from "./api/index";
+// local file exports
+export * from "./AbcMutation";
+export * from "./DbSyncOperation";
+export * from "./FmConfigActions";
+export * from "./FmConfigMutation";
+export * from "./FmCrudMutation";
 
 // Note:
 // -----

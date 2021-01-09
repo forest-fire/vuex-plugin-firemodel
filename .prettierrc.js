@@ -1,4 +1,4 @@
-module.export = {
+module.exports = {
   printWidth: 100,
   semi: true,
   excludeFiles: ["**/*.md"],

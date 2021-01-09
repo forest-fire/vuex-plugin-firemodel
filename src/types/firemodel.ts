@@ -1,13 +1,8 @@
-import {
-  AuthCredential,
-  IClientConfig,
-  IdTokenResult,
-  User
-} from "universal-fire";
-import { ICurrentUser, IFmQueuedAction } from "@/types";
-import { IFmLocalEvent, IWatcherEventContext } from "firemodel";
+import { AuthCredential, IClientConfig, IdTokenResult, User } from 'universal-fire';
+import type { ICurrentUser, IFmQueuedAction } from '@/types';
+import { IFmLocalEvent, IWatcherEventContext } from 'firemodel';
 
-import { IDictionary } from "common-types";
+import { IDictionary } from 'common-types';
 
 export interface IFiremodelAbbreviatedUser {
   uid: string;
@@ -29,17 +24,12 @@ export interface IFiremodelState<T> {
    * the appropriatate state can be established as soon as the Firebase SDK loads and indicates
    * it's status.
    */
-  authenticated: undefined | false | "anonymous" | "logged-in";
+  authenticated: undefined | false | 'anonymous' | 'logged-in';
   /** the AuthCredential received when logging in */
   userCredential?: AuthCredential;
   currentUser: ICurrentUser | null;
   /** the DB connection status */
-  status:
-    | "unconfigured"
-    | "connecting"
-    | "disconnected"
-    | "connected"
-    | "error";
+  status: 'unconfigured' | 'connecting' | 'disconnected' | 'connected' | 'error';
   /**
    * callbacks which are queued to be executed when a lifecycle state is achieved
    */

@@ -1,4 +1,5 @@
-import { FmCrudMutation, IFiremodelState } from "@/types";
+import { FmCrudMutation } from "@/enums";
+import type {  IFiremodelState } from "@/types";
 import { FmEvents, IFmLocalRelationshipEvent } from "firemodel";
 
 import { ActionTree } from "vuex";
@@ -19,7 +20,7 @@ export const relationship = <T>() =>
     },
     async [FmEvents.RELATIONSHIP_SET_LOCALLY](
       { commit, rootState },
-      payload: IFmLocalRelationshipEvent
+      payload: IFmLocalRelationshipEvent 
     ) {
       commit(FmCrudMutation.relationshipSetLocally, payload);
     },

@@ -1,10 +1,10 @@
-import { Model, Record } from "firemodel";
-import { arrayToHash, hashToArray } from "typed-conversions";
+import { IModel, Model, Record } from 'firemodel';
+import { arrayToHash, hashToArray } from 'typed-conversions';
 
-import { AbcApi } from "@/abc";
-import { AbcError } from "@/errors";
-import { IAbcResult } from "@/types";
-import { IDictionary } from "common-types";
+import { AbcApi } from '@/abc';
+import { AbcError } from '@/errors';
+import type { IAbcResult } from '@/types';
+import { IDictionary } from 'common-types';
 
 /**
  * Whenever the `api.get()` or `api.load()` calls return they will
@@ -12,14 +12,15 @@ import { IDictionary } from "common-types";
  * the result but also certain meta data and a simple means to conditionally
  * watch certain elements of the returned resultset.
  */
-export class AbcResult<T extends Model> {
+export class AbcResult<T extends IModel> {
   constructor(
     private _context: AbcApi<T>,
     private _results: IAbcResult<T>,
     private _performance?: IDictionary
   ) {}
 
-  static async create<T extends Model>(
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  static async create<T extends IModel>(
     _context: AbcApi<T>,
     _results: IAbcResult<T>,
     _performance?: IDictionary
@@ -34,7 +35,7 @@ export class AbcResult<T extends Model> {
     const hasDynamicProperties =
       Record.dynamicPathProperties(obj._context.model.constructor).length > 0;
     if (hasDynamicProperties) {
-      let localPathProps: Partial<T> = Record.compositeKey(
+      const localPathProps: Partial<T> = Record.compositeKey(
         obj._context.model.constructor,
         obj.serverRecords[0]
       );
@@ -43,8 +44,7 @@ export class AbcResult<T extends Model> {
       const propKeys = Object.keys(localPathProps);
       const propValues: string[] = Object.values(localPathProps);
       const whereClause = propKeys.length > 1 ? propKeys : propKeys.toString();
-      const notEqualVal =
-        propValues.length > 1 ? propValues : propValues.toString();
+      const notEqualVal = propValues.length > 1 ? propValues : propValues.toString();
 
       const queryResults = await obj._context.dexieTable
         .where(whereClause)
@@ -56,8 +56,7 @@ export class AbcResult<T extends Model> {
       const server = arrayToHash(obj.serverRecords || []);
       obj.records = hashToArray({ ...localOffDynamicPath, ...server });
     } else {
-      obj.records =
-        obj.serverRecords !== undefined ? obj.serverRecords : obj.localRecords;
+      obj.records = obj.serverRecords !== undefined ? obj.serverRecords : obj.localRecords;
     }
 
     return obj;
@@ -73,7 +72,7 @@ export class AbcResult<T extends Model> {
    */
   get resultFromQuery(): boolean {
     // TODO: we will add the correct option to the AbcResult constructor later
-    return this._results.type === "query";
+    return this._results.type === 'query';
   }
 
   /**
@@ -114,7 +113,7 @@ export class AbcResult<T extends Model> {
   }
 
   get query() {
-    if (this._results.type !== "query") {
+    if (this._results.type !== 'query') {
       return;
     }
     return this._results.server?.query;
@@ -122,10 +121,10 @@ export class AbcResult<T extends Model> {
 
   /** the query definition used to arrive at these results */
   get queryDefn() {
-    if (this._results.type !== "query") {
+    if (this._results.type !== 'query') {
       throw new AbcError(
         `The attempt to reference the result's "queryDefn" is invalid in non-query based results!`,
-        "not-allowed"
+        'not-allowed'
       );
     }
 

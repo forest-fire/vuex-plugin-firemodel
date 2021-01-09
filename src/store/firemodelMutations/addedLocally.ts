@@ -1,11 +1,11 @@
 import { changeRoot, isRecord, updateList } from "@/util";
 
-import { FmCrudMutation } from "@/types";
+import { FmCrudMutation } from "@/enums";
 import { IDictionary } from "common-types";
-import { IFmWatchEvent } from "firemodel";
+import { IFmWatchEvent, IModel } from "firemodel";
 import { MutationTree } from "vuex";
 
-export function addedLocally<T>(
+export function addedLocally<T extends IModel>(
   propOffset?: keyof T & string
 ): MutationTree<T> {
   const offset = !propOffset ? ("all" as keyof T & string) : propOffset;
