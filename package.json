@@ -18,7 +18,7 @@
     "docs": "vuepress dev docs",
     "build": "run-s clean build:bundle",
     "build:bundle": "rollup -c",
-    "build:tsc": "yarn tsc -P tsconfig.es.json && yarn tsc -P tsconfig.cjs.json",
+    "build:tsc": "yarn ttsc -P tsconfig.es.json && yarn ttsc -P tsconfig.cjs.json",
     "watch": "yarn tsc --watch -P tsconfig.json",
     "autoindex": "yarn do autoindex",
     "build:docs": "vuepress build docs",
@@ -48,9 +48,12 @@
   "homepage": "https://vuex.firemodel.info",
   "dependencies": {
     "@types/node": "12",
+    "common-types": "> 1.15.8",
     "fast-copy": "^2.1.0",
     "fast-equals": "^2.0.0",
-    "native-dash": "^1.7.0"
+    "firemock": "^0.58.1",
+    "native-dash": "^1.7.0",
+    "typed-conversions": "^0.11.1"
   },
   "peerDependencies": {
     "firemodel": "^0.58.3",
