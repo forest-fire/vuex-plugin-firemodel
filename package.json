@@ -1,6 +1,6 @@
 {
   "name": "vuex-plugin-firemodel",
-  "version": "1.0.0-beta.136",
+  "version": "1.0.0-beta.138",
   "description": "A Vuex plugin which reponds to all FireModel actions as well as providing mutations which can be imported by your state tree.",
   "files": [
     "dist"
@@ -18,7 +18,7 @@
     "docs": "vuepress dev docs",
     "build": "run-s clean build:bundle",
     "build:bundle": "rollup -c",
-    "build:tsc": "yarn tsc -P tsconfig.es.json && yarn tsc -P tsconfig.cjs.json",
+    "build:tsc": "yarn ttsc -P tsconfig.es.json && yarn ttsc -P tsconfig.cjs.json",
     "watch": "yarn tsc --watch -P tsconfig.json",
     "autoindex": "yarn do autoindex",
     "build:docs": "vuepress build docs",
@@ -48,9 +48,12 @@
   "homepage": "https://vuex.firemodel.info",
   "dependencies": {
     "@types/node": "12",
+    "common-types": "> 1.15.8",
     "fast-copy": "^2.1.0",
     "fast-equals": "^2.0.0",
-    "native-dash": "^1.7.0"
+    "firemock": "^0.58.1",
+    "native-dash": "^1.7.1",
+    "typed-conversions": "^0.11.1"
   },
   "peerDependencies": {
     "firemodel": "^0.58.3",
@@ -85,6 +88,7 @@
     "babel-jest": "^26.1.0",
     "common-types": "> 1.15.8",
     "do-devops": "^0.5.5",
+    "esbuild": "^0.8.31",
     "eslint": "^7.17.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-import": "^2.22.1",
@@ -106,6 +110,7 @@
     "ts-jest": "^26.1.1",
     "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.9.0",
+    "tslib": "^2.1.0",
     "tslint": "^6.1.2",
     "ttypescript": "^1.5.12",
     "typed-conversions": "^0.11.1",
