@@ -36,9 +36,9 @@ import {
   Record,
   Watch
 } from "firemodel";
-import { IDictionary, pathJoin } from "common-types";
-import { capitalize, getStore } from "@/util";
-
+import { IDictionary } from "common-types";
+import { pathJoin, capitalize } from "native-dash";
+import { getStore } from "@/util";
 import { AbcError } from "@/errors";
 
 /**

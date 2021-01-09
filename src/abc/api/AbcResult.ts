@@ -34,7 +34,7 @@ export class AbcResult<T extends Model> {
     const hasDynamicProperties =
       Record.dynamicPathProperties(obj._context.model.constructor).length > 0;
     if (hasDynamicProperties) {
-      let localPathProps = Record.compositeKey(
+      let localPathProps: Partial<T> = Record.compositeKey(
         obj._context.model.constructor,
         obj.serverRecords[0]
       );
