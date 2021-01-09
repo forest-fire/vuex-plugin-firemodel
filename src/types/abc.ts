@@ -1,8 +1,8 @@
-import { Model, IPrimaryKey } from 'firemodel';
+import type { Model, IPrimaryKey } from 'firemodel';
 import type { IAbstractedDatabase, ISerializedQuery } from 'universal-fire';
-import { epochWithMilliseconds, IDictionary } from 'common-types';
+import type { epochWithMilliseconds, IDictionary } from 'common-types';
 import type { AbcApi, AbcResult } from '@/abc';
-import { AbcMutation, DbSyncOperation } from '@/enums';
+import type { AbcMutation, DbSyncOperation, AbcStrategy, QueryType } from '@/enums';
 
 export interface IAbcApiConfig<T extends Model> {
   /**
@@ -86,10 +86,6 @@ export interface IAbcQueryRequest<T extends Model> {
  */
 export interface IAbcRequest<T> {
   (param: IAbcParam<T>, options?: IAbcOptions<T>): Promise<AbcResult<T>>;
-}
-
-export function isDiscreteRequest<T>(request: IAbcParam<T>): request is IPrimaryKey<T>[] {
-  return typeof request !== 'function';
 }
 
 /** The specific **ABC** request command */
@@ -209,18 +205,6 @@ export interface IAbcResultsMeta<T> {
 
 export type IAbcMutation = keyof typeof AbcMutation | keyof typeof DbSyncOperation;
 
-export enum AbcDataSource {
-  vuex = 'vuex',
-  indexedDb = 'indexedDb',
-  firebase = 'firebase',
-}
-
-export enum QueryType {
-  all = 'all',
-  where = 'where',
-  since = 'since',
-}
-
 export type IAbcQueryDefinition<T> =
   | IAbcAllQueryDefinition<T>
   | IAbcWhereQueryDefinition<T>
@@ -233,7 +217,7 @@ export interface IAbcAllQueryDefinition<T> extends IAbcQueryBaseDefinition {
 export interface IAbcWhereQueryEquals<T extends Model> extends IAbcQueryBaseDefinition {
   // queryType: QueryType.where;
   property: keyof T & string;
-  equals: unknown;
+  equals: any;
   lessThan?: never;
   greaterThan?: never;
 }
@@ -242,13 +226,13 @@ export interface IAbcWhereQueryGreaterThan<T extends Model> extends IAbcQueryBas
   property: keyof T & string;
   equals?: never;
   lessThan?: never;
-  greaterThan: unknown;
+  greaterThan: any;
 }
 export interface IAbcWhereQueryLessThan<T extends Model> extends IAbcQueryBaseDefinition {
   // queryType: QueryType.where;
   property: keyof T & string;
   equals?: never;
-  lessThan: unknown;
+  lessThan: any;
   greaterThan?: never;
 }
 
@@ -281,7 +265,7 @@ export interface IAbcQueryBaseDefinition {
  * a "local" response and optionally also includes a "server" response. Also
  * includes meta for Vuex.
  */
-export interface IDiscreteResult<T, K = unknown> {
+export interface IDiscreteResult<T, K extends string = string> {
   type: 'discrete';
   local?: IDiscreteLocalResults<T, K>;
   server?: IDiscreteServerResults<T, K> | undefined;
@@ -292,7 +276,7 @@ export interface IDiscreteResult<T, K = unknown> {
  * A query result (`IQueryLocalResults`) which definitely has a "local" response
  * and optionally also includes a "server" response. Also includes meta for Vuex.
  */
-export interface IQueryResult<T, K = unknown> {
+export interface IQueryResult<T, K extends string = string> {
   type: 'query';
   queryDefn: IAbcQueryDefinition<T>;
   local?: IQueryLocalResults<T, K>;
@@ -304,7 +288,7 @@ export interface IQueryResult<T, K = unknown> {
 /**
  * The results from either a Discrete or Query-based request.
  */
-export type IAbcResult<T, K = unknown> = IDiscreteResult<T, K> | IQueryResult<T, K>;
+export type IAbcResult<T, K extends string = string> = IDiscreteResult<T, K> | IQueryResult<T, K>;
 
 export interface IQueryOptions<T> extends IUniversalOptions<T> {
   watchNew?: boolean;
@@ -326,15 +310,6 @@ export interface IDiscreteOptions<T> extends IUniversalOptions<T> {
    */
   offsets?: Partial<T>;
   strategy?: IAbcStrategy;
-}
-
-export enum AbcStrategy {
-  loadVuex = 'loadVuex',
-  /**
-   * Forces **get** based queries to always go to firebase (however promise is returned after
-   * local query); this does not affect _discrete_ gets or unknown load queries.
-   */
-  getFirebase = 'getFirebase',
 }
 
 export type IAbcStrategy = keyof typeof AbcStrategy;
@@ -378,8 +353,6 @@ export interface IAbcQueryApi<T> {
   get: (defn: IAbcQueryDefinition<T>, options: IQueryOptions<T>) => Promise<AbcResult<T>>;
   load: (props: IAbcQueryDefinition<T>, options: IQueryOptions<T>) => Promise<AbcResult<T>>;
 }
-
-export const SINCE_LAST_COOKIE = 'slc';
 
 export interface IGeneralizedQuery<T extends Model> {
   (): Promise<T[]>;

@@ -2,19 +2,12 @@
 
 // #region autoindexed files
 
-// index last changed at: 1st Jan, 2021, 11:01 AM ( GMT-8 )
+// index last changed at: 1st Jan, 2021, 11:02 AM ( GMT-8 )
 // export: named; exclusions: index, private.
-// files: AbcDataSource, AbcMutation, AbcStrategy, DbSyncOperation, FmConfigActions, FmConfigMutation, FmCrudMutation, QueryType.
+// files: abc.
 
 // local file exports
-export * from "./AbcDataSource";
-export * from "./AbcMutation";
-export * from "./AbcStrategy";
-export * from "./DbSyncOperation";
-export * from "./FmConfigActions";
-export * from "./FmConfigMutation";
-export * from "./FmCrudMutation";
-export * from "./QueryType";
+export * from "./abc";
 
 // Note:
 // -----

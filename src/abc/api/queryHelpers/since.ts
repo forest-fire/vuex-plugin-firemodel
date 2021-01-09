@@ -3,13 +3,12 @@ import type {
   IAbcQueryHelper,
   IAbcSinceQueryDefinition,
   IQueryOptions,
-  QueryType,
-  SINCE_LAST_COOKIE
-} from "@/types";
-import { List, Model } from "firemodel";
-
-import { AbcApi } from "@/abc";
-import cookies from "js-cookie";
+} from '@/types';
+import { List, Model } from 'firemodel';
+import { AbcApi } from '@/abc';
+import cookies from 'js-cookie';
+import { QueryType } from '@/enums';
+import { SINCE_LAST_COOKIE } from '@/constants';
 
 /**
  * **since**
@@ -17,9 +16,7 @@ import cookies from "js-cookie";
  * Gets all records _since_ a certain timestamp (`epoch` with milliseconds)
  */
 export const since: IAbcQueryHelper = function since<T extends Model>(
-  defn:
-    | IAbcSinceQueryDefinition<T>
-    | (IAbcSinceQueryDefinition<T> & { queryType: QueryType.since })
+  defn: IAbcSinceQueryDefinition<T> | (IAbcSinceQueryDefinition<T> & { queryType: QueryType.since })
 ) {
   return (ctx: AbcApi<T>, options: IQueryOptions<T> = {}) => {
     defn = { ...defn, queryType: QueryType.since };
@@ -30,7 +27,7 @@ export const since: IAbcQueryHelper = function since<T extends Model>(
           SINCE_LAST_COOKIE,
           JSON.stringify({
             ...(cookies.getJSON(SINCE_LAST_COOKIE) || {}),
-            [ctx.model.pascal]: new Date().getTime()
+            [ctx.model.pascal]: new Date().getTime(),
           })
         );
       }

@@ -1,7 +1,4 @@
-import {
-  AbcMutation,
-  AbcStrategy,
-  DbSyncOperation,
+import type {
   IAbcApiConfig,
   IAbcOptions,
   IAbcParam,
@@ -13,9 +10,8 @@ import {
   IQueryOptions,
   IQueryServerResults,
   IWatchCallback,
-  QueryType,
-  isDiscreteRequest
-} from "@/types";
+} from '@/types';
+import { isDiscreteRequest } from '@/type-guards';
 import {
   AbcResult,
   getDefaultApiConfig,
@@ -25,21 +21,14 @@ import {
   mergeLocalRecords,
   queryFirebase,
   queryIndexedDb,
-  saveToIndexedDb
-} from "@/abc";
-import {
-  DexieDb,
-  FireModel,
-  IFmModelMeta,
-  IPrimaryKey,
-  Model,
-  Record,
-  Watch
-} from "firemodel";
-import { IDictionary } from "common-types";
-import { pathJoin, capitalize } from "native-dash";
-import { getStore } from "@/util";
-import { AbcError } from "@/errors";
+  saveToIndexedDb,
+} from '@/abc';
+import { DexieDb, FireModel, IFmModelMeta, IPrimaryKey, Model, Record, Watch } from 'firemodel';
+import { IDictionary } from 'common-types';
+import { pathJoin, capitalize } from 'native-dash';
+import { getStore } from '@/util';
+import { AbcError } from '@/errors';
+import { AbcMutation, AbcStrategy, DbSyncOperation, QueryType } from '@/enums';
 
 /**
  * Provides the full **ABC** API, including `get`, `load`, and `watch` but also
@@ -96,12 +85,10 @@ export class AbcApi<T extends Model> {
   /**
    * Returns constructors for the `Model`s which will be managed by the IndexedDB
    */
-  protected static get indexedDbModelConstructors(): IFmModelConstructor<
-    any
-  >[] {
+  protected static get indexedDbModelConstructors(): IFmModelConstructor<any>[] {
     return Object.keys(AbcApi._modelsManaged)
-      .filter(m => AbcApi._modelsManaged[m].config.useIndexedDb)
-      .map(m => AbcApi._modelsManaged[m]._modelConstructor);
+      .filter((m) => AbcApi._modelsManaged[m].config.useIndexedDb)
+      .map((m) => AbcApi._modelsManaged[m]._modelConstructor);
   }
 
   /**
@@ -113,7 +100,7 @@ export class AbcApi<T extends Model> {
     if (!AbcApi._modelsManaged[name]) {
       throw new AbcError(
         `You attempted to get an AbcApi for the model ${name} but it is not yet configured!`,
-        "abc-api/invalid-model"
+        'abc-api/invalid-model'
       );
     }
     return AbcApi._modelsManaged[name] as AbcApi<T>;
@@ -124,15 +111,13 @@ export class AbcApi<T extends Model> {
    */
   public static async clear() {
     const waitFor: any[] = [];
-    Object.keys(AbcApi._modelsManaged).forEach(key => {
-      const ref = AbcApi.getModelApi(
-        AbcApi._modelsManaged[key].model.constructor
-      );
+    Object.keys(AbcApi._modelsManaged).forEach((key) => {
+      const ref = AbcApi.getModelApi(AbcApi._modelsManaged[key].model.constructor);
       if (ref.config.useIndexedDb) {
         waitFor.push(ref.dexieTable.clear());
       }
     });
-    await Promise.all(waitFor).catch(e => {
+    await Promise.all(waitFor).catch((e) => {
       console.warn(e);
     });
     AbcApi._modelsManaged = {};
@@ -157,7 +142,7 @@ export class AbcApi<T extends Model> {
         await AbcApi._dexieDb.open();
       }
     } else {
-      console.info("ABC API has no models using IndexedDB");
+      console.info('ABC API has no models using IndexedDB');
     }
   }
 
@@ -188,14 +173,12 @@ export class AbcApi<T extends Model> {
     this._modelConstructor = model;
     this._config = { ...getDefaultApiConfig(), ...config };
     const rec = Record.create(this._modelConstructor);
-    this._dynamicPathComponents = rec.hasDynamicPath
-      ? rec.dynamicPathComponents
-      : false;
+    this._dynamicPathComponents = rec.hasDynamicPath ? rec.dynamicPathComponents : false;
     this._dbOffset = rec.dbOffset;
     this._modelName = {
       singular: rec.modelName,
       plural: rec.pluralName,
-      pascal: capitalize(rec.modelName)
+      pascal: capitalize(rec.modelName),
     };
     this._modelMeta = rec.META;
     AbcApi.addModel(this);
@@ -225,7 +208,7 @@ export class AbcApi<T extends Model> {
       /** the ABC API's configuration */
       config: this._config,
       dbOffset: this._dbOffset,
-      dynamicPathComponents: this._dynamicPathComponents
+      dynamicPathComponents: this._dynamicPathComponents,
     };
   }
 
@@ -253,15 +236,13 @@ export class AbcApi<T extends Model> {
       /**
        * An optional offset to the module to store record(s)
        */
-      modulePostfix: this.config.isList
-        ? this._modelMeta.localPostfix || "all"
-        : "",
+      modulePostfix: this.config.isList ? this._modelMeta.localPostfix || 'all' : '',
       /**
        * The full path to where the record(s) reside
        */
       fullPath: this.config.isList
-        ? pathJoin(this.model.plural, this._modelMeta.localPostfix || "all")
-        : this.model.singular
+        ? pathJoin(this.model.plural, this._modelMeta.localPostfix || 'all')
+        : this.model.singular,
     };
   }
 
@@ -276,7 +257,7 @@ export class AbcApi<T extends Model> {
       /** had to go to Firebase for results */
       misses: this._cacheMisses,
       /** ignored the request as results were already in Vuex */
-      ignores: this._cacheIgnores
+      ignores: this._cacheIgnores,
     };
   }
 
@@ -285,10 +266,7 @@ export class AbcApi<T extends Model> {
    *
    * @request either a Query Helper (since, where, etc.) or an array of primary keys
    */
-  async get(
-    request: IAbcParam<T>,
-    options: IAbcOptions<T> = {}
-  ): Promise<AbcResult<T>> {
+  async get(request: IAbcParam<T>, options: IAbcOptions<T> = {}): Promise<AbcResult<T>> {
     if (isDiscreteRequest(request)) {
       return this.getDiscrete(request, options as IDiscreteOptions<T>);
     } else {
@@ -301,10 +279,7 @@ export class AbcApi<T extends Model> {
    *
    * @request either a Query Helper (since, where, etc.) or an array of primary keys
    */
-  async load(
-    request: IAbcParam<T>,
-    options: IAbcOptions<T> = {}
-  ): Promise<AbcResult<T>> {
+  async load(request: IAbcParam<T>, options: IAbcOptions<T> = {}): Promise<AbcResult<T>> {
     if (isDiscreteRequest(request)) {
       return this.loadDiscrete(request, options as IDiscreteOptions<T>);
     } else {
@@ -323,17 +298,17 @@ export class AbcApi<T extends Model> {
     let local: IQueryLocalResults<T, any> = {
       records: [],
       indexedDbPks: [],
-      localPks: []
+      localPks: [],
     };
     // query indexedDb
     if (this.config.useIndexedDb) {
       // ctx should be model constructor
       local = await queryIndexedDb(this._modelConstructor, dexieQuery);
       const localResults = await AbcResult.create(this, {
-        type: "query",
+        type: 'query',
         queryDefn,
         local,
-        options
+        options,
       });
 
       if (local.records.length > 0) {
@@ -349,10 +324,7 @@ export class AbcApi<T extends Model> {
           );
         }
       } else {
-        store.commit(
-          `${this.vuex.moduleName}/${AbcMutation.ABC_LOCAL_QUERY_EMPTY}`,
-          localResults
-        );
+        store.commit(`${this.vuex.moduleName}/${AbcMutation.ABC_LOCAL_QUERY_EMPTY}`, localResults);
       }
     }
 
@@ -360,13 +332,13 @@ export class AbcApi<T extends Model> {
     let server: IQueryServerResults<T> | undefined;
     if (options.strategy === AbcStrategy.getFirebase) {
       // get data from firebase
-      queryFirebase(this, firemodelQuery, local).then(async server => {
+      queryFirebase(this, firemodelQuery, local).then(async (server) => {
         const serverResponse = await AbcResult.create(this, {
-          type: "query",
+          type: 'query',
           queryDefn,
           local,
           server,
-          options
+          options,
         });
 
         // watch records
@@ -408,11 +380,11 @@ export class AbcApi<T extends Model> {
     }
 
     const response = await AbcResult.create(this, {
-      type: "query",
+      type: 'query',
       queryDefn,
       local,
       server,
-      options
+      options,
     });
 
     return response;
@@ -429,7 +401,7 @@ export class AbcApi<T extends Model> {
     let local: IQueryLocalResults<T, any> = {
       records: [],
       indexedDbPks: [],
-      localPks: []
+      localPks: [],
     };
 
     // query firebase if getFirebase strategy in place
@@ -437,11 +409,11 @@ export class AbcApi<T extends Model> {
     const server = await queryFirebase(this, firemodelQuery, local);
 
     const serverResponse = await AbcResult.create(this, {
-      type: "query",
+      type: 'query',
       queryDefn,
       local,
       server,
-      options
+      options,
     });
 
     // cache results to IndexedDB
@@ -480,18 +452,15 @@ export class AbcApi<T extends Model> {
     }
 
     const response = await AbcResult.create(this, {
-      type: "query",
+      type: 'query',
       queryDefn,
       local,
       server,
-      options
+      options,
     });
 
     if (options.strategy === AbcStrategy.loadVuex) {
-      store.commit(
-        `${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`,
-        response
-      );
+      store.commit(`${this.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`, response);
     }
 
     return response;
@@ -506,9 +475,7 @@ export class AbcApi<T extends Model> {
   ): Promise<AbcResult<T>> {
     const store = getStore();
     let idxRecords: T[] = [];
-    const requestIds = request.map(i =>
-      Record.compositeKeyRef(this._modelConstructor, i)
-    );
+    const requestIds = request.map((i) => Record.compositeKeyRef(this._modelConstructor, i));
 
     // get from Vuex
     const vuexRecords = await getFromVuex(this);
@@ -524,12 +491,12 @@ export class AbcApi<T extends Model> {
     let server: IDiscreteServerResults<T> | undefined;
     if (options.strategy === AbcStrategy.getFirebase) {
       // get from firebase
-      getFromFirebase(this, requestIds).then(async server => {
+      getFromFirebase(this, requestIds).then(async (server) => {
         const serverResponse = await AbcResult.create(this, {
-          type: "discrete",
+          type: 'discrete',
           local,
           server,
-          options
+          options,
         });
 
         // cache results to IndexedDB
@@ -550,16 +517,13 @@ export class AbcApi<T extends Model> {
     }
 
     const response = await AbcResult.create(this, {
-      type: "discrete",
+      type: 'discrete',
       local,
       server,
-      options
+      options,
     });
 
-    store.commit(
-      `${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`,
-      response
-    );
+    store.commit(`${this.vuex.moduleName}/${DbSyncOperation.ABC_INDEXED_DB_SET_VUEX}`, response);
 
     return response;
   }
@@ -573,17 +537,15 @@ export class AbcApi<T extends Model> {
   ): Promise<AbcResult<T>> {
     const store = getStore();
     // const t0 = performance.now();
-    const requestIds = request.map(i =>
-      Record.compositeKeyRef(this._modelConstructor, i)
-    );
+    const requestIds = request.map((i) => Record.compositeKeyRef(this._modelConstructor, i));
 
     const local = undefined;
     const server = await getFromFirebase(this, requestIds);
     const serverResponse = await AbcResult.create(this, {
-      type: "discrete",
+      type: 'discrete',
       local,
       server,
-      options
+      options,
     });
     // cache results to IndexedDB
     if (this.config.useIndexedDb) {
@@ -608,10 +570,10 @@ export class AbcApi<T extends Model> {
 
     // const perfOverall = t2 - t0;
     const results = await AbcResult.create(this, {
-      type: "discrete",
+      type: 'discrete',
       options,
       local,
-      server
+      server,
     });
     return results;
   }
@@ -670,14 +632,14 @@ export class AbcApi<T extends Model> {
     if (!this.about.config.useIndexedDb) {
       throw new AbcError(
         `You are attempting to access Dexie while connected to the ABC API with the model ${this.about.model.pascal} which is configured NOT to use IndexedDB!`,
-        "not-allowed"
+        'not-allowed'
       );
     }
 
     if (!AbcApi._dexieDb) {
       throw new AbcError(
         `The Dexie database is not yet connected; calls to get() or load() will automatically connect it but if you want to access it prior to that you must call connectDexie()`,
-        "not-ready"
+        'not-ready'
       );
     }
     return AbcApi._dexieDb;
@@ -696,22 +658,14 @@ export class AbcApi<T extends Model> {
   async watch(serverResponse: AbcResult<T>, options: IAbcOptions<T>) {
     const { watch } = options;
     if (watch) {
-      const isFunction = (x: any): x is IWatchCallback<T> =>
-        typeof x === "function";
+      const isFunction = (x: any): x is IWatchCallback<T> => typeof x === 'function';
       const watcher = Watch.list(this._modelConstructor);
       if (isFunction(watch)) {
-        const watchIds = serverResponse.records
-          .filter(p => watch(p))
-          .map(p => p.id!);
+        const watchIds = serverResponse.records.filter((p) => watch(p)).map((p) => p.id!);
         await watcher
           .ids(...watchIds)
           .start()
-          .then(() =>
-            console.info(
-              `${this._modelConstructor.name} watch function: `,
-              watchIds
-            )
-          );
+          .then(() => console.info(`${this._modelConstructor.name} watch function: `, watchIds));
       } else {
         if (serverResponse.resultFromQuery && serverResponse.query) {
           await watcher
@@ -725,12 +679,12 @@ export class AbcApi<T extends Model> {
             );
         } else {
           await watcher
-            .ids(...serverResponse.records.map(p => p.id!))
+            .ids(...serverResponse.records.map((p) => p.id!))
             .start()
             .then(() =>
               console.info(
                 `${this._modelConstructor.name} watch all: `,
-                ...serverResponse.records.map(p => p.id!)
+                ...serverResponse.records.map((p) => p.id!)
               )
             );
         }
@@ -742,7 +696,7 @@ export class AbcApi<T extends Model> {
     return {
       model: this.about.model.pascal,
       config: this.about.config,
-      cachePerformance: this.cachePerformance
+      cachePerformance: this.cachePerformance,
     };
   }
   toString() {
