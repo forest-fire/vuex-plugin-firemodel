@@ -1,25 +1,17 @@
-import {
-  AbcApi,
-  AbcResult,
-  queryFirebase,
-  queryIndexedDb,
-  saveToIndexedDb
-} from "@/abc";
-import {
-  AbcMutation,
+import { AbcApi, AbcResult, queryFirebase, queryIndexedDb, saveToIndexedDb } from '@/abc';
+import type {
   AbcRequestCommand,
-  AbcStrategy,
-  DbSyncOperation,
   IAbcOptions,
   IAbcQueryDefinition,
   IGeneralizedFiremodelQuery,
   IGeneralizedQuery,
   IQueryLocalResults,
   IQueryServerResults,
-  QueryType
-} from "@/types";
-import { Model, Record } from "firemodel";
-import { get, getStore } from "@/util";
+} from '@/types';
+import { Model, Record } from 'firemodel';
+import { getStore } from '@/util';
+import { get } from 'native-dash';
+import { AbcMutation, AbcStrategy, DbSyncOperation, QueryType } from '@/enums';
 
 /**
  * A generalized flow for queries; specific query helpers
@@ -34,32 +26,25 @@ export async function generalizedQuery<T extends Model>(
   options: IAbcOptions<T>
 ) {
   const store = getStore();
-  const hasDynamicProperties =
-    Record.dynamicPathProperties(ctx.model.constructor).length > 0;
-  const vuexRecords = get<T[]>(
-    store.state,
-    ctx.vuex.fullPath.replace(/\//g, "."),
-    []
-  );
-  const vuexPks = vuexRecords.map(v =>
-    Record.compositeKeyRef(ctx.model.constructor, v)
-  );
+  const hasDynamicProperties = Record.dynamicPathProperties(ctx.model.constructor).length > 0;
+  const vuexRecords = get<T[]>(store.state, ctx.vuex.fullPath.replace(/\//g, '.'), []);
+  const vuexPks = vuexRecords.map((v) => Record.compositeKeyRef(ctx.model.constructor, v));
 
   let local: IQueryLocalResults<T, any> = {
     records: vuexRecords,
     vuexPks,
     indexedDbPks: [],
-    localPks: vuexPks
+    localPks: vuexPks,
   };
 
-  if (command === "get" && ctx.config.useIndexedDb) {
+  if (command === 'get' && ctx.config.useIndexedDb) {
     // Populate Vuex with what IndexedDB knows
     local = await queryIndexedDb(ctx.model.constructor, dexieQuery);
     const localResults = await AbcResult.create(ctx, {
-      type: "query",
+      type: 'query',
       queryDefn,
       local,
-      options
+      options,
     });
 
     if (local.records.length > 0) {
@@ -75,24 +60,21 @@ export async function generalizedQuery<T extends Model>(
         );
       }
     } else {
-      store.commit(
-        `${ctx.vuex.moduleName}/${AbcMutation.ABC_LOCAL_QUERY_EMPTY}`,
-        localResults
-      );
+      store.commit(`${ctx.vuex.moduleName}/${AbcMutation.ABC_LOCAL_QUERY_EMPTY}`, localResults);
     }
   }
 
   let server: IQueryServerResults<T> | undefined;
-  if (command === "get" && options.strategy === AbcStrategy.getFirebase) {
+  if (command === 'get' && options.strategy === AbcStrategy.getFirebase) {
     console.log(`${ctx.model.constructor.name}:start`);
     // get data from firebase
-    queryFirebase(ctx, firemodelQuery, local).then(async server => {
+    queryFirebase(ctx, firemodelQuery, local).then(async (server) => {
       const serverResponse = await AbcResult.create(ctx, {
-        type: "query",
+        type: 'query',
         queryDefn,
         local,
         server,
-        options
+        options,
       });
 
       // cache results to IndexedDB
@@ -160,17 +142,14 @@ export async function generalizedQuery<T extends Model>(
   }
 
   const response = await AbcResult.create(ctx, {
-    type: "query",
+    type: 'query',
     queryDefn,
     local,
     server,
-    options
+    options,
   });
 
-  store.commit(
-    `${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`,
-    response
-  );
+  store.commit(`${ctx.vuex.moduleName}/${DbSyncOperation.ABC_FIREBASE_SET_VUEX}`, response);
 
   return response;
 }

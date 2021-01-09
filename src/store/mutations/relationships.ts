@@ -1,69 +1,52 @@
-import { FmCrudMutation, IFiremodelState } from "@/types";
+import type { IFiremodelState } from '@/types';
 
-import { IFmLocalRelationshipEvent } from "firemodel";
-import { MutationTree } from "vuex";
-import Vue from "vue";
+import { IFmLocalRelationshipEvent } from 'firemodel';
+import { MutationTree } from 'vuex';
+import Vue from 'vue';
+import { FmCrudMutation } from '@/enums';
 
 export const relationships = <T>() =>
   ({
     // LOCAL
-    [FmCrudMutation.relationshipAddedLocally](
-      state,
-      payload: IFmLocalRelationshipEvent<T>
-    ) {
-      Vue.set(state, "localOnly", {
+    [FmCrudMutation.relationshipAddedLocally](state, payload: IFmLocalRelationshipEvent<T>) {
+      Vue.set(state, 'localOnly', {
         ...state.localOnly,
-        [payload.transactionId]: payload
+        [payload.transactionId]: payload,
       });
     },
 
-    [FmCrudMutation.relationshipSetLocally](
-      state,
-      payload: IFmLocalRelationshipEvent<T>
-    ) {
-      Vue.set(state, "localOnly", {
+    [FmCrudMutation.relationshipSetLocally](state, payload: IFmLocalRelationshipEvent<T>) {
+      Vue.set(state, 'localOnly', {
         ...state.localOnly,
-        [payload.transactionId]: payload
+        [payload.transactionId]: payload,
       });
     },
 
-    [FmCrudMutation.relationshipRemovedLocally](
-      state,
-      payload: IFmLocalRelationshipEvent<T>
-    ) {
-      Vue.set(state, "localOnly", {
+    [FmCrudMutation.relationshipRemovedLocally](state, payload: IFmLocalRelationshipEvent<T>) {
+      Vue.set(state, 'localOnly', {
         ...state.localOnly,
-        [payload.transactionId]: payload
+        [payload.transactionId]: payload,
       });
     },
 
     // CONFIRMATION
-    [FmCrudMutation.relationshipAddConfirmation](
-      state,
-      payload: IFmLocalRelationshipEvent<T>
-    ) {
+    [FmCrudMutation.relationshipAddConfirmation](state, payload: IFmLocalRelationshipEvent<T>) {
       const transactionId = payload.transactionId;
       const localOnly: typeof state.localOnly = { ...{}, ...state.localOnly };
       delete localOnly[transactionId];
-      Vue.set(state, "localOnly", localOnly);
+      Vue.set(state, 'localOnly', localOnly);
     },
-    [FmCrudMutation.relationshipRemovedConfirmation](
-      state,
-      payload: IFmLocalRelationshipEvent<T>
-    ) {
+    [FmCrudMutation.relationshipRemovedConfirmation](state, payload: IFmLocalRelationshipEvent<T>) {
       const transactionId = payload.transactionId;
       const localOnly: typeof state.localOnly = { ...{}, ...state.localOnly };
       delete localOnly[transactionId];
-      Vue.set(state, "localOnly", localOnly);
+      Vue.set(state, 'localOnly', localOnly);
     },
-    [FmCrudMutation.relationshipSetConfirmation](
-      state,
-      payload: IFmLocalRelationshipEvent<T>
-    ) {
+    [FmCrudMutation.relationshipSetConfirmation](state, payload: IFmLocalRelationshipEvent<T>) {
       const transactionId = payload.transactionId;
       const localOnly: typeof state.localOnly = { ...{}, ...state.localOnly };
       delete localOnly[transactionId];
-      Vue.set(state, "localOnly", localOnly);
+      Vue.set(state, 'localOnly', localOnly);
     },
 
     // ROLLBACK
@@ -74,22 +57,13 @@ export const relationships = <T>() =>
      * actual properties that had been set locally were rolled
      * back already
      */
-    [FmCrudMutation.relationshipAddRollback](
-      state,
-      payload: IFmLocalRelationshipEvent<T>
-    ) {
+    [FmCrudMutation.relationshipAddRollback](state, payload: IFmLocalRelationshipEvent<T>) {
       delete state.localOnly[payload.transactionId];
     },
-    [FmCrudMutation.relationshipRemovedRollback](
-      state,
-      payload: IFmLocalRelationshipEvent<T>
-    ) {
+    [FmCrudMutation.relationshipRemovedRollback](state, payload: IFmLocalRelationshipEvent<T>) {
       delete state.localOnly[payload.transactionId];
     },
-    [FmCrudMutation.relationshipSetRollback](
-      state,
-      payload: IFmLocalRelationshipEvent<T>
-    ) {
+    [FmCrudMutation.relationshipSetRollback](state, payload: IFmLocalRelationshipEvent<T>) {
       delete state.localOnly[payload.transactionId];
-    }
+    },
   } as MutationTree<IFiremodelState<T>>);

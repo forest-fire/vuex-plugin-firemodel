@@ -1,33 +1,25 @@
-import {
-  FmCallback,
-  FmConfigMutation,
-  IFiremodelConfig,
-  IFmQueuedAction
-} from "@/types";
+import { FmCallback, IFiremodelConfig, IFmQueuedAction } from '@/types';
+import { FireModelPluginError } from '@/errors';
+import { Store } from 'vuex';
+import { addNamespace } from '@/util';
+import { FmConfigMutation } from '@/enums';
 
-import { FireModelPluginError } from "@/errors";
-import { Store } from "vuex";
-import { addNamespace } from "@/util";
-
-export async function queueLifecycleEvents<T>(
-  store: Store<T>,
-  config?: IFiremodelConfig<T>
-) {
+export async function queueLifecycleEvents<T>(store: Store<T>, config?: IFiremodelConfig<T>) {
   if (!config) {
     throw new FireModelPluginError(
       `There was no configuration sent into the FiremodelPlugin!`,
-      "not-allowed"
+      'not-allowed'
     );
     return;
   }
   const iterable = [
-    ["onConnect", "connected"],
-    ["onAuth", "auth-event"],
-    ["onLogin", "logged-in"],
-    ["onLogout", "logged-out"],
-    ["onDisconnect", "disconnected"],
-    ["onRouteChange", "route-changed"],
-    ["onUserUpgraded", "user-upgraded"]
+    ['onConnect', 'connected'],
+    ['onAuth', 'auth-event'],
+    ['onLogin', 'logged-in'],
+    ['onLogout', 'logged-out'],
+    ['onDisconnect', 'disconnected'],
+    ['onRouteChange', 'route-changed'],
+    ['onUserUpgraded', 'user-upgraded'],
   ];
 
   for (const i of iterable) {
@@ -37,7 +29,7 @@ export async function queueLifecycleEvents<T>(
       store.commit(addNamespace(FmConfigMutation.queueHook), {
         on: event,
         name: `lifecycle-event-${event}`,
-        cb
+        cb,
       } as IFmQueuedAction<T>);
     }
   }

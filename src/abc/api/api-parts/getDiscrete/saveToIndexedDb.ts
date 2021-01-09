@@ -1,7 +1,7 @@
-import { IDiscreteServerResults, IQueryServerResults } from "@/types";
-import { IPrimaryKey, Model } from "firemodel";
+import type { IDiscreteServerResults, IQueryServerResults } from '@/types';
+import { IPrimaryKey, Model } from 'firemodel';
 
-import Dexie from "dexie";
+import Dexie from 'dexie';
 
 export function saveToIndexedDb<T extends Model>(
   server: IQueryServerResults<T> | IDiscreteServerResults<T>,
@@ -9,11 +9,11 @@ export function saveToIndexedDb<T extends Model>(
 ) {
   const waitFor: any[] = [];
   const now = new Date().getTime();
-  server.records.forEach(record => {
+  server.records.forEach((record) => {
     const newRec = {
       ...record,
       lastUpdated: now,
-      createdAt: record.createdAt || now
+      createdAt: record.createdAt || now,
     };
     waitFor.push(dexieTable.put(newRec));
   });

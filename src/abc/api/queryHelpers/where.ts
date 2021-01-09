@@ -1,26 +1,21 @@
-import {
+import type {
   IAbcFirebaseQueryResult,
   IAbcQueryHelper,
   IAbcWhereQueryDefinition,
   IQueryOptions,
-  QueryType
-} from "@/types";
-import { IComparisonOperator, List, Model, PropType } from "firemodel";
+} from '@/types';
+import { IComparisonOperator, List, Model, PropType } from 'firemodel';
 
-import { AbcApi } from "@/abc";
+import { AbcApi } from '@/abc';
+import { QueryType } from '@/enums';
 
 /**
  * Offers a configuration to consumers of the standard _where_ clause that Firebase
  * provides and then provides an implementation that is aligned with the ABC `get`
  * and `load` endpoints.
  */
-export const where: IAbcQueryHelper = function where<
-  T extends Model,
-  K extends keyof T
->(
-  defn:
-    | IAbcWhereQueryDefinition<T>
-    | (IAbcWhereQueryDefinition<T> & { queryType: QueryType.where })
+export const where: IAbcQueryHelper = function where<T extends Model, K extends keyof T>(
+  defn: IAbcWhereQueryDefinition<T> | (IAbcWhereQueryDefinition<T> & { queryType: QueryType.where })
 ) {
   defn = { ...defn, queryType: QueryType.where };
   return (ctx: AbcApi<T>, options: IQueryOptions<T> = {}) => {
@@ -29,8 +24,8 @@ export const where: IAbcQueryHelper = function where<
       defn.equals !== undefined
         ? defn.equals
         : defn.greaterThan !== undefined
-        ? [">", defn.greaterThan]
-        : ["<", defn.lessThan];
+        ? ['>', defn.greaterThan]
+        : ['<', defn.lessThan];
     // The query to use for IndexedDB
     const dexieQuery = async () => {
       const recs = await ctx.dexieList.where(defn.property, valueOp);

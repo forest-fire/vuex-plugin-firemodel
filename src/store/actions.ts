@@ -1,7 +1,7 @@
 import { firemodelActions, pluginActions } from "@/store";
 
 import { ActionTree } from "vuex";
-import { IFiremodelState } from "@/types";
+import type { IFiremodelState } from "@/types";
 
 export const actions = <T>() =>
   ({

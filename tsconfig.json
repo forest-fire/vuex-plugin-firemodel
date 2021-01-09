@@ -2,7 +2,7 @@
   "compilerOptions": {
     "declaration": false,
     "module": "commonjs",
-    "target": "es2017",
+    "target": "es2018",
     "lib": ["es2015.reflect", "DOM"],
     "moduleResolution": "node",
     "sourceMap": true,
@@ -18,11 +18,8 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "plugins": [
-      { "transform": "typescript-transform-paths" },
-      { "transform": "typescript-transform-paths", "afterDeclarations": true }
-    ]
+    "plugins": [{ "transform": "typescript-transform-paths" }]
   },
-  "files": ["global.d.ts"],
-  "include": ["src/**/*", "global.d.ts", "test/**/*"]
+
+  "include": ["src", "test"]
 }

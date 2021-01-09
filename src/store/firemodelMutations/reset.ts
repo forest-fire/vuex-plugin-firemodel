@@ -1,4 +1,4 @@
-import { FmCrudMutation } from "@/types";
+import { FmCrudMutation } from "@/enums";
 import { Model } from "firemodel";
 import { MutationTree } from "vuex";
 import Vue from "vue";

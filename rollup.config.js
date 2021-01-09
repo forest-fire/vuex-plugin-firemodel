@@ -1,16 +1,16 @@
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import typescript2 from "rollup-plugin-typescript2";
+import analyze from "rollup-plugin-analyzer";
 import pkg from "./package.json";
 import { builtinModules } from "module";
-import analyze from "rollup-plugin-analyzer";
 
 const generalConfig = moduleSystem => ({
   input: "src/index.ts",
   output: {
     dir: `dist/${moduleSystem}`,
     format: `${moduleSystem}`,
-    sourcemap: true
+    sourcemap: false
   },
   external: [
     ...Object.keys(pkg.dependencies),
@@ -22,10 +22,8 @@ const generalConfig = moduleSystem => ({
     commonjs(),
     resolve(),
     typescript2({
-      rootDir: ".",
       tsconfig: `tsconfig.es.json`,
-      typescript: require("ttypescript"),
-      declaration: moduleSystem === "es" ? true : false
+      typescript: require("ttypescript")
     }),
     ...(moduleSystem === "es" ? [analyze()] : [])
   ]

@@ -10,7 +10,7 @@ import {
   IdTokenResult,
   UserCredential
 } from "@firebase/auth-types";
-import { IAuthProfile, IFiremodelState } from "@/types";
+import type { IAuthProfile, IFiremodelState } from "@/types";
 import { getAuth, getStore } from "@/util";
 
 import { FireModelPluginError } from "@/errors";
@@ -67,7 +67,7 @@ export async function signOut(payload: {
 export async function getIdToken(
   forceRefresh?: boolean
 ): Promise<IdTokenResult> {
-  const fmState = getStore().state["@firemodel"] as IFiremodelState<any>;
+  const fmState = getStore().state["@firemodel"] as IFiremodelState<unknown>;
   if (fmState.token && forceRefresh !== true) {
     return fmState.token;
   }

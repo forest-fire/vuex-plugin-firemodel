@@ -6,7 +6,7 @@ export class AbcError extends Error {
   public firemodel = true;
   public abc = true;
   public code: string;
-  constructor(message: string, classification: string = "abc-api/error") {
+  constructor(message: string, classification = "abc-api/error") {
     super(message);
     const parts = classification.split("/");
     const [type, subType] = parts.length === 1 ? ["abc-api", parts[0]] : parts;

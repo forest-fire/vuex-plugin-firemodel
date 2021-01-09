@@ -6,6 +6,6 @@
     "noEmit": false,
     "outDir": "./dist/es"
   },
-  "include": ["src/**/*"],
-  "exclude": ["test/**/*"]
+  "include": ["src"],
+  "exclude": ["test"]
 }

@@ -36,10 +36,10 @@ export function updateList<
     );
   }
 
-  let existing: T[] = ((moduleState[offset] as unknown) as T[]) || [];
+  const existing: T[] = ((moduleState[offset] as unknown) as T[]) || [];
 
   let found = false;
-  let updated: T[] = existing.map(i => {
+  const updated: T[] = existing.map(i => {
     if (value && i.id === value.id) {
       found = true;
     }
@@ -47,7 +47,7 @@ export function updateList<
   });
 
   Vue.set(
-    moduleState as any,
+    moduleState as Record<string, unknown>,
     offset,
     found ? updated : existing.concat(value as T)
   );
