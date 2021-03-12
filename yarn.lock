@@ -8584,9 +8584,9 @@ lru-cache@^6.0.0:
     yallist "^4.0.0"
 
 madge@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/madge/-/madge-4.0.0.tgz"
-  integrity sha512-BQbYl2HTFnTqOTJQQwVGJPBuD7ScafYvWa2GGGIt+qBFQ2ZpYhSWQJp2rk3EdazthyAOhFvpeuIEOXTBVB50hw==
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/madge/-/madge-4.0.1.tgz#d6d7899a83b7aa86e07074bd8a718a232029bcb2"
+  integrity sha512-bcZDGa+cweRJ0XFCWaVlPTJKw2lB+EBBhUsBOqGv84jvlC6G1syKxCiS15+KBarwsVXNEtEEAs30r7EYn4ccNw==
   dependencies:
     chalk "^4.1.0"
     commander "^6.2.1"
@@ -9032,10 +9032,10 @@ nanomatch@^1.2.9:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-native-dash@^1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/native-dash/-/native-dash-1.7.0.tgz"
-  integrity sha512-g7aoRs0h0+89gIsmw4tsSc8ORqe8/dmjGC+Ww/tuvETax5jAfMRwxCtjLHxwmgIRsAYvIgV1HpN+J5UBGaZmjQ==
+native-dash@^1.7.1:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/native-dash/-/native-dash-1.10.0.tgz#ba9cf90a0b927705699bac335e92382a19b1e97e"
+  integrity sha512-DDIUubO1N5Ul7Ldd9JfkdzMAungddSTgwY8Qyk6k0cS7z7vx8AdgWhRCBVnymFnQbs/wRQdnC2yiL28jlt/E/Q==
 
 native-dash@~1.2.7:
   version "1.2.7"
@@ -10960,11 +10960,6 @@ rollup-plugin-analyzer@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/rollup-plugin-analyzer/-/rollup-plugin-analyzer-4.0.0.tgz"
   integrity sha512-LL9GEt3bkXp6Wa19SNR5MWcvHNMvuTFYg+eYBZN2OIFhSWN+pEJUQXEKu5BsOeABob3x9PDaLKW7w5iOJnsESQ==
-
-rollup-plugin-typescript-paths@^1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-typescript-paths/-/rollup-plugin-typescript-paths-1.2.2.tgz#325b9af1522b3f11b2cc6c3890ff15ace214a3fd"
-  integrity sha512-MMdnzx4Qbj3kZnPivNTlfnCYTvFKvl2Ac+tlVyq3EUK90mmaY5wCz6oEofxwUAF0YTwp8jI5AsasqJmDUwhDXQ==
 
 rollup-plugin-typescript2@^0.29.0:
   version "0.29.0"
