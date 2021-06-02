@@ -18,7 +18,7 @@ export function addedLocally<T extends IModel>(
       if (isRecord(state, payload)) {
         changeRoot<T>(state, payload.value, payload.localPath);
       } else {
-        updateList<T>(state, offset, payload.value);
+        updateList(state, offset, payload.value);
       }
     },
 
@@ -26,7 +26,7 @@ export function addedLocally<T extends IModel>(
       if (isRecord(state, payload)) {
         changeRoot<T>(state, payload.value, payload.localPath);
       } else {
-        updateList<T>(state, offset, payload.value);
+        updateList(state, offset, payload.value);
       }
     },
 
@@ -34,7 +34,7 @@ export function addedLocally<T extends IModel>(
       if (isRecord(state, payload)) {
         changeRoot<T>(state, null, payload.localPath);
       } else {
-        updateList<T>(state, offset, null);
+        updateList(state, offset, null);
       }
     }
   };

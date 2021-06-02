@@ -13,7 +13,7 @@ import { IDictionary } from "common-types";
 import { Order } from "../models/Order";
 import { Person } from "../models/Person";
 import { Product } from "../models/Product";
-import { RealTimeClient } from "@forest-fire/real-time-client";
+import { RealTimeClient } from '@forest-fire/real-time-client';
 import Vue from "vue";
 import { abc } from "@/abc";
 import { config } from "./config";
@@ -43,15 +43,15 @@ export const setupStore = (data?: IDictionary | AsyncMockData) => {
       products,
       userProfile,
       companies,
-      orders
+      orders,
     },
     plugins: [
       FiremodelPlugin(db, {
         connect: true,
         auth: true,
-        ...lifecycle
-      })
-    ]
+        ...lifecycle,
+      }),
+    ],
   });
   return store;
 };

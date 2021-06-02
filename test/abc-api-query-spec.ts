@@ -96,6 +96,7 @@ describe('ABC API Query - with a model with IndexedDB support => ', () => {
     getOrders = abc.getOrders;
     loadOrders = abc.loadOrders;
     await AbcApi.connectIndexedDb();
+    console.log(FireModel.defaultDb);
     // TODO: find a better solution to get the mock database reset
     FireModel.defaultDb.mock.updateDB({ ...productData, ...orderData }, true);
     expect(AbcApi.getModelApi(Product).db.isConnected);
