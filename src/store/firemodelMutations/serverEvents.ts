@@ -18,7 +18,7 @@ export function serverEvents<T extends IModel>(propOffset?: keyof T & string): M
       if (isRecord(state, payload)) {
         changeRoot<T>(state, payload.value, payload.localPath);
       } else {
-        updateList<T>(state, offset, payload.value);
+        updateList(state, offset, payload.value);
       }
     },
 
@@ -40,7 +40,7 @@ export function serverEvents<T extends IModel>(propOffset?: keyof T & string): M
       if (isRecord(state, payload)) {
         changeRoot<T>(state, payload.value, payload.localPath);
       } else {
-        updateList<T>(state, offset, payload.value);
+        updateList(state, offset, payload.value);
       }
     },
 
@@ -55,7 +55,7 @@ export function serverEvents<T extends IModel>(propOffset?: keyof T & string): M
       if (isRecord(state, payload)) {
         changeRoot(state, null, payload.localPath);
       } else {
-        updateList<T>(state, offset, payload.value);
+        updateList(state, offset, payload.value);
       }
     },
   };
